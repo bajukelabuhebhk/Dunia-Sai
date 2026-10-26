@@ -28,4 +28,10 @@
 
   // Games opened directly (not from the launcher) still get offline support
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(function () {});
+
+  // Anonymous open/play counts for the owner's dashboard (/pantau/)
+  const j = document.createElement('script');
+  j.src = '/shared/js/jejak.js';
+  j.defer = true;
+  document.head.appendChild(j);
 })();
