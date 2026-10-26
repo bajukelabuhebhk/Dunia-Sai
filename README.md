@@ -12,13 +12,15 @@ Public landing page, a central PWA launcher and four offline learning apps, depl
 | `/app/kembara/` | Negeri Malaysia quiz and recycling bins |
 | `/promo/<slug>` | Any campaign from `PROMOS`, rendered by `promo/template.html` |
 
-## Deploy on Cloudflare Pages
+## Deploy on Cloudflare
 
-1. Cloudflare dashboard → Workers & Pages → Create → Pages → Connect to Git → pick `sgield-eduplay`.
-2. Framework preset: **None**. Build command: *(leave empty)*. Build output directory: `/`.
-3. Save and deploy. Add your custom domain under the project's Custom domains tab.
+The repo is set up for Cloudflare Workers static assets (`wrangler.jsonc`), which is what the dashboard's Git import uses now.
 
-`_redirects` handles promo URLs and `_headers` keeps `sw.js` uncached.
+1. Cloudflare dashboard → Workers & Pages → Create → Import a repository → pick `Dunia-Sai`.
+2. Project name `dunia-sai`, build command empty, deploy command `npx wrangler deploy`.
+3. Deploy. Every push to `main` redeploys automatically.
+
+`_redirects` handles promo URLs, `_headers` keeps `sw.js` uncached, and `.assetsignore` keeps `README.md`, `tools/` and config files off the public site.
 
 ## Everyday tasks
 

@@ -1,0 +1,11 @@
+{
+  // Dunia Sai: a static site served by Cloudflare Workers static assets.
+  // No Worker script is needed; _redirects and _headers are applied natively.
+  "name": "dunia-sai",
+  "compatibility_date": "2026-10-13",
+  "assets": {
+    "directory": "./",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "none"
+  }
+}
