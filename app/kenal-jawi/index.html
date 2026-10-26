@@ -1259,6 +1259,8 @@ updateHome();
 (function(){
  var front=document.getElementById('kj-front'), input=document.getElementById('kj-front-name'), btn=document.getElementById('kj-front-go');
  try{input.value=localStorage.getItem('kj_name')||'';}catch(e){}
+ /* Dunia Sai: the child's name from the app */ var dsn='';try{dsn=String(JSON.parse(localStorage.getItem('ds_anak')||'{}').active||'').trim();}catch(e){}
+ if(dsn){input.value=dsn;var pp=front.querySelector('p');if(pp){pp.innerHTML='Selamat datang, <b></b>! 👋<br>Jom belajar Jawi.';pp.querySelector('b').textContent=dsn;}}
  function enter(){var n=input.value.trim();if(!n){input.focus();input.style.borderColor='#e66c55';return;}
  try{localStorage.setItem('kj_name',n);localStorage.setItem('kj_student_name',n);}catch(e){}
  var homeName=document.getElementById('kjhomeName');if(homeName)homeName.value=n;

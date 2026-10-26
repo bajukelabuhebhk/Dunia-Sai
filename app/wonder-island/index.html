@@ -1104,7 +1104,7 @@ document.addEventListener('pointerdown',wiSparkle,{passive:true});
 function islandHome(){if(page==='island')saveCamera();document.querySelectorAll('.wi-modal-bg').forEach(x=>x.remove());
  leave();page='island';buildMode=false;buildingItem=null;movingDecor=-1;syncLivingRewards();setIslandTheme();hud();
   scene(`<div class="island-root" id="islandRoot">
-  <div class="island-heading"><strong>✨ My Living Island</strong><small>${completed()}/18 adventures • ${LIVE_ANIMALS.filter(livingUnlocked).length}/${LIVE_ANIMALS.length} animal friends</small></div>
+  <div class="island-heading"><strong>✨ ${wiIsland()}</strong><small>${completed()}/18 adventures • ${LIVE_ANIMALS.filter(livingUnlocked).length}/${LIVE_ANIMALS.length} animal friends</small></div>
   <div class="island-toolbar"><button type="button" id="wiThemeBtn" title="Change time of day">☀️ Day</button><button type="button" id="wiPlacesBtn" title="Explore island places">🧭</button><button hidden id="wiForestBtn"></button><button hidden id="wiLagoonBtn"></button><button hidden id="wiPetsBtn"></button><button hidden id="wiMeadowBtn"></button><button hidden id="wiSafariBtn"></button></div>
   <div class="island-viewport" id="islandViewport" tabindex="0" aria-label="Swipe to explore your living island"><div class="island-world" id="islandWorld">
   ${WI_SCENERY}
@@ -1129,6 +1129,8 @@ function islandHome(){if(page==='island')saveCamera();document.querySelectorAll(
     LIVE_DISTRICTS.map(z=>[z.name,()=>focusDistrict(z.id)])));
  const v=$('islandViewport');requestAnimationFrame(()=>{if(page!=='island')return;v.scrollLeft=islandCamera.x>=0?islandCamera.x:Math.max(0,775*islandZoom()-v.clientWidth/2);v.scrollTop=islandCamera.y>=0?islandCamera.y:Math.max(0,554*islandZoom()-v.clientHeight/2)});
  msg('Explore your island, play and earn prizes!');action()}
+// Dunia Sai: the island carries the child's name set in the app
+function wiIsland(){let n='';try{n=String(JSON.parse(localStorage.getItem('ds_anak')||'{}').active||'').trim()}catch(e){}return n?`${n.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}'s Living Island`:'My Living Island'}
 function home(){islandHome()}
 
  document.addEventListener('keydown',e=>{if(page==='home'&&wheelPuzzle&&!wheelPuzzle.solved&&!e.ctrlKey&&!e.altKey&&!e.metaKey&&/^[a-z]$/i.test(e.key))guessWheelLetter(e.key.toUpperCase())});

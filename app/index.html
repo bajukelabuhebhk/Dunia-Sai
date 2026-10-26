@@ -27,6 +27,20 @@
   .salam { margin: 4px 0 18px; }
   .salam h1 { font-size: 1.5rem; }
   .salam p { margin: 0; color: var(--muted); }
+  .anak { margin-top: 12px; }
+  .anak .kotak { padding: 14px; }
+  .anak form { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+  .anak form[hidden] { display: none; }
+  .anak input { flex: 1 1 160px; min-height: 44px; padding: 8px 12px; border: 2px solid var(--garis); border-radius: 12px; font: 600 1rem var(--font); color: var(--ink); background: #fff; }
+  .anak input:focus { outline: 3px solid var(--kuning); border-color: transparent; }
+  .cip { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .cip button { min-height: 38px; padding: 6px 14px; border-radius: 999px; border: 2px solid var(--garis); background: #fff; color: var(--ink); font: 700 .92rem var(--font); cursor: pointer; }
+  .cip button.aktif { background: var(--hijau); border-color: var(--hijau); color: #fff; }
+  .cip button.kecil { border-style: dashed; color: var(--hijau); }
+  .urus { display: grid; gap: 8px; margin-top: 10px; }
+  .urus .baris-nama { display: flex; gap: 8px; }
+  .urus .baris-nama button { min-width: 44px; border: 0; border-radius: 12px; background: #fde4e4; cursor: pointer; font-size: 1rem; }
+  .anak .nanti { background: none; border: 0; color: var(--muted); font: 600 .9rem var(--font); cursor: pointer; text-decoration: underline; padding: 0 4px; }
   .pasang-ios { display: none; margin: 0 0 16px; padding: 12px 14px; border-radius: 14px; background: var(--kuning-muda); font-size: .93rem; }
   .pasang-ios.tunjuk { display: block; }
   .card .gambar .lencana { position: absolute; top: 10px; left: 10px; box-shadow: 0 2px 6px rgb(0 0 0 / .15); }
@@ -63,8 +77,9 @@
   <div class="pasang-ios" id="pasangIos">📲 <b>Pasang Dunia Sai di skrin utama:</b> tekan butang <b>Kongsi</b> (petak dengan anak panah ke atas) di Safari, kemudian pilih <b>Add to Home Screen</b>.</div>
 
   <section class="salam">
-    <h1>Jom main dan belajar!</h1>
+    <h1 id="haiTajuk">Jom main dan belajar!</h1>
     <p>Pilih satu game. Setiap game ada bahagian percuma. Versi penuh dibuka dengan kod lesen.</p>
+    <div class="anak" id="anak"></div>
   </section>
 
   <main class="grid" id="senarai"></main>
@@ -108,6 +123,7 @@
 
 <script src="/shared/js/config.js"></script>
 <script src="/shared/js/jejak.js" defer></script>
+<script src="/shared/js/anak.js"></script>
 <script src="/shared/js/lesen-lib.js"></script>
 <script src="/shared/js/lesen.js"></script>
 <script>
@@ -143,6 +159,58 @@
       </div>`;
     }).join('');
   }
+
+  /* ---------- Children's names ---------- */
+  let urus = false;
+  function renderAnak() {
+    const d = DSAnak.read();
+    const box = $('anak');
+    $('haiTajuk').textContent = d.active ? `Hai ${d.active}! 👋 Jom main dan belajar!` : 'Jom main dan belajar!';
+    if (!d.names.length) {
+      let nanti = false;
+      try { nanti = sessionStorage.getItem('ds_anak_nanti') === '1'; } catch (e) { /* none */ }
+      box.innerHTML = nanti ? `<div class="cip"><button class="kecil" data-anak-tambah>👋 Tulis nama anak</button></div>` : `<div class="kotak">
+        <b>👋 Siapa nama anak?</b><br><span style="color:var(--muted);font-size:.92rem">Nama akan keluar di muka depan game dan dalam sijil. Disimpan dalam peranti ini sahaja.</span>
+        <form data-anak-form><label class="sr" for="anakBaru">Nama anak</label><input id="anakBaru" maxlength="${DSAnak.MAX}" placeholder="Contoh: Aisyah" autocomplete="off"><button class="btn kecil">Simpan</button></form>
+        <button class="nanti" data-anak-nanti>Nanti dulu</button></div>`;
+      return;
+    }
+    box.innerHTML = `<div class="cip">
+        ${d.names.map((n) => `<button class="${n === d.active ? 'aktif' : ''}" data-anak-pilih="${esc(n)}" aria-pressed="${n === d.active}">${n === d.active ? '⭐ ' : ''}${esc(n)}</button>`).join('')}
+        <button class="kecil" data-anak-tambah>＋ Tambah anak</button>
+        <button class="kecil" data-anak-urus>${urus ? 'Siap' : '✏️ Ubah'}</button>
+      </div>
+      ${urus ? `<div class="urus">${d.names.map((n, i) => `<div class="baris-nama"><label class="sr" for="un${i}">Nama</label><input id="un${i}" data-anak-asal="${esc(n)}" value="${esc(n)}" maxlength="${DSAnak.MAX}"><button data-anak-buang="${esc(n)}" aria-label="Padam ${esc(n)}">🗑</button></div>`).join('')}</div>` : ''}
+      <form data-anak-form hidden><label class="sr" for="anakBaru">Nama anak</label><input id="anakBaru" maxlength="${DSAnak.MAX}" placeholder="Nama anak" autocomplete="off"><button class="btn kecil">Tambah</button></form>`;
+  }
+  $('anak').addEventListener('click', (e) => {
+    const t = e.target.closest('button');
+    if (!t) return;
+    if (t.dataset.anakPilih) { DSAnak.choose(t.dataset.anakPilih); renderAnak(); }
+    else if ('anakTambah' in t.dataset) {
+      try { sessionStorage.removeItem('ds_anak_nanti'); } catch (er) { /* none */ }
+      if (!DSAnak.read().names.length) { renderAnak(); $('anakBaru').focus(); return; }
+      const f = $('anak').querySelector('[data-anak-form]'); f.hidden = false; $('anakBaru').focus();
+    } else if ('anakUrus' in t.dataset) { urus = !urus; renderAnak(); }
+    else if (t.dataset.anakBuang) { if (confirm(`Padam nama ${t.dataset.anakBuang}?`)) { DSAnak.remove(t.dataset.anakBuang); renderAnak(); } }
+    else if ('anakNanti' in t.dataset) { try { sessionStorage.setItem('ds_anak_nanti', '1'); } catch (er) { /* none */ } renderAnak(); }
+  });
+  $('anak').addEventListener('submit', (e) => {
+    e.preventDefault();
+    if ($('anakBaru').value.trim()) { DSAnak.add($('anakBaru').value); urus = false; renderAnak(); }
+  });
+  $('anak').addEventListener('change', (e) => {
+    const i = e.target.closest('[data-anak-asal]');
+    if (i) { DSAnak.rename(i.dataset.anakAsal, i.value); renderAnak(); }
+  });
+  DSAnak.adoptExisting();
+  // A link like /app/?nama=Aisyah sets the name in one tap
+  const namaLink = new URLSearchParams(location.search).get('nama');
+  if (namaLink) {
+    DSAnak.add(namaLink);
+    if (!new URLSearchParams(location.search).get('lesen')) history.replaceState(null, '', location.pathname);
+  }
+  renderAnak();
 
   /* ---------- Licence ---------- */
   const reasons = {
