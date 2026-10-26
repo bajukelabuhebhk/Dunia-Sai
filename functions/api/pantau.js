@@ -1,10 +1,17 @@
 /*
- * GET /api/pantau?hari=7: numbers for the owner's dashboard at /pantau/.
+ * GET /api/pantau?hari=7: numbers for the owner's dashboard app (folder /pantau-app).
  * Only answers with the header  Authorization: Bearer <PANTAU_KUNCI>.
+ * The app lives on its own address, so any origin may ask; the key is what protects the data.
  */
 import { sediakan, hariMYT } from './jejak.js';
 
-const H = { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' };
+const CORS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'Authorization',
+  'Access-Control-Allow-Methods': 'GET, OPTIONS',
+  'Access-Control-Max-Age': '86400',
+};
+const H = { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', ...CORS };
 const json = (data, status = 200) => new Response(JSON.stringify(data), { status, headers: H });
 const KEEP_DAYS = 400;
 
@@ -18,6 +25,8 @@ async function sama(a, b) {
   for (let i = 0; i < x.length; i++) d |= x[i] ^ y[i];
   return d === 0;
 }
+
+export const onRequestOptions = () => new Response(null, { status: 204, headers: CORS });
 
 export async function onRequestGet({ request, env }) {
   if (!env.PANTAU_KUNCI) return json({ ralat: 'PANTAU_KUNCI belum ditetapkan dalam tetapan Cloudflare Pages.' }, 503);

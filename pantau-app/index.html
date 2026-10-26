@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pantau Dunia Sai</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#23314a">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/favicon.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Pantau">
+<style>
+  :root {
+    --bg: #fff8ec; --card: #fff; --ink: #23314a; --muted: #5f6b80; --garis: #ead9bd; --grid: #efe4d1;
+    --bar: #0f7a5c; --bar2: #8cc9b5; --hijau: #0f7a5c; --live: #1fa855; --soft: #f6efe2;
+    --font: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #141a24; --card: #1d2532; --ink: #e8edf5; --muted: #9aa6b8; --garis: #2c3747; --grid: #273141;
+      --bar: #3fbf98; --bar2: #2a6e5b; --hijau: #3fbf98; --soft: #232c3a;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: var(--font); background: var(--bg); color: var(--ink); line-height: 1.45;
+    padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom); }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 0 16px 40px; }
+  header { display: flex; align-items: center; gap: 10px; padding: 14px 0; flex-wrap: wrap; }
+  header h1 { font-size: 1.2rem; margin: 0; flex: 1; display: flex; align-items: center; gap: 10px; }
+  header img { width: 32px; height: 32px; border-radius: 8px; }
+  button { font: 600 .9rem var(--font); cursor: pointer; }
+  .seg { display: inline-flex; background: var(--soft); border-radius: 999px; padding: 3px; }
+  .seg button { border: 0; background: none; color: var(--muted); padding: 7px 12px; border-radius: 999px; }
+  .seg button[aria-pressed="true"] { background: var(--card); color: var(--ink); box-shadow: 0 1px 3px rgb(0 0 0 / .12); }
+  .ikon { border: 0; background: var(--soft); color: var(--ink); width: 38px; height: 38px; border-radius: 999px; }
+  .live { display: flex; align-items: center; gap: 8px; font-size: .92rem; color: var(--muted); margin-bottom: 12px; min-height: 1.4em; }
+  .titik { width: 10px; height: 10px; border-radius: 50%; background: var(--live); box-shadow: 0 0 0 4px rgb(31 168 85 / .2); flex: none; }
+  .titik.mati { background: var(--muted); box-shadow: none; }
+  .kpi { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 14px; }
+  .tile, .kotak { background: var(--card); border: 1px solid var(--garis); border-radius: 16px; }
+  .tile { padding: 12px 14px; }
+  .tile .l { font-size: .82rem; color: var(--muted); }
+  .tile .v { font-size: 1.7rem; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1.2; }
+  .tile .s { font-size: .78rem; color: var(--muted); }
+  .kotak { padding: 14px 16px; margin-bottom: 14px; min-width: 0; }
+  .kotak h2 { font-size: 1rem; margin: 0 0 10px; }
+  .kotak h2 small { font-weight: 500; color: var(--muted); }
+  .dua { display: grid; gap: 14px; }
+  .dua > .kotak { margin: 0; }
+  @media (min-width: 800px) { .dua { grid-template-columns: 1fr 1fr; } }
+  .dua + .kotak, .dua + .dua { margin-top: 14px; }
+  #carta { position: relative; }
+  #carta svg { display: block; width: 100%; height: 220px; overflow: visible; }
+  #carta .tip { position: absolute; pointer-events: none; background: var(--ink); color: var(--bg); padding: 6px 10px; border-radius: 8px;
+    font-size: .8rem; white-space: nowrap; transform: translate(-50%, -100%); display: none; z-index: 2; }
+  .petunjuk { display: flex; gap: 14px; font-size: .8rem; color: var(--muted); margin-top: 6px; flex-wrap: wrap; }
+  .petunjuk i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+  table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+  th { text-align: right; font-weight: 600; color: var(--muted); font-size: .78rem; padding: 4px 6px 8px; }
+  td { text-align: right; padding: 7px 6px; border-top: 1px solid var(--grid); font-variant-numeric: tabular-nums; }
+  th:first-child, td:first-child { text-align: left; }
+  .skrol { overflow-x: auto; }
+  @media (max-width: 520px) { #game th:nth-child(5), #game td:nth-child(5) { display: none; } }
+  .bar { height: 6px; border-radius: 3px; background: var(--bar); margin-top: 4px; }
+  .senarai { list-style: none; margin: 0; padding: 0; font-size: .9rem; }
+  .senarai li { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; padding: 6px 0; border-top: 1px solid var(--grid); }
+  .senarai li:first-child { border-top: 0; }
+  .senarai .bar { grid-column: 1 / -1; margin: 0; background: var(--bar2); }
+  .senarai b { font-variant-numeric: tabular-nums; }
+  .kosong { color: var(--muted); font-size: .9rem; }
+  .feed { list-style: none; margin: 0; padding: 0; font-size: .88rem; }
+  .feed li { display: flex; gap: 10px; padding: 6px 0; border-top: 1px solid var(--grid); }
+  .feed li:first-child { border-top: 0; }
+  .feed time { color: var(--muted); flex: none; width: 44px; font-variant-numeric: tabular-nums; }
+  .masuk { max-width: 420px; margin: 12vh auto 0; text-align: center; }
+  .masuk input { width: 100%; padding: 12px 14px; border-radius: 12px; border: 2px solid var(--garis); background: var(--card); color: var(--ink); font: 600 1rem var(--font); margin: 12px 0; }
+  .btn { border: 0; background: var(--hijau); color: #fff; padding: 12px 22px; border-radius: 999px; font-weight: 700; }
+  .ralat { color: #d5484d; font-weight: 600; margin-top: 10px; min-height: 1.4em; }
+  .tetapan { font-size: .88rem; color: var(--muted); display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }
+  .tetapan label { display: flex; gap: 6px; align-items: center; }
+  .tetapan button, .tetapan a { border: 0; background: none; color: var(--hijau); padding: 0; font: 600 .88rem var(--font); cursor: pointer; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="masuk" id="masuk" hidden>
+    <img src="icons/icon-192.png" alt="" width="72" height="72" style="border-radius:16px;margin:0 auto">
+    <h1 style="font-size:1.3rem">Pantau Dunia Sai</h1>
+    <p style="color:var(--muted)">Masukkan kunci pantau (PANTAU_KUNCI yang anda tetapkan di Cloudflare).</p>
+    <form id="borang">
+      <input id="kunci" type="password" autocomplete="current-password" placeholder="Kunci pantau" required>
+      <button class="btn" type="submit">Masuk</button>
+    </form>
+    <div class="ralat" id="ralatMasuk" role="alert"></div>
+  </section>
+
+  <div id="papan" hidden>
+    <header>
+      <h1><img src="icons/icon-192.png" alt="">Pantau Dunia Sai</h1>
+      <div class="seg" role="group" aria-label="Tempoh">
+        <button data-hari="1">Hari ini</button><button data-hari="7">7 hari</button><button data-hari="30">30 hari</button><button data-hari="90">90 hari</button>
+      </div>
+      <button class="ikon" id="segar" title="Muat semula" aria-label="Muat semula">↻</button>
+    </header>
+
+    <div class="live" id="live"></div>
+    <div class="ralat" id="ralat" role="alert"></div>
+
+    <div class="kpi" id="kpi"></div>
+
+    <section class="kotak">
+      <h2 id="cartaTajuk">Pelawat</h2>
+      <div id="carta"></div>
+      <div class="petunjuk"><span><i style="background:var(--bar)"></i>Pelawat</span><span><i style="background:var(--bar2)"></i>Main game</span></div>
+    </section>
+
+    <section class="kotak">
+      <h2>Game <small>dibuka dan dimain</small></h2>
+      <div class="skrol"><table id="game"></table></div>
+    </section>
+
+    <div class="dua">
+      <section class="kotak"><h2>Datang dari mana</h2><ul class="senarai" id="rujukan"></ul></section>
+      <section class="kotak"><h2>Halaman</h2><ul class="senarai" id="halaman"></ul></section>
+    </div>
+    <div class="dua">
+      <section class="kotak"><h2>Peranti</h2><ul class="senarai" id="peranti"></ul></section>
+      <section class="kotak"><h2>Negara</h2><ul class="senarai" id="negara"></ul></section>
+    </div>
+
+    <section class="kotak">
+      <h2>Aktiviti terkini</h2>
+      <ul class="feed" id="terkini"></ul>
+    </section>
+
+    <div class="tetapan">
+      <span id="dikemas"></span>
+      <a id="kecuali" target="_blank" rel="noopener">Jangan kira lawatan dari phone ini</a>
+      <button id="keluar">Log keluar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Game names come from the main site -->
+<script src="https://dunia-sai.pages.dev/shared/js/config.js"></script>
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const nf = new Intl.NumberFormat('ms-MY');
+  const n = (x) => nf.format(Math.round(x || 0));
+  const store = (() => { try { return localStorage; } catch (e) { return { getItem: () => null, setItem() {}, removeItem() {} }; } })();
+  const NAMA = Object.fromEntries((window.DS ? DS.GAMES : []).map((g) => [g.id, g.name]));
+  const namaGame = (id) => NAMA[id] || id;
+  let hari = Number(store.getItem('pantau_hari')) || 7;
+  let data = null, timer = null;
+
+  function masa(s) {
+    s = Math.round(s || 0);
+    if (s < 60) return `${s} saat`;
+    if (s < 3600) return `${Math.round(s / 60)} min`;
+    const j = Math.floor(s / 3600), m = Math.round((s % 3600) / 60);
+    return m ? `${j} j ${m} min` : `${j} jam`;
+  }
+  const jam = (ts) => new Date(ts).toLocaleTimeString('ms-MY', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23', timeZone: 'Asia/Kuala_Lumpur' });
+  const tarikh = (d) => new Date(d + 'T00:00:00+08:00').toLocaleDateString('ms-MY', { day: 'numeric', month: 'short', timeZone: 'Asia/Kuala_Lumpur' });
+
+  // This app runs on its own address; the numbers live on the main site
+  const SITE = 'https://dunia-sai.pages.dev';
+  const API = location.hostname === 'dunia-sai.pages.dev' ? '' : SITE;
+
+  function tunjuk(masukView) {
+    $('masuk').hidden = !masukView;
+    $('papan').hidden = masukView;
+  }
+
+  async function muat() {
+    const key = store.getItem('pantau_kunci');
+    if (!key) return tunjuk(true);
+    $('segar').disabled = true;
+    try {
+      const r = await fetch(`${API}/api/pantau?hari=${hari}`, { headers: { Authorization: `Bearer ${key}` }, cache: 'no-store' });
+      const body = await r.json().catch(() => ({}));
+      if (r.status === 401) { store.removeItem('pantau_kunci'); $('ralatMasuk').textContent = 'Kunci salah. Cuba lagi.'; return tunjuk(true); }
+      if (!r.ok) throw new Error(body.ralat || `Ralat ${r.status}`);
+      data = body;
+      $('ralat').textContent = '';
+      tunjuk(false);
+      lukis();
+    } catch (e) {
+      tunjuk(false);
+      $('ralat').textContent = navigator.onLine === false ? 'Tiada internet. Nombor di bawah mungkin lama.' : e.message;
+      if (data) lukis();
+    } finally {
+      $('segar').disabled = false;
+    }
+  }
+
+  function lukis() {
+    const d = data, t = d.jumlah;
+    document.querySelectorAll('.seg button').forEach((b) => b.setAttribute('aria-pressed', String(Number(b.dataset.hari) === hari)));
+
+    const L = d.langsung;
+    $('live').innerHTML = `<span class="titik${L.pelawat ? '' : ' mati'}"></span>` + (L.pelawat
+      ? `<span><b>${n(L.pelawat)}</b> orang aktif dalam 5 minit lalu${L.game.length ? ` · main ${L.game.map((g) => esc(namaGame(g))).join(', ')}` : ''}</span>`
+      : '<span>Tiada pelawat aktif sekarang</span>');
+
+    const apps = (d.apps.find((a) => a.k === 1) || {}).n || 0;
+    const appsAll = d.apps.reduce((s, a) => s + a.n, 0);
+    const tiles = [
+      ['Pelawat', n(t.pelawat), hari === 1 ? 'hari ini' : 'jumlah pelawat unik setiap hari'],
+      ['Lawatan halaman', n(t.lawat), 'termasuk buka game'],
+      ['Main game', n(t.main), 'sesi anak betul-betul bermain'],
+      ['Masa bermain', masa(t.saat), t.main ? `purata ${masa(t.saat / t.main)} satu sesi` : '—'],
+      ['Tekan WhatsApp', n(t.wa), 'butang beli / tanya'],
+      ['Guna apps', appsAll ? `${Math.round((100 * apps) / appsAll)}%` : '—', 'lawatan dari apps yang dipasang'],
+    ];
+    $('kpi').innerHTML = tiles.map(([l, v, s]) => `<div class="tile"><div class="l">${l}</div><div class="v">${v}</div><div class="s">${s}</div></div>`).join('');
+
+    carta(d);
+
+    const games = d.game.slice();
+    for (const g of window.DS ? DS.GAMES : []) if (!games.find((x) => x.game === g.id)) games.push({ game: g.id, buka: 0, orang: 0, main: 0, saat: 0 });
+    const maxBuka = Math.max(1, ...games.map((g) => g.buka));
+    $('game').innerHTML = `<thead><tr><th>Game</th><th>Dibuka</th><th>Orang</th><th>Main</th><th>Masa main</th><th>Purata</th></tr></thead><tbody>` +
+      games.map((g) => `<tr><td>${esc(namaGame(g.game))}<div class="bar" style="width:${(100 * g.buka) / maxBuka}%"></div></td>
+        <td>${n(g.buka)}</td><td>${n(g.orang)}</td><td>${n(g.main)}</td><td>${g.saat ? masa(g.saat) : '—'}</td><td>${g.main && g.saat ? masa(g.saat / g.main) : '—'}</td></tr>`).join('') + '</tbody>';
+
+    senarai('rujukan', d.rujukan, (k) => k, 'Belum ada. Pelawat yang taip alamat sendiri atau buka dari apps tidak dikira di sini.');
+    senarai('halaman', d.halaman, (k) => ({ '/': 'Laman utama', '/app/': 'Senarai game (apps)' }[k] || k));
+    senarai('peranti', d.peranti, (k) => ({ telefon: '📱 Telefon', tablet: '📱 Tablet', komputer: '💻 Komputer' }[k] || k));
+    senarai('negara', d.negara, (k) => negara(k));
+
+    const label = { lawat: 'buka', main: 'mula main', tempoh: 'main selama', wa: 'tekan WhatsApp di' };
+    $('terkini').innerHTML = d.terkini.length ? d.terkini.map((e) => {
+      const apa = e.game ? namaGame(e.game) : ({ '/': 'laman utama', '/app/': 'senarai game' }[e.page] || e.page);
+      const extra = e.type === 'tempoh' ? ` <b>${masa(e.secs)}</b>` : '';
+      return `<li><time>${jam(e.ts)}</time><span>${e.device === 'komputer' ? '💻' : '📱'} ${esc(negara(e.country))}: ${label[e.type] || e.type} <b>${esc(apa)}</b>${extra}${e.app ? ' · apps' : ''}</span></li>`;
+    }).join('') : '<li class="kosong">Belum ada data. Buka dunia-sai.pages.dev dari peranti lain untuk cuba.</li>';
+
+    $('dikemas').textContent = `Dikemas kini ${jam(d.kini)}`;
+  }
+
+  function negara(k) {
+    if (!k || k === '?') return 'Tidak diketahui';
+    try { return new Intl.DisplayNames(['ms'], { type: 'region' }).of(k) || k; } catch (e) { return k; }
+  }
+
+  function senarai(id, rows, nama, kosong = 'Belum ada data.') {
+    const max = Math.max(1, ...rows.map((r) => r.n));
+    $(id).innerHTML = rows.length
+      ? rows.map((r) => `<li><span>${esc(nama(r.k))}</span><b>${n(r.n)}</b><div class="bar" style="width:${(100 * r.n) / max}%"></div></li>`).join('')
+      : `<li class="kosong">${kosong}</li>`;
+  }
+
+  // Bars of visitors per day (or hour for today), with plays as a thinner bar beside each
+  function carta(d) {
+    let pts;
+    if (hari === 1) {
+      const by = Object.fromEntries(d.siri.map((r) => [r.k, r]));
+      const now = Number(new Date().toLocaleString('en-GB', { hour: '2-digit', hour12: false, timeZone: 'Asia/Kuala_Lumpur' })) % 24;
+      pts = Array.from({ length: now + 1 }, (_, h) => ({ label: `${String(h).padStart(2, '0')}:00`, short: h % 3 ? '' : String(h), ...(by[h] || { lawat: 0, pelawat: 0, main: 0 }) }));
+      $('cartaTajuk').textContent = 'Pelawat ikut jam (hari ini)';
+    } else {
+      const by = Object.fromEntries(d.siri.map((r) => [r.k, r]));
+      pts = [];
+      const step = hari > 30 ? 7 : hari > 7 ? 5 : 1;
+      for (let i = hari - 1; i >= 0; i--) {
+        const day = new Date(d.kini - i * 864e5 + 8 * 3600e3).toISOString().slice(0, 10);
+        const idx = hari - 1 - i;
+        pts.push({ label: tarikh(day), short: idx % step === 0 || i === 0 ? tarikh(day) : '', ...(by[day] || { lawat: 0, pelawat: 0, main: 0 }) });
+      }
+      $('cartaTajuk').textContent = `Pelawat setiap hari (${hari} hari)`;
+    }
+    const W = 1000, Hh = 220, top = 14, bot = 26, left = 34;
+    const max = Math.max(1, ...pts.map((p) => Math.max(p.pelawat, p.main)));
+    const nice = (() => { const m = Math.pow(10, Math.floor(Math.log10(max))); return Math.ceil(max / m) * m; })();
+    const y = (v) => top + (Hh - top - bot) * (1 - v / nice);
+    const slot = (W - left) / pts.length;
+    const bw = Math.max(2, Math.min(28, slot * 0.5));
+    const gw = Math.max(1, bw * 0.45);
+    let s = `<svg viewBox="0 0 ${W} ${Hh}" preserveAspectRatio="none" role="img" aria-label="Carta pelawat">`;
+    for (let i = 0; i <= 4; i++) {
+      const v = (nice * i) / 4, yy = y(v);
+      s += `<line x1="${left}" x2="${W}" y1="${yy}" y2="${yy}" stroke="var(--grid)" stroke-width="1" vector-effect="non-scaling-stroke"/>`;
+    }
+    pts.forEach((p, i) => {
+      const cx = left + slot * i + slot / 2;
+      const bar = (v, x, w, c) => v ? `<rect x="${x}" y="${y(v)}" width="${w}" height="${Math.max(0, y(0) - y(v))}" rx="${Math.min(4, w / 2)}" fill="${c}"/>` : '';
+      s += bar(p.pelawat, cx - bw / 2 - gw / 2 - 1, bw, 'var(--bar)');
+      s += bar(p.main, cx + bw / 2 - gw / 2 + 1, gw, 'var(--bar2)');
+      s += `<rect class="hit" data-i="${i}" x="${left + slot * i}" y="0" width="${slot}" height="${Hh}" fill="transparent"/>`;
+    });
+    s += '</svg>';
+    // Axis labels in HTML so the stretched SVG does not distort the text
+    const yl = [0, 2, 4].map((i) => `<span style="position:absolute;left:0;top:${(y((nice * i) / 4) / Hh) * 100}%;transform:translateY(-50%);font-size:.72rem;color:var(--muted)">${n((nice * i) / 4)}</span>`).join('');
+    const xl = pts.map((p, i) => p.short ? `<span style="position:absolute;bottom:0;left:${((left + slot * i + slot / 2) / W) * 100}%;transform:translateX(-50%);font-size:.72rem;color:var(--muted);white-space:nowrap">${esc(p.short)}</span>` : '').join('');
+    $('carta').innerHTML = s + yl + xl + '<div class="tip" id="tip"></div>';
+    const tip = $('tip');
+    $('carta').querySelectorAll('.hit').forEach((r) => {
+      const show = () => {
+        const p = pts[Number(r.dataset.i)];
+        const box = $('carta').getBoundingClientRect(), rb = r.getBoundingClientRect();
+        tip.innerHTML = `<b>${esc(p.label)}</b><br>${n(p.pelawat)} pelawat · ${n(p.lawat)} lawatan · ${n(p.main)} main`;
+        tip.style.display = 'block';
+        tip.style.left = Math.min(Math.max(rb.left - box.left + rb.width / 2, 80), box.width - 80) + 'px';
+        tip.style.top = (y(Math.max(p.pelawat, p.main)) / Hh) * box.height - 6 + 'px';
+      };
+      r.addEventListener('pointerenter', show);
+      r.addEventListener('pointerdown', show);
+      r.addEventListener('pointerleave', () => { tip.style.display = 'none'; });
+    });
+  }
+
+  $('borang').addEventListener('submit', (e) => {
+    e.preventDefault();
+    store.setItem('pantau_kunci', $('kunci').value.trim());
+    $('kunci').value = '';
+    $('ralatMasuk').textContent = '';
+    muat();
+  });
+  document.querySelectorAll('.seg button').forEach((b) => b.addEventListener('click', () => {
+    hari = Number(b.dataset.hari);
+    store.setItem('pantau_hari', String(hari));
+    muat();
+  }));
+  $('segar').addEventListener('click', muat);
+  // Opening /pantau/ on the main site marks that phone as the owner's, so its visits are not counted
+  $('kecuali').href = `${SITE}/pantau/`;
+  $('keluar').addEventListener('click', () => { store.removeItem('pantau_kunci'); data = null; tunjuk(true); });
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && store.getItem('pantau_kunci')) muat(); });
+  timer = setInterval(() => { if (document.visibilityState === 'visible' && store.getItem('pantau_kunci')) muat(); }, 60e3);
+
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+  muat();
+})();
+</script>
+</body>
+</html>

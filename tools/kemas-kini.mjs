@@ -21,8 +21,9 @@ const ignore = new Set(
   readFileSync(join(ROOT, '.assetsignore'), 'utf8').split('\n').map((l) => l.trim()).filter((l) => l && !l.startsWith('#'))
 );
 for (const f of ['files.json', 'sw.js', '_headers', '_redirects', '.assetsignore', 'package.json']) ignore.add(f);
-// The owner's dashboard is published but has its own service worker; buyers' apps never cache it
+// The owner's pages are never cached by buyers' apps; /pantau-app is its own Pages project
 ignore.add('pantau');
+ignore.add('pantau-app');
 
 function walk(dir, out = []) {
   for (const name of readdirSync(dir).sort()) {
