@@ -1,241 +1,260 @@
 <!doctype html>
 <html lang="ms">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Dunia Sai · Pilih aplikasi</title>
-  <meta name="theme-color" content="#1f5fa6">
-  <link rel="manifest" href="/manifest.json">
-  <link rel="icon" href="/shared/icons/favicon.png">
-  <link rel="apple-touch-icon" href="/shared/icons/apple-touch-icon.png">
-  <link rel="stylesheet" href="/shared/css/theme.css">
-  <style>
-    .atas {
-      background: var(--biru); color: #fff;
-      padding: max(16px, env(safe-area-inset-top)) 0 56px;
-    }
-    .atas .wrap { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-    .atas .jenama { font-weight: 700; font-size: var(--t-md); flex: 1; color: #fff; text-decoration: none; }
-    .sapaan { margin-top: 18px; }
-    .sapaan h1 { font-size: var(--t-xl); margin: 0; color: #fff; }
-    .sapaan button {
-      font: inherit; color: #fff; background: none; border: 0; padding: 0;
-      text-decoration: underline; text-underline-offset: 4px; cursor: pointer;
-    }
-
-    .modul-grid {
-      display: grid; gap: 18px; margin-top: -36px;
-      grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
-    }
-    .modul {
-      --c: var(--biru);
-      position: relative; display: grid; grid-template-rows: auto 1fr;
-      color: var(--dakwat); background: var(--kertas); text-decoration: none;
-      border-radius: var(--r-card); overflow: hidden;
-      box-shadow: 0 6px 0 0 color-mix(in srgb, var(--c) 55%, var(--garis));
-      transition: transform 80ms ease, box-shadow 80ms ease;
-    }
-    .modul:active { transform: translateY(4px); box-shadow: 0 2px 0 0 color-mix(in srgb, var(--c) 55%, var(--garis)); }
-    .modul .kepala {
-      display: flex; align-items: flex-end; justify-content: space-between;
-      padding: 16px 16px 0; background: var(--c); min-height: 104px;
-    }
-    .modul .glif {
-      display: grid; place-items: center; min-width: 84px; height: 84px; margin-bottom: -26px; padding: 0 10px;
-      font: 700 2.6rem/1 var(--font); color: var(--dakwat);
-      background: var(--kertas); border-radius: var(--r-tile);
-      box-shadow: inset 0 0 0 3px var(--garis), 0 5px 0 0 var(--garis);
-    }
-    .modul .glif.jawi { font-family: var(--font-jawi); font-size: 3rem; color: var(--hijau); }
-    .modul .status {
-      align-self: flex-start; padding: 4px 12px; border-radius: var(--r-pill);
-      font-size: var(--t-sm); font-weight: 700; color: var(--dakwat); background: rgb(255 255 255 / 0.85);
-    }
-    .modul .badan { padding: 36px 16px 18px; display: grid; gap: 6px; align-content: start; }
-    .modul h2 { font-size: var(--t-md); margin: 0; }
-    .modul p { margin: 0; color: var(--dakwat-lembut); font-size: var(--t-base); }
-    .modul .peringkat { font-size: var(--t-sm); }
-    .modul .kemajuan { display: flex; align-items: center; gap: 10px; margin-top: 8px; font-size: var(--t-sm); font-weight: 700; }
-    .modul .meter { flex: 1; --accent: var(--c); }
-
-    .bahagian { margin-top: 40px; }
-    .bahagian h2 { font-size: var(--t-lg); }
-    .kotak { background: var(--kertas); border-radius: var(--r-card); padding: 20px; }
-    .lesen-senarai { list-style: none; padding: 0; margin: 0 0 16px; display: grid; gap: 8px; }
-    .lesen-senarai li {
-      display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;
-      padding: 10px 14px; border-radius: var(--r-tile); background: var(--hijau-muda);
-    }
-    .lesen-senarai code { font-size: var(--t-sm); }
-    .tetapan { display: grid; gap: 14px; }
-    .suis { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-weight: 700; }
-    .suis input { width: 52px; height: 30px; accent-color: var(--hijau); }
-    .baris-butang { display: flex; gap: 10px; flex-wrap: wrap; }
-    footer { padding: 40px 0 calc(40px + env(safe-area-inset-bottom)); color: var(--dakwat-lembut); font-size: var(--t-sm); }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dunia Sai: Semua Game</title>
+<meta name="description" content="Semua game belajar Dunia Sai dalam satu apps. Cuba percuma, bayar sekali, boleh main tanpa internet.">
+<meta name="theme-color" content="#0f7a5c">
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" href="/shared/icons/favicon.png">
+<link rel="apple-touch-icon" href="/shared/icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Dunia Sai">
+<link rel="stylesheet" href="/shared/css/dunia.css">
+<style>
+  body { padding-bottom: env(safe-area-inset-bottom); }
+  #senarai { grid-template-columns: repeat(auto-fill, minmax(min(100%, 165px), 1fr)); gap: 12px; }
+  @media (max-width: 600px) {
+    #senarai .card p { display: none; }
+    #senarai .card .isi { padding: 10px 10px 12px; gap: 4px; }
+    #senarai .card h3 { font-size: 1rem; }
+    #senarai .card .gambar .lencana { top: 6px; left: 6px; font-size: .72rem; padding: 2px 8px; }
+    #senarai .baris { flex-direction: column-reverse; align-items: stretch; }
+    #senarai .main { text-align: center; text-decoration: none; }
+  }
+  .salam { margin: 4px 0 18px; }
+  .salam h1 { font-size: 1.5rem; }
+  .salam p { margin: 0; color: var(--muted); }
+  .pasang-ios { display: none; margin: 0 0 16px; padding: 12px 14px; border-radius: 14px; background: var(--kuning-muda); font-size: .93rem; }
+  .pasang-ios.tunjuk { display: block; }
+  .card .gambar .lencana { position: absolute; top: 10px; left: 10px; box-shadow: 0 2px 6px rgb(0 0 0 / .15); }
+  .baris { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+  .offline { border: 0; background: none; padding: 4px 0; font: 600 .85rem var(--font); color: var(--hijau); cursor: pointer; text-align: left; }
+  .offline[disabled] { color: var(--muted); cursor: default; }
+  .main { font-weight: 800; color: #fff; background: var(--hijau); padding: 6px 14px; border-radius: 999px; font-size: .92rem; }
+  .lesen textarea { width: 100%; min-height: 84px; padding: 12px; border: 2px solid var(--garis); border-radius: 14px; font: 600 15px/1.4 ui-monospace, Menlo, Consolas, monospace; color: var(--ink); background: #fff; resize: vertical; }
+  .lesen textarea:focus { outline: 3px solid var(--kuning); border-color: transparent; }
+  .lesen .baris { margin-top: 10px; }
+  .mesej { margin-top: 10px; font-weight: 700; min-height: 1.5em; }
+  .mesej.baik { color: var(--hijau-gelap); }
+  .mesej.salah { color: #b4232a; }
+  .beli { display: grid; gap: 16px; }
+  @media (min-width: 760px) { .beli { grid-template-columns: 1fr 1fr; } }
+  .harga-besar { font-size: 2rem; font-weight: 800; color: var(--merah); }
+  .harga-besar s { font-size: 1rem; color: var(--muted); font-weight: 600; margin-left: 6px; }
+  .senarai-harga { margin: 0; padding: 0; list-style: none; }
+  .senarai-harga li { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed var(--garis); }
+  .senarai-harga li:last-child { border-bottom: 0; }
+  .simpan-semua { margin-top: 14px; color: var(--muted); font-size: .9rem; }
+  .tiada-net { display: none; margin: 0 0 14px; padding: 10px 14px; border-radius: 12px; background: #eef0f4; font-size: .9rem; }
+  .tiada-net.tunjuk { display: block; }
+</style>
 </head>
 <body>
-  <header class="atas">
-    <div class="wrap">
-      <a class="jenama" href="/">Dunia Sai</a>
-      <span class="bintang-kiraan" aria-label="Jumlah bintang">⭐ <span data-bintang>0</span></span>
-      <button class="btn btn-kuning btn-kecil" data-pasang hidden>Pasang aplikasi</button>
-    </div>
-    <div class="wrap sapaan">
-      <h1 id="sapaan">Hai! Jom belajar.</h1>
-    </div>
+<div class="wrap">
+  <header class="topbar">
+    <a class="jenama" href="/"><img src="/shared/icons/icon-192.png" alt="">Dunia Sai</a>
+    <button class="btn kecil kuning" id="pasang" hidden>📲 Pasang apps</button>
   </header>
 
-  <main class="wrap">
-    <div class="modul-grid" id="modul-grid"></div>
+  <div class="tiada-net" id="tiadaNet">Tiada internet. Game yang sudah disimpan masih boleh dimainkan.</div>
+  <div class="pasang-ios" id="pasangIos">📲 <b>Pasang Dunia Sai di skrin utama:</b> tekan butang <b>Kongsi</b> (petak dengan anak panah ke atas) di Safari, kemudian pilih <b>Add to Home Screen</b>.</div>
 
-    <section class="bahagian" aria-labelledby="t-lesen">
-      <h2 id="t-lesen">Lesen</h2>
+  <section class="salam">
+    <h1>Jom main dan belajar!</h1>
+    <p>Pilih satu game. Setiap game ada bahagian percuma. Versi penuh dibuka dengan kod lesen.</p>
+  </section>
+
+  <main class="grid" id="senarai"></main>
+
+  <section class="seksyen lesen" id="lesen">
+    <div class="kotak">
+      <h2>🔑 Masukkan kod lesen</h2>
+      <p style="margin:0 0 10px;color:var(--muted)">Untuk ibu bapa: tampal kod yang anda terima di WhatsApp (atau seluruh mesej). Satu kali tampal di sini membuka semua game yang termasuk dalam kod itu, untuk peranti ini.</p>
+      <label class="sr" for="kod">Kod lesen</label>
+      <textarea id="kod" placeholder="Contoh: PK1-XXXXXX-XXXXXX-..." autocomplete="off" autocapitalize="characters" spellcheck="false"></textarea>
+      <div class="baris">
+        <button class="btn" id="aktif">Aktifkan</button>
+        <a href="#beli">Belum ada kod?</a>
+      </div>
+      <div class="mesej" id="mesej" role="status" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <section class="seksyen" id="beli" style="padding-top:0">
+    <div class="beli">
       <div class="kotak">
-        <ul class="lesen-senarai" id="lesen-senarai"></ul>
-        <div class="baris-butang">
-          <button class="btn btn-hijau" id="tambah-lesen">Masukkan kod lesen</button>
-          <a class="btn btn-garis" href="/#pakej">Lihat pakej</a>
-        </div>
+        <span class="lencana">⭐ Paling berbaloi</span>
+        <h2 style="margin-top:8px" id="pakejNama"></h2>
+        <div class="harga-besar" id="pakejHarga"></div>
+        <p id="pakejNota" style="color:var(--muted)"></p>
+        <a class="btn wa" id="pakejWa" target="_blank" rel="noopener">Beli melalui WhatsApp</a>
       </div>
-    </section>
-
-    <section class="bahagian" aria-labelledby="t-tetapan">
-      <h2 id="t-tetapan">Tetapan</h2>
-      <div class="kotak tetapan">
-        <label class="suis">Nama anak <input class="medan" id="nama" maxlength="20" autocomplete="off" style="width:min(60%,260px);height:48px;font-size:var(--t-base)"></label>
-        <label class="suis">Bunyi <input type="checkbox" id="bunyi"></label>
-        <label class="suis">Suara sebutan <input type="checkbox" id="suara"></label>
-        <div class="baris-butang">
-          <button class="btn btn-garis btn-kecil" id="eksport">Simpan sandaran</button>
-          <label class="btn btn-garis btn-kecil" for="import-fail">Pulihkan sandaran</label>
-          <input type="file" id="import-fail" accept="application/json,.json" hidden>
-          <button class="btn btn-garis btn-kecil" id="reset" style="color:var(--merah)">Padam kemajuan</button>
-        </div>
+      <div class="kotak">
+        <h2>Harga satu game</h2>
+        <ul class="senarai-harga" id="harga"></ul>
+        <p style="margin:10px 0 0;color:var(--muted);font-size:.9rem">Bayar melalui DuitNow atau online banking, hantar resit di WhatsApp <b id="waNo"></b>, terima kod lesen, tampal di atas.</p>
       </div>
-    </section>
-  </main>
+    </div>
+    <div class="simpan-semua">
+      <button class="btn garis kecil" id="simpanSemua">📥 Simpan semua game untuk main tanpa internet</button>
+      <div id="simpanSemuaNota" style="margin-top:6px"></div>
+    </div>
+  </section>
+</div>
+<footer class="kaki">© SgieldSai · Dunia Sai: Setiap Permainan, Satu Ilmu · <a href="/">Laman utama</a></footer>
 
-  <footer class="wrap">
-    Semua aplikasi boleh dimain tanpa internet selepas dibuka kali pertama. Kemajuan disimpan dalam peranti ini sahaja.
-  </footer>
+<script src="/shared/js/config.js"></script>
+<script src="/shared/js/lesen-lib.js"></script>
+<script src="/shared/js/lesen.js"></script>
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const mb = (n) => Math.max(1, Math.round(n / 1048576)) + ' MB';
+  let list = null;              // /files.json
+  const saved = {};             // game id -> files already cached
+  const progress = {};          // game id -> {done,total} while saving
 
-  <script src="/shared/js/config.js"></script>
-  <script src="/shared/js/storage.js"></script>
-  <script src="/shared/js/ui.js"></script>
-  <script>
-  (() => {
-    const { esc, sound, toast, licenceDialog, installApp, registerSW, refreshStarCount } = EduUI;
-    const C = window.EDU_CONFIG;
-    const grid = document.getElementById('modul-grid');
+  /* ---------- Game cards ---------- */
+  function render() {
+    $('senarai').innerHTML = DS.GAMES.map((g) => {
+      const full = DSLesen.isFull(g);
+      const total = list && list.games[g.id] ? Object.keys(list.games[g.id].files).length : 0;
+      const have = saved[g.id] || 0;
+      const p = progress[g.id];
+      let off;
+      if (!total) off = '';
+      else if (p && !p.final) off = `<button class="offline" disabled>📥 Menyimpan ${Math.floor(100 * p.done / p.total)}%</button>`;
+      else if (have >= total) off = `<button class="offline" disabled>✓ Boleh main tanpa internet</button>`;
+      else off = `<button class="offline" data-simpan="${g.id}">📥 Simpan offline (${mb(list.games[g.id].bytes)})</button>`;
+      return `<div class="card">
+        <a class="gambar" href="${g.path}"><img src="${g.img}" alt="" loading="lazy">
+          ${full ? '<span class="lencana hijau">✅ Versi penuh</span>' : `<span class="lencana">Percuma: ${esc(g.free)}</span>`}</a>
+        <div class="isi">
+          <h3>${esc(g.name)}</h3>
+          <p>${esc(g.desc)}</p>
+          <span style="font-size:.85rem;color:var(--muted)">${esc(g.subject)} · ${esc(g.age)}</span>
+          <div class="baris">${off}<a class="main" href="${g.path}">Main ▶</a></div>
+        </div>
+      </div>`;
+    }).join('');
+  }
 
-    function renderModul() {
-      grid.innerHTML = C.MODULES.map((m) => {
-        const open = EduStore.hasAccess(m.id);
-        const pct = Math.round(EduStore.completion(m.id, m.activities) * 100);
-        const stars = EduStore.totalStars(m.id);
-        return `<a class="modul" href="${m.path}" style="--c:var(${m.color})">
-          <div class="kepala">
-            <span class="glif ${m.glyphClass === 'jawi' ? 'jawi' : ''}" ${m.glyphClass === 'jawi' ? 'lang="ms-Arab"' : ''} aria-hidden="true">${
-              m.glyphClass === 'kv' ? EduUI.colourWord(m.glyph) : esc(m.glyph)}</span>
-            <span class="status">${open ? 'Penuh' : 'Percubaan'}</span>
-          </div>
-          <div class="badan">
-            <h2>${esc(m.name)}</h2>
-            <p>${esc(m.tagline)}</p>
-            <p class="peringkat">${esc(m.level)}</p>
-            <div class="kemajuan">
-              <div class="meter" style="--isi:${pct}%" role="progressbar" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100" aria-label="Kemajuan ${esc(m.name)}"><span></span></div>
-              <span>⭐ ${stars}</span>
-            </div>
-          </div>
-        </a>`;
-      }).join('');
+  /* ---------- Licence ---------- */
+  const reasons = {
+    signature: 'Kod ini tidak sah. Semak semula huruf dan nombor, atau tampal seluruh mesej WhatsApp.',
+    blocked: 'Kod ini telah dibatalkan. Sila hubungi kami di WhatsApp.',
+    'unknown-key': 'Kod ini tidak dikenali. Sila hubungi kami di WhatsApp.',
+    'not-in-bundle': 'Kod ini sah tetapi bukan untuk game di sini.',
+    'other-game': 'Kod ini sah tetapi bukan untuk game di sini.',
+    empty: 'Tampal kod lesen dahulu.',
+  };
+  function activate(text) {
+    const m = $('mesej');
+    if (!text.trim()) { m.className = 'mesej salah'; m.textContent = reasons.empty; return; }
+    const r = DSLesen.activate(text);
+    if (r.unlocked.length || r.already.length) {
+      const parts = [];
+      if (r.unlocked.length) parts.push('🎉 Berjaya! Versi penuh dibuka: ' + r.unlocked.map((g) => g.name).join(', ') + '.');
+      if (r.already.length) parts.push('Sudah dibuka sebelum ini: ' + r.already.map((g) => g.name).join(', ') + '.');
+      m.className = 'mesej baik'; m.textContent = parts.join(' ');
+      $('kod').value = '';
+      render();
+    } else {
+      m.className = 'mesej salah';
+      m.textContent = reasons[r.reason] || 'Kod tidak dikenali. Semak semula, atau tampal seluruh mesej WhatsApp.';
     }
+  }
+  $('aktif').onclick = () => activate($('kod').value);
+  // A link like /app/?lesen=PK1-... activates in one tap
+  const fromLink = new URLSearchParams(location.search).get('lesen');
+  if (fromLink) {
+    $('kod').value = fromLink;
+    activate(fromLink);
+    history.replaceState(null, '', location.pathname + '#lesen');
+    $('lesen').scrollIntoView();
+  }
 
-    function renderLesen() {
-      const list = EduStore.licences();
-      const el = document.getElementById('lesen-senarai');
-      el.innerHTML = list.length
-        ? list.map((l) => {
-            const p = EduStore.packageInfo(l.pkg);
-            return `<li><span><strong>${esc(p ? p.name : l.pkg)}</strong><br><code>${esc(l.key)}</code></span>
-              <button class="btn btn-garis btn-kecil" data-buang="${esc(l.key)}">Buang</button></li>`;
-          }).join('')
-        : '<li style="background:var(--kapur)">Belum ada lesen. Anda sedang menggunakan versi percubaan.</li>';
-    }
-    document.getElementById('lesen-senarai').addEventListener('click', (e) => {
-      const b = e.target.closest('[data-buang]');
-      if (b && confirm('Buang lesen ini daripada peranti ini?')) {
-        EduStore.removeLicence(b.dataset.buang);
-        refresh();
+  /* ---------- Prices ---------- */
+  const P = DS.PAKEJ;
+  $('pakejNama').textContent = P.name;
+  $('pakejHarga').innerHTML = P.promo ? `RM${P.promo}<s>RM${P.price}</s>` : `RM${P.price}`;
+  $('pakejNota').textContent = (P.promo ? `Harga biasa RM${P.price}, promo RM${P.promo} ${P.promoNote}. ` : '') +
+    DS.pakejGames().map((g) => g.name).join(', ') + '. ' + P.note;
+  $('pakejWa').href = DS.waLink(`Assalamualaikum, saya nak beli ${P.name} Dunia Sai (RM${P.promo || P.price}).`);
+  $('harga').innerHTML = DS.GAMES.map((g) => `<li><span>${esc(g.name)}</span><b>RM${g.price}</b></li>`).join('');
+  $('waNo').textContent = DS.whatsappText;
+
+  /* ---------- Offline ---------- */
+  async function loadList() {
+    try { list = await (await fetch('/files.json', { cache: 'no-cache' })).json(); return; } catch (e) { /* offline */ }
+    try {
+      for (const k of await caches.keys()) {
+        if (!k.startsWith('ds-core-')) continue;
+        const r = await (await caches.open(k)).match('/files.json');
+        if (r) { list = await r.json(); return; }
       }
+    } catch (e) { /* no cache storage */ }
+  }
+  async function countSaved() {
+    if (!list || !('caches' in window)) return;
+    const have = new Set((await (await caches.open('ds-games')).keys()).map((r) => new URL(r.url).pathname));
+    for (const [id, g] of Object.entries(list.games)) saved[id] = Object.keys(g.files).filter((u) => have.has(u)).length;
+  }
+  async function askSave(id) {
+    if (!('serviceWorker' in navigator)) return;
+    const reg = await navigator.serviceWorker.ready;
+    progress[id] = { done: saved[id] || 0, total: Object.keys(list.games[id].files).length, final: false };
+    render();
+    (navigator.serviceWorker.controller || reg.active).postMessage({ type: 'ds-save', id });
+  }
+  $('senarai').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-simpan]');
+    if (b) askSave(b.dataset.simpan);
+  });
+  $('simpanSemua').onclick = () => {
+    if (!list) return;
+    for (const g of DS.GAMES) if (list.games[g.id] && (saved[g.id] || 0) < Object.keys(list.games[g.id].files).length) askSave(g.id);
+  };
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(() => {});
+    navigator.serviceWorker.addEventListener('message', async (e) => {
+      const d = e.data || {};
+      if (d.type !== 'ds-save') return;
+      progress[d.id] = d;
+      if (d.final) {
+        await countSaved();
+        if (d.failed) $('simpanSemuaNota').textContent = 'Sebahagian fail gagal disimpan. Cuba lagi bila internet lebih stabil.';
+      }
+      render();
     });
+  }
 
-    function renderSapaan() {
-      const nama = EduStore.profile().name.trim();
-      document.getElementById('sapaan').textContent = nama ? `Hai ${nama}! Jom belajar.` : 'Hai! Jom belajar.';
-    }
+  /* ---------- Install ---------- */
+  let installEvent = null;
+  window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); installEvent = e; $('pasang').hidden = false; });
+  $('pasang').onclick = async () => { if (!installEvent) return; installEvent.prompt(); await installEvent.userChoice; installEvent = null; $('pasang').hidden = true; };
+  window.addEventListener('appinstalled', () => { $('pasang').hidden = true; });
+  const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+  const ios = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  if (ios && !standalone) $('pasangIos').classList.add('tunjuk');
 
-    function refresh() { renderModul(); renderLesen(); renderSapaan(); refreshStarCount(); }
+  const net = () => $('tiadaNet').classList.toggle('tunjuk', !navigator.onLine);
+  addEventListener('online', net); addEventListener('offline', net); net();
 
-    // Settings
-    const nama = document.getElementById('nama');
-    const bunyi = document.getElementById('bunyi');
-    const suara = document.getElementById('suara');
-    nama.value = EduStore.profile().name;
-    bunyi.checked = EduStore.settings().sound;
-    suara.checked = EduStore.settings().speech;
-    nama.addEventListener('input', () => { EduStore.setProfile({ name: nama.value }); renderSapaan(); });
-    bunyi.addEventListener('change', () => { EduStore.setSettings({ sound: bunyi.checked }); sound('click'); });
-    suara.addEventListener('change', () => EduStore.setSettings({ speech: suara.checked }));
+  // Licences entered inside a game show here when the child comes back
+  addEventListener('pageshow', () => countSaved().then(render));
 
-    document.getElementById('tambah-lesen').onclick = () => licenceDialog(null, refresh);
-
-    document.getElementById('eksport').onclick = () => {
-      const blob = new Blob([EduStore.exportAll()], { type: 'application/json' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = `duniasai-sandaran-${new Date().toISOString().slice(0, 10)}.json`;
-      a.click();
-      setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-      toast('Sandaran disimpan');
-    };
-    document.getElementById('import-fail').onchange = async (e) => {
-      const f = e.target.files[0];
-      if (!f) return;
-      try {
-        EduStore.importAll(await f.text());
-        toast('Sandaran dipulihkan');
-        location.reload();
-      } catch (err) {
-        toast('Fail ini bukan sandaran Dunia Sai');
-      }
-    };
-    document.getElementById('reset').onclick = () => {
-      if (confirm('Padam semua bintang dan kemajuan? Lesen tidak akan dipadam.')) {
-        EduStore.resetProgress();
-        refresh();
-        toast('Kemajuan dipadam');
-      }
-    };
-
-    document.querySelectorAll('[data-pasang]').forEach((b) => b.onclick = () => {
-      if (!installApp()) toast('Gunakan menu pelayar, kemudian pilih "Tambah ke Skrin Utama"', 3500);
-    });
-
-    // ?lesen=SAI-... from a WhatsApp link activates directly
-    const q = new URLSearchParams(location.search).get('lesen');
-    if (q) {
-      const r = EduStore.activate(q);
-      toast(r.ok ? `${r.package.name} diaktifkan` : r.error, 3500);
-      history.replaceState(null, '', location.pathname);
-    }
-
-    window.addEventListener('pageshow', refresh);
-    refresh();
-    registerSW();
-  })();
-  </script>
+  render();
+  loadList().then(countSaved).then(() => {
+    render();
+    if (list) $('simpanSemua').textContent = `📥 Simpan semua game untuk main tanpa internet (${mb(Object.values(list.games).reduce((n, g) => n + g.bytes, 0))})`;
+  });
+})();
+</script>
 </body>
 </html>

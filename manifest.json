@@ -2,25 +2,25 @@
   "id": "/app/",
   "name": "Dunia Sai",
   "short_name": "Dunia Sai",
-  "description": "Jawi, membaca, matematik dan Kembara Malaysia untuk prasekolah dan Tahun 1. Boleh dimain tanpa internet.",
+  "description": "Game belajar untuk kanak-kanak Malaysia: Jawi, ABC, Matematik, Sains, English, Geografi, Duit dan Koding. Boleh dimain tanpa internet.",
   "lang": "ms",
   "dir": "ltr",
   "start_url": "/app/?source=pwa",
   "scope": "/",
   "display": "standalone",
   "orientation": "any",
-  "background_color": "#edf3f7",
-  "theme_color": "#1f5fa6",
-  "categories": ["education", "kids"],
+  "background_color": "#fff8ec",
+  "theme_color": "#0f7a5c",
+  "categories": ["education", "kids", "games"],
   "icons": [
     { "src": "/shared/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
     { "src": "/shared/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
     { "src": "/shared/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ],
   "shortcuts": [
-    { "name": "Kenal Jawi", "url": "/app/jawi/", "icons": [{ "src": "/shared/icons/icon-192.png", "sizes": "192x192" }] },
-    { "name": "Wira Matematik", "url": "/app/matematik/", "icons": [{ "src": "/shared/icons/icon-192.png", "sizes": "192x192" }] },
-    { "name": "Kenal ABC & Suku Kata", "url": "/app/abc/", "icons": [{ "src": "/shared/icons/icon-192.png", "sizes": "192x192" }] },
-    { "name": "Kembara Malaysia", "url": "/app/kembara/", "icons": [{ "src": "/shared/icons/icon-192.png", "sizes": "192x192" }] }
+    { "name": "Kenal Jawi", "url": "/app/kenal-jawi/", "icons": [{ "src": "/shared/icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Wira Matematik", "url": "/app/wira-matematik/", "icons": [{ "src": "/shared/icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Wonder Island", "url": "/app/wonder-island/", "icons": [{ "src": "/shared/icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Masukkan kod lesen", "url": "/app/#lesen", "icons": [{ "src": "/shared/icons/icon-192.png", "sizes": "192x192" }] }
   ]
 }

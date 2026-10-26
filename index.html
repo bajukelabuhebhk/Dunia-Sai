@@ -1,252 +1,178 @@
 <!doctype html>
 <html lang="ms">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Dunia Sai · Jawi, membaca dan matematik untuk prasekolah</title>
-  <meta name="description" content="Empat aplikasi pembelajaran untuk prasekolah dan Tahun 1: 37 huruf Jawi, ABC dan suku kata, bingkai sepuluh, dan Kembara Malaysia. Boleh dimain tanpa internet.">
-  <meta name="theme-color" content="#1f5fa6">
-  <link rel="manifest" href="/manifest.json">
-  <link rel="icon" href="/shared/icons/favicon.png">
-  <link rel="apple-touch-icon" href="/shared/icons/apple-touch-icon.png">
-  <meta property="og:title" content="Dunia Sai">
-  <meta property="og:description" content="Jawi, membaca dan matematik untuk prasekolah dan Tahun 1. Main tanpa internet.">
-  <meta property="og:image" content="/shared/icons/icon-512.png">
-  <link rel="stylesheet" href="/shared/css/theme.css">
-  <style>
-    .nav { padding: max(14px, env(safe-area-inset-top)) 0 14px; }
-    .nav .wrap { display: flex; align-items: center; gap: 12px; }
-    .nav .jenama { flex: 1; font-weight: 700; font-size: var(--t-md); color: var(--dakwat); text-decoration: none; }
-
-    /* Hero: the syllable tiles are the one memorable thing */
-    .hero { padding: 24px 0 64px; }
-    .hero .wrap { display: grid; gap: 32px; align-items: center; grid-template-columns: 1fr; }
-    @media (min-width: 860px) { .hero .wrap { grid-template-columns: 1.1fr 0.9fr; } }
-    .hero h1 { max-width: 14ch; margin-bottom: 16px; }
-    .hero .lead { font-size: var(--t-md); color: var(--dakwat-lembut); max-width: 36ch; }
-    .hero .tindakan { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
-
-    .meja {
-      position: relative; display: grid; gap: 18px; justify-items: center;
-      padding: 28px 16px 32px; border-radius: 28px;
-      background:
-        repeating-linear-gradient(0deg, transparent 0 35px, var(--garis) 35px 37px),
-        var(--kertas);
-    }
-    .meja .baris { display: flex; gap: 12px; align-items: flex-end; }
-    .meja .tile { font-size: clamp(3rem, 11vw, 5.5rem); }
-    .meja .tile.jawi-tile { font-family: var(--font-jawi); color: var(--hijau); font-size: clamp(3rem, 10vw, 5rem); line-height: 1.5; padding-top: 0; }
-    .meja .tile.nombor { color: var(--biru); }
-    .meja .tambah { font: 700 clamp(2rem, 7vw, 3.5rem)/1 var(--font); color: var(--dakwat-lembut); }
-    .meja figcaption { font-size: var(--t-sm); color: var(--dakwat-lembut); text-align: center; }
-
-    /* One orchestrated load moment: tiles drop in and settle */
-    @media (prefers-reduced-motion: no-preference) {
-      .meja .tile { animation: jatuh 520ms cubic-bezier(.3,1.5,.6,1) both; }
-      .meja .baris:nth-child(1) .tile:nth-child(1) { animation-delay: 120ms; }
-      .meja .baris:nth-child(1) .tile:nth-child(3) { animation-delay: 260ms; }
-      .meja .baris:nth-child(2) .tile { animation-delay: 420ms; }
-      .meja .baris:nth-child(3) .tile:nth-child(1) { animation-delay: 560ms; }
-      .meja .baris:nth-child(3) .tile:nth-child(3) { animation-delay: 680ms; }
-    }
-    @keyframes jatuh { from { opacity: 0; transform: translateY(-40px) rotate(-6deg); } }
-
-    section.blok { padding: 56px 0; }
-    section.blok.putih { background: var(--kertas); }
-    .blok h2 { max-width: 22ch; }
-    .blok .pengenalan { color: var(--dakwat-lembut); font-size: var(--t-md); max-width: 46ch; margin-bottom: 28px; }
-
-    .selaras { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); }
-    .selaras article { padding: 18px; border-radius: var(--r-card); background: var(--kapur); border-top: 6px solid var(--c, var(--biru)); }
-    .selaras h3 { margin-bottom: 6px; }
-    .selaras p { margin: 0; color: var(--dakwat-lembut); }
-    .penafian { font-size: var(--t-sm); color: var(--dakwat-lembut); margin-top: 20px; }
-
-    .modul-senarai { display: grid; gap: 14px; }
-    .modul-baris {
-      display: grid; grid-template-columns: 76px 1fr; gap: 16px; align-items: center;
-      padding: 14px; border-radius: var(--r-card); background: var(--kertas);
-    }
-    .modul-baris .glif {
-      display: grid; place-items: center; width: 76px; height: 76px;
-      font: 700 2.2rem/1 var(--font); border-radius: var(--r-tile);
-      background: var(--c); color: #fff;
-    }
-    .modul-baris .glif.jawi { font-family: var(--font-jawi); font-size: 2.6rem; }
-    .modul-baris h3 { margin: 0 0 2px; }
-    .modul-baris p { margin: 0; color: var(--dakwat-lembut); }
-
-    .pakej-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); align-items: start; }
-    .pakej {
-      display: grid; gap: 10px; padding: 20px; border-radius: var(--r-card);
-      background: var(--kapur); box-shadow: inset 0 0 0 3px var(--garis);
-    }
-    .pakej.utama { background: var(--biru); color: #fff; box-shadow: none; grid-column: 1 / -1; }
-    @media (min-width: 760px) { .pakej.utama { grid-template-columns: 1fr auto; align-items: center; } }
-    .pakej h3 { margin: 0; }
-    .pakej .harga { font: 700 var(--t-xl)/1 var(--font); }
-    .pakej .harga s { font-size: var(--t-base); font-weight: 400; opacity: 0.75; margin-left: 6px; }
-    .pakej p { margin: 0; }
-    .pakej.utama p { color: rgb(255 255 255 / 0.85); }
-
-    .langkah { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); counter-reset: l; padding: 0; list-style: none; }
-    .langkah li { counter-increment: l; padding: 18px; border-radius: var(--r-card); background: var(--kertas); }
-    .langkah li::before {
-      content: counter(l); display: grid; place-items: center; width: 44px; height: 44px; margin-bottom: 10px;
-      border-radius: 50%; background: var(--kuning); font-weight: 700; font-size: var(--t-md);
-    }
-
-    details { padding: 16px 0; border-bottom: 2px solid var(--garis); }
-    summary { font-weight: 700; font-size: var(--t-md); cursor: pointer; }
-    details p { margin: 10px 0 0; color: var(--dakwat-lembut); }
-
-    footer { padding: 32px 0 calc(32px + env(safe-area-inset-bottom)); font-size: var(--t-sm); color: var(--dakwat-lembut); }
-    footer .wrap { display: flex; gap: 16px; justify-content: space-between; flex-wrap: wrap; }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dunia Sai: Setiap Permainan, Satu Ilmu</title>
+<meta name="description" content="Game belajar untuk kanak-kanak Malaysia: Jawi, ABC, Matematik, Sains, English, Geografi, Duit dan Koding. Semua dalam satu apps. Cuba percuma, bayar sekali, boleh main tanpa internet.">
+<meta name="theme-color" content="#0f7a5c">
+<meta property="og:title" content="Dunia Sai: Setiap Permainan, Satu Ilmu">
+<meta property="og:description" content="8 game belajar dalam satu apps. Cuba percuma, bayar sekali.">
+<meta property="og:image" content="/shared/icons/icon-512.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" href="/shared/icons/favicon.png">
+<link rel="apple-touch-icon" href="/shared/icons/apple-touch-icon.png">
+<link rel="stylesheet" href="/shared/css/dunia.css">
+<style>
+  .hero { padding: 20px 0 36px; display: grid; gap: 24px; align-items: center; }
+  @media (min-width: 860px) { .hero { grid-template-columns: 1.1fr 1fr; padding: 36px 0 48px; } }
+  .hero h1 { font-size: clamp(2rem, 6vw, 3rem); margin-bottom: 10px; }
+  .hero h1 span { color: var(--hijau); }
+  .hero .cerita { font-weight: 700; color: #a0611a; margin: 0 0 8px; }
+  .hero p.lead { font-size: 1.08rem; color: var(--muted); margin: 0 0 18px; max-width: 46ch; }
+  .hero .butang { display: flex; gap: 12px; flex-wrap: wrap; }
+  .kolaj { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .kolaj img { border-radius: 14px; box-shadow: var(--shadow); aspect-ratio: 1260 / 1000; object-fit: cover; }
+  .yakin { display: flex; gap: 8px 16px; flex-wrap: wrap; margin: 16px 0 0; padding: 0; list-style: none; font-size: .9rem; font-weight: 600; color: var(--hijau-gelap); }
+  .prinsip { display: grid; gap: 16px; }
+  @media (min-width: 760px) { .prinsip { grid-template-columns: repeat(3, 1fr); } }
+  .prinsip .kotak h3 { font-size: 1.08rem; }
+  .prinsip .kotak p { margin: 0; color: var(--muted); }
+  .ikon { font-size: 1.8rem; line-height: 1; margin-bottom: 8px; }
+  .harga { font-weight: 800; }
+  .pakej { display: grid; gap: 18px; align-items: center; background: var(--hijau); color: #fff; border-radius: 24px; padding: 24px; box-shadow: var(--shadow); }
+  @media (min-width: 760px) { .pakej { grid-template-columns: 1.3fr 1fr; padding: 32px; } }
+  .pakej h2 { color: #fff; font-size: 1.7rem; }
+  .pakej ul { margin: 10px 0 0; padding-left: 1.2em; }
+  .pakej .tanda { display: inline-block; background: var(--kuning); color: var(--ink); font-weight: 800; padding: 3px 12px; border-radius: 999px; font-size: .85rem; }
+  .pakej .kanan { background: #fff; color: var(--ink); border-radius: 18px; padding: 20px; text-align: center; }
+  .pakej .besar { font-size: 2.6rem; font-weight: 900; color: var(--merah); line-height: 1.1; }
+  .pakej .besar s { font-size: 1.1rem; color: var(--muted); font-weight: 600; margin-left: 6px; }
+  .langkah { counter-reset: l; display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+  @media (min-width: 760px) { .langkah { grid-template-columns: repeat(4, 1fr); } }
+  .langkah li { counter-increment: l; background: var(--card); border-radius: var(--r); box-shadow: var(--shadow); padding: 16px; }
+  .langkah li::before { content: counter(l); display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--kuning); font-weight: 800; margin-bottom: 8px; }
+  .tentang p { max-width: 70ch; }
+</style>
 </head>
 <body>
-  <nav class="nav" aria-label="Utama">
-    <div class="wrap">
-      <a class="jenama" href="/">Dunia Sai</a>
-      <a class="btn btn-kecil" href="/app/">Buka aplikasi</a>
-    </div>
-  </nav>
-
-  <header class="hero">
-    <div class="wrap">
-      <div>
-        <h1>Jawi, membaca dan mengira, sambil bermain</h1>
-        <p class="lead">Empat aplikasi untuk anak prasekolah dan Tahun 1. Main di telefon atau tablet, walaupun tanpa internet.</p>
-        <div class="tindakan">
-          <a class="btn btn-besar" href="/app/">Cuba percuma</a>
-          <a class="btn btn-besar btn-garis" href="#pakej">Lihat harga</a>
-        </div>
-      </div>
-      <figure class="meja" aria-label="Contoh suku kata bu dan ku menjadi buku, huruf Jawi ba, dan 5 tambah 5">
-        <div class="baris"><span class="tile"><span class="k">b</span><span class="v">u</span></span><span class="tambah" aria-hidden="true">+</span><span class="tile"><span class="k">k</span><span class="v">u</span></span></div>
-        <div class="baris"><span class="tile jawi-tile" lang="ms-Arab">ب</span></div>
-        <div class="baris"><span class="tile nombor">5</span><span class="tambah" aria-hidden="true">+</span><span class="tile nombor">5</span></div>
-        <figcaption>Konsonan biru, vokal merah. Warna yang sama dalam setiap aplikasi.</figcaption>
-      </figure>
-    </div>
+<div class="wrap">
+  <header class="topbar">
+    <a class="jenama" href="/"><img src="/shared/icons/icon-192.png" alt="">Dunia Sai</a>
+    <a class="btn kecil" href="/app/">Buka apps</a>
   </header>
 
-  <section class="blok putih" aria-labelledby="t-selaras">
-    <div class="wrap">
-      <h2 id="t-selaras">Disusun mengikut apa yang dipelajari di sekolah</h2>
-      <p class="pengenalan">Kandungan mengikut susunan DBP untuk Jawi, dan pendekatan yang digunakan dalam KSPK dan KSSR.</p>
-      <div class="selaras">
-        <article style="--c:var(--hijau)">
-          <h3>37 huruf Jawi</h3>
-          <p>Mengikut susunan huruf Jawi DBP, termasuk ca, nga, pa, ga, va dan nya. Setiap huruf dalam bentuk tunggal, awal, tengah dan akhir.</p>
-        </article>
-        <article style="--c:var(--merah)">
-          <h3>Suku kata KV dan KVK</h3>
-          <p>Bacaan bermula dengan suku kata terbuka seperti bu-ku, kemudian suku kata tertutup seperti ru-mah.</p>
-        </article>
-        <article style="--c:var(--biru)">
-          <h3>Konkrit, gambar, abstrak</h3>
-          <p>Anak meletak pembilang dalam bingkai sepuluh dahulu, kemudian mengenal nombor daripada gambar, kemudian ikatan nombor.</p>
-        </article>
-        <article style="--c:var(--kuning)">
-          <h3>Mengenal Malaysia</h3>
-          <p>13 negeri dan ibu negerinya, serta tong kitar semula biru, coklat dan oren.</p>
-        </article>
+  <section class="hero">
+    <div>
+      <p class="cerita">Bermula Dengan Jawi, Terus Meneroka</p>
+      <h1>Dunia Sai: <span>Setiap Permainan, Satu Ilmu</span></h1>
+      <p class="lead">8 game belajar untuk kanak-kanak Malaysia dalam satu apps: Jawi, ABC, Matematik, Sains, English, Geografi, Duit dan Koding. Main di telefon, tablet atau komputer.</p>
+      <div class="butang">
+        <a class="btn" href="/app/">▶ Cuba percuma sekarang</a>
+        <a class="btn wa" id="heroWa" target="_blank" rel="noopener">Beli melalui WhatsApp</a>
       </div>
-      <p class="penafian">Dunia Sai ialah produk bebas dan tidak dikeluarkan atau disahkan oleh Dewan Bahasa dan Pustaka atau Kementerian Pendidikan Malaysia.</p>
+      <ul class="yakin">
+        <li>✓ Cuba percuma, bayar sekali</li>
+        <li>✓ Ejaan Jawi ikut pedoman DBP</li>
+        <li>✓ Selari dengan KSSR</li>
+        <li>✓ Tiada iklan pihak ketiga</li>
+      </ul>
+    </div>
+    <div class="kolaj" aria-hidden="true">
+      <img src="/img/kenal-jawi.jpg" alt=""><img src="/img/wira-matematik.jpg" alt="">
+      <img src="/img/hikayat-sungai.jpg" alt=""><img src="/img/wonder-island.jpg" alt="">
     </div>
   </section>
+</div>
 
-  <section class="blok" aria-labelledby="t-modul">
-    <div class="wrap">
-      <h2 id="t-modul">Empat aplikasi, satu tempat</h2>
-      <p class="pengenalan">Semua aplikasi dibuka dari satu skrin. Bintang dan kemajuan setiap anak disimpan dalam peranti.</p>
-      <div class="modul-senarai" id="modul-senarai"></div>
+<section class="seksyen" style="padding-top:0">
+  <div class="wrap">
+    <div class="prinsip">
+      <div class="kotak"><div class="ikon">🎁</div><h3>Cuba Percuma, Sekali Bayar</h3><p>Setiap permainan ada bahagian percuma untuk dicuba dulu. Versi penuh dibuka dengan satu kod lesen untuk semua peranti di rumah. Tiada langganan, tiada iklan, tiada akaun.</p></div>
+      <div class="kotak"><div class="ikon">🇲🇾</div><h3>Kandungan Tempatan, Bukan Terjemahan</h3><p>Dibina khusus untuk kanak-kanak Malaysia, mengikut budaya, bahasa dan sistem ejaan rasmi kita.</p></div>
+      <div class="kotak"><div class="ikon">📶</div><h3>Boleh Dimainkan Tanpa Internet</h3><p>Selepas dibuka kali pertama, berfungsi lancar di tablet, komputer rumah dan skrin pintar bilik darjah, termasuk sekolah pedalaman.</p></div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <section class="blok putih" id="pakej" aria-labelledby="t-pakej">
-    <div class="wrap">
-      <h2 id="t-pakej">Pakej</h2>
-      <p class="pengenalan">Bayar sekali, tiada langganan. Setiap aplikasi boleh dicuba percuma sebelum membeli.</p>
-      <div class="pakej-grid" id="pakej-grid"></div>
+<section class="seksyen" id="game">
+  <div class="wrap">
+    <h2>Semua game dalam satu apps</h2>
+    <p style="color:var(--muted);margin:0 0 18px">Tekan mana-mana game untuk cuba percuma terus dalam pelayar.</p>
+    <div class="grid" id="senarai"></div>
+  </div>
+</section>
+
+<section class="seksyen" id="pakej">
+  <div class="wrap">
+    <div class="pakej">
+      <div>
+        <span class="tanda" id="pakejTanda"></span>
+        <h2 style="margin-top:10px" id="pakejNama"></h2>
+        <p style="margin:0" id="pakejLead"></p>
+        <ul id="pakejGame"></ul>
+      </div>
+      <div class="kanan">
+        <div class="besar" id="pakejHarga"></div>
+        <p style="margin:6px 0 14px;color:var(--muted)" id="pakejNota"></p>
+        <a class="btn wa" id="pakejWa" target="_blank" rel="noopener" style="width:100%">Beli Pakej melalui WhatsApp</a>
+        <p style="margin:10px 0 0;font-size:.85rem;color:var(--muted)">Kembara Malaysia Kita, Boss Gerai dan Ember Code dijual berasingan.</p>
+      </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <section class="blok" aria-labelledby="t-cara">
-    <div class="wrap">
-      <h2 id="t-cara">Cara membeli</h2>
-      <ol class="langkah">
-        <li><strong>Pilih pakej</strong><br>Tekan "Beli melalui WhatsApp" pada pakej yang anda mahu.</li>
-        <li><strong>Hantar mesej dan bayar</strong><br>Mesej sudah diisi. Kami akan membalas dengan cara pembayaran.</li>
-        <li><strong>Terima kod lesen</strong><br>Buka pautan dalam WhatsApp, atau masukkan kod di skrin aplikasi.</li>
-      </ol>
-    </div>
-  </section>
+<section class="seksyen" id="cara">
+  <div class="wrap">
+    <h2>Cara beli</h2>
+    <ol class="langkah">
+      <li><b>WhatsApp kami</b><br><span id="waNo"></span>, beritahu game atau pakej yang dipilih.</li>
+      <li><b>Bayar</b> melalui DuitNow atau online banking, dan hantar resit.</li>
+      <li><b>Terima kod lesen</b> di WhatsApp.</li>
+      <li><b>Tampal kod</b> dalam apps Dunia Sai. Satu kali tampal membuka semua game dalam kod itu.</li>
+    </ol>
+  </div>
+</section>
 
-  <section class="blok putih" aria-labelledby="t-soalan">
-    <div class="wrap">
-      <h2 id="t-soalan">Soalan lazim</h2>
-      <details>
-        <summary>Perlukah saya memuat turun dari Play Store atau App Store?</summary>
-        <p>Tidak. Buka aplikasi dalam pelayar, kemudian pilih "Tambah ke Skrin Utama". Ia akan dibuka seperti aplikasi biasa.</p>
-      </details>
-      <details>
-        <summary>Bolehkah anak bermain tanpa internet?</summary>
-        <p>Boleh. Selepas aplikasi dibuka kali pertama dengan internet, semua aktiviti disimpan dalam peranti dan boleh dimain di mana-mana.</p>
-      </details>
-      <details>
-        <summary>Berapa peranti untuk satu lesen?</summary>
-        <p>Satu lesen untuk kegunaan seisi rumah. Masukkan kod yang sama pada telefon dan tablet keluarga.</p>
-      </details>
-      <details>
-        <summary>Bagaimana jika saya menukar telefon?</summary>
-        <p>Masukkan semula kod lesen anda. Untuk memindahkan bintang dan kemajuan, gunakan "Simpan sandaran" dalam Tetapan.</p>
-      </details>
-    </div>
-  </section>
+<section class="seksyen tentang" id="tentang">
+  <div class="wrap">
+    <h2>Tentang Dunia Sai</h2>
+    <p>Kami tidak membina permainan sekadar untuk mengisi masa lapang. Kami membina modul digital interaktif yang menjawab persoalan ibu bapa moden: bagaimana menjadikan masa skrin anak sebagai masa menguasai ilmu.</p>
+    <p>Bermula dengan literasi Jawi mengikut ejaan rasmi Dewan Bahasa dan Pustaka (DBP), Dunia Sai kini berkembang menjadi ekosistem pembelajaran menyeluruh, merangkumi kemahiran asas 3M, logik matematik berkaedah CPA, hingga ke sains dan geografi tempatan.</p>
+    <p><a class="btn" href="/app/">Buka apps Dunia Sai</a></p>
+  </div>
+</section>
 
-  <footer>
-    <div class="wrap">
-      <span>© <span id="tahun"></span> Dunia Sai</span>
-      <a href="#" id="wa-umum">Hubungi kami di WhatsApp</a>
-    </div>
-  </footer>
+<footer class="kaki">
+  <div class="wrap">Kemajuan anak dan kod lesen disimpan dalam peranti ini. · Juga di <a id="itch" target="_blank" rel="noopener">itch.io</a><br>© SgieldSai</div>
+</footer>
 
-  <script src="/shared/js/config.js"></script>
-  <script src="/shared/js/storage.js"></script>
-  <script src="/shared/js/ui.js"></script>
-  <script>
-  (() => {
-    const C = window.EDU_CONFIG;
-    const { esc, colourWord } = EduUI;
-    const rm = (n) => 'RM' + n;
-    const wa = (text) => `https://wa.me/${C.whatsapp}?text=${encodeURIComponent(text)}`;
+<script src="/shared/js/config.js"></script>
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const P = DS.PAKEJ;
 
-    document.getElementById('modul-senarai').innerHTML = C.MODULES.map((m) => `
-      <a class="modul-baris" href="${m.path}" style="--c:var(${m.color});color:inherit;text-decoration:none">
-        <span class="glif ${m.glyphClass === 'jawi' ? 'jawi' : ''}" ${m.glyphClass === 'jawi' ? 'lang="ms-Arab"' : ''} aria-hidden="true">${esc(m.glyph)}</span>
-        <span><h3>${esc(m.name)}</h3><p>${esc(m.tagline)}</p></span>
-      </a>`).join('');
-
-    const nama = (code) => C.MODULES.filter((m) => C.PACKAGES.find((p) => p.code === code).modules.includes(m.id)).map((m) => m.name);
-
-    document.getElementById('pakej-grid').innerHTML = C.PACKAGES.filter((p) => !p.hidden).map((p) => `
-      <article class="pakej ${p.featured ? 'utama' : ''}">
-        <div style="display:grid;gap:8px">
-          <h3>${esc(p.name)}</h3>
-          <div class="harga">${rm(p.price)}${p.was ? `<s>${rm(p.was)}</s>` : ''}</div>
-          <p>${esc(p.note)}</p>
-          ${p.featured ? `<p>${nama(p.code).map(esc).join(', ')}</p>` : ''}
+  $('senarai').innerHTML = DS.GAMES.map((g) => `
+    <a class="card" href="${g.path}">
+      <div class="gambar"><img src="${g.img}" alt="${esc(g.name)}" loading="lazy"></div>
+      <div class="isi">
+        <h3>${esc(g.name)}</h3>
+        <p>${esc(g.desc)}</p>
+        <span style="font-size:.85rem;color:var(--muted)">${esc(g.subject)} · ${esc(g.age)}</span>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:6px">
+          <span class="harga">Versi penuh RM${g.price}</span>
+          ${g.pakej ? '<span class="lencana">Dalam Pakej</span>' : ''}
         </div>
-        <a class="btn btn-wa ${p.featured ? 'btn-besar' : ''}" target="_blank" rel="noopener"
-           href="${wa(`Salam, saya mahu membeli ${p.name} (${rm(p.price)}) untuk ${C.brand}.`)}">Beli melalui WhatsApp</a>
-      </article>`).join('');
+      </div>
+    </a>`).join('');
 
-    document.getElementById('wa-umum').href = wa(`Salam, saya ada soalan tentang ${C.brand}.`);
-    document.getElementById('tahun').textContent = new Date().getFullYear();
-    EduUI.registerSW();
-  })();
-  </script>
+  $('pakejTanda').textContent = P.promo ? `⭐ PROMO ${P.promoNote}` : '⭐ Paling berbaloi';
+  $('pakejNama').textContent = P.name;
+  $('pakejLead').textContent = P.note;
+  $('pakejGame').innerHTML = DS.pakejGames().map((g) => `<li>${esc(g.name)} (RM${g.price})</li>`).join('');
+  $('pakejHarga').innerHTML = P.promo ? `RM${P.promo}<s>RM${P.price}</s>` : `RM${P.price}`;
+  $('pakejNota').textContent = P.promo
+    ? `Harga biasa RM${P.price}, promo RM${P.promo} ${P.promoNote}. Nilai jika beli satu-satu RM${P.worth}.`
+    : `Nilai jika beli satu-satu RM${P.worth}.`;
+  $('pakejWa').href = DS.waLink(`Assalamualaikum, saya nak beli ${P.name} Dunia Sai (RM${P.promo || P.price}).`);
+  $('heroWa').href = DS.waLink('Assalamualaikum, saya nak tahu tentang game Dunia Sai.');
+  $('waNo').innerHTML = `<a href="https://wa.me/${DS.whatsapp}" target="_blank" rel="noopener">${DS.whatsappText}</a>`;
+  $('itch').href = DS.itch;
+
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(() => {});
+})();
+</script>
 </body>
 </html>

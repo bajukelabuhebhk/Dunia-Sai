@@ -1,165 +1,120 @@
 <!doctype html>
 <html lang="ms">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Promosi · Dunia Sai</title>
-  <meta name="theme-color" content="#d23c4b">
-  <link rel="manifest" href="/manifest.json">
-  <link rel="icon" href="/shared/icons/favicon.png">
-  <link rel="apple-touch-icon" href="/shared/icons/apple-touch-icon.png">
-  <link rel="stylesheet" href="/shared/css/theme.css">
-  <style>
-    body { background: var(--merah); }
-    .nav { padding: max(14px, env(safe-area-inset-top)) 0 14px; }
-    .nav .wrap { display: flex; align-items: center; gap: 12px; }
-    .nav a.jenama { flex: 1; color: #fff; font-weight: 700; font-size: var(--t-md); text-decoration: none; }
-
-    .promo { padding: 16px 0 48px; color: #fff; }
-    .promo .tile-baris { display: flex; gap: 12px; flex-wrap: wrap; margin: 8px 0 28px; }
-    .promo .tile { font-size: clamp(3.2rem, 14vw, 6rem); color: var(--dakwat); box-shadow: 0 8px 0 0 rgb(0 0 0 / 0.18); }
-    .promo h1 { max-width: 16ch; color: #fff; }
-    .promo .lead { font-size: var(--t-md); max-width: 40ch; color: rgb(255 255 255 / 0.9); }
-
-    .tawaran {
-      display: grid; gap: 18px; margin-top: 28px; padding: 22px;
-      color: var(--dakwat); background: var(--kertas); border-radius: var(--r-card);
-      box-shadow: 0 8px 0 0 rgb(0 0 0 / 0.18);
-    }
-    @media (min-width: 760px) { .tawaran { grid-template-columns: 1fr auto; align-items: center; } }
-    .tawaran h2 { font-size: var(--t-lg); margin: 0 0 4px; }
-    .harga { font: 700 var(--t-xxl)/1 var(--font); color: var(--merah); }
-    .harga s { font-size: var(--t-md); font-weight: 400; color: var(--dakwat-lembut); margin-left: 8px; }
-    .kod { display: inline-block; margin-top: 8px; padding: 4px 12px; border-radius: 8px; background: var(--kuning-muda); font-weight: 700; letter-spacing: 0.06em; }
-    .tawaran ul { margin: 12px 0 0; padding-left: 1.2em; }
-    .tawaran li { margin-bottom: 4px; }
-
-    .masa { display: flex; gap: 10px; margin-top: 28px; flex-wrap: wrap; align-items: center; }
-    .masa .unit { display: grid; place-items: center; min-width: 72px; padding: 10px 8px; border-radius: var(--r-tile); background: rgb(0 0 0 / 0.18); }
-    .masa .unit b { font-size: var(--t-xl); line-height: 1; }
-    .masa .unit span { font-size: var(--t-sm); }
-    .masa .ket { width: 100%; font-weight: 700; }
-
-    .kosong { color: #fff; padding: 24px 0 64px; }
-    .kosong h1 { color: #fff; }
-    .senarai-promo { display: grid; gap: 12px; margin-top: 20px; }
-    .senarai-promo a { display: block; padding: 16px; border-radius: var(--r-card); background: var(--kertas); color: var(--dakwat); text-decoration: none; }
-    .senarai-promo a strong { display: block; font-size: var(--t-md); }
-    footer { padding: 24px 0 calc(24px + env(safe-area-inset-bottom)); color: rgb(255 255 255 / 0.85); font-size: var(--t-sm); }
-    footer a { color: #fff; }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Promosi Dunia Sai</title>
+<meta name="theme-color" content="#e5484d">
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" href="/shared/icons/favicon.png">
+<link rel="apple-touch-icon" href="/shared/icons/apple-touch-icon.png">
+<link rel="stylesheet" href="/shared/css/dunia.css">
+<style>
+  body { background: var(--merah); color: #fff; }
+  .topbar .jenama { color: #fff; }
+  .promo { padding: 12px 0 40px; }
+  .promo h1 { font-size: clamp(2rem, 7vw, 3.2rem); max-width: 18ch; }
+  .promo .lead { font-size: 1.1rem; max-width: 46ch; color: rgb(255 255 255 / .92); }
+  .tawaran { display: grid; gap: 18px; margin-top: 24px; padding: 22px; color: var(--ink); background: #fff; border-radius: 22px; box-shadow: 0 8px 0 rgb(0 0 0 / .18); }
+  @media (min-width: 760px) { .tawaran { grid-template-columns: 1fr auto; align-items: center; } }
+  .tawaran h2 { font-size: 1.4rem; margin: 0 0 4px; }
+  .harga { font-size: 3rem; font-weight: 900; line-height: 1; color: var(--merah); }
+  .harga s { font-size: 1.1rem; font-weight: 600; color: var(--muted); margin-left: 8px; }
+  .tawaran ul { margin: 12px 0 0; padding-left: 1.2em; }
+  .gambar-game { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 8px; margin-top: 14px; }
+  .gambar-game img { border-radius: 10px; aspect-ratio: 1260 / 1000; object-fit: cover; }
+  .masa { display: flex; gap: 10px; margin-top: 24px; flex-wrap: wrap; align-items: center; }
+  .masa .unit { display: grid; place-items: center; min-width: 72px; padding: 10px 8px; border-radius: 14px; background: rgb(0 0 0 / .18); }
+  .masa .unit b { font-size: 1.8rem; line-height: 1; }
+  .masa .ket { width: 100%; font-weight: 700; }
+  .senarai-promo { display: grid; gap: 12px; margin-top: 18px; }
+  .senarai-promo a { display: block; padding: 16px; border-radius: 18px; background: #fff; color: var(--ink); text-decoration: none; }
+  footer.kaki { color: rgb(255 255 255 / .85); }
+  footer.kaki a { color: #fff; }
+</style>
 </head>
 <body>
-  <nav class="nav" aria-label="Utama">
-    <div class="wrap">
-      <a class="jenama" href="/">Dunia Sai</a>
-      <a class="btn btn-garis btn-kecil" href="/app/">Cuba percuma</a>
+<div class="wrap">
+  <header class="topbar">
+    <a class="jenama" href="/"><img src="/shared/icons/icon-192.png" alt="">Dunia Sai</a>
+    <a class="btn kecil garis" href="/app/">Cuba percuma</a>
+  </header>
+  <main id="isi"></main>
+</div>
+<footer class="kaki"><div class="wrap">Harga promosi sah untuk tempoh atau kuota yang dinyatakan sahaja. <a href="/#pakej">Lihat semua harga</a> · © SgieldSai</div></footer>
+
+<script src="/shared/js/config.js"></script>
+<script>
+(() => {
+  /*
+   * One template, many campaigns: each entry in DS.PROMOS (shared/js/config.js) is live at /promo/<slug>
+   * through the rewrite in /_redirects. Locally: /promo/template.html?c=<slug>.
+   */
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const isi = document.getElementById('isi');
+  const fromPath = location.pathname.replace(/\/+$/, '').split('/').pop();
+  const slug = new URLSearchParams(location.search).get('c') ||
+    (fromPath && !/^(promo|template(\.html)?)$/.test(fromPath) ? decodeURIComponent(fromPath) : '');
+  const promo = DS.PROMOS[slug];
+  const now = Date.now();
+  const mula = (p) => Date.parse(p.startsAt || 0);
+  const akhir = (p) => (p.endsAt ? Date.parse(p.endsAt) : Infinity);
+  const aktif = (p) => now >= mula(p) && now <= akhir(p);
+  const tarikh = (iso) => new Date(iso).toLocaleDateString('ms-MY', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Asia/Kuala_Lumpur' });
+
+  function senaraiLain(kecuali) {
+    const live = Object.entries(DS.PROMOS).filter(([s, p]) => s !== kecuali && aktif(p));
+    if (!live.length) return `<p><a class="btn kuning" href="/#pakej">Lihat harga biasa</a></p>`;
+    return `<div class="senarai-promo">${live.map(([s, p]) =>
+      `<a href="/promo/${encodeURIComponent(s)}"><strong>${esc(p.title)}</strong><br>${p.endsAt ? 'Sehingga ' + tarikh(p.endsAt) : 'Sedang berjalan'}</a>`).join('')}</div>`;
+  }
+
+  if (!promo) {
+    isi.innerHTML = `<section class="promo"><h1>${slug ? 'Promosi ini tidak dijumpai' : 'Promosi semasa'}</h1>
+      <p class="lead">${slug ? 'Pautan mungkin salah eja. Ini promosi yang sedang berjalan:' : 'Pilih promosi di bawah.'}</p>${senaraiLain()}</section>`;
+    return;
+  }
+
+  const games = DS.GAMES.filter((g) => (promo.games || []).includes(g.id));
+  const belum = now < mula(promo);
+  const tamat = now > akhir(promo);
+  document.title = `${promo.title} · Dunia Sai`;
+  const waHref = DS.waLink(`Assalamualaikum, saya nak beli ${promo.title} (RM${promo.price}).`);
+
+  isi.innerHTML = `<section class="promo">
+    <h1>${esc(promo.title)}</h1>
+    <p class="lead">${esc(promo.lead)}</p>
+    <div class="tawaran">
+      <div>
+        <h2>${games.map((g) => esc(g.name)).join(', ')}</h2>
+        <div class="harga" style="margin-top:12px">RM${promo.price}${promo.was ? `<s>RM${promo.was}</s>` : ''}</div>
+        <ul>${(promo.points || []).map((x) => `<li>${esc(x)}</li>`).join('')}</ul>
+        <div class="gambar-game">${games.map((g) => `<img src="${g.img}" alt="${esc(g.name)}" loading="lazy">`).join('')}</div>
+      </div>
+      ${tamat ? `<p style="margin:0;font-weight:700">Promosi ini telah tamat pada ${tarikh(promo.endsAt)}.</p>`
+        : belum ? `<p style="margin:0;font-weight:700">Promosi bermula ${tarikh(promo.startsAt)}.</p>`
+        : `<a class="btn wa" target="_blank" rel="noopener" href="${waHref}">Beli melalui WhatsApp</a>`}
     </div>
-  </nav>
+    ${tamat ? `<h2 style="margin-top:32px">Promosi lain</h2>${senaraiLain(slug)}`
+      : (belum || promo.endsAt) ? `<div class="masa"><span class="ket">${belum ? 'Bermula dalam' : 'Berakhir dalam'}</span>
+        <div class="unit"><b data-h>0</b><span>hari</span></div><div class="unit"><b data-j>0</b><span>jam</span></div>
+        <div class="unit"><b data-m>0</b><span>minit</span></div><div class="unit"><b data-s>0</b><span>saat</span></div></div>` : ''}
+  </section>`;
 
-  <main class="wrap" id="isi"></main>
-
-  <footer>
-    <div class="wrap">Harga promosi sah untuk tempoh yang dinyatakan sahaja. <a href="/#pakej">Lihat semua pakej</a></div>
-  </footer>
-
-  <script src="/shared/js/config.js"></script>
-  <script src="/shared/js/storage.js"></script>
-  <script src="/shared/js/ui.js"></script>
-  <script>
-  (() => {
-    /*
-     * One template, many campaigns. Each campaign lives in EDU_CONFIG.PROMOS
-     * and is served at /promo/<slug> by the rewrite in /_redirects.
-     * Locally you can also open /promo/template.html?c=<slug>.
-     */
-    const C = window.EDU_CONFIG;
-    const { esc, colourWord } = EduUI;
-    const isi = document.getElementById('isi');
-    const rm = (n) => 'RM' + n;
-
-    const fromPath = location.pathname.replace(/\/+$/, '').split('/').pop();
-    const slug = new URLSearchParams(location.search).get('c') ||
-      (fromPath && !/^(promo|template(\.html)?)$/.test(fromPath) ? decodeURIComponent(fromPath) : '');
-    const promo = C.PROMOS[slug];
-    const now = Date.now();
-    const aktif = (p) => now >= Date.parse(p.startsAt) && now <= Date.parse(p.endsAt);
-    const tarikh = (iso) => new Date(iso).toLocaleDateString('ms-MY', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Asia/Kuala_Lumpur' });
-
-    function senaraiLain(kecuali) {
-      const live = Object.entries(C.PROMOS).filter(([s, p]) => s !== kecuali && aktif(p));
-      if (!live.length) return `<p><a class="btn btn-kuning" href="/#pakej">Lihat pakej biasa</a></p>`;
-      return `<div class="senarai-promo">${live.map(([s, p]) => `
-        <a href="/promo/${encodeURIComponent(s)}"><strong>${esc(p.title)}</strong>Sehingga ${tarikh(p.endsAt)}</a>`).join('')}</div>`;
-    }
-
-    if (!promo) {
-      document.title = 'Promosi · Dunia Sai';
-      isi.innerHTML = `<section class="kosong">
-        <h1>${slug ? 'Promosi ini tidak dijumpai' : 'Promosi semasa'}</h1>
-        <p>${slug ? 'Pautan mungkin salah eja. Ini promosi yang sedang berjalan:' : 'Pilih promosi di bawah.'}</p>
-        ${senaraiLain()}
-      </section>`;
-      return;
-    }
-
-    const pkg = C.PACKAGES.find((p) => p.code === promo.package);
-    const modulNama = C.MODULES.filter((m) => pkg.modules.includes(m.id)).map((m) => m.name);
-    const belum = now < Date.parse(promo.startsAt);
-    const tamat = now > Date.parse(promo.endsAt);
-    document.title = `${promo.title} · Dunia Sai`;
-    document.querySelector('meta[name="theme-color"]').content = '#d23c4b';
-
-    const waText = `Salam, saya mahu membeli ${pkg.name} dengan harga promosi ${rm(promo.price)} (kod ${promo.code}).`;
-    const waHref = `https://wa.me/${C.whatsapp}?text=${encodeURIComponent(waText)}`;
-
-    isi.innerHTML = `
-      <section class="promo">
-        <div class="tile-baris" aria-hidden="true">${(promo.tiles || []).map((t) => `<span class="tile">${colourWord(t)}</span>`).join('')}</div>
-        <h1>${esc(promo.title)}</h1>
-        <p class="lead">${esc(promo.lead)}</p>
-
-        <div class="tawaran">
-          <div>
-            <h2>${esc(pkg.name)}</h2>
-            <p style="margin:0;color:var(--dakwat-lembut)">${modulNama.map(esc).join(', ')}</p>
-            <div class="harga" style="margin-top:12px">${rm(promo.price)}<s>${rm(pkg.was || pkg.price)}</s></div>
-            <span class="kod">Kod: ${esc(promo.code)}</span>
-            <ul>${(promo.points || []).map((x) => `<li>${esc(x)}</li>`).join('')}</ul>
-          </div>
-          ${tamat
-            ? `<p style="margin:0;font-weight:700">Promosi ini telah tamat pada ${tarikh(promo.endsAt)}.</p>`
-            : belum
-              ? `<p style="margin:0;font-weight:700">Promosi bermula ${tarikh(promo.startsAt)}.</p>`
-              : `<a class="btn btn-wa btn-besar" target="_blank" rel="noopener" href="${waHref}">Beli melalui WhatsApp</a>`}
-        </div>
-
-        ${tamat ? `<h2 style="color:#fff;font-size:var(--t-lg);margin-top:36px">Promosi lain</h2>${senaraiLain(slug)}` : `
-        <div class="masa" aria-live="off">
-          <span class="ket">${belum ? 'Bermula dalam' : 'Berakhir dalam'}</span>
-          <div class="unit"><b data-h>0</b><span>hari</span></div>
-          <div class="unit"><b data-j>0</b><span>jam</span></div>
-          <div class="unit"><b data-m>0</b><span>minit</span></div>
-          <div class="unit"><b data-s>0</b><span>saat</span></div>
-        </div>`}
-      </section>`;
-
-    if (!tamat) {
-      const target = Date.parse(belum ? promo.startsAt : promo.endsAt);
-      const set = (sel, v) => { isi.querySelector(sel).textContent = v; };
-      const tick = () => {
-        let d = Math.max(0, Math.floor((target - Date.now()) / 1000));
-        if (d === 0) return location.reload();
-        set('[data-h]', Math.floor(d / 86400)); d %= 86400;
-        set('[data-j]', Math.floor(d / 3600)); d %= 3600;
-        set('[data-m]', Math.floor(d / 60));
-        set('[data-s]', d % 60);
-      };
-      tick();
-      setInterval(tick, 1000);
-    }
-    EduUI.registerSW();
-  })();
-  </script>
+  const unit = isi.querySelector('.masa');
+  if (unit) {
+    const target = belum ? mula(promo) : akhir(promo);
+    const set = (sel, v) => { unit.querySelector(sel).textContent = v; };
+    const tick = () => {
+      const d = Math.max(0, target - Date.now());
+      set('[data-h]', Math.floor(d / 864e5)); set('[data-j]', Math.floor(d / 36e5) % 24);
+      set('[data-m]', Math.floor(d / 6e4) % 60); set('[data-s]', Math.floor(d / 1e3) % 60);
+      if (d === 0) location.reload(); else setTimeout(tick, 1000);
+    };
+    tick();
+  }
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(() => {});
+})();
+</script>
 </body>
 </html>
