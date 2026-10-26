@@ -1,8 +1,8 @@
 {
- "version": "b39cd37244",
+ "version": "cb75e99161",
  "core": {
   "files": {
-   "/app/": "4e163907d284",
+   "/app/": "60adb35dfa48",
    "/img/boss-gerai.jpg": "1b3bbf65104d",
    "/img/ember-code.jpg": "18c258c10308",
    "/img/hikayat-sungai.jpg": "e07f528e069d",
@@ -20,13 +20,14 @@
    "/shared/icons/icon-192.png": "b097bae06ec7",
    "/shared/icons/icon-512.png": "388fdf84b4ce",
    "/shared/icons/maskable-512.png": "78d51897dd77",
+   "/shared/js/anak.js": "b26ad114d73c",
    "/shared/js/balik.js": "2d3d840009ee",
    "/shared/js/config.js": "4fe8d6e6f295",
    "/shared/js/jejak.js": "5d84f1a184b3",
    "/shared/js/lesen-lib.js": "b0cb9fd18423",
    "/shared/js/lesen.js": "35453cebccd4"
   },
-  "bytes": 610111
+  "bytes": 617684
  },
  "games": {
   "boss-gerai": {
@@ -145,9 +146,9 @@
     "/app/hikayat-sungai/audio/hs-97.mp3": "2a60ccfe4331",
     "/app/hikayat-sungai/audio/hs-98.mp3": "fe9ed2e138ae",
     "/app/hikayat-sungai/audio/hs-99.mp3": "685316cf7628",
-    "/app/hikayat-sungai/": "d3f3e4acbc2e"
+    "/app/hikayat-sungai/": "b63794c7967f"
    },
-   "bytes": 3809849
+   "bytes": 3810178
   },
   "kembara-malaysia": {
    "files": {
@@ -426,15 +427,15 @@
     "/app/kenal-abc/audio/suku-zi.mp3": "2a04ce6009a6",
     "/app/kenal-abc/audio/suku-zo.mp3": "4279ed2cf1cb",
     "/app/kenal-abc/audio/suku-zu.mp3": "10618cf8f7b4",
-    "/app/kenal-abc/": "d0d46fc37a18"
+    "/app/kenal-abc/": "a9cd06d1b463"
    },
-   "bytes": 3016184
+   "bytes": 3016586
   },
   "kenal-jawi": {
    "files": {
-    "/app/kenal-jawi/": "95060d1ada6b"
+    "/app/kenal-jawi/": "c5d46a8fef10"
    },
-   "bytes": 2331995
+   "bytes": 2332321
   },
   "wira-matematik": {
    "files": {
@@ -536,15 +537,15 @@
     "/app/wira-matematik/audio/ms-super-sihir.mp3": "1cbb2248f35a",
     "/app/wira-matematik/audio/ms-tambah.mp3": "7a7cfb9010f2",
     "/app/wira-matematik/audio/ms-tolak.mp3": "34ebae4126ff",
-    "/app/wira-matematik/": "c8521937ec88"
+    "/app/wira-matematik/": "2e29ba1c1957"
    },
-   "bytes": 1532330
+   "bytes": 1532720
   },
   "wonder-island": {
    "files": {
-    "/app/wonder-island/": "879e0574c257"
+    "/app/wonder-island/": "8dd011d5815c"
    },
-   "bytes": 20958375
+   "bytes": 20958674
   }
  }
 }

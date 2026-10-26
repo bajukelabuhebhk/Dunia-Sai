@@ -495,12 +495,15 @@ const specialGot=()=>SPECIAL.filter(([m,n])=>traced[m].size>=n).map(x=>x[2]);
 const stickersGot=()=>[...STICKERS.slice(0,Math.min(Math.floor(stars/PER_STICKER),STICKERS.length)),...specialGot()];
 
 /* ---------- HOME ---------- */
+// Dunia Sai: greet the child by the name set in the app
+function abcHai(){let n='';try{n=String(JSON.parse(localStorage.getItem('ds_anak')||'{}').active||'').trim()}catch(e){}if(!n)return '';return `<div style="text-align:center;font-weight:900;font-size:1.35rem;margin:2px 0 6px">👋 Hai ${n.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}! Jom belajar ABC.</div>`}
 function home(){
   setScreen(false);
   const got=Math.min(Math.floor(stars/PER_STICKER),STICKERS.length);
   const need=got<STICKERS.length?PER_STICKER-(stars%PER_STICKER):0;
   const sp=specialGot();
   view.innerHTML=`<div class="stack">
+    ${abcHai()}
     <div class="home">
       <button class="game g1" id="go1"><span class="ic">🚂</span>Kereta Api<span class="jl">A B ? D</span></button>
       <button class="game g2" id="go2"><span class="ic">🎣</span>Tangkap Ikan<span class="jl">B → ⚽</span></button>

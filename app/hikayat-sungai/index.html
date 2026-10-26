@@ -1812,12 +1812,14 @@ var KJL=(function(){
     $('arReplay').onclick = () => startArcade(arcadeGame);
   }
 
+  // Dunia Sai: greet the child by the name set in the app
+  const hsHai = () => { let n = ''; try { n = String(JSON.parse(localStorage.getItem('ds_anak')||'{}').active||'').trim(); } catch (e) {} return n ? `<div class="eyebrow" style="font-size:1.05em">👋 ${lang === 'ms' ? 'Hai' : 'Hi'} ${esc(n)}!</div>` : ''; };
   function title() {
     arcadeOpen=false; arcadeGame=null;
     const started = !!st.f.talked;
     const o=openOv('title-screen', `<div class="hero-content"><div class="eyebrow">✦ ${lang==='ms'?'PENGEMBARAAN SAINS':'SCIENCE ADVENTURE'} ✦</div>
       <div class="hero-characters"><span>🦌</span><span>${st.av ? avImg() : '🧒'}</span><span>🐊</span></div>
-      <h1>Hikayat<br><span>Sungai Ilmu</span></h1><p>${esc(t().tagline)}</p>
+      ${hsHai()}<h1>Hikayat<br><span>Sungai Ilmu</span></h1><p>${esc(t().tagline)}</p>
       <div class="hero-actions"><button class="btn" id="go" type="button" data-adv>🗺️ ${esc(started?t().cont:t().start)}</button>
       <button class="btn secondary" id="arStart" type="button">🧪 ${esc(aT().hub)}</button>
       ${started ? `<button class="btn secondary" id="rs" type="button">↻ ${esc(t().reset)}</button>` : ''}</div>

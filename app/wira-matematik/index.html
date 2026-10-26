@@ -565,10 +565,12 @@ let screen='home',B=null;
 function head(title,back){hdr.textContent=title;backBtn.hidden=!back;backBtn.onclick=back||null;starPill.textContent='⭐ '+totalStars();langBtn.hidden=false;window.scrollTo(0,0);document.body.scrollTop=0}
 function stopBattle(){if(B){B.dead=true;B=null}stopVoice()}
 
+// Dunia Sai: greet the child by the name set in the app
+function wmHai(){let n='';try{n=String(JSON.parse(localStorage.getItem('ds_anak')||'{}').active||'').trim()}catch(e){}if(!n)return '';return `<div class="t2" style="font-weight:900;font-size:1.15em;margin-top:6px">👋 ${lang==='en'?'Hi':'Hai'} ${n.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}!</div>`}
 function home(){
   stopBattle();screen='home';redraw=home;head('',null);
   const lv=1+wins();
-  view.innerHTML=`<div class="title"><div class="t1">${t('title')}</div><div class="t2">${t('subtitle')}</div></div>
+  view.innerHTML=`<div class="title"><div class="t1">${t('title')}</div><div class="t2">${t('subtitle')}</div>${wmHai()}</div>
   ${lang?'':`<div class="panel"><h2>Pilih bahasa · Choose language</h2><div class="row"><button class="btn" data-lang="ms">Bahasa Melayu</button><button class="btn" data-lang="en">English</button></div></div>`}
   <div class="panel"><h2>${t('pickHero')}</h2><div class="heroes">${HEROES.map(h=>`<button class="hcard${S.hero===h.id?' on':''}" data-h="${h.id}">${heroSVG(h.id)}${tr(h.name)}<small>${tr(h.sub)}</small></button>`).join('')}</div></div>
   <div class="panel lvl"><div>${lv}<small>${t('heroLevel')}</small></div><div>${totalStars()}<small>${t('stars')}</small></div><div>${wins()}/18<small>${t('monsters')}</small></div></div>
