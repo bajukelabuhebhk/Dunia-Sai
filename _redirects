@@ -1,11 +1,21 @@
-# Cloudflare Pages redirects — only the first matching rule applies
+# Cloudflare redirects: only the first matching rule applies
 
-# Every campaign in EDU_CONFIG.PROMOS is served by one template.
-# /promo/cuti-sekolah shows the "cuti-sekolah" campaign; the URL stays as typed.
+# Every campaign in DS.PROMOS (shared/js/config.js) is served by one template; the URL stays as typed.
 /promo              /promo/template  200
 /promo/             /promo/template  200
 /promo/:slug        /promo/template  200
 
+# Old Sgield paths (sgield.pages.dev/kenal-jawi/ ...) now live under /app/
+/kenal-jawi/*        /app/kenal-jawi/:splat        301
+/kenal-abc/*         /app/kenal-abc/:splat         301
+/wira-matematik/*    /app/wira-matematik/:splat    301
+/hikayat-sungai/*    /app/hikayat-sungai/:splat    301
+/kembara-malaysia/*  /app/kembara-malaysia/:splat  301
+/boss-gerai/*        /app/boss-gerai/:splat        301
+/ember-code/*        /app/ember-code/:splat        301
+/wonder-island/*     /app/wonder-island/:splat     301
+
 # Short links for sharing
-/app/main           /app/            301
+/main               /app/            302
+/lesen              /app/#lesen      302
 /beli               /#pakej          302

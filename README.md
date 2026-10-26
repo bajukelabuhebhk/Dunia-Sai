@@ -1,46 +1,48 @@
 # Dunia Sai
 
-Public landing page, a central PWA launcher and four offline learning apps, deployed as one Cloudflare Pages site. No build step.
+Satu laman, satu apps (PWA) untuk semua game belajar Dunia Sai oleh SgieldSai. Tiada build step: Cloudflare terus papar fail dalam repo ini setiap kali ada push ke `main`.
 
-| Path | What it is |
+| Laluan | Isi |
 | --- | --- |
-| `/` | Landing page: DBP/KSPK/KSSR alignment, packages, WhatsApp checkout |
-| `/app/` | Launcher: one card per app, licences, settings, backup |
-| `/app/jawi/` | Kenal Jawi (37 DBP letters, 4 forms) and Nakhoda Jawi quiz |
-| `/app/matematik/` | Wira Matematik: ten-frames (CPA) and number bonds |
-| `/app/abc/` | Kenal ABC, KV/KVK syllables, word building |
-| `/app/kembara/` | Negeri Malaysia quiz and recycling bins |
-| `/promo/<slug>` | Any campaign from `PROMOS`, rendered by `promo/template.html` |
+| `/` | Laman utama: tentang Dunia Sai, 8 game dan harga, Pakej 5 Game, cara beli melalui WhatsApp |
+| `/app/` | Apps (launcher): semua game, satu tempat masukkan kod lesen, simpan game untuk main tanpa internet |
+| `/app/<game>/` | Game sebenar: `kenal-jawi`, `kenal-abc`, `wira-matematik`, `hikayat-sungai`, `wonder-island`, `kembara-malaysia`, `boss-gerai`, `ember-code` |
+| `/promo/<nama>` | Halaman promo dari `PROMOS` dalam `shared/js/config.js` (contoh `/promo/pakej-5-game`) |
+| `/lesen`, `/beli`, `/main` | Pautan pendek untuk dikongsi |
 
-## Deploy on Cloudflare
+## Cara ia berfungsi
 
-The repo is set up for Cloudflare Workers static assets (`wrangler.jsonc`), which is what the dashboard's Git import uses now.
+- **Satu apps.** `manifest.json` (scope `/`, mula di `/app/`) dan satu service worker `sw.js` meliputi semua game. Pembeli pasang sekali dan nampak semua game.
+- **Main tanpa internet.** Kali pertama sesuatu game dibuka, `sw.js` simpan semua failnya (HTML dan audio). Selepas itu game dibuka terus dari simpanan, walaupun ada internet. Butang "Simpan offline" di `/app/` boleh simpan awal.
+- **Kemas kini jimat data.** `files.json` senaraikan setiap fail dengan hash. Bila versi baharu keluar, hanya fail yang berubah dimuat turun semula.
+- **Kod lesen sedia ada kekal sah.** Setiap game masih semak lesennya sendiri seperti dulu. `/app/` hanya semak kod dengan cara yang sama (`shared/js/lesen-lib.js` disalin dari game) dan simpan untuk setiap game yang kod itu buka. Satu kod `PK1-` buka 5 game pakej sekali gus. Kod lesen yang sah tidak akan ditulis ganti.
+- **Butang 🏠** di tepi kiri setiap game membawa anak kembali ke senarai game (apps yang dipasang tiada butang back).
 
-1. Cloudflare dashboard → Workers & Pages → Create → Import a repository → pick `Dunia-Sai`.
-2. Project name `dunia-sai`, build command empty, deploy command `npx wrangler deploy`.
-3. Deploy. Every push to `main` redeploys automatically.
+## Tugas biasa
 
-`_redirects` handles promo URLs, `_headers` keeps `sw.js` uncached, and `.assetsignore` keeps `README.md`, `tools/` and config files off the public site.
+**Tukar harga, nombor WhatsApp atau pakej:** sunting `shared/js/config.js` (`GAMES[].price`, `PAKEJ`, `whatsapp`). Harga di dalam game sendiri ada dalam tetapan `SHOP`/`SALE` dalam `app/<game>/index.html`.
 
-## Everyday tasks
+**Kemas kini game:** salin `index.html` (dan folder `audio/` jika ada) versi baharu ke `app/<game>/`, kemudian jalankan:
 
-**Change prices, WhatsApp number or packages** — edit `shared/js/config.js` (`whatsapp`, `PACKAGES`).
-
-**Launch a promo** — add an entry to `PROMOS` in `shared/js/config.js`. It goes live at `/promo/<slug>` between `startsAt` and `endsAt`, with a countdown. `/promo` lists the campaigns running now.
-
-**Issue a licence after payment**
 ```bash
-node tools/keygen.mjs FULL 1        # FULL, JAWI, ABC, MATH, KEMB, BACA
+node tools/kemas-kini.mjs
 ```
-Send the buyer the key, or a link that activates it in one tap:
-`https://<your-domain>/app/?lesen=SAI-FULL-XXXX-XX`
 
-**Add a new app** — create `app/<id>/index.html` (copy an existing module's shell), add it to `MODULES` in `config.js`, add its path to `PRECACHE` in `sw.js`.
+Skrip ini tambah butang 🏠, tulis semula `files.json` dan naikkan `VERSION` dalam `sw.js`. Commit semua fail yang berubah.
 
-**After any change** — bump `VERSION` in `sw.js` so installed apps pick up the new files.
+**Tambah game baharu:** salin ke `app/<id>/`, tambah satu entri dalam `GAMES` di `config.js` (termasuk `lic.store`, kunci localStorage yang game itu guna), tambah gambar kad di `img/<id>.jpg`, jalankan `node tools/kemas-kini.mjs`.
 
-## Notes
+**Lancar promo:** tambah entri dalam `PROMOS` di `config.js`. Ia terus hidup di `/promo/<slug>`. `endsAt` pilihan; jika ada, halaman tunjuk kiraan detik.
 
-- Licences and progress live in `localStorage` on each device. Keys deter casual sharing but are not DRM; the scheme is visible in `shared/js/storage.js`.
-- Speech uses the device's Malay voice when one is installed, and falls back to the default voice.
-- Local preview: `npx wrangler pages dev .` (emulates `_redirects` and `_headers`).
+**Pautan lesen satu sentuhan:** hantar `https://<domain>/app/?lesen=<KOD>` kepada pembeli; kod diaktifkan bila pautan dibuka.
+
+## Deploy di Cloudflare
+
+Repo ini boleh dipapar sebagai Cloudflare Pages (sambung repo, framework None, tiada build command, output directory `/`) atau Workers static assets (`wrangler.jsonc`, deploy command `npx wrangler deploy`). `_redirects` dan `_headers` berfungsi pada kedua-duanya.
+
+Had Cloudflare: 25 MiB satu fail. Fail paling besar ialah Wonder Island (~20 MB).
+
+## Nota
+
+- Kemajuan anak dan lesen disimpan dalam pelayar setiap peranti. Kod yang dimasukkan di sgield.pages.dev atau itch.io tidak terbawa ke domain baharu, jadi pembeli lama perlu tampal kod sekali lagi di `/app/`.
+- Laluan lama Sgield (`/kenal-jawi/` dan lain-lain) dihalakan ke `/app/<game>/`.
