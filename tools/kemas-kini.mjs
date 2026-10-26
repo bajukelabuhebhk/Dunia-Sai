@@ -20,7 +20,7 @@ const SNIPPET = `${MARK}<link rel="manifest" href="/manifest.json"><script src="
 const ignore = new Set(
   readFileSync(join(ROOT, '.assetsignore'), 'utf8').split('\n').map((l) => l.trim()).filter((l) => l && !l.startsWith('#'))
 );
-for (const f of ['files.json', 'sw.js', '_headers', '_redirects', '.assetsignore', 'package.json']) ignore.add(f);
+for (const f of ['files.json', 'sw.js', '_headers', '_redirects', '_routes.json', '.assetsignore', 'package.json']) ignore.add(f);
 // The owner's pages are never cached by buyers' apps; /pantau-app is its own Pages project
 ignore.add('pantau');
 ignore.add('pantau-app');
