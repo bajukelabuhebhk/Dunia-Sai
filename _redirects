@@ -15,6 +15,9 @@
 /ember-code/*        /app/ember-code/:splat        301
 /wonder-island/*     /app/wonder-island/:splat     301
 
+# The dashboard app has its own address (folder /pantau-app, its own Pages project)
+/pantau-app/*       /pantau/          302
+
 # Short links for sharing
 /main               /app/            302
 /lesen              /app/#lesen      302

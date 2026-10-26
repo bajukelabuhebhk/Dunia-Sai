@@ -9,7 +9,7 @@ Satu laman, satu apps (PWA) untuk semua game belajar Dunia Sai oleh SgieldSai. T
 | `/app/<game>/` | Game sebenar: `kenal-jawi`, `kenal-abc`, `wira-matematik`, `hikayat-sungai`, `wonder-island`, `kembara-malaysia`, `boss-gerai`, `ember-code` |
 | `/promo/<nama>` | Halaman promo dari `PROMOS` dalam `shared/js/config.js` (contoh `/promo/pakej-5-game`) |
 | `/lesen`, `/beli`, `/main` | Pautan pendek untuk dikongsi |
-| `/pantau/` | Dashboard pemilik (PWA berasingan): pelawat, game dibuka dan dimain. Perlu kunci |
+| `/pantau/` | Tandakan phone pemilik supaya tidak dikira, dan pautan ke apps Pantau |
 
 ## Cara ia berfungsi
 
@@ -47,7 +47,10 @@ Data disimpan dalam Cloudflare D1 oleh Pages Functions (`functions/api/`). Ia ha
 2. Workers & Pages > projek `dunia-sai` > Settings > Bindings > Add > D1 database: nama pembolehubah `DB`, pilih `dunia-sai-pantau`.
 3. Settings > Variables and Secrets > Add: jenis Secret, nama `PANTAU_KUNCI`, nilai kata laluan panjang pilihan anda.
 4. Deployments > deploy semula `main` (binding hanya aktif selepas deploy baharu).
-5. Buka `/pantau/`, masukkan kunci, dan pasang sebagai apps. Peranti yang buka `/pantau/` tidak dikira sebagai pelawat.
+
+**Apps Pantau** (folder `pantau-app/`) ialah projek Cloudflare Pages kedua dari repo yang sama, supaya ia boleh dipasang sebagai apps berasingan dengan ikon sendiri: Create > Pages > sambung repo ini, nama projek `pantau-dunia-sai`, framework None, build command kosong, build output directory `/`, root directory `pantau-app`. Ia baca nombor dari `https://dunia-sai.pages.dev/api/pantau`, jadi tiada binding diperlukan di projek kedua. Jika nama projek lain, tukar `PANTAU_URL` dalam `pantau/index.html`.
+
+Buka `https://dunia-sai.pages.dev/pantau/` sekali di setiap phone atau tablet anda: lawatan dari peranti itu tidak akan dikira.
 
 Jadual dicipta sendiri pada acara pertama. Acara lebih lama dari 400 hari dipadam automatik.
 
