@@ -183,7 +183,7 @@
   $('pakejNama').textContent = P.name;
   $('pakejHarga').innerHTML = P.promo ? `RM${P.promo}<s>RM${P.price}</s>` : `RM${P.price}`;
   $('pakejNota').textContent = (P.promo ? `Harga biasa RM${P.price}, promo RM${P.promo} ${P.promoNote}. ` : '') +
-    DS.pakejGames().map((g) => g.name).join(', ') + '. ' + P.note;
+    P.note;
   $('pakejWa').href = DS.waLink(`Assalamualaikum, saya nak beli ${P.name} Dunia Sai (RM${P.promo || P.price}).`);
   $('harga').innerHTML = DS.GAMES.map((g) => `<li><span>${esc(g.name)}</span><b>RM${g.price}</b></li>`).join('');
   $('waNo').textContent = DS.whatsappText;

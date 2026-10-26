@@ -86,7 +86,7 @@
     <p class="lead">${esc(promo.lead)}</p>
     <div class="tawaran">
       <div>
-        <h2>${games.map((g) => esc(g.name)).join(', ')}</h2>
+        <h2>${esc(promo.heading || games.map((g) => g.name).join(', '))}</h2>
         <div class="harga" style="margin-top:12px">RM${promo.price}${promo.was ? `<s>RM${promo.was}</s>` : ''}</div>
         <ul>${(promo.points || []).map((x) => `<li>${esc(x)}</li>`).join('')}</ul>
         <div class="gambar-game">${games.map((g) => `<img src="${g.img}" alt="${esc(g.name)}" loading="lazy">`).join('')}</div>

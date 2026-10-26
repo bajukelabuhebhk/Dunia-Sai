@@ -88,7 +88,7 @@
       promo: 50,          // harga promo, set null bila promo tamat
       promoNote: 'untuk 50 pembeli terawal',
       worth: 70,          // jumlah jika beli 5 game satu-satu
-      note: 'Kenal ABC percuma dalam pakej. Satu kod lesen (PK1-) buka kelima-lima game.',
+      note: '1 kod lesen PK1 buka 5 game: Kenal Jawi, Kenal ABC, Wira Matematik, Hikayat Sungai Ilmu dan Wonder Island. Kenal ABC percuma dalam pakej.',
     },
 
     // Promo campaigns, each live at /promo/<slug>. Dates are Malaysia time (+08:00).
@@ -96,13 +96,16 @@
     PROMOS: {
       'pakej-5-game': {
         title: 'Pakej 5 Game, harga promo',
+        heading: 'Pakej 5 Game',  // optional; without it the box lists the game names
         lead: 'Jawi, ABC, Matematik, Sains dan English dalam satu apps. Harga promo untuk 50 pembeli terawal sahaja.',
         price: 50,
         was: 60,
         games: ['kenal-jawi', 'kenal-abc', 'wira-matematik', 'hikayat-sungai', 'wonder-island'],
         startsAt: '2026-10-26T00:00:00+08:00',
         points: [
-          'Satu kod lesen untuk semua telefon, tablet dan komputer di rumah',
+          '1 kod lesen PK1 buka 5 game: Kenal Jawi, Kenal ABC, Wira Matematik, Hikayat Sungai Ilmu dan Wonder Island',
+          'Kenal ABC percuma dalam pakej',
+          'Kod yang sama boleh dipakai di semua telefon, tablet dan komputer di rumah',
           'Bayar sekali, tiada langganan, tiada iklan',
           'Boleh dimainkan tanpa internet selepas dibuka kali pertama',
         ],

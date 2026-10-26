@@ -1,8 +1,8 @@
 {
- "version": "b512ab9eec",
+ "version": "d037ffa920",
  "core": {
   "files": {
-   "/app/": "a1ca3ca6407c",
+   "/app/": "cbe272ec0262",
    "/img/boss-gerai.jpg": "1b3bbf65104d",
    "/img/ember-code.jpg": "18c258c10308",
    "/img/hikayat-sungai.jpg": "e07f528e069d",
@@ -13,7 +13,7 @@
    "/img/wonder-island.jpg": "ab0300febf5b",
    "/": "da17b0def2fa",
    "/manifest.json": "9a5f33949e56",
-   "/promo/template": "47621881779a",
+   "/promo/template": "7435c053c4a4",
    "/shared/css/dunia.css": "988818953830",
    "/shared/icons/apple-touch-icon.png": "01fbaa6baf79",
    "/shared/icons/favicon.png": "ebf9f71bbb86",
@@ -21,11 +21,11 @@
    "/shared/icons/icon-512.png": "388fdf84b4ce",
    "/shared/icons/maskable-512.png": "78d51897dd77",
    "/shared/js/balik.js": "349184c1e6c7",
-   "/shared/js/config.js": "1cdd0bbd07a1",
+   "/shared/js/config.js": "4fe8d6e6f295",
    "/shared/js/lesen-lib.js": "b0cb9fd18423",
    "/shared/js/lesen.js": "35453cebccd4"
   },
-  "bytes": 605663
+  "bytes": 605946
  },
  "games": {
   "boss-gerai": {
