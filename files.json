@@ -1,8 +1,8 @@
 {
- "version": "b12b867b73",
+ "version": "b512ab9eec",
  "core": {
   "files": {
-   "/app/": "3422a1e1ed55",
+   "/app/": "a1ca3ca6407c",
    "/img/boss-gerai.jpg": "1b3bbf65104d",
    "/img/ember-code.jpg": "18c258c10308",
    "/img/hikayat-sungai.jpg": "e07f528e069d",
@@ -11,7 +11,7 @@
    "/img/kenal-jawi.jpg": "02bb8bd3a6af",
    "/img/wira-matematik.jpg": "cff23d37d80f",
    "/img/wonder-island.jpg": "ab0300febf5b",
-   "/": "90e22fa92c75",
+   "/": "da17b0def2fa",
    "/manifest.json": "9a5f33949e56",
    "/promo/template": "47621881779a",
    "/shared/css/dunia.css": "988818953830",
@@ -25,7 +25,7 @@
    "/shared/js/lesen-lib.js": "b0cb9fd18423",
    "/shared/js/lesen.js": "35453cebccd4"
   },
-  "bytes": 605677
+  "bytes": 605663
  },
  "games": {
   "boss-gerai": {
