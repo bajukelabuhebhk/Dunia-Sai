@@ -23,3 +23,8 @@
 
 /img/*
   Cache-Control: public, max-age=2592000
+
+# Owner's dashboard: not for search engines, never served stale
+/pantau/*
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-cache

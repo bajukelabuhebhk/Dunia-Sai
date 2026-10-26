@@ -9,6 +9,7 @@ Satu laman, satu apps (PWA) untuk semua game belajar Dunia Sai oleh SgieldSai. T
 | `/app/<game>/` | Game sebenar: `kenal-jawi`, `kenal-abc`, `wira-matematik`, `hikayat-sungai`, `wonder-island`, `kembara-malaysia`, `boss-gerai`, `ember-code` |
 | `/promo/<nama>` | Halaman promo dari `PROMOS` dalam `shared/js/config.js` (contoh `/promo/pakej-5-game`) |
 | `/lesen`, `/beli`, `/main` | Pautan pendek untuk dikongsi |
+| `/pantau/` | Dashboard pemilik (PWA berasingan): pelawat, game dibuka dan dimain. Perlu kunci |
 
 ## Cara ia berfungsi
 
@@ -35,6 +36,20 @@ Skrip ini tambah butang 🏠, tulis semula `files.json` dan naikkan `VERSION` da
 **Lancar promo:** tambah entri dalam `PROMOS` di `config.js`. Ia terus hidup di `/promo/<slug>`. `endsAt` pilihan; jika ada, halaman tunjuk kiraan detik.
 
 **Pautan lesen satu sentuhan:** hantar `https://<domain>/app/?lesen=<KOD>` kepada pembeli; kod diaktifkan bila pautan dibuka.
+
+## Pantau pelawat (`/pantau/`)
+
+`shared/js/jejak.js` (dimuat di semua halaman, dan dalam game melalui `balik.js`) hantar kiraan tanpa nama ke `/api/jejak`: lawatan halaman, game dibuka, game dimain (anak betul-betul tekan skrin), masa bermain dan tekan butang WhatsApp. Tiada nama, kod lesen, cookie atau IP disimpan; pelawat dikira dengan hash yang bertukar setiap hari. Acara semasa offline disimpan dan dihantar bila ada internet.
+
+Data disimpan dalam Cloudflare D1 oleh Pages Functions (`functions/api/`). Ia hanya berfungsi di Cloudflare **Pages**. Persediaan sekali sahaja:
+
+1. Cloudflare > Storage & Databases > D1 > Create database, nama `dunia-sai-pantau`.
+2. Workers & Pages > projek `dunia-sai` > Settings > Bindings > Add > D1 database: nama pembolehubah `DB`, pilih `dunia-sai-pantau`.
+3. Settings > Variables and Secrets > Add: jenis Secret, nama `PANTAU_KUNCI`, nilai kata laluan panjang pilihan anda.
+4. Deployments > deploy semula `main` (binding hanya aktif selepas deploy baharu).
+5. Buka `/pantau/`, masukkan kunci, dan pasang sebagai apps. Peranti yang buka `/pantau/` tidak dikira sebagai pelawat.
+
+Jadual dicipta sendiri pada acara pertama. Acara lebih lama dari 400 hari dipadam automatik.
 
 ## Deploy di Cloudflare
 
