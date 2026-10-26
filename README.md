@@ -48,7 +48,7 @@ Data disimpan dalam Cloudflare D1 oleh Pages Functions (`functions/api/`). Ia ha
 3. Settings > Variables and Secrets > Add: jenis Secret, nama `PANTAU_KUNCI`, nilai kata laluan panjang pilihan anda.
 4. Deployments > deploy semula `main` (binding hanya aktif selepas deploy baharu).
 
-**Apps Pantau** (folder `pantau-app/`) ialah projek Cloudflare Pages kedua dari repo yang sama, supaya ia boleh dipasang sebagai apps berasingan dengan ikon sendiri: Create > Pages > sambung repo ini, nama projek `pantau-dunia-sai`, framework None, build command kosong, build output directory `/`, root directory `pantau-app`. Ia baca nombor dari `https://dunia-sai.pages.dev/api/pantau`, jadi tiada binding diperlukan di projek kedua. Jika nama projek lain, tukar `PANTAU_URL` dalam `pantau/index.html`.
+**Apps Pantau** (folder `pantau-app/`) ialah projek Cloudflare Pages kedua dari repo yang sama, supaya ia boleh dipasang sebagai apps berasingan dengan ikon sendiri: Create > Pages > sambung repo ini, nama projek `pantau-dunia-sai`, framework None, build command kosong, build output directory `/`, root directory `pantau-app`. Jika root directory tidak berkesan, `functions/_middleware.js` tetap jawab alamat `pantau-dunia-sai.pages.dev` dari folder `pantau-app/` (hanya laluan dalam `_routes.json` melalui fungsi itu). Ia baca nombor dari `https://dunia-sai.pages.dev/api/pantau`, jadi tiada binding diperlukan di projek kedua. Jika nama projek lain, tukar `PANTAU_URL` dalam `pantau/index.html`.
 
 Buka `https://dunia-sai.pages.dev/pantau/` sekali di setiap phone atau tablet anda: lawatan dari peranti itu tidak akan dikira.
 
