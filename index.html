@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="ms">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Dunia Sai · Jawi, membaca dan matematik untuk prasekolah</title>
+  <meta name="description" content="Empat aplikasi pembelajaran untuk prasekolah dan Tahun 1: 37 huruf Jawi, ABC dan suku kata, bingkai sepuluh, dan Kembara Malaysia. Boleh dimain tanpa internet.">
+  <meta name="theme-color" content="#1f5fa6">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/shared/icons/favicon.png">
+  <link rel="apple-touch-icon" href="/shared/icons/apple-touch-icon.png">
+  <meta property="og:title" content="Dunia Sai">
+  <meta property="og:description" content="Jawi, membaca dan matematik untuk prasekolah dan Tahun 1. Main tanpa internet.">
+  <meta property="og:image" content="/shared/icons/icon-512.png">
+  <link rel="stylesheet" href="/shared/css/theme.css">
+  <style>
+    .nav { padding: max(14px, env(safe-area-inset-top)) 0 14px; }
+    .nav .wrap { display: flex; align-items: center; gap: 12px; }
+    .nav .jenama { flex: 1; font-weight: 700; font-size: var(--t-md); color: var(--dakwat); text-decoration: none; }
+
+    /* Hero: the syllable tiles are the one memorable thing */
+    .hero { padding: 24px 0 64px; }
+    .hero .wrap { display: grid; gap: 32px; align-items: center; grid-template-columns: 1fr; }
+    @media (min-width: 860px) { .hero .wrap { grid-template-columns: 1.1fr 0.9fr; } }
+    .hero h1 { max-width: 14ch; margin-bottom: 16px; }
+    .hero .lead { font-size: var(--t-md); color: var(--dakwat-lembut); max-width: 36ch; }
+    .hero .tindakan { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
+
+    .meja {
+      position: relative; display: grid; gap: 18px; justify-items: center;
+      padding: 28px 16px 32px; border-radius: 28px;
+      background:
+        repeating-linear-gradient(0deg, transparent 0 35px, var(--garis) 35px 37px),
+        var(--kertas);
+    }
+    .meja .baris { display: flex; gap: 12px; align-items: flex-end; }
+    .meja .tile { font-size: clamp(3rem, 11vw, 5.5rem); }
+    .meja .tile.jawi-tile { font-family: var(--font-jawi); color: var(--hijau); font-size: clamp(3rem, 10vw, 5rem); line-height: 1.5; padding-top: 0; }
+    .meja .tile.nombor { color: var(--biru); }
+    .meja .tambah { font: 700 clamp(2rem, 7vw, 3.5rem)/1 var(--font); color: var(--dakwat-lembut); }
+    .meja figcaption { font-size: var(--t-sm); color: var(--dakwat-lembut); text-align: center; }
+
+    /* One orchestrated load moment: tiles drop in and settle */
+    @media (prefers-reduced-motion: no-preference) {
+      .meja .tile { animation: jatuh 520ms cubic-bezier(.3,1.5,.6,1) both; }
+      .meja .baris:nth-child(1) .tile:nth-child(1) { animation-delay: 120ms; }
+      .meja .baris:nth-child(1) .tile:nth-child(3) { animation-delay: 260ms; }
+      .meja .baris:nth-child(2) .tile { animation-delay: 420ms; }
+      .meja .baris:nth-child(3) .tile:nth-child(1) { animation-delay: 560ms; }
+      .meja .baris:nth-child(3) .tile:nth-child(3) { animation-delay: 680ms; }
+    }
+    @keyframes jatuh { from { opacity: 0; transform: translateY(-40px) rotate(-6deg); } }
+
+    section.blok { padding: 56px 0; }
+    section.blok.putih { background: var(--kertas); }
+    .blok h2 { max-width: 22ch; }
+    .blok .pengenalan { color: var(--dakwat-lembut); font-size: var(--t-md); max-width: 46ch; margin-bottom: 28px; }
+
+    .selaras { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); }
+    .selaras article { padding: 18px; border-radius: var(--r-card); background: var(--kapur); border-top: 6px solid var(--c, var(--biru)); }
+    .selaras h3 { margin-bottom: 6px; }
+    .selaras p { margin: 0; color: var(--dakwat-lembut); }
+    .penafian { font-size: var(--t-sm); color: var(--dakwat-lembut); margin-top: 20px; }
+
+    .modul-senarai { display: grid; gap: 14px; }
+    .modul-baris {
+      display: grid; grid-template-columns: 76px 1fr; gap: 16px; align-items: center;
+      padding: 14px; border-radius: var(--r-card); background: var(--kertas);
+    }
+    .modul-baris .glif {
+      display: grid; place-items: center; width: 76px; height: 76px;
+      font: 700 2.2rem/1 var(--font); border-radius: var(--r-tile);
+      background: var(--c); color: #fff;
+    }
+    .modul-baris .glif.jawi { font-family: var(--font-jawi); font-size: 2.6rem; }
+    .modul-baris h3 { margin: 0 0 2px; }
+    .modul-baris p { margin: 0; color: var(--dakwat-lembut); }
+
+    .pakej-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); align-items: start; }
+    .pakej {
+      display: grid; gap: 10px; padding: 20px; border-radius: var(--r-card);
+      background: var(--kapur); box-shadow: inset 0 0 0 3px var(--garis);
+    }
+    .pakej.utama { background: var(--biru); color: #fff; box-shadow: none; grid-column: 1 / -1; }
+    @media (min-width: 760px) { .pakej.utama { grid-template-columns: 1fr auto; align-items: center; } }
+    .pakej h3 { margin: 0; }
+    .pakej .harga { font: 700 var(--t-xl)/1 var(--font); }
+    .pakej .harga s { font-size: var(--t-base); font-weight: 400; opacity: 0.75; margin-left: 6px; }
+    .pakej p { margin: 0; }
+    .pakej.utama p { color: rgb(255 255 255 / 0.85); }
+
+    .langkah { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); counter-reset: l; padding: 0; list-style: none; }
+    .langkah li { counter-increment: l; padding: 18px; border-radius: var(--r-card); background: var(--kertas); }
+    .langkah li::before {
+      content: counter(l); display: grid; place-items: center; width: 44px; height: 44px; margin-bottom: 10px;
+      border-radius: 50%; background: var(--kuning); font-weight: 700; font-size: var(--t-md);
+    }
+
+    details { padding: 16px 0; border-bottom: 2px solid var(--garis); }
+    summary { font-weight: 700; font-size: var(--t-md); cursor: pointer; }
+    details p { margin: 10px 0 0; color: var(--dakwat-lembut); }
+
+    footer { padding: 32px 0 calc(32px + env(safe-area-inset-bottom)); font-size: var(--t-sm); color: var(--dakwat-lembut); }
+    footer .wrap { display: flex; gap: 16px; justify-content: space-between; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+  <nav class="nav" aria-label="Utama">
+    <div class="wrap">
+      <a class="jenama" href="/">Dunia Sai</a>
+      <a class="btn btn-kecil" href="/app/">Buka aplikasi</a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="wrap">
+      <div>
+        <h1>Jawi, membaca dan mengira, sambil bermain</h1>
+        <p class="lead">Empat aplikasi untuk anak prasekolah dan Tahun 1. Main di telefon atau tablet, walaupun tanpa internet.</p>
+        <div class="tindakan">
+          <a class="btn btn-besar" href="/app/">Cuba percuma</a>
+          <a class="btn btn-besar btn-garis" href="#pakej">Lihat harga</a>
+        </div>
+      </div>
+      <figure class="meja" aria-label="Contoh suku kata bu dan ku menjadi buku, huruf Jawi ba, dan 5 tambah 5">
+        <div class="baris"><span class="tile"><span class="k">b</span><span class="v">u</span></span><span class="tambah" aria-hidden="true">+</span><span class="tile"><span class="k">k</span><span class="v">u</span></span></div>
+        <div class="baris"><span class="tile jawi-tile" lang="ms-Arab">ب</span></div>
+        <div class="baris"><span class="tile nombor">5</span><span class="tambah" aria-hidden="true">+</span><span class="tile nombor">5</span></div>
+        <figcaption>Konsonan biru, vokal merah. Warna yang sama dalam setiap aplikasi.</figcaption>
+      </figure>
+    </div>
+  </header>
+
+  <section class="blok putih" aria-labelledby="t-selaras">
+    <div class="wrap">
+      <h2 id="t-selaras">Disusun mengikut apa yang dipelajari di sekolah</h2>
+      <p class="pengenalan">Kandungan mengikut susunan DBP untuk Jawi, dan pendekatan yang digunakan dalam KSPK dan KSSR.</p>
+      <div class="selaras">
+        <article style="--c:var(--hijau)">
+          <h3>37 huruf Jawi</h3>
+          <p>Mengikut susunan huruf Jawi DBP, termasuk ca, nga, pa, ga, va dan nya. Setiap huruf dalam bentuk tunggal, awal, tengah dan akhir.</p>
+        </article>
+        <article style="--c:var(--merah)">
+          <h3>Suku kata KV dan KVK</h3>
+          <p>Bacaan bermula dengan suku kata terbuka seperti bu-ku, kemudian suku kata tertutup seperti ru-mah.</p>
+        </article>
+        <article style="--c:var(--biru)">
+          <h3>Konkrit, gambar, abstrak</h3>
+          <p>Anak meletak pembilang dalam bingkai sepuluh dahulu, kemudian mengenal nombor daripada gambar, kemudian ikatan nombor.</p>
+        </article>
+        <article style="--c:var(--kuning)">
+          <h3>Mengenal Malaysia</h3>
+          <p>13 negeri dan ibu negerinya, serta tong kitar semula biru, coklat dan oren.</p>
+        </article>
+      </div>
+      <p class="penafian">Dunia Sai ialah produk bebas dan tidak dikeluarkan atau disahkan oleh Dewan Bahasa dan Pustaka atau Kementerian Pendidikan Malaysia.</p>
+    </div>
+  </section>
+
+  <section class="blok" aria-labelledby="t-modul">
+    <div class="wrap">
+      <h2 id="t-modul">Empat aplikasi, satu tempat</h2>
+      <p class="pengenalan">Semua aplikasi dibuka dari satu skrin. Bintang dan kemajuan setiap anak disimpan dalam peranti.</p>
+      <div class="modul-senarai" id="modul-senarai"></div>
+    </div>
+  </section>
+
+  <section class="blok putih" id="pakej" aria-labelledby="t-pakej">
+    <div class="wrap">
+      <h2 id="t-pakej">Pakej</h2>
+      <p class="pengenalan">Bayar sekali, tiada langganan. Setiap aplikasi boleh dicuba percuma sebelum membeli.</p>
+      <div class="pakej-grid" id="pakej-grid"></div>
+    </div>
+  </section>
+
+  <section class="blok" aria-labelledby="t-cara">
+    <div class="wrap">
+      <h2 id="t-cara">Cara membeli</h2>
+      <ol class="langkah">
+        <li><strong>Pilih pakej</strong><br>Tekan "Beli melalui WhatsApp" pada pakej yang anda mahu.</li>
+        <li><strong>Hantar mesej dan bayar</strong><br>Mesej sudah diisi. Kami akan membalas dengan cara pembayaran.</li>
+        <li><strong>Terima kod lesen</strong><br>Buka pautan dalam WhatsApp, atau masukkan kod di skrin aplikasi.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="blok putih" aria-labelledby="t-soalan">
+    <div class="wrap">
+      <h2 id="t-soalan">Soalan lazim</h2>
+      <details>
+        <summary>Perlukah saya memuat turun dari Play Store atau App Store?</summary>
+        <p>Tidak. Buka aplikasi dalam pelayar, kemudian pilih "Tambah ke Skrin Utama". Ia akan dibuka seperti aplikasi biasa.</p>
+      </details>
+      <details>
+        <summary>Bolehkah anak bermain tanpa internet?</summary>
+        <p>Boleh. Selepas aplikasi dibuka kali pertama dengan internet, semua aktiviti disimpan dalam peranti dan boleh dimain di mana-mana.</p>
+      </details>
+      <details>
+        <summary>Berapa peranti untuk satu lesen?</summary>
+        <p>Satu lesen untuk kegunaan seisi rumah. Masukkan kod yang sama pada telefon dan tablet keluarga.</p>
+      </details>
+      <details>
+        <summary>Bagaimana jika saya menukar telefon?</summary>
+        <p>Masukkan semula kod lesen anda. Untuk memindahkan bintang dan kemajuan, gunakan "Simpan sandaran" dalam Tetapan.</p>
+      </details>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <span>© <span id="tahun"></span> Dunia Sai</span>
+      <a href="#" id="wa-umum">Hubungi kami di WhatsApp</a>
+    </div>
+  </footer>
+
+  <script src="/shared/js/config.js"></script>
+  <script src="/shared/js/storage.js"></script>
+  <script src="/shared/js/ui.js"></script>
+  <script>
+  (() => {
+    const C = window.EDU_CONFIG;
+    const { esc, colourWord } = EduUI;
+    const rm = (n) => 'RM' + n;
+    const wa = (text) => `https://wa.me/${C.whatsapp}?text=${encodeURIComponent(text)}`;
+
+    document.getElementById('modul-senarai').innerHTML = C.MODULES.map((m) => `
+      <a class="modul-baris" href="${m.path}" style="--c:var(${m.color});color:inherit;text-decoration:none">
+        <span class="glif ${m.glyphClass === 'jawi' ? 'jawi' : ''}" ${m.glyphClass === 'jawi' ? 'lang="ms-Arab"' : ''} aria-hidden="true">${esc(m.glyph)}</span>
+        <span><h3>${esc(m.name)}</h3><p>${esc(m.tagline)}</p></span>
+      </a>`).join('');
+
+    const nama = (code) => C.MODULES.filter((m) => C.PACKAGES.find((p) => p.code === code).modules.includes(m.id)).map((m) => m.name);
+
+    document.getElementById('pakej-grid').innerHTML = C.PACKAGES.filter((p) => !p.hidden).map((p) => `
+      <article class="pakej ${p.featured ? 'utama' : ''}">
+        <div style="display:grid;gap:8px">
+          <h3>${esc(p.name)}</h3>
+          <div class="harga">${rm(p.price)}${p.was ? `<s>${rm(p.was)}</s>` : ''}</div>
+          <p>${esc(p.note)}</p>
+          ${p.featured ? `<p>${nama(p.code).map(esc).join(', ')}</p>` : ''}
+        </div>
+        <a class="btn btn-wa ${p.featured ? 'btn-besar' : ''}" target="_blank" rel="noopener"
+           href="${wa(`Salam, saya mahu membeli ${p.name} (${rm(p.price)}) untuk ${C.brand}.`)}">Beli melalui WhatsApp</a>
+      </article>`).join('');
+
+    document.getElementById('wa-umum').href = wa(`Salam, saya ada soalan tentang ${C.brand}.`);
+    document.getElementById('tahun').textContent = new Date().getFullYear();
+    EduUI.registerSW();
+  })();
+  </script>
+</body>
+</html>

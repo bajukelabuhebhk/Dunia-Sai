@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="ms">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Wira Matematik · Dunia Sai</title>
+  <meta name="theme-color" content="#1f5fa6">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/shared/icons/favicon.png">
+  <link rel="apple-touch-icon" href="/shared/icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="/shared/css/theme.css">
+  <style>
+    .tahap-senarai { display: grid; gap: 12px; max-width: 560px; margin-inline: auto; }
+    .tahap {
+      position: relative; display: flex; align-items: center; gap: 14px; text-align: left;
+      width: 100%; padding: 14px 16px; font: inherit; color: var(--dakwat);
+      background: var(--kertas); border: 0; border-radius: var(--r-card); cursor: pointer;
+      box-shadow: inset 0 0 0 3px var(--garis), 0 5px 0 0 var(--garis);
+    }
+    .tahap .ikon {
+      display: grid; place-items: center; flex: none; width: 48px; height: 48px;
+      border-radius: 12px; background: var(--biru-muda); font-size: 1.5rem;
+    }
+    .tahap strong { display: block; }
+    .tahap small { color: var(--dakwat-lembut); }
+    .tahap .skor { margin-left: auto; white-space: nowrap; }
+
+    /* Ten-frame */
+    .bingkai-set { display: grid; gap: 12px; grid-template-columns: minmax(0, 420px); justify-content: center; margin: 8px auto 20px; }
+    .bingkai {
+      display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0;
+      width: 100%;
+      border: 4px solid var(--dakwat); border-radius: 10px; overflow: hidden;
+      background: var(--kertas);
+    }
+    .bingkai .petak {
+      position: relative; aspect-ratio: 1; display: block; width: 100%; margin: 0;
+      border: 0; border-radius: 0;
+      border-right: 3px solid var(--dakwat); border-bottom: 3px solid var(--dakwat);
+      background: var(--kertas); padding: 0; cursor: default;
+    }
+    .bingkai .petak:nth-child(5n) { border-right: 0; }
+    .bingkai .petak:nth-child(n+6) { border-bottom: 0; }
+    .bingkai button.petak { cursor: pointer; }
+    .bingkai .petak::after {
+      content: ''; position: absolute; inset: 14%; border-radius: 50%;
+      background: var(--merah); transform: scale(0); transition: transform 140ms ease;
+    }
+    .bingkai .petak.isi::after { transform: scale(1); }
+    .bingkai .petak.isi.biru::after { background: var(--biru); }
+
+    .nombor-besar {
+      text-align: center; font: 700 5rem/1 var(--font); color: var(--biru); margin: 0 0 8px;
+    }
+    .tindakan { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+    /* Number bonds */
+    .ikatan { position: relative; width: min(100%, 360px); margin: 0 auto 20px; aspect-ratio: 1 / 0.8; }
+    .ikatan svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .bulatan {
+      position: absolute; display: grid; place-items: center; align-content: center;
+      width: 34%; aspect-ratio: 1; border-radius: 50%;
+      background: var(--kertas); border: 4px solid var(--biru);
+      font: 700 2.4rem/1 var(--font); color: var(--dakwat);
+    }
+    .bulatan.keseluruhan { left: 33%; top: 0; background: var(--biru-muda); }
+    .bulatan.bahagian-a { left: 0; bottom: 0; }
+    .bulatan.bahagian-b { right: 0; bottom: 0; }
+    .bulatan.tanya { border-style: dashed; color: var(--merah); }
+    .bulatan .titik { display: flex; flex-wrap: wrap; justify-content: center; gap: 3px; max-width: 80%; margin-top: 6px; }
+    .bulatan .titik i { width: 9px; height: 9px; border-radius: 50%; background: var(--merah); }
+    .bahagian-b .titik i { background: var(--biru); }
+  </style>
+</head>
+<body>
+  <header class="app-bar">
+    <a class="balik" href="/app/" aria-label="Kembali ke semua aplikasi">‹</a>
+    <h1>Wira Matematik</h1>
+    <span class="bintang-kiraan" aria-label="Jumlah bintang">⭐ <span data-bintang>0</span></span>
+  </header>
+
+  <nav class="tab-bar" role="tablist" aria-label="Aktiviti">
+    <button role="tab" aria-controls="bingkai">Bingkai Sepuluh</button>
+    <button role="tab" aria-controls="ikatan">Ikatan Nombor</button>
+  </nav>
+
+  <section id="bingkai" class="panel" role="tabpanel" aria-label="Bingkai sepuluh"></section>
+  <section id="ikatan" class="panel" role="tabpanel" aria-label="Ikatan nombor" hidden></section>
+
+  <script src="/shared/js/config.js"></script>
+  <script src="/shared/js/storage.js"></script>
+  <script src="/shared/js/ui.js"></script>
+  <script>
+  (() => {
+    const MOD = 'matematik';
+    const { sound, speak, toast, pujian, shuffle, esc, gate, showResult } = EduUI;
+    const SOALAN = 6;
+    const rand = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+
+    // Concrete → Pictorial → Abstract
+    const TAHAP = {
+      bingkai: [
+        { id: 'b5', ikon: '✋', nama: 'Bina nombor 1 hingga 5', ket: 'Letak pembilang dalam bingkai', jenis: 'bina', max: 5, free: true },
+        { id: 'k5', ikon: '👀', nama: 'Kira nombor 1 hingga 5', ket: 'Lihat bingkai, pilih nombor', jenis: 'kira', max: 5, free: true },
+        { id: 'b10', ikon: '✋', nama: 'Bina nombor 1 hingga 10', ket: 'Penuhkan bingkai sepuluh', jenis: 'bina', max: 10 },
+        { id: 'k10', ikon: '👀', nama: 'Kira nombor 1 hingga 10', ket: 'Kenal nombor tanpa mengira satu-satu', jenis: 'kira', max: 10 },
+        { id: 'k20', ikon: '🔟', nama: 'Kira hingga 20', ket: 'Dua bingkai: sepuluh dan beberapa lagi', jenis: 'kira', max: 20, min: 11 },
+      ],
+      ikatan: [
+        { id: 'i5', ikon: '🔗', nama: 'Ikatan nombor 5', ket: 'Cari bahagian yang hilang', jenis: 'bahagian', max: 5, free: true },
+        { id: 'i10', ikon: '🔗', nama: 'Ikatan nombor 10', ket: 'Cari bahagian yang hilang', jenis: 'bahagian', max: 10 },
+        { id: 'iw', ikon: '➕', nama: 'Cari jumlahnya', ket: 'Gabungkan dua bahagian', jenis: 'keseluruhan', max: 10 },
+      ],
+    };
+
+    function senarai(panelId) {
+      const panel = document.getElementById(panelId);
+      const p = EduStore.getProgress(MOD);
+      const open = EduStore.hasAccess(MOD);
+      panel.innerHTML = `<div class="tahap-senarai">${TAHAP[panelId].map((t, n) => {
+        const s = p.stars[t.id] || 0;
+        return `<button class="tahap ${!open && !t.free ? 'kunci' : ''}" data-t="${n}">
+          <span class="ikon" aria-hidden="true">${t.ikon}</span>
+          <span><strong>${esc(t.nama)}</strong><small>${esc(t.ket)}</small></span>
+          <span class="skor" aria-label="${s} bintang">${'⭐'.repeat(s)}${'☆'.repeat(3 - s)}</span>
+        </button>`;
+      }).join('')}</div>`;
+      panel.onclick = (e) => {
+        const b = e.target.closest('[data-t]');
+        if (!b) return;
+        const t = TAHAP[panelId][+b.dataset.t];
+        if (gate(MOD, t.free, refreshAll)) main(panelId, t);
+      };
+    }
+
+    // Each question: a target and 4 numeral choices
+    function soalanSet(t) {
+      const out = [];
+      let last = -1;
+      for (let i = 0; i < SOALAN; i++) {
+        let n;
+        do { n = rand(t.min || 1, t.max); } while (n === last && t.max > 1);
+        last = n;
+        out.push(n);
+      }
+      return out;
+    }
+    function pilihanNombor(ans, lo, hi) {
+      const set = new Set([ans]);
+      while (set.size < 4) {
+        const d = ans + rand(-3, 3);
+        if (d >= lo && d <= hi) set.add(d);
+        if (hi - lo < 4) for (let x = lo; x <= hi && set.size < 4; x++) set.add(x);
+      }
+      return shuffle([...set]);
+    }
+
+    function bingkaiHTML(n, { boleh = false, jumlah = 10 } = {}) {
+      const frames = Math.ceil(jumlah / 10);
+      let html = '<div class="bingkai-set">';
+      for (let f = 0; f < frames; f++) {
+        html += '<div class="bingkai" role="group" aria-label="Bingkai sepuluh">';
+        for (let c = 0; c < 10; c++) {
+          const idx = f * 10 + c;
+          const on = idx < n;
+          html += boleh
+            ? `<button class="petak" data-c="${idx}" aria-label="Petak ${idx + 1}" aria-pressed="false"></button>`
+            : `<div class="petak ${on ? 'isi' : ''} ${on && f > 0 ? 'biru' : ''}"></div>`;
+        }
+        html += '</div>';
+      }
+      return html + '</div>';
+    }
+
+    function main(panelId, t) {
+      const panel = document.getElementById(panelId);
+      const qs = soalanSet(t);
+      let q = 0, betul = 0;
+
+      function seterusnya(ok, msg) {
+        if (ok) { betul++; sound('correct'); toast(pujian()); }
+        else { sound('wrong'); toast(msg); }
+        q++;
+        setTimeout(tunjuk, ok ? 900 : 1700);
+      }
+
+      function kepala() {
+        return `<div class="meter" style="--isi:${(q / qs.length) * 100}%;max-width:420px;margin:4px auto 16px" aria-hidden="true"><span></span></div>`;
+      }
+      function kaki() {
+        return `<p style="text-align:center;margin-top:20px"><button class="btn btn-garis btn-kecil" data-keluar>Pilih aktiviti lain</button></p>`;
+      }
+
+      function tunjuk() {
+        if (q >= qs.length) {
+          return showResult(panel, {
+            moduleId: MOD, activityId: t.id, correct: betul, total: qs.length,
+            onAgain: () => main(panelId, t), onNext: () => senarai(panelId),
+          });
+        }
+        const n = qs[q];
+
+        if (t.jenis === 'bina') {
+          let dipilih = 0;
+          panel.innerHTML = `${kepala()}
+            <p class="soalan">Letakkan pembilang sebanyak</p>
+            <p class="nombor-besar">${n}</p>
+            ${bingkaiHTML(0, { boleh: true })}
+            <div class="tindakan"><button class="btn btn-garis" data-padam>Kosongkan</button><button class="btn" data-semak>Semak</button></div>
+            ${kaki()}`;
+          speak(String(n));
+          // Counters fill left to right, top row first, like a real ten-frame
+          const petak = [...panel.querySelectorAll('.petak')];
+          const lukis = () => petak.forEach((p, i) => { p.classList.toggle('isi', i < dipilih); p.setAttribute('aria-pressed', i < dipilih); });
+          petak.forEach((p, i) => p.onclick = () => {
+            dipilih = i < dipilih ? i : i + 1;
+            sound('click');
+            lukis();
+          });
+          panel.querySelector('[data-padam]').onclick = () => { dipilih = 0; lukis(); };
+          panel.querySelector('[data-semak]').onclick = (e) => {
+            e.target.disabled = true;
+            if (dipilih === n) speak(`${n}. ${pujian()}`);
+            seterusnya(dipilih === n, `Anda letak ${dipilih}. Kita perlukan ${n}.`);
+          };
+        } else if (t.jenis === 'kira') {
+          const pilihan = pilihanNombor(n, t.min ? 10 : 1, t.max);
+          panel.innerHTML = `${kepala()}
+            <p class="soalan">Berapakah bilangan pembilang?</p>
+            ${bingkaiHTML(n, { jumlah: t.max })}
+            <div class="grid-pilihan">${pilihan.map((x) => `<button class="pilihan" data-x="${x}">${x}</button>`).join('')}</div>
+            ${kaki()}`;
+          jawapan(panel, pilihan, n, (ok) => seterusnya(ok, `Jawapannya ${n}`));
+        } else {
+          // Number bonds: whole = a + b
+          const w = t.jenis === 'keseluruhan' ? rand(2, t.max) : rand(2, t.max);
+          const a = rand(0, w);
+          const b = w - a;
+          const hilang = t.jenis === 'keseluruhan' ? 'w' : (Math.random() < 0.5 ? 'a' : 'b');
+          const ans = hilang === 'w' ? w : hilang === 'a' ? a : b;
+          const titik = (k) => `<span class="titik" aria-hidden="true">${'<i></i>'.repeat(k)}</span>`;
+          const bulatan = (cls, val, key) => key === hilang
+            ? `<div class="bulatan ${cls} tanya" aria-label="Nombor yang hilang">?</div>`
+            : `<div class="bulatan ${cls}">${val}${cls !== 'keseluruhan' ? titik(val) : ''}</div>`;
+          const pilihan = pilihanNombor(ans, 0, t.max);
+          panel.innerHTML = `${kepala()}
+            <p class="soalan">${hilang === 'w' ? 'Berapakah jumlahnya?' : 'Nombor apakah yang hilang?'}</p>
+            <div class="ikatan">
+              <svg viewBox="0 0 100 80" aria-hidden="true" preserveAspectRatio="none">
+                <line x1="50" y1="20" x2="17" y2="62" stroke="var(--biru)" stroke-width="2.5"/>
+                <line x1="50" y1="20" x2="83" y2="62" stroke="var(--biru)" stroke-width="2.5"/>
+              </svg>
+              ${bulatan('keseluruhan', w, 'w')}
+              ${bulatan('bahagian-a', a, 'a')}
+              ${bulatan('bahagian-b', b, 'b')}
+            </div>
+            <div class="grid-pilihan">${pilihan.map((x) => `<button class="pilihan" data-x="${x}">${x}</button>`).join('')}</div>
+            ${kaki()}`;
+          jawapan(panel, pilihan, ans, (ok) => seterusnya(ok, `${a} dan ${b} menjadi ${w}`));
+        }
+        panel.querySelector('[data-keluar]').onclick = () => senarai(panelId);
+      }
+      sound('click');
+      tunjuk();
+    }
+
+    function jawapan(panel, pilihan, ans, done) {
+      panel.querySelectorAll('[data-x]').forEach((b) => b.onclick = () => {
+        panel.querySelectorAll('[data-x]').forEach((x) => (x.disabled = true));
+        const ok = +b.dataset.x === ans;
+        b.classList.add(ok ? 'betul' : 'salah');
+        if (!ok) panel.querySelector(`[data-x="${ans}"]`).classList.add('betul');
+        done(ok);
+      });
+    }
+
+    function refreshAll() { senarai('bingkai'); senarai('ikatan'); }
+
+    EduUI.initModule(MOD);
+    refreshAll();
+  })();
+  </script>
+</body>
+</html>

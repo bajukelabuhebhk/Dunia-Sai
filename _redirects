@@ -1,0 +1,11 @@
+# Cloudflare Pages redirects — only the first matching rule applies
+
+# Every campaign in EDU_CONFIG.PROMOS is served by one template.
+# /promo/cuti-sekolah shows the "cuti-sekolah" campaign; the URL stays as typed.
+/promo              /promo/template  200
+/promo/             /promo/template  200
+/promo/:slug        /promo/template  200
+
+# Short links for sharing
+/app/main           /app/            301
+/beli               /#pakej          302
