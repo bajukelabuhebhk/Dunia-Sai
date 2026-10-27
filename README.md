@@ -6,7 +6,7 @@ Satu laman, satu apps (PWA) untuk semua game belajar Dunia Sai oleh SgieldSai. T
 | --- | --- |
 | `/` | Laman utama: tentang Dunia Sai, 8 game dan harga, Pakej 5 Game, cara beli melalui WhatsApp |
 | `/app/` | Apps (launcher): semua game, satu tempat masukkan kod lesen, simpan game untuk main tanpa internet |
-| `/app/<game>/` | Game sebenar: `kenal-jawi`, `kenal-abc`, `wira-matematik`, `hikayat-sungai`, `wonder-island`, `kembara-malaysia`, `boss-gerai`, `ember-code` |
+| `/app/<game>/` | Game sebenar: `kenal-jawi`, `kenal-abc`, `wira-matematik`, `hikayat-sungai`, `wonder-island`, `kembara-malaysia`, `boss-gerai`, `ember-code`, `nakhoda-jawi`, `robot-rumble` |
 | `/promo/<nama>` | Halaman promo dari `PROMOS` dalam `shared/js/config.js` (contoh `/promo/pakej-5-game`) |
 | `/lesen`, `/beli`, `/main` | Pautan pendek untuk dikongsi |
 | `/pantau/` | Tandakan phone pemilik supaya tidak dikira, dan pautan ke apps Pantau |
