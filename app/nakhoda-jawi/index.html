@@ -333,7 +333,7 @@ var KJL2=(function(){
 
 </script>
 <script>
-/* NAKHODA JAWI (NJ-014: suara Nakhoda, bunyi laut, lesen PK2- game 10, watak & kosmetik kapal; asas NJ-013) — dahulu NJ-006 — 14 KAEDAH EJAAN + PULAU LANUN.
+/* NAKHODA JAWI (NJ-015: huruf daripada rakaman Kenal Jawi, bunyi Web Audio tanpa lengah. NJ-014: suara Nakhoda, bunyi laut, lesen PK2- game 10, watak & kosmetik kapal; asas NJ-013) — dahulu NJ-006 — 14 KAEDAH EJAAN + PULAU LANUN.
    NJ-006: semakan rasmi PRPM untuk Jumaat/Islam; pembetulan pemasa raksasa;
    tiada petunjuk semasa peperiksaan; laporan penguasaan dan ujian guru tanpa bantuan.
    NJ-005: semakan bersama ulasan Gemini. izin = ايذين (disahkan PRPM); insan = انسان (disahkan PRPM);
@@ -685,32 +685,53 @@ soundBtn.onclick=()=>{soundOn=!soundOn;soundBtn.textContent=soundOn?'🔊':'🔇
    Suara: klip ElevenLabs (suara lelaki "Daud M") dalam folder audio/suara/, satu fail setiap kunci.
    Bunyi: audio/bunyi/ (suasana laut, ribut, meriam, percikan dan lain-lain).
    Jika fail tiada (contoh: fail HTML dibuka tanpa folder audio), permainan kekal senyap atau guna suara peranti. */
-const VOICE_KEYS=new Set(["e-beli", "e-bocor", "e-boss-gagal", "e-boss-menang", "e-boss-mula", "e-buka", "e-combo", "e-ganas", "e-kedai", "e-kunci", "e-masa", "e-menang", "e-no-1", "e-no-2", "e-no-3", "e-ok-1", "e-ok-2", "e-ok-3", "e-ok-4", "e-peta", "e-selamat", "e-sijil", "e-tamat-1", "e-tamat-2", "e-tamat-3", "h-alif", "h-dal", "h-ra", "h-wau", "h-zai", "h-zal", "m-belon", "m-bina", "m-cop", "m-drop", "m-gerbang", "m-gunting", "m-kerang", "m-kilat", "m-magnet", "m-meriam", "m-meriam4", "m-pancing", "m-raksasa", "m-sauh", "m-sort", "m-tenun", "p-0", "p-1", "p-10", "p-11", "p-12", "p-13", "p-14", "p-15", "p-16", "p-17", "p-2", "p-3", "p-4", "p-5", "p-6", "p-7", "p-8", "p-9", "w-anak", "w-bahagia", "w-baharu", "w-bahasa", "w-baju", "w-bantal", "w-bapa", "w-bara", "w-bas", "w-batu", "w-belanga", "w-biasa", "w-bintang", "w-bola", "w-budak", "w-budak-budak", "w-buka", "w-buku", "w-buku-buku", "w-bunga", "w-buta", "w-ca", "w-cahaya", "w-cara", "w-cempedak", "w-cicak", "w-cuba", "w-cuti", "w-dada", "w-daun", "w-dewa", "w-di-kedai", "w-di-rumah", "w-dibaca", "w-ditulis", "w-doktor", "w-dosa", "w-ga", "w-gula", "w-gulai", "w-guru", "w-harga", "w-ikan", "w-ikhlas", "w-insan", "w-islam", "w-izin", "w-jala", "w-jalan-raya", "w-jam", "w-jendela", "w-jiran", "w-jiwa", "w-juga", "w-julai", "w-jumaat", "w-kaki", "w-kambing", "w-kamera", "w-kanak-kanak", "w-kapal", "w-kapal-terbang", "w-kata", "w-katak", "w-kawan-kawan", "w-ke-pasar", "w-ke-sekolah", "w-kecewa", "w-kedua", "w-kek", "w-kerbau", "w-kereta", "w-kereta-api", "w-kertas", "w-kerusi", "w-ketara", "w-ketika", "w-kitab", "w-klinik", "w-komputer", "w-kota", "w-kuala", "w-kuda", "w-labu", "w-lada", "w-lima", "w-luka", "w-lusa", "w-mac", "w-maharaja", "w-makan", "w-masa", "w-masjid", "w-mata", "w-meja", "w-melaka", "w-merangkak", "w-mereka", "w-muka", "w-muzik", "w-nama", "w-nga", "w-nya", "w-pa", "w-padi", "w-pahala", "w-pantai", "w-pensel", "w-pisau", "w-plastik", "w-polis", "w-puasa", "w-pulau", "w-rabu", "w-ramadan", "w-rasa", "w-rasmi", "w-rehat", "w-roti", "w-rumah", "w-rupa", "w-rusa", "w-sabun", "w-safar", "w-sahabat", "w-sahaja", "w-sama", "w-sampan", "w-sebuah", "w-solat", "w-stok", "w-suka", "w-sungai", "w-syawal", "w-televisyen", "w-tengkorak", "w-tidak", "w-tiga", "w-tikus", "w-trak", "w-tunda", "w-universiti", "w-urus-setia", "w-va", "w-vaksin", "z-0", "z-1", "z-2", "z-3"]);
+const VOICE_KEYS=new Set(["e-beli", "e-bocor", "e-boss-gagal", "e-boss-menang", "e-boss-mula", "e-buka", "e-combo", "e-ganas", "e-kedai", "e-kunci", "e-masa", "e-menang", "e-no-1", "e-no-2", "e-no-3", "e-ok-1", "e-ok-2", "e-ok-3", "e-ok-4", "e-peta", "e-selamat", "e-sijil", "e-tamat-1", "e-tamat-2", "e-tamat-3", "h-alif", "h-dal", "h-ra", "h-va", "h-wau", "h-zai", "h-zal", "m-belon", "m-bina", "m-cop", "m-drop", "m-gerbang", "m-gunting", "m-kerang", "m-kilat", "m-magnet", "m-meriam", "m-meriam4", "m-pancing", "m-raksasa", "m-sauh", "m-sort", "m-tenun", "p-0", "p-0a", "p-1", "p-10", "p-11", "p-12", "p-13", "p-14", "p-15", "p-16", "p-17", "p-1a", "p-1b", "p-2", "p-3", "p-4", "p-5", "p-6", "p-7", "p-8", "p-9", "w-anak", "w-bahagia", "w-baharu", "w-bahasa", "w-baju", "w-bantal", "w-bapa", "w-bara", "w-bas", "w-batu", "w-belanga", "w-biasa", "w-bintang", "w-bola", "w-budak", "w-budak-budak", "w-buka", "w-buku", "w-buku-buku", "w-bunga", "w-buta", "w-ca", "w-cahaya", "w-cara", "w-cempedak", "w-cicak", "w-cuba", "w-cuti", "w-dada", "w-daun", "w-dewa", "w-di-kedai", "w-di-rumah", "w-dibaca", "w-ditulis", "w-doktor", "w-dosa", "w-ga", "w-gula", "w-gulai", "w-guru", "w-harga", "w-ikan", "w-ikhlas", "w-insan", "w-islam", "w-izin", "w-jala", "w-jalan-raya", "w-jam", "w-jendela", "w-jiran", "w-jiwa", "w-juga", "w-julai", "w-jumaat", "w-kaki", "w-kambing", "w-kamera", "w-kanak-kanak", "w-kapal", "w-kapal-terbang", "w-kata", "w-katak", "w-kawan-kawan", "w-ke-pasar", "w-ke-sekolah", "w-kecewa", "w-kedua", "w-kek", "w-kerbau", "w-kereta", "w-kereta-api", "w-kertas", "w-kerusi", "w-ketara", "w-ketika", "w-kitab", "w-klinik", "w-komputer", "w-kota", "w-kuala", "w-kuda", "w-labu", "w-lada", "w-lima", "w-luka", "w-lusa", "w-mac", "w-maharaja", "w-makan", "w-masa", "w-masjid", "w-mata", "w-meja", "w-melaka", "w-merangkak", "w-mereka", "w-muka", "w-muzik", "w-nama", "w-nga", "w-nya", "w-pa", "w-padi", "w-pahala", "w-pantai", "w-pensel", "w-pisau", "w-plastik", "w-polis", "w-puasa", "w-pulau", "w-rabu", "w-ramadan", "w-rasa", "w-rasmi", "w-rehat", "w-roti", "w-rumah", "w-rupa", "w-rusa", "w-sabun", "w-safar", "w-sahabat", "w-sahaja", "w-sama", "w-sampan", "w-sebuah", "w-solat", "w-stok", "w-suka", "w-sungai", "w-syawal", "w-televisyen", "w-tengkorak", "w-tidak", "w-tiga", "w-tikus", "w-trak", "w-tunda", "w-universiti", "w-urus-setia", "w-va", "w-vaksin", "z-0", "z-1", "z-2", "z-3"]);
 const SFX_KEYS=new Set(['meriam','percik','ombak','loceng','layar','syiling','raksasa','letup','gunting','cop','rantai','magnet','menang']);
-const SND={base:'audio/',voice:null,queue:[],amb:null,ambKind:null,want:null,ducked:false,sfxOk:true};
+/* NJ-015: huruf diambil daripada rakaman Kenal Jawi. Peraturan yang menyebut senarai huruf dimainkan sebagai ayat + klip huruf. */
+const VOICE_SEQ={'p-0':['p-0a','w-ca','w-nga','w-pa','w-ga','w-nya','w-va'],'p-1':['p-1a','h-alif','h-dal','h-zal','h-ra','h-zai','h-wau','h-va','p-1b']};
+const SND={base:'audio/',voice:null,queue:[],tok:0,ambKind:null,want:null,ducked:false,sfxOk:true,html:null};
 const voiceSlug=q=>String(q||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
 const voiceOn=()=>soundOn&&save.voiceOn!==false;
 function ambVolume(){return SND.ambKind==='ribut'?.26:.2}
-function duck(on){SND.ducked=on;if(SND.amb)SND.amb.volume=ambVolume()*(on?.45:1)}
-function stopVoice(){SND.queue=[];const a=SND.voice;SND.voice=null;if(a){try{a.pause()}catch(_){}}duck(false)}
+/* NJ-015: semua bunyi melalui Web Audio. Fail dimuat turun sekali dan dimainkan serta-merta, jadi bunyi tidak lewat daripada aksi. */
+const AU={ctx:null,master:null,raw:new Map(),loading:new Map(),buf:new Map(),pin:new Map(),amb:null,ambGain:null};
+function auCtx(){if(AU.ctx)return AU.ctx;const C=window.AudioContext||window.webkitAudioContext;if(!C)return null;try{AU.ctx=new C();AU.master=AU.ctx.createGain();AU.master.connect(AU.ctx.destination)}catch(_){AU.ctx=null}return AU.ctx}
+const auReady=()=>AU.ctx&&AU.ctx.state==='running';
+function auRaw(path){if(AU.raw.has(path))return Promise.resolve(AU.raw.get(path));if(AU.loading.has(path))return AU.loading.get(path);
+ const p=fetch(path).then(r=>{if(!r.ok)throw 0;return r.arrayBuffer()}).then(b=>{AU.raw.set(path,b);AU.loading.delete(path);return b}).catch(()=>{AU.loading.delete(path);return null});AU.loading.set(path,p);return p}
+function auBuf(path,pin){const hit=AU.pin.get(path)||AU.buf.get(path);if(hit){if(AU.buf.has(path)){AU.buf.delete(path);AU.buf.set(path,hit)}return Promise.resolve(hit)}
+ const ctx=auCtx();if(!ctx)return Promise.resolve(null);
+ return auRaw(path).then(b=>b?new Promise(res=>{const ok=d=>{if(pin)AU.pin.set(path,d);else{AU.buf.set(path,d);if(AU.buf.size>48)AU.buf.delete(AU.buf.keys().next().value)}res(d)};try{const p=ctx.decodeAudioData(b.slice(0),ok,()=>res(null));if(p&&p.catch)p.catch(()=>res(null))}catch(_){res(null)}}):null)}
+function auPlay(d,vol,loop){const s=AU.ctx.createBufferSource(),g=AU.ctx.createGain();s.buffer=d;s.loop=!!loop;g.gain.value=vol;s.connect(g);g.connect(AU.master);s.start();s.gainNode=g;return s}
+function auUnlock(){const ctx=auCtx();if(!ctx)return;if(ctx.state!=='running')ctx.resume().catch(()=>{});
+ if(!AU.started){AU.started=true;SFX_KEYS.forEach(k=>auBuf(SND.base+'bunyi/'+k+'.mp3',true));['laut','ribut'].forEach(k=>auBuf(SND.base+'bunyi/'+k+'.mp3',true));
+  /* Muat turun semua klip suara di belakang tabir (kira-kira 4 MB), 3 serentak. */
+  const list=[...VOICE_KEYS];let n=0;const pump=()=>{const k=list[n++];if(!k)return;auRaw(SND.base+'suara/'+k+'.mp3').then(pump)};pump();pump();pump()}}
+function duck(on){SND.ducked=on;const v=ambVolume()*(on?.45:1);if(AU.ambGain&&AU.ctx)AU.ambGain.gain.setTargetAtTime(v,AU.ctx.currentTime,.08);if(SND.html)SND.html.volume=v}
+function stopVoice(){SND.tok++;SND.queue=[];const a=SND.voice;SND.voice=null;if(a){try{a.stop?a.stop():a.pause()}catch(_){}}duck(false)}
 function playQueue(){const k=SND.queue.shift();if(!k){SND.voice=null;duck(false);return}
- const a=new Audio(SND.base+'suara/'+k+'.mp3');SND.voice=a;duck(true);
- const next=()=>{if(SND.voice===a)playQueue()};a.onended=next;a.onerror=next;const p=a.play();if(p&&p.catch)p.catch(next)}
+ const tok=SND.tok,path=SND.base+'suara/'+k+'.mp3';duck(true);
+ if(auReady()){auBuf(path).then(d=>{if(tok!==SND.tok)return;if(!d){playQueue();return}const s=auPlay(d,1);SND.voice=s;s.onended=()=>{if(SND.voice===s)playQueue()}});return}
+ const a=new Audio(path);SND.voice=a;const next=()=>{if(SND.voice===a)playQueue()};a.onended=next;a.onerror=next;const p=a.play();if(p&&p.catch)p.catch(next)}
 /* say(['e-ok-1','w-kuda'], 'kuda'): mainkan klip ikut turutan; jika tiada klip, guna suara peranti untuk teks fallback. */
 function say(keys,fallback){stopVoice();if(!soundOn||(typeof assessmentMode!=='undefined'&&assessmentMode&&fallback))return;
- const list=[].concat(keys).filter(k=>k&&VOICE_KEYS.has(k));
+ const list=[].concat(keys).flatMap(k=>VOICE_SEQ[k]&&VOICE_SEQ[k].every(x=>VOICE_KEYS.has(x))?VOICE_SEQ[k]:[k]).filter(k=>k&&VOICE_KEYS.has(k));
  if(voiceOn()&&list.length){SND.queue=list;playQueue();return}
  if(fallback&&save.ttsEnabled)deviceSpeak(fallback)}
 function wordKey(r){if(!r)return null;if(r.r)return 'h-'+r.r;const m=String(r.q||'').match(/^Huruf sombong: (\w+)/);return m?'h-'+m[1]:'w-'+voiceSlug(r.q)}
-function sfx(k,vol=.7){if(!soundOn||!SFX_KEYS.has(k)||!SND.sfxOk)return false;try{const a=new Audio(SND.base+'bunyi/'+k+'.mp3');a.volume=vol;const p=a.play();if(p&&p.catch)p.catch(()=>{});return true}catch(_){return false}}
+function sfx(k,vol=.7){if(!soundOn||!SFX_KEYS.has(k)||!SND.sfxOk)return false;const path=SND.base+'bunyi/'+k+'.mp3';
+ if(auReady()){const d=AU.pin.get(path);if(d){auPlay(d,vol);return true}auBuf(path,true);return false}
+ try{const a=new Audio(path);a.volume=vol;const p=a.play();if(p&&p.catch)p.catch(()=>{});return true}catch(_){return false}}
+function stopAmb(){if(AU.amb){try{AU.amb.stop()}catch(_){}AU.amb=null;AU.ambGain=null}if(SND.html){try{SND.html.pause()}catch(_){}SND.html=null}}
 function setAmb(kind){SND.want=kind;if(!soundOn||save.ambOn===false)kind=null;
- if(SND.ambKind===kind&&SND.amb){if(kind&&SND.amb.paused)SND.amb.play().catch(()=>{});return}
- if(SND.amb){try{SND.amb.pause()}catch(_){}SND.amb=null}SND.ambKind=kind;if(!kind)return;
- const a=new Audio(SND.base+'bunyi/'+kind+'.mp3');a.loop=true;a.volume=ambVolume()*(SND.ducked?.45:1);SND.amb=a;a.play().catch(()=>{})}
+ const playing=AU.amb||(SND.html&&!SND.html.paused);if(SND.ambKind===kind&&playing)return;
+ stopAmb();SND.ambKind=kind;if(!kind)return;const path=SND.base+'bunyi/'+kind+'.mp3',vol=ambVolume()*(SND.ducked?.45:1);
+ if(auReady()){auBuf(path,true).then(d=>{if(!d||SND.ambKind!==kind||AU.amb)return;const s=auPlay(d,0,true);AU.amb=s;AU.ambGain=s.gainNode;s.gainNode.gain.setTargetAtTime(ambVolume()*(SND.ducked?.45:1),AU.ctx.currentTime,.4)});return}
+ const a=new Audio(path);a.loop=true;a.volume=vol;SND.html=a;a.play().catch(()=>{})}
 const ambFor=()=>lv&&(lv.miniboss||lv.boss)?'ribut':'laut';
 /* Pelayar biasanya menyekat bunyi sehingga sentuhan pertama. */
-addEventListener('pointerdown',()=>{if(SND.want&&(!SND.amb||SND.amb.paused))setAmb(SND.want)},{passive:true});
-document.addEventListener('visibilitychange',()=>{if(document.hidden){stopVoice();if(SND.amb)try{SND.amb.pause()}catch(_){}}else if(SND.want)setAmb(SND.want)});
+addEventListener('pointerdown',()=>{auUnlock();const go=()=>{if(!soundOn||!SND.want||AU.amb)return;if(SND.html&&!SND.html.paused&&!auReady())return;if(SND.html){stopAmb();SND.ambKind=null}setAmb(SND.want)};const c=AU.ctx;if(c&&c.state!=='running')c.resume().then(go,go);else go()},{passive:true});
+document.addEventListener('visibilitychange',()=>{if(document.hidden){stopVoice();if(AU.ctx)AU.ctx.suspend().catch(()=>{});if(SND.html)try{SND.html.pause()}catch(_){}}else{if(AU.ctx)AU.ctx.resume().catch(()=>{});if(SND.want&&!AU.amb)setAmb(SND.want)}});
 {const old=soundBtn.onclick;soundBtn.onclick=()=>{old();if(!soundOn){stopVoice();setAmb(null);SND.want=SND.want||ambFor()}else setAmb(SND.want||ambFor())}}
 
 /* ---------- Lesen keluarga PK2- (game 10). Pulau 1–7 percuma: Kaedah 1–4, Ketam Gergasi, Kaedah 5–6. ---------- */
