@@ -61,7 +61,7 @@ var KJL=(function(){
    A game only checks that its own number is in the signed mask, so a new bundle never needs a game update. */
 var KJL2=(function(){
   var A='0123456789ABCDEFGHJKMNPQRSTVWXYZ',DOMAIN='KenalGames-bundle-v2|',VERSION=2,EPOCH=Date.UTC(2026,0,1),PRE='PK2',BYTES=78;
-  var GAMES={1:'Kenal Jawi',2:'Kenal ABC',3:'Wira Matematik',4:'Hikayat Sungai Ilmu',5:'Wonder Island',6:'Kembara Malaysia Kita',7:'Adiwira Jawi'};
+  var GAMES={1:'Kenal Jawi',2:'Kenal ABC',3:'Wira Matematik',4:'Hikayat Sungai Ilmu',5:'Wonder Island',6:'Kembara Malaysia Kita',7:'Adiwira Jawi',8:'Boss Gerai',9:'Ember Code',10:'Nakhoda Jawi',11:'Robot Rumble'};
   function enc32(bytes){var out='',bits=0,val=0;for(var i=0;i<bytes.length;i++){val=((val<<8)|bytes[i])&0xffff;bits+=8;while(bits>=5){out+=A[(val>>>(bits-5))&31];bits-=5}}if(bits>0)out+=A[(val<<(5-bits))&31];return out}
   function dec32(s){var out=[],bits=0,val=0;for(var i=0;i<s.length;i++){var v=A.indexOf(s[i]);if(v<0)return null;val=((val<<5)|v)&0xfff;bits+=5;if(bits>=8){out.push((val>>>(bits-8))&255);bits-=8}}
     if(bits>0&&(val&((1<<bits)-1))!==0)return null;return new Uint8Array(out)}

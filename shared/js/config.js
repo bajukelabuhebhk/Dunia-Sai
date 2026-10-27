@@ -77,6 +77,20 @@
         free: 'Peta 1 hingga 3',
         lic: { store: 'ember_code_lesen', pk2: 9 },
       },
+      {
+        id: 'nakhoda-jawi', name: 'Nakhoda Jawi', path: '/app/nakhoda-jawi/', img: '/img/nakhoda-jawi.jpg',
+        subject: 'Jawi lanjutan', age: '7 hingga 12 tahun', price: 25, pakej: false,
+        desc: 'Belayar 18 pulau: 14 kaedah ejaan Jawi, 3 Mini Boss dan Pulau Lanun, dengan suara nakhoda BM dan kapal sendiri.',
+        free: '7 pulau pertama',
+        lic: { store: 'nakhoda_jawi_lesen', pk2: 10 },
+      },
+      {
+        id: 'robot-rumble', name: 'Robot Rumble', path: '/app/robot-rumble/', img: '/img/robot-rumble.jpg',
+        subject: 'Robotik dan fizik', age: '8 hingga 14 tahun', price: 15, pakej: false,
+        desc: 'Bina robot, tulis kod dan uji di 25 misi: tork, geseran, sensor dan tenaga, dengan suara BEEP BM.',
+        free: 'Misi M1 hingga M5',
+        lic: { store: 'robot_rumble_lesen', pk2: 11 },
+      },
     ],
 
     // Signing key number -> Ed25519 public key, the same one inside every game. It can check codes, not make them.
