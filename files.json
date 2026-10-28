@@ -1,18 +1,18 @@
 {
- "version": "6302ac8a46",
+ "version": "f6b06ed732",
  "core": {
   "files": {
    "/app/": "60adb35dfa48",
-   "/img/boss-gerai.jpg": "1b3bbf65104d",
-   "/img/ember-code.jpg": "18c258c10308",
-   "/img/hikayat-sungai.jpg": "e07f528e069d",
-   "/img/kembara-malaysia.jpg": "8590682fd440",
-   "/img/kenal-abc.jpg": "f785e43a601a",
-   "/img/kenal-jawi.jpg": "02bb8bd3a6af",
-   "/img/nakhoda-jawi.jpg": "6bce30d330fd",
-   "/img/robot-rumble.jpg": "eb47b9a0010e",
-   "/img/wira-matematik.jpg": "cff23d37d80f",
-   "/img/wonder-island.jpg": "ab0300febf5b",
+   "/img/boss-gerai.jpg": "5136ff6f0e7c",
+   "/img/ember-code.jpg": "a12b51a0b432",
+   "/img/hikayat-sungai.jpg": "ba4391a5dd3f",
+   "/img/kembara-malaysia.jpg": "0943df0e480c",
+   "/img/kenal-abc.jpg": "117435109d86",
+   "/img/kenal-jawi.jpg": "b1bff0b195a0",
+   "/img/nakhoda-jawi.jpg": "64953dcc9acf",
+   "/img/robot-rumble.jpg": "4edd8272150f",
+   "/img/wira-matematik.jpg": "38747e9a98f0",
+   "/img/wonder-island.jpg": "1ae683e5f7e8",
    "/": "78e9bd723489",
    "/manifest.json": "9a5f33949e56",
    "/promo/template": "77349aa14694",
@@ -29,7 +29,7 @@
    "/shared/js/lesen-lib.js": "9f17920f43d7",
    "/shared/js/lesen.js": "35453cebccd4"
   },
-  "bytes": 701562
+  "bytes": 1091428
  },
  "games": {
   "boss-gerai": {
