@@ -186,9 +186,10 @@
       const r = await fetch(`${API}/api/pantau?hari=${hari}`, { headers: { Authorization: `Bearer ${key}` }, cache: 'no-store' });
       const body = await r.json().catch(() => ({}));
       if (r.status === 401) { store.removeItem('pantau_kunci'); $('ralatMasuk').textContent = 'Kunci salah. Cuba lagi.'; return tunjuk(true); }
+      if (r.status === 429) { store.removeItem('pantau_kunci'); $('ralatMasuk').textContent = body.ralat || 'Terlalu banyak cubaan. Cuba lagi selepas 1 jam.'; return tunjuk(true); }
       if (!r.ok) throw new Error(body.ralat || `Ralat ${r.status}`);
       data = body;
-      $('ralat').textContent = '';
+      $('ralat').textContent = body.kunciPendek ? 'Kunci anda pendek. Tukar PANTAU_KUNCI di Cloudflare kepada 20 aksara atau lebih.' : '';
       tunjuk(false);
       lukis();
     } catch (e) {

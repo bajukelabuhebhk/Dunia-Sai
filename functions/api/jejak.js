@@ -28,6 +28,12 @@ export const SKEMA = [
   )`,
   'CREATE INDEX IF NOT EXISTS events_day ON events (day, type)',
   'CREATE INDEX IF NOT EXISTS events_ts ON events (ts)',
+  // Counters for rate limits (see had()); rows are dropped once their window is over
+  `CREATE TABLE IF NOT EXISTS had (
+    kunci TEXT PRIMARY KEY,
+    n INTEGER NOT NULL,
+    tamat INTEGER NOT NULL
+  )`,
 ];
 
 let ready = false;
@@ -43,6 +49,30 @@ async function hash(text) {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
   return [...new Uint8Array(buf).slice(0, 8)].map((b) => b.toString(16).padStart(2, '0')).join('');
 }
+
+/*
+ * Rate limit: adds `n` to the counter for `kunci` and returns the new total.
+ * A counter starts again from zero once `ms` has passed since it began.
+ * The key is a hash of the IP with a secret, so no IP is stored here either.
+ */
+export async function had(db, kunci, n, ms, now = Date.now()) {
+  const row = await db.prepare(
+    `INSERT INTO had (kunci, n, tamat) VALUES (?1, ?2, ?3)
+     ON CONFLICT(kunci) DO UPDATE SET
+       n = CASE WHEN tamat < ?4 THEN ?2 ELSE n + ?2 END,
+       tamat = CASE WHEN tamat < ?4 THEN ?3 ELSE tamat END
+     RETURNING n`
+  ).bind(kunci, n, now + ms, now).first();
+  if (Math.random() < 0.02) await db.prepare('DELETE FROM had WHERE tamat < ?').bind(now).run();
+  return row ? row.n : n;
+}
+
+export const hashIP = (request, label, salt) =>
+  hash(`${label}|${request.headers.get('cf-connecting-ip') || ''}|${salt}`);
+
+// Most events one internet connection may send in a day. A school or a big family on one wifi
+// sends a few hundred; more than this is someone filling the dashboard with fake visits.
+const HAD_SEHARI = 2000;
 
 function peranti(ua) {
   if (/iPad|Tablet|Android(?!.*Mobile)/i.test(ua)) return 'tablet';
@@ -87,6 +117,8 @@ export async function onRequestPost({ request, env }) {
   if (!rows.length) return ok;
 
   await sediakan(env.DB);
+  const dipakai = await had(env.DB, 'j:' + (await hashIP(request, hariMYT(now), salt)), rows.length, 864e5, now);
+  if (dipakai > HAD_SEHARI) return new Response(null, { status: 429 });
   const stmt = env.DB.prepare(
     'INSERT INTO events (ts, day, type, page, game, visitor, secs, ref, country, device, app) VALUES (?,?,?,?,?,?,?,?,?,?,?)'
   );
