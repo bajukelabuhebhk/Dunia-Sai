@@ -3,7 +3,7 @@
  * Only answers with the header  Authorization: Bearer <PANTAU_KUNCI>.
  * The app lives on its own address, so any origin may ask; the key is what protects the data.
  */
-import { sediakan, hariMYT } from './jejak.js';
+import { sediakan, hariMYT, had, hashIP } from './jejak.js';
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -14,6 +14,9 @@ const CORS = {
 const H = { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', ...CORS };
 const json = (data, status = 200) => new Response(JSON.stringify(data), { status, headers: H });
 const KEEP_DAYS = 400;
+// Wrong keys allowed from one internet connection per hour, so the key cannot be guessed by trying many
+const SALAH_SEJAM = 10;
+const KUNCI_MIN = 20;
 
 async function sha(s) {
   return new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)));
@@ -30,12 +33,19 @@ export const onRequestOptions = () => new Response(null, { status: 204, headers:
 
 export async function onRequestGet({ request, env }) {
   if (!env.PANTAU_KUNCI) return json({ ralat: 'PANTAU_KUNCI belum ditetapkan dalam tetapan Cloudflare Pages.' }, 503);
-  const auth = (request.headers.get('authorization') || '').replace(/^Bearer\s+/i, '');
-  if (!(await sama(auth, env.PANTAU_KUNCI))) return json({ ralat: 'Kunci salah.' }, 401);
   if (!env.DB) return json({ ralat: 'Pangkalan data D1 (binding DB) belum disambung.' }, 503);
-
   const db = env.DB;
   await sediakan(db);
+
+  const auth = (request.headers.get('authorization') || '').replace(/^Bearer\s+/i, '');
+  const pintu = 'p:' + (await hashIP(request, 'pantau', env.PANTAU_KUNCI));
+  if ((await had(db, pintu, 0, 3600e3)) >= SALAH_SEJAM) {
+    return json({ ralat: 'Terlalu banyak cubaan kunci salah. Cuba lagi selepas 1 jam.' }, 429);
+  }
+  if (!(await sama(auth, env.PANTAU_KUNCI))) {
+    await had(db, pintu, 1, 3600e3);
+    return json({ ralat: 'Kunci salah.' }, 401);
+  }
   const url = new URL(request.url);
   const hari = [1, 7, 30, 90].includes(Number(url.searchParams.get('hari'))) ? Number(url.searchParams.get('hari')) : 7;
   const now = Date.now();
@@ -77,6 +87,7 @@ export async function onRequestGet({ request, env }) {
 
   return json({
     hari, dari, kini: now,
+    kunciPendek: env.PANTAU_KUNCI.length < KUNCI_MIN,
     jumlah: r[0][0],
     siri: r[1],
     game: r[2],

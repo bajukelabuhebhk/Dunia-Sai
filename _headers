@@ -1,10 +1,13 @@
 # Cloudflare response headers
+# Content-Security-Policy: pages and games may only load files from this site (plus Google Fonts)
+# and only send data back to it. Inline scripts stay allowed because every game is a single HTML file.
 
 /*
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), geolocation=()
   X-Frame-Options: SAMEORIGIN
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://dunia-sai.pages.dev; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' data: blob:; connect-src 'self' data: blob: https://dunia-sai.pages.dev; worker-src 'self' blob:; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'
 
 # The service worker and its file list must never be served stale, or updates stall
 /sw.js
