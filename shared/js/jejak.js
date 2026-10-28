@@ -54,10 +54,11 @@
   const src = new URLSearchParams(location.search).get('utm_source') || new URLSearchParams(location.search).get('source');
   send({ t: 'lawat', r: src ? String(src).slice(0, 40) : ref });
 
-  // WhatsApp buy links on the landing, launcher and promo pages
+  // WhatsApp buy links on the landing, launcher and promo pages. Only links to a number count:
+  // a share link (wa.me/?text=..., like Robot Rumble's) lets the player pick a friend and is not a buyer.
   document.addEventListener('click', (ev) => {
     const a = ev.target.closest && ev.target.closest('a[href*="wa.me/"]');
-    if (a) send({ t: 'wa' }, true);
+    if (a && /wa\.me\/\d/.test(a.getAttribute('href') || '')) send({ t: 'wa' }, true);
   }, true);
 
   if (game) {
