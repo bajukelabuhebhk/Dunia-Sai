@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<!-- RR-CC-010-STABIL: pembaikan kestabilan daripada ChatGPT (RR-CC-009-DS) digabung ke RR-CC-009-BUNYI: dialog bertindih, link cabaran rosak tidak menghentikan game, suara BM jatuh ke suara peranti jika klip rosak, had 40 blok, kurang blur GPU pada telefon, susun atur telefon kecil. -->
 <!-- RR-CC-009-BUNYI: muzik bengkel dan 6 bunyi ElevenLabs (folder audio/bunyi, kembali ke bunyi sintetik jika gagal dimuat), cabaran bayang untuk misi berkunci terus ke skrin lesen. Dibina daripada RR-CC-008-DS. -->
 <!-- RR-CC-008-DS: Dunia Sai. Suara BEEP BM (ElevenLabs, folder audio/suara), suara peranti untuk EN, lesen PK2- game 11 (M1-M5 percuma, RM15). Dibina daripada RR-CC-007-P01. -->
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -67,13 +68,12 @@ button:focus-visible,select:focus-visible,input:focus-visible,[tabindex]:focus-v
 .lang-btn{background:rgba(245,158,11,.15);color:var(--amber3);border-color:rgba(245,158,11,.45);font-size:12px}
 .gfx-btn{font-size:19px;color:var(--sky3);border-color:rgba(56,189,248,.45)}
 .gfx-btn[aria-pressed="true"]{background:#065f46;border-color:#34d399;color:#ecfdf5}
-body.gfx-compatible .brain-mini,body.gfx-compatible .result{backdrop-filter:none;-webkit-backdrop-filter:none}
+body.gfx-compatible .brain-mini,body.gfx-compatible .result,body.gfx-compatible .modal{backdrop-filter:none;-webkit-backdrop-filter:none}
 
 .speech{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:5px 12px;background:rgba(15,23,42,.92);border-bottom:1px solid rgba(12,74,110,.6);font-size:13px;min-height:32px;flex:none;z-index:20}
 .speech .who{color:var(--amber2);font-weight:900;letter-spacing:.06em;margin-right:6px}
-.speech .say{color:var(--sky3);font-style:italic}
+.speech .say{color:var(--sky3);font-style:italic;overflow-wrap:anywhere}
 .speech>div:first-child{min-width:0;flex:1}
-.speech .say{overflow-wrap:anywhere}
 .coach-open{flex:none;min-height:44px;min-width:44px;padding:0 8px;border-radius:10px;border:1px solid rgba(56,189,248,.5);background:#082f49;color:var(--sky3);font-weight:900}
 .pills{display:flex;gap:4px;font-family:var(--mono);font-size:11px;flex:none}
 .pill{padding:2px 7px;border-radius:6px;border:1px solid;white-space:nowrap}
@@ -374,11 +374,10 @@ body.gfx-compatible .lab-overlay{backdrop-filter:none}
   .rig-top{flex-wrap:nowrap;flex-direction:column;align-items:stretch;gap:4px;padding:6px 6px 0}
   .stats{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
   .stats::-webkit-scrollbar{display:none}
-  .stat{flex:none}
+  .stat{flex:none;min-width:64px;padding:2px 6px}
   .rig-tools{justify-content:space-between;margin-left:0}
   #btn-reset [data-i18n]{display:none}
   .hint{display:none}
-  .stat{min-width:64px;padding:2px 6px}
   .stat b{font-size:12px}
   .brain-mini{width:min(190px,52%);font-size:10px}
 }
@@ -401,14 +400,13 @@ body.gfx-compatible .lab-overlay{backdrop-filter:none}
   .part{min-height:60px}
   .part .ps{display:none}
   .hud{padding:2px 6px;flex-wrap:nowrap}
-  .tele{flex:1;min-width:0;flex-wrap:nowrap;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none}
+  .tele{flex:1;min-width:0;flex-wrap:nowrap;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;gap:7px;font-size:11px}
   .tele::-webkit-scrollbar{display:none}
   .tele>div{flex:none;white-space:nowrap}
   .hud-btns{flex:none}
   .hud-btns .btn [data-i18n],.hud-btns #btn-tune{font-size:0}
   .hud-btns #btn-tune::before{content:'🔧';font-size:16px}
   .hud-btns .btn{padding:0 10px}
-  .tele{gap:7px;font-size:11px}
   .ebar{width:52px}
   .rcard{padding:8px 12px;gap:5px}
   .r-badge{width:38px;height:38px;font-size:18px}
@@ -417,6 +415,17 @@ body.gfx-compatible .lab-overlay{backdrop-filter:none}
   .trace{max-height:34px}
   .experiment{font-size:10.5px;padding:6px 8px}
   .guide-step{padding:8px}
+}
+/* Keep the gate readout and the live program debugger in separate lanes on
+   narrow phone viewports without hiding either diagnostic panel. */
+@media (max-width:480px){
+  .gate-tele{max-width:43%;padding:5px 7px;font-size:10px;overflow-wrap:anywhere}
+  .gate-tele b{font-size:11px}
+  .brain-mini{width:46%;max-height:56%;font-size:10px}
+}
+/* Avoid layered GPU blurs on phones and short landscape viewports. */
+@media (max-width:720px), (orientation:landscape) and (max-height:540px){
+  .modal,.brain-mini,.result,.lab-overlay{backdrop-filter:none;-webkit-backdrop-filter:none}
 }
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 /* Dunia Sai: lesen */
@@ -749,7 +758,7 @@ body.gfx-compatible .lab-overlay{backdrop-filter:none}
   const BRAKE_DECEL = 5.5;   // m/s² brake limit before grip limiting
   const IDLE_W = 1.5;
   const TURBO_GAIN = 1.5;    // motor voltage multiplier while TURBO is active
-  const TURBO_W = 18;        // extra supercapacitor charging draw (W)        // controller electronics draw (W)
+  const TURBO_W = 18;        // extra supercapacitor charging draw (W)
   const CHASSIS_MASS = 2.4;
   const CHASSIS_Z = 0.08;    // chassis CoM height above the axle (m)
 
@@ -2522,9 +2531,7 @@ var KJL2=(function(){
   }
   function experimentChanges(previous, current) {
     if (!previous?.config || !current?.config) return null;
-    const keys = ['motor', 'wheel_rear', 'wheel_front', 'gear', 'suspension', 'tyres', 'brakes',
-      'ballast', 'cargo', 'sensor', 'ir', 'solar', 'gyro'];
-    return keys.filter(k => previous.config[k] !== current.config[k]).map(k => {
+    return EXP_FIELDS.filter(k => previous.config[k] !== current.config[k]).map(k => {
       const label = k === 'wheel_front' || k === 'wheel_rear' ?
         t('ex_wheels') + (k === 'wheel_front' ? ' (F)' : ' (R)') : t('ex_' + k);
       return `${label}: ${experimentValue(k, previous.config[k])} → ${experimentValue(k, current.config[k])}`;
@@ -3310,7 +3317,9 @@ var KJL2=(function(){
     }).join('');
   }
   function addBlock(type) {
-    if (program.length >= 39) { sound.error(); return; }
+    // LOOP_WHILE inserts a matching LOOP_END; every accepted edit must fit
+    // within the same 40-block limit used by RR.sanitizeProgram().
+    if (program.length + (type === 'LOOP_WHILE' ? 2 : 1) > 40) { sound.error(); return; }
     const spec = RR.BLOCKS[type];
     program.push({ id: uid++, type, p: spec.options ? spec.def : null });
     if (type === 'LOOP_WHILE') program.push({ id: uid++, type: 'LOOP_END', p: null });
@@ -4933,9 +4942,11 @@ var KJL2=(function(){
   }
   function acceptChallenge() {
     if (!pendingChallenge) return;
+    // Keep the verified challenge in the entry dialog until the paid mission
+    // is unlocked. The player can resume by pressing Race after activation.
+    if (needLicence(pendingChallenge.mid)) { showPaywall(pendingChallenge.mid); return; }
     const c = { ...pendingChallenge, attempts: 0, beaten: false };
     closeModal('modal-challenge');
-    if (needLicence(c.mid)) { showPaywall(c.mid); return; }
     setMission(c.mid, false);
     setChallenge(c);
     say('chal_accepted', { name: c.name });
@@ -4943,7 +4954,10 @@ var KJL2=(function(){
     switchTab('build');
   }
   function challengeFromHash() {
-    const h = decodeURIComponent(location.hash || '');
+    let h;
+    // An invalid percent escape in a pasted link must never abort init(),
+    // otherwise the first animation frame and the entire game never start.
+    try { h = decodeURIComponent(location.hash || ''); } catch (e) { return; }
     if (!/[#&]c=RR1-/.test(h)) return;
     openChallengeEntry(h.slice(h.indexOf('RR1-')));
     try { history.replaceState(null, '', location.pathname + location.search); } catch (e) { /* sandboxed */ }
@@ -5542,12 +5556,47 @@ var KJL2=(function(){
     refreshBuild(); updateChallengeChip(); save();
     if (currentTab === 'build' && !$('view-build').hidden) scheduleBuildPaint();
   }
+  // Modals can nest (a Ghost Challenge may open the licence dialog). Keep
+  // their actual visual stacking order, keyboard focus and return target in
+  // sync instead of relying on their order in the HTML document.
+  const modalStack = [], modalOpeners = new WeakMap();
+  const modalFocusSelector = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+  function modalFocusables(el) {
+    return [...el.querySelectorAll(modalFocusSelector)].filter(node =>
+      !node.hidden && !node.closest('[hidden]') && node.getClientRects().length > 0);
+  }
   function openModal(id) {
     const el = $(id);
+    if (el.hidden) modalOpeners.set(el, document.activeElement);
     el.hidden = false;
-    el.querySelector('button, input')?.focus({ preventScroll: true });
+    const old = modalStack.indexOf(el);
+    if (old >= 0) modalStack.splice(old, 1);
+    modalStack.push(el);
+    modalStack.forEach((dialog, i) => {
+      dialog.style.zIndex = String(60 + i);
+      dialog.inert = i !== modalStack.length - 1;
+    });
+    const first = modalFocusables(el)[0];
+    if (first) first.focus({ preventScroll: true });
+    else { el.tabIndex = -1; el.focus({ preventScroll: true }); }
   }
-  function closeModal(id) { $(id).hidden = true; }
+  function closeModal(id) {
+    const el = $(id);
+    if (el.hidden) return;
+    el.hidden = true;
+    const at = modalStack.indexOf(el);
+    if (at >= 0) modalStack.splice(at, 1);
+    el.style.zIndex = '';
+    el.inert = false;
+    modalStack.forEach((dialog, i) => {
+      dialog.style.zIndex = String(60 + i);
+      dialog.inert = i !== modalStack.length - 1;
+    });
+    const opener = modalOpeners.get(el);
+    modalOpeners.delete(el);
+    if (opener?.isConnected && !opener.closest('[hidden]')) opener.focus({ preventScroll: true });
+    else if (modalStack.length) modalFocusables(modalStack[modalStack.length - 1])[0]?.focus({ preventScroll: true });
+  }
 
   // T01: short, bilingual first-time help. The guide never takes over the
   // simulation or forces a change to the player's robot/program.
@@ -5707,10 +5756,23 @@ var KJL2=(function(){
   const VOICE_KEYS = new Set(["beep_m1", "beep_m10", "beep_m11", "beep_m12", "beep_m13", "beep_m14", "beep_m15", "beep_m16", "beep_m17", "beep_m18", "beep_m19", "beep_m2", "beep_m20", "beep_m21", "beep_m22", "beep_m23", "beep_m24", "beep_m25", "beep_m3", "beep_m4", "beep_m5", "beep_m6", "beep_m7", "beep_m8", "beep_m9", "bg_paused", "code_cleared", "confirm_delete", "deleted", "fail_battery", "fail_blocks_required", "fail_bottom_out", "fail_bounce", "fail_caught", "fail_code_sequence", "fail_crash", "fail_delivery_missed", "fail_early", "fail_early_bay", "fail_fall", "fail_gap", "fail_gate_closed", "fail_gate_sensor", "fail_gate_strategy", "fail_gate_window", "fail_idle", "fail_late", "fail_late_bay", "fail_need_high_cargo", "fail_no_adaptation", "fail_no_cargo", "fail_no_code", "fail_no_drive", "fail_no_ir", "fail_no_power", "fail_no_program", "fail_no_sensor", "fail_no_solar", "fail_stall", "fail_stall_flat", "fail_step", "fail_step_torque", "fail_stopped_short", "fail_timeout", "fail_tip", "fail_tip_forward", "fail_title", "gfx_say_safe", "gfx_say_standard", "guide_1_body", "guide_2_body", "guide_3_body", "guide_finish", "hello_test", "nb_cleared", "nb_confirm", "no_saved", "paused", "pick_first", "race_ready", "reset_done", "seeded_m2", "storage_off", "win_m1", "win_m10", "win_m11", "win_m12", "win_m13", "win_m14", "win_m15", "win_m16", "win_m17", "win_m18", "win_m19", "win_m2", "win_m20", "win_m21", "win_m22", "win_m23", "win_m24", "win_m25", "win_m3", "win_m4", "win_m5", "win_m6", "win_m7", "win_m8", "win_m9", "win_title"]);
   const VOICE_BASE = 'audio/suara/';
   let vAudio = null, vQueue = [], vToken = 0;
+  const missingVoiceFiles = new Set();
   function stopVoice() {
     vToken++; vQueue = [];
     if (vAudio) { try { vAudio.pause(); } catch (e) {} vAudio = null; }
     try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch (e) {}
+  }
+  function deviceVoice(keys, vars, locale, done) {
+    if (!window.speechSynthesis || !window.SpeechSynthesisUtterance) return false;
+    try {
+      const text = keys.map(k => t(k, vars)).join('. ').replace(/[^\p{L}\p{N}\s.,!?'’:;()\-–%]/gu, ' ').replace(/\s+/g, ' ').trim();
+      if (!text) return false;
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = locale; u.rate = locale === 'ms-MY' ? 0.98 : 1; u.pitch = 1.15;
+      if (done) { u.onend = done; u.onerror = done; }
+      speechSynthesis.speak(u);
+      return true;
+    } catch (e) { return false; }
   }
   function voice(keys, vars) {
     stopVoice();
@@ -5721,26 +5783,33 @@ var KJL2=(function(){
       const tok = vToken;
       const next = () => {
         if (tok !== vToken || !vQueue.length) return;
-        const a = new Audio(VOICE_BASE + vQueue.shift() + '.mp3');
+        const key = vQueue.shift();
+        const fallback = () => {
+          if (tok !== vToken) return;
+          // Only a missing/broken recording uses device BM speech. Every
+          // available ElevenLabs recording remains the authoritative voice.
+          const advance = () => { if (tok === vToken) setTimeout(next, 180); };
+          if (!deviceVoice([key], vars, 'ms-MY', advance)) advance();
+        };
+        if (missingVoiceFiles.has(key)) { fallback(); return; }
+        const a = new Audio(VOICE_BASE + key + '.mp3');
         vAudio = a; a.volume = 0.95;
-        a.onended = () => setTimeout(next, 180);
-        a.onerror = next;
-        a.play().catch(() => {});
+        let settled = false;
+        a.onended = () => { if (settled || tok !== vToken) return; settled = true; setTimeout(next, 180); };
+        const failed = () => {
+          if (settled || tok !== vToken) return;
+          settled = true; missingVoiceFiles.add(key); fallback();
+        };
+        a.onerror = failed;
+        a.play().catch(e => {
+          // Autoplay permission is not evidence that the bundled MP3 is bad.
+          if (e?.name !== 'NotAllowedError' && e?.name !== 'AbortError') failed();
+        });
       };
       next();
-    } else if (window.speechSynthesis && window.SpeechSynthesisUtterance) {
-      try {
-        const text = keys.map(k => t(k, vars)).join('. ').replace(/[^\p{L}\p{N}\s.,!?'’:;()\-–%]/gu, ' ').replace(/\s+/g, ' ').trim();
-        if (!text) return;
-        const u = new SpeechSynthesisUtterance(text);
-        u.lang = 'en-US'; u.rate = 1; u.pitch = 1.15;
-        speechSynthesis.speak(u);
-      } catch (e) {}
-    }
+    } else deviceVoice(keys, vars, 'en-US');
   }
   document.addEventListener('visibilitychange', () => { if (document.hidden) stopVoice(); });
-  // Fail HTML dibuka seorang diri tanpa folder audio: jangan cuba main klip.
-  { const p = new Audio(); p.preload = 'auto'; p.onerror = () => VOICE_KEYS.clear(); p.src = VOICE_BASE + 'win_title.mp3'; }
 
   const FREE_MISSIONS = 5;
   const SALE = { price: 'RM15', wa: '601137865789', msg: 'Assalamualaikum, saya nak beli Robot Rumble versi penuh (RM15).' };
@@ -5811,8 +5880,12 @@ var KJL2=(function(){
     const f = g.querySelector('i'); let t0 = 0, raf = 0;
     const stop = () => { cancelAnimationFrame(raf); t0 = 0; f.style.width = '0'; };
     const step = tt => { if (!t0) return; const p = Math.min(1, (tt - t0) / 3000); f.style.width = p * 100 + '%'; if (p >= 1) { stop(); then(); return; } raf = requestAnimationFrame(step); };
-    g.addEventListener('pointerdown', e => { e.preventDefault(); try { g.setPointerCapture(e.pointerId); } catch (_) {} t0 = performance.now(); raf = requestAnimationFrame(step); });
+    const start = () => { if (t0) return; t0 = performance.now(); raf = requestAnimationFrame(step); };
+    g.addEventListener('pointerdown', e => { e.preventDefault(); try { g.setPointerCapture(e.pointerId); } catch (_) {} start(); });
     ['pointerup', 'pointercancel', 'pointerleave'].forEach(n => g.addEventListener(n, stop));
+    g.addEventListener('keydown', e => { if ((e.key === ' ' || e.key === 'Enter') && !e.repeat) { e.preventDefault(); start(); } });
+    g.addEventListener('keyup', e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); stop(); } });
+    g.addEventListener('blur', stop);
     g.addEventListener('contextmenu', e => e.preventDefault());
   }
   function licenceForm() {
@@ -5957,6 +6030,17 @@ var KJL2=(function(){
       if (e.target.id === id) { if (id === 'modal-guide') closeGuide(); else closeModal(id); }
     });
     document.addEventListener('keydown', e => {
+      if (e.key === 'Tab' && modalStack.length) {
+        const dialog = modalStack[modalStack.length - 1], items = modalFocusables(dialog);
+        if (!items.length) { e.preventDefault(); dialog.focus({ preventScroll: true }); return; }
+        const first = items[0], last = items[items.length - 1];
+        if (e.shiftKey && (document.activeElement === first || !dialog.contains(document.activeElement))) {
+          e.preventDefault(); last.focus({ preventScroll: true });
+        } else if (!e.shiftKey && (document.activeElement === last || !dialog.contains(document.activeElement))) {
+          e.preventDefault(); first.focus({ preventScroll: true });
+        }
+        return;
+      }
       const typing = /^(INPUT|SELECT|TEXTAREA)$/.test(e.target.tagName);
       if (!typing && !e.ctrlKey && !e.metaKey && !e.altKey && currentTab === 'test' && $('modal-save').hidden && $('modal-missions').hidden && $('modal-share').hidden && $('modal-challenge').hidden && $('modal-guide').hidden) {
         if (e.key === 'r' || e.key === 'R') { e.preventDefault(); sound.click(); startTest(); return; }
@@ -5965,11 +6049,10 @@ var KJL2=(function(){
       if (e.key !== 'Escape') return;
       if (!$('failure-lab').hidden) { closeFailureLab();showResult(); }
       else if (!$('reliability-lab').hidden) { closeReliability();showResult(); }
-      else if (!$('modal-guide').hidden) closeGuide();
-      else if (!$('modal-share').hidden) closeModal('modal-share');
-      else if (!$('modal-challenge').hidden) closeModal('modal-challenge');
-      else if (!$('modal-save').hidden) closeModal('modal-save');
-      else if (!$('modal-missions').hidden) closeModal('modal-missions');
+      else if (modalStack.length) {
+        const id = modalStack[modalStack.length - 1].id;
+        if (id === 'modal-guide') closeGuide(); else closeModal(id);
+      }
       else if (selectedPart) selectPart(selectedPart);
     });
     // utilities
