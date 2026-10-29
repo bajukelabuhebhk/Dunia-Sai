@@ -640,12 +640,14 @@ const titleEl=document.getElementById('levelName'),numEl=document.getElementById
 const progEl=document.getElementById('progress'),soundBtn=document.getElementById('soundBtn'),ruleBtn=document.getElementById('ruleBtn');
 const TAU=Math.PI*2,JF='"NJ Naskh","Noto Naskh Arabic","Traditional Arabic",serif',UF='"Trebuchet MS",Verdana,system-ui,sans-serif';
 let W=innerWidth,H=innerHeight,dpr=1,t=0,dt=1/60,last=0,particles=[],floats=[],shake=0,flash=0,modalOpen=true;
-let mode='home',li=0,lv=null,rounds=[],ri=0,hearts=HEARTS,maxHearts=HEARTS,R=null,fb=null,fbT=0,fbMax=1,reactionT=0,qTop=96,qBot=156,hintTop=0,teacher=false,assessmentMode=false,assessmentRun=null,combo=0,levelCoins=0,banner=null,ganas=false;
+let roundVoiceReady=true,mode='home',li=0,lv=null,rounds=[],ri=0,hearts=HEARTS,maxHearts=HEARTS,R=null,fb=null,fbT=0,fbMax=1,reactionT=0,qTop=96,qBot=156,hintTop=0,teacher=false,assessmentMode=false,assessmentRun=null,combo=0,levelCoins=0,banner=null,ganas=false;
 let bossMisses=new Set(),bossWeakRules=new Set(),chartChapter=0,chartCanvas=null,chartStatic=null,chartStaticCtx=null,chartNodes=[],voyage=null,voyageTimer=0,lastChartFrame=0;
 let skyCache=Object.create(null),seaGradients=Object.create(null);
 let pointer={x:W/2,y:H/2,startX:W/2,startY:H/2,down:false,tap:false,released:false,cancelled:false};
 let soundOn=true,audioCtx=null;
-const DEF={stars:{},coins:0,skins:['default'],activeSkin:'default',relaxed:false,suku:true,guideMode:'focus',guideStats:{full:{right:0,total:0},focus:{right:0,total:0},off:{right:0,total:0}},ruleStats:{},ttsEnabled:false,voiceOn:true,ambOn:true,reducedMotion:!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches),storySeen:false,mapList:false,visited:{},zoneSeen:{}};
+ /* NJ-016 A06: redraw while a dialog is open at most twice per second. */
+ let lastBackdropFrame=0, backdropDirty=true;
+const DEF={stars:{},coins:0,skins:['default'],activeSkin:'default',relaxed:false,suku:true,guideMode:'focus',guideStats:{full:{right:0,total:0},focus:{right:0,total:0},off:{right:0,total:0}},ruleStats:{},ttsEnabled:false,voiceOn:true,ambOn:true,compatMode:false,reducedMotion:!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches),storySeen:false,mapList:false,visited:{},zoneSeen:{}};
 let save=JSON.parse(JSON.stringify(DEF));try{const s=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');if(s&&s.stars)save=Object.assign(JSON.parse(JSON.stringify(DEF)),s)}catch(_){}
 if(!save.zoneSeen||typeof save.zoneSeen!=='object'||Array.isArray(save.zoneSeen))save.zoneSeen={};
 if(!['full','focus','off'].includes(save.guideMode))save.guideMode=save.suku?'focus':'off';
@@ -667,15 +669,89 @@ function setInstruction(message){if(hintEl.textContent===message)return;hintEl.t
 /* Sebutan perkataan: hanya jika peranti ada suara Melayu atau Indonesia */
 let voice=null;function pickVoice(){try{const vs=speechSynthesis.getVoices();voice=vs.find(v=>/^ms/i.test(v.lang))||vs.find(v=>/^id/i.test(v.lang))||null}catch(_){voice=null}}
 if('speechSynthesis' in window){pickVoice();try{speechSynthesis.addEventListener('voiceschanged',pickVoice)}catch(_){}}
-function stopSpeech(){try{stopVoice()}catch(_){}try{if('speechSynthesis' in window)speechSynthesis.cancel()}catch(_){}}
+function stopSpeech(){try{stopVoice()}catch(_){}try{if('speechSynthesis' in window)speechSynthesis.cancel()}catch(_){}roundVoiceReady=true}
 function speak(s){if(assessmentMode||!s)return;say(R&&R.q===s?wordKey(R):'w-'+voiceSlug(s),s)}
-function deviceSpeak(s){if(!soundOn||!s)return;if(!voice)pickVoice();if(!voice)return;try{stopSpeech();const u=new SpeechSynthesisUtterance(s);u.voice=voice;u.lang=voice.lang;u.rate=.85;u.pitch=1.1;speechSynthesis.speak(u)}catch(_){}}
+/* TTS only if a suitable Malay/Indonesian device voice actually exists. */
+ function deviceSpeak(s,onComplete,token){
+   if(token===undefined){stopSpeech();token=SND.tok}
+   const done=()=>{if(token===SND.tok&&onComplete)onComplete()};
+   if(!soundOn||!s||!('speechSynthesis' in window)){done();return}
+   if(!voice)pickVoice();if(!voice){done();return}
+   try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(s);u.voice=voice;u.lang=voice.lang;u.rate=.85;u.pitch=1.1;
+     let ended=false;const finish=()=>{if(ended)return;ended=true;clearVoiceGuard();done()};u.onend=finish;u.onerror=finish;speechSynthesis.speak(u);armVoiceGuard(token,finish,22000)
+   }catch(_){done()}
+ }
 const rand=(a,b)=>a+Math.random()*(b-a),clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),pick=a=>a[Math.floor(Math.random()*a.length)];
 const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 const RR=(x,y,w,h,r=13)=>{const rr=Math.max(0,Math.min(r,w/2,h/2));ctx.beginPath();if(ctx.roundRect){ctx.roundRect(x,y,w,h,rr);return}ctx.moveTo(x+rr,y);ctx.arcTo(x+w,y,x+w,y+h,rr);ctx.arcTo(x+w,y+h,x,y+h,rr);ctx.arcTo(x,y+h,x,y,rr);ctx.arcTo(x,y,x+w,y,rr);ctx.closePath()};
 const fill=c=>{ctx.fillStyle=c;ctx.fill()},stroke=(c,w=2)=>{ctx.strokeStyle=c;ctx.lineWidth=w;ctx.stroke()};
 function measureTop(){const b=progEl.getBoundingClientRect();qTop=Math.max(b.bottom,60)+8;qBot=qTop+(H<560?50:62);hintTop=hintEl.getBoundingClientRect().top||H-50}
-function resize(){W=innerWidth;H=innerHeight;dpr=Math.min(devicePixelRatio||1,2);canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);skyCache=Object.create(null);seaGradients=Object.create(null);chartStatic=Object.create(null);measureTop();if(mode==='play'&&R)initRound()}
+/* NJ-016 A02/A06: resize only layouts, NEVER reshuffle or restart active puzzle. */
+ function resize(){const oldW=W,oldH=H;W=innerWidth;H=innerHeight;
+   dpr=Math.min(devicePixelRatio||1,save.compatMode?1:1.5);
+   canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);
+   skyCache=Object.create(null);seaGradients=Object.create(null);chartStatic=Object.create(null);
+   measureTop();backdropDirty=true;
+   if(R&&['play','react','banner','fb'].includes(mode))relayoutRound(oldW,oldH);
+ }
+ function relayoutRound(oldW,oldH){
+   const m=M();if(!m||!oldW||!oldH)return;
+   const sx=W/oldW,sy=H/oldH;
+   /* Preserve object identities, selections, timers and random options. */
+   const pts=o=>{if(!o||typeof o!=='object')return;
+     for(const k of ['x','bx','tx','fromX','toX','startX','boatX','press'])if(typeof o[k]==='number')o[k]*=sx;
+     for(const k of ['y','by','ty','y0','fromY','toY'])if(typeof o[k]==='number')o[k]*=sy;
+   };
+   for(const key of ['items','b','g','cr','t','tiles','cards','ch','bullets'])if(Array.isArray(m[key]))for(const p of m[key]){
+     pts(p);if(Array.isArray(p.tr))p.tr.forEach(pts);
+   }
+   for(const key of ['rod','hook','anchor','target','cannon','card','dropFrom','retract','from','grab'])pts(m[key]);
+   if(m.btns){m.btns=layoutBtns(m.btns.map(({label,sub,col,dark,fg,s})=>({label,sub,col,dark,fg,s})));}
+   if(R.m==='bina'){
+     const fs=jfs(.95),gap=10,maxW=W-28,h=fs*1.6;let rows=[[]],rw=0;
+     m.fs=fs;m.tiles.forEach(tile=>{tile.w=Math.max(measureJ(tile.s,fs)+fs*.9,fs*1.7);
+       if(rw+tile.w>maxW&&rows[rows.length-1].length){rows.push([]);rw=0}
+       rows[rows.length-1].push(tile);rw+=tile.w+gap});
+     rows.forEach((row,i)=>{const tw=row.reduce((a,b)=>a+b.w,0)+gap*(row.length-1);let x=W/2+tw/2;
+       row.forEach(tile=>{tile.x=x-tile.w/2;tile.y=H*.70+i*(h+12);x-=tile.w+gap})});
+     m.h=h;m.board={y:H*.43,w:Math.min(W-30,440),h:fs*2.5};
+   }else if(R.m==='kerang'){
+     const cards=m.cards,cols=W<560?4:6,rows=Math.ceil(cards.length/cols),gap=10,top=qBot+14,bot=hintTop-14;
+     const cw=Math.min((W-28-gap*(cols-1))/cols,110),chh=Math.max(24,Math.min(cw*1.15,(bot-top-gap*(rows-1))/rows)),tot=cw*cols+gap*(cols-1);
+     cards.forEach((c,i)=>{c.x=W/2-tot/2+cw/2+(i%cols)*(cw+gap);c.y=top+chh/2+Math.floor(i/cols)*(chh+gap);c.w=cw;c.h=chh});
+   }else if(R.m==='tenun'){
+     const fs=jfs(1.05);m.fs=fs;m.compact=H<500&&W>H*1.25;m.choiceFs=fs*(m.compact?.68:.95);
+     const cw=Math.min((W-28-30)/4,110),gap=10,tot=cw*4+gap*3,chh=m.compact?Math.max(48,fs*1.35):fs*1.9,y=m.compact?hintTop-13-chh/2:hintTop-14-fs*1.9;
+     m.ch.forEach((c,j)=>{c.x=W/2+tot/2-cw/2-j*(cw+gap);c.y=y;c.w=cw;c.h=chh});
+   }else if(R.m==='sort'){
+     const bh=Math.min(124,H*.19);m.bins=[0,1].map(i=>({x:i?W*.75:W*.25,y:hintTop-14-bh/2,w:W*.44,h:bh}));
+     if(m.pick<0&&!m.grab){m.card.x=W/2;m.card.y=H*.4}
+   }else if(R.m==='pancing'){
+     const fs=jfs(),top=Math.max(qBot+77,H*.68),bottom=Math.max(top+8,H-54);
+     m.fs=fs;m.items.forEach((it,i)=>{it.w=measureJ(it.s,fs)+fs*.9;it.h=fs*1.55;it.y0=top+(bottom-top)*i/Math.max(1,m.items.length-1)});
+     m.rod={bx:clamp(W*.12,28,87),by:H*.79,tx:clamp(W*.33,95,W*.46),ty:Math.max(qBot+62,H*.55)};
+     if(m.hook.st==='idle'){m.hook.x=m.rod.tx;m.hook.y=m.rod.ty}
+   }else if(R.m==='belon'){
+     const fs=jfs(.9);m.fs=fs;m.b.forEach((b,i)=>{const rx=Math.max(measureJ(b.s,fs)/2+16,fs*1.15);b.rx=rx;b.ry=rx*1.12;b.bx=W*(i+1)/(m.b.length+1)})
+   }else if(R.m==='meriam'){
+     const fs=jfs(.85);m.fs=fs;m.cannon={x:W/2,y:H-Math.max(120,H*.15)};
+     const gap=Math.min(100,(m.cannon.y-90-qBot)/Math.max(1,m.g.length));
+     m.g.forEach((g,i)=>{g.w=Math.max(measureJ(g.s,fs)+fs*.9,84);g.row=qBot+56+i*gap})
+   }else if(R.m==='drop'){
+     const fs=jfs(.85);m.fs=fs;m.rail=qBot+34;m.target={x:W/2,y:H*.79};m.S=Math.max(W*.55,...m.cr.map(c=>c.w+70));m.sp=W*.1+38;
+     m.cr.forEach(c=>{c.w=Math.max(measureJ(c.s,fs)+fs*1.1,80);if(c.st==='rail')c.y=m.rail+fs*1.3})
+   }else if(R.m==='sauh'){
+     m.rad=clamp(Math.min(W*.1,(hintTop-qBot)*.18,(H-Math.max(110,H*.15)-qBot)*.33),28,48);
+     m.anchor={x:W/2,y:H-Math.max(110,H*.15)};m.drag=false;
+     const n=m.t.length,oneRow=W/(n+1)>m.rad*2+10;
+     m.t.forEach((l,i)=>{if(oneRow){l.x=W*(i+1)/(n+1);l.y=Math.max(qBot+m.rad+10,Math.min(qBot+64,m.anchor.y-m.rad-50))}
+      else{const col=i%2,row=Math.floor(i/2),rows=Math.ceil(n/2),top=qBot+m.rad+10,bottom=m.anchor.y-m.rad-45,step=rows>1?Math.max(40,(bottom-top)/(rows-1)):0;l.x=W*(col?.7:.3);l.y=top+row*step}})
+   }else if(R.m==='gunting'){
+     m.press=W*.17;
+   }
+   if(m.grab)m.grab=null;
+   /* Preserve correct/incorrect selection, remaining seconds, earned coins and matched pairs. */
+ }
 function tone(f=600,d=.12,type='sine',v=.07,delay=0){if(!soundOn)return;try{audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume();const n=audioCtx.currentTime+delay,o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=type;o.frequency.setValueAtTime(f,n);o.frequency.exponentialRampToValueAtTime(Math.max(80,f*.76),n+d);g.gain.setValueAtTime(.001,n);g.gain.exponentialRampToValueAtTime(v,n+.012);g.gain.exponentialRampToValueAtTime(.001,n+d);o.connect(g).connect(audioCtx.destination);o.start(n);o.stop(n+d+.04)}catch(_){}}
 const CUE_SFX={shot:['meriam',.55],splash:['percik',.6],pop:['letup',.6],snip:['gunting',.7],stamp:['cop',.7],coin:['syiling',.45],fanfare:['menang',.55]};
 function cue(k){if(CUE_SFX[k]&&sfx(...CUE_SFX[k]))return;if(k==='success'){tone(520,.16,'triangle',.065);tone(700,.19,'triangle',.07,.11);tone(880,.29,'triangle',.085,.24)}else if(k==='miss'){tone(220,.21,'sawtooth',.025);tone(150,.23,'triangle',.04,.12)}else if(k==='tap'){tone(540,.075,'sine',.03)}else if(k==='shot'){tone(220,.12,'sawtooth',.036);tone(110,.16,'triangle',.055,.03)}else if(k==='splash'){tone(430,.13,'sine',.04);tone(650,.12,'sine',.035,.11)}else if(k==='pop'){tone(900,.08,'square',.03);tone(1300,.1,'sine',.03,.05)}else if(k==='snip'){tone(1800,.05,'sawtooth',.05);tone(2600,.04,'triangle',.05,.03)}else if(k==='buzz'){tone(110,.22,'sawtooth',.06);tone(165,.18,'square',.03,.02)}else if(k==='stamp'){tone(120,.18,'triangle',.12);tone(60,.28,'sine',.1,.02)}else if(k==='coin'){tone(988,.07,'square',.025);tone(1319,.12,'square',.025,.06)}else if(k==='tick'){tone(1200,.04,'sine',.02)}else if(k==='fanfare'){[523,659,784,1046].forEach((f,i)=>tone(f,.25,'triangle',.08,i*.14))}}
@@ -689,7 +765,7 @@ const VOICE_KEYS=new Set(["e-beli", "e-bocor", "e-boss-gagal", "e-boss-menang", 
 const SFX_KEYS=new Set(['meriam','percik','ombak','loceng','layar','syiling','raksasa','letup','gunting','cop','rantai','magnet','menang']);
 /* NJ-015: huruf diambil daripada rakaman Kenal Jawi. Peraturan yang menyebut senarai huruf dimainkan sebagai ayat + klip huruf. */
 const VOICE_SEQ={'p-0':['p-0a','w-ca','w-nga','w-pa','w-ga','w-nya','w-va'],'p-1':['p-1a','h-alif','h-dal','h-zal','h-ra','h-zai','h-wau','h-va','p-1b']};
-const SND={base:'audio/',voice:null,queue:[],tok:0,ambKind:null,want:null,ducked:false,sfxOk:true,html:null};
+const SND={base:'audio/',voice:null,queue:[],tok:0,guard:null,ambTok:0,ambKind:null,want:null,ducked:false,sfxOk:true,html:null};
 const voiceSlug=q=>String(q||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
 const voiceOn=()=>soundOn&&save.voiceOn!==false;
 function ambVolume(){return SND.ambKind==='ribut'?.26:.2}
@@ -697,42 +773,85 @@ function ambVolume(){return SND.ambKind==='ribut'?.26:.2}
 const AU={ctx:null,master:null,raw:new Map(),loading:new Map(),buf:new Map(),pin:new Map(),amb:null,ambGain:null};
 function auCtx(){if(AU.ctx)return AU.ctx;const C=window.AudioContext||window.webkitAudioContext;if(!C)return null;try{AU.ctx=new C();AU.master=AU.ctx.createGain();AU.master.connect(AU.ctx.destination)}catch(_){AU.ctx=null}return AU.ctx}
 const auReady=()=>AU.ctx&&AU.ctx.state==='running';
-function auRaw(path){if(AU.raw.has(path))return Promise.resolve(AU.raw.get(path));if(AU.loading.has(path))return AU.loading.get(path);
- const p=fetch(path).then(r=>{if(!r.ok)throw 0;return r.arrayBuffer()}).then(b=>{AU.raw.set(path,b);AU.loading.delete(path);return b}).catch(()=>{AU.loading.delete(path);return null});AU.loading.set(path,p);return p}
-function auBuf(path,pin){const hit=AU.pin.get(path)||AU.buf.get(path);if(hit){if(AU.buf.has(path)){AU.buf.delete(path);AU.buf.set(path,hit)}return Promise.resolve(hit)}
- const ctx=auCtx();if(!ctx)return Promise.resolve(null);
- return auRaw(path).then(b=>b?new Promise(res=>{const ok=d=>{if(pin)AU.pin.set(path,d);else{AU.buf.set(path,d);if(AU.buf.size>48)AU.buf.delete(AU.buf.keys().next().value)}res(d)};try{const p=ctx.decodeAudioData(b.slice(0),ok,()=>res(null));if(p&&p.catch)p.catch(()=>res(null))}catch(_){res(null)}}):null)}
-function auPlay(d,vol,loop){const s=AU.ctx.createBufferSource(),g=AU.ctx.createGain();s.buffer=d;s.loop=!!loop;g.gain.value=vol;s.connect(g);g.connect(AU.master);s.start();s.gainNode=g;return s}
-function auUnlock(){const ctx=auCtx();if(!ctx)return;if(ctx.state!=='running')ctx.resume().catch(()=>{});
- if(!AU.started){AU.started=true;SFX_KEYS.forEach(k=>auBuf(SND.base+'bunyi/'+k+'.mp3',true));['laut','ribut'].forEach(k=>auBuf(SND.base+'bunyi/'+k+'.mp3',true));
-  /* Muat turun semua klip suara di belakang tabir (kira-kira 4 MB), 3 serentak. */
-  const list=[...VOICE_KEYS];let n=0;const pump=()=>{const k=list[n++];if(!k)return;auRaw(SND.base+'suara/'+k+'.mp3').then(pump)};pump();pump();pump()}}
-function duck(on){SND.ducked=on;const v=ambVolume()*(on?.45:1);if(AU.ambGain&&AU.ctx)AU.ambGain.gain.setTargetAtTime(v,AU.ctx.currentTime,.08);if(SND.html)SND.html.volume=v}
-function stopVoice(){SND.tok++;SND.queue=[];const a=SND.voice;SND.voice=null;if(a){try{a.stop?a.stop():a.pause()}catch(_){}}duck(false)}
-function playQueue(){const k=SND.queue.shift();if(!k){SND.voice=null;duck(false);return}
- const tok=SND.tok,path=SND.base+'suara/'+k+'.mp3';duck(true);
- if(auReady()){auBuf(path).then(d=>{if(tok!==SND.tok)return;if(!d){playQueue();return}const s=auPlay(d,1);SND.voice=s;s.onended=()=>{if(SND.voice===s)playQueue()}});return}
- const a=new Audio(path);SND.voice=a;const next=()=>{if(SND.voice===a)playQueue()};a.onended=next;a.onerror=next;const p=a.play();if(p&&p.catch)p.catch(next)}
-/* say(['e-ok-1','w-kuda'], 'kuda'): mainkan klip ikut turutan; jika tiada klip, guna suara peranti untuk teks fallback. */
-function say(keys,fallback){stopVoice();if(!soundOn||(typeof assessmentMode!=='undefined'&&assessmentMode&&fallback))return;
- const list=[].concat(keys).flatMap(k=>VOICE_SEQ[k]&&VOICE_SEQ[k].every(x=>VOICE_KEYS.has(x))?VOICE_SEQ[k]:[k]).filter(k=>k&&VOICE_KEYS.has(k));
- if(voiceOn()&&list.length){SND.queue=list;playQueue();return}
- if(fallback&&save.ttsEnabled)deviceSpeak(fallback)}
+ /* NJ-016 A03: bounded, on-demand cache instead of fetching 218 voices at launch. */
+ function auRaw(path){if(AU.raw.has(path))return Promise.resolve(AU.raw.get(path));if(AU.loading.has(path))return AU.loading.get(path);
+   const p=fetch(path).then(r=>{if(!r.ok)throw Error('HTTP '+r.status);return r.arrayBuffer()})
+     .then(b=>{AU.raw.set(path,b);while(AU.raw.size>20)AU.raw.delete(AU.raw.keys().next().value);return b})
+     .catch(()=>null).finally(()=>AU.loading.delete(path));AU.loading.set(path,p);return p
+ }
+ function auBuf(path,pin){const hit=AU.pin.get(path)||AU.buf.get(path);if(hit){if(AU.buf.has(path)){AU.buf.delete(path);AU.buf.set(path,hit)}return Promise.resolve(hit)}
+   const ctx=auCtx();if(!ctx)return Promise.resolve(null);
+   return auRaw(path).then(b=>b?new Promise(res=>{let done=false;const finish=d=>{if(done)return;done=true;if(d){if(pin)AU.pin.set(path,d);else{AU.buf.set(path,d);if(AU.buf.size>32)AU.buf.delete(AU.buf.keys().next().value)}}res(d)};
+     try{const p=ctx.decodeAudioData(b.slice(0),finish,()=>finish(null));if(p&&p.catch)p.catch(()=>finish(null))}catch(_){finish(null)}}):null)
+ }
+ function auPlay(d,vol,loop){const s=AU.ctx.createBufferSource(),g=AU.ctx.createGain();s.buffer=d;s.loop=!!loop;g.gain.value=vol;s.connect(g);g.connect(AU.master);s.start();s.gainNode=g;return s}
+ function auUnlock(){const ctx=auCtx();if(ctx&&ctx.state!=='running')ctx.resume().catch(()=>{});
+   if(!AU.started){AU.started=true;['meriam','percik','syiling'].forEach(k=>auBuf(SND.base+'bunyi/'+k+'.mp3',true));
+     /* Ambient audio and the first voice are fetched when the scene needs them. */}}
+ function prefetchVoices(keys){if(!AU.started||!voiceOn())return;
+   [].concat(keys).filter(k=>VOICE_KEYS.has(k)).slice(0,3).forEach(k=>auBuf(SND.base+'suara/'+k+'.mp3'))
+ }
+ function duck(on){SND.ducked=on;const v=ambVolume()*(on?.45:1);if(AU.ambGain&&AU.ctx)AU.ambGain.gain.setTargetAtTime(v,AU.ctx.currentTime,.08);if(SND.html)SND.html.volume=v}
+ /* SND.tok is the audio epoch: no late fetch, HTML event or TTS callback may resurrect old speech. */
+ function clearVoiceGuard(){if(SND.guard!==null){clearTimeout(SND.guard);SND.guard=null}}
+ function armVoiceGuard(tok,fn,delay=22000){clearVoiceGuard();SND.guard=setTimeout(()=>{SND.guard=null;if(tok===SND.tok)fn()},delay)}
+ function stopVoice(){clearVoiceGuard();SND.tok++;SND.queue=[];SND.onDone=null;SND.fallback=null;
+   const a=SND.voice;SND.voice=null;if(a){try{a.onended=null;a.onerror=null;if(a.stop)a.stop();else{a.pause();a.currentTime=0}}catch(_){}}
+   duck(false)
+ }
+ function finishQueue(tok){if(tok!==SND.tok)return;clearVoiceGuard();SND.voice=null;SND.queue=[];duck(false);
+   const cb=SND.onDone;SND.onDone=null;SND.fallback=null;if(cb)cb()
+ }
+ function missingVoice(tok){if(tok!==SND.tok)return;clearVoiceGuard();if(SND.queue.length){playQueue();return}
+   if(SND.fallback&&save.ttsEnabled){const fallback=SND.fallback;SND.fallback=null;
+      deviceSpeak(fallback,()=>finishQueue(tok),tok);return}
+   finishQueue(tok)
+ }
+ function playHtmlVoice(path,tok){if(tok!==SND.tok)return;
+   const a=new Audio(path);a.preload='auto';SND.voice=a;let finished=false;
+   const good=()=>{if(finished||tok!==SND.tok)return;finished=true;clearVoiceGuard();SND.voice=null;playQueue()};
+   const bad=()=>{if(finished||tok!==SND.tok)return;finished=true;clearVoiceGuard();SND.voice=null;missingVoice(tok)};
+   a.onended=good;a.onerror=bad;
+   try{const p=a.play();if(p&&p.catch)p.catch(bad);armVoiceGuard(tok,bad)}catch(_){bad()}
+ }
+ function playQueue(){const tok=SND.tok,k=SND.queue.shift();if(!k){finishQueue(tok);return}
+   const path=SND.base+'suara/'+k+'.mp3';duck(true);
+   if(!auReady()){playHtmlVoice(path,tok);return}
+   auBuf(path).then(d=>{if(tok!==SND.tok)return;
+     if(!d){playHtmlVoice(path,tok);return}
+     try{const s=auPlay(d,1);SND.voice=s;s.onended=()=>{if(tok!==SND.tok||SND.voice!==s)return;clearVoiceGuard();SND.voice=null;playQueue()};armVoiceGuard(tok,()=>{try{s.stop()}catch(_){}if(SND.voice===s){SND.voice=null;playQueue()}})}
+     catch(_){playHtmlVoice(path,tok)}
+   }).catch(()=>playHtmlVoice(path,tok))
+ }
+ /* Optional third argument fires only on natural completion of the full spoken instruction. */
+ function say(keys,fallback,onComplete){stopSpeech();const tok=SND.tok;if(onComplete&&mode==='banner')roundVoiceReady=false;
+   if(!soundOn||(typeof assessmentMode!=='undefined'&&assessmentMode&&fallback)){if(onComplete)onComplete();return false}
+   const list=[].concat(keys).flatMap(k=>VOICE_SEQ[k]&&VOICE_SEQ[k].every(x=>VOICE_KEYS.has(x))?VOICE_SEQ[k]:[k]).filter(k=>k&&VOICE_KEYS.has(k));
+   if(voiceOn()&&list.length){SND.queue=list;SND.onDone=onComplete||null;SND.fallback=fallback||null;
+     /* Sequential decoding prevents simultaneous voice load and preserves speech order. */
+     playQueue();return true}
+   if(fallback&&save.ttsEnabled){deviceSpeak(fallback,onComplete,tok);return !!voice}
+   if(onComplete)onComplete();return false
+ }
 function wordKey(r){if(!r)return null;if(r.r)return 'h-'+r.r;const m=String(r.q||'').match(/^Huruf sombong: (\w+)/);return m?'h-'+m[1]:'w-'+voiceSlug(r.q)}
 function sfx(k,vol=.7){if(!soundOn||!SFX_KEYS.has(k)||!SND.sfxOk)return false;const path=SND.base+'bunyi/'+k+'.mp3';
- if(auReady()){const d=AU.pin.get(path);if(d){auPlay(d,vol);return true}auBuf(path,true);return false}
+ if(auReady()){const d=AU.pin.get(path);if(d){auPlay(d,vol);return true}auBuf(path,true);/* Play immediately on tap, even before first decode. */}
  try{const a=new Audio(path);a.volume=vol;const p=a.play();if(p&&p.catch)p.catch(()=>{});return true}catch(_){return false}}
-function stopAmb(){if(AU.amb){try{AU.amb.stop()}catch(_){}AU.amb=null;AU.ambGain=null}if(SND.html){try{SND.html.pause()}catch(_){}SND.html=null}}
-function setAmb(kind){SND.want=kind;if(!soundOn||save.ambOn===false)kind=null;
+function stopAmb(){SND.ambTok++;if(AU.amb){try{AU.amb.stop()}catch(_){}AU.amb=null;AU.ambGain=null}if(SND.html){try{SND.html.pause()}catch(_){}SND.html=null}}
+ function startHtmlAmb(path,kind,tok){if(SND.ambKind!==kind||tok!==SND.ambTok)return;const a=new Audio(path);a.loop=true;a.volume=ambVolume()*(SND.ducked?.45:1);SND.html=a;const p=a.play();if(p&&p.then)p.then(()=>{if(tok!==SND.ambTok){a.pause();a.currentTime=0}}).catch(()=>{})}
+ function setAmb(kind){SND.want=kind;if(!soundOn||save.ambOn===false)kind=null;
  const playing=AU.amb||(SND.html&&!SND.html.paused);if(SND.ambKind===kind&&playing)return;
- stopAmb();SND.ambKind=kind;if(!kind)return;const path=SND.base+'bunyi/'+kind+'.mp3',vol=ambVolume()*(SND.ducked?.45:1);
- if(auReady()){auBuf(path,true).then(d=>{if(!d||SND.ambKind!==kind||AU.amb)return;const s=auPlay(d,0,true);AU.amb=s;AU.ambGain=s.gainNode;s.gainNode.gain.setTargetAtTime(ambVolume()*(SND.ducked?.45:1),AU.ctx.currentTime,.4)});return}
- const a=new Audio(path);a.loop=true;a.volume=vol;SND.html=a;a.play().catch(()=>{})}
+ stopAmb();SND.ambKind=kind;const ambTok=SND.ambTok;if(!kind)return;const path=SND.base+'bunyi/'+kind+'.mp3',vol=ambVolume()*(SND.ducked?.45:1);
+ if(auReady()){auBuf(path,true).then(d=>{if(SND.ambKind!==kind||ambTok!==SND.ambTok||AU.amb||SND.html)return;
+    if(d){try{const s=auPlay(d,0,true);AU.amb=s;AU.ambGain=s.gainNode;s.gainNode.gain.setTargetAtTime(ambVolume()*(SND.ducked?.45:1),AU.ctx.currentTime,.4);return}catch(_){}}
+    startHtmlAmb(path,kind,ambTok)
+   });return}
+  startHtmlAmb(path,kind,ambTok)}
 const ambFor=()=>lv&&(lv.miniboss||lv.boss)?'ribut':'laut';
 /* Pelayar biasanya menyekat bunyi sehingga sentuhan pertama. */
 addEventListener('pointerdown',()=>{auUnlock();const go=()=>{if(!soundOn||!SND.want||AU.amb)return;if(SND.html&&!SND.html.paused&&!auReady())return;if(SND.html){stopAmb();SND.ambKind=null}setAmb(SND.want)};const c=AU.ctx;if(c&&c.state!=='running')c.resume().then(go,go);else go()},{passive:true});
-document.addEventListener('visibilitychange',()=>{if(document.hidden){stopVoice();if(AU.ctx)AU.ctx.suspend().catch(()=>{});if(SND.html)try{SND.html.pause()}catch(_){}}else{if(AU.ctx)AU.ctx.resume().catch(()=>{});if(SND.want&&!AU.amb)setAmb(SND.want)}});
-{const old=soundBtn.onclick;soundBtn.onclick=()=>{old();if(!soundOn){stopVoice();setAmb(null);SND.want=SND.want||ambFor()}else setAmb(SND.want||ambFor())}}
+document.addEventListener('visibilitychange',()=>{if(document.hidden){stopSpeech();if(AU.ctx)AU.ctx.suspend().catch(()=>{});if(SND.html)try{SND.html.pause()}catch(_){}}else{if(AU.ctx)AU.ctx.resume().catch(()=>{});if(SND.want&&!AU.amb)setAmb(SND.want)}});
+{const old=soundBtn.onclick;soundBtn.onclick=()=>{old();if(!soundOn){stopSpeech();setAmb(null);SND.want=SND.want||ambFor()}else setAmb(SND.want||ambFor())}}
 
 /* ---------- Lesen keluarga PK2- (game 10). Pulau 1–7 percuma: Kaedah 1–4, Ketam Gergasi, Kaedah 5–6. ---------- */
 const FREE_ISLANDS=7;
@@ -1322,7 +1441,7 @@ function cachedSeaChart(page){if(!chartStatic)chartStatic=Object.create(null);if
  for(const p of nodes){b.save();b.translate(p.x,p.y);b.fillStyle='rgba(17,78,105,.22)';b.beginPath();b.ellipse(0,16,37,12,0,0,TAU);b.fill();b.fillStyle=L[p.i].miniboss||L[p.i].boss?'#d9ae82':'#e5db9b';b.beginPath();b.ellipse(0,6,33,22,-.15,0,TAU);b.fill();b.fillStyle=L[p.i].miniboss||L[p.i].boss?'#af8aa4':'#50a977';b.beginPath();b.ellipse(0,0,29,18,-.2,0,TAU);b.fill();b.restore()}
  chartStatic[page]=c;return c}
 function drawChartBoat(b,x,y,tt=0,tilt=0){const sk=SKINS[save.activeSkin]||SKINS.default;b.save();b.translate(x,y+Math.sin(tt*2)*2);b.rotate(tilt+Math.sin(tt*1.5)*.018);b.fillStyle=sk.hull;b.beginPath();b.moveTo(-20,8);b.lineTo(20,8);b.lineTo(12,19);b.lineTo(-12,19);b.closePath();b.fill();b.strokeStyle='#71442f';b.lineWidth=3;b.beginPath();b.moveTo(0,-25);b.lineTo(0,9);b.stroke();b.fillStyle='#fff9d3';b.beginPath();b.moveTo(2,-24);b.quadraticCurveTo(13+Math.sin(tt*3)*2,-13,19+Math.sin(tt*3)*2,2);b.lineTo(2,2);b.closePath();b.fill();b.fillStyle=sk.flag;b.beginPath();b.moveTo(-2,-28);b.lineTo(11+Math.sin(tt*4)*2,-28);b.lineTo(10+Math.sin(tt*4)*2,-22);b.lineTo(-2,-22);b.fill();b.restore()}
-function renderSeaChart(progress=null){if(!chartCanvas)return;const page=chartChapter,b=chartCanvas.getContext('2d'),nodes=chartPoints(page),art=getMapArt(page);b.setTransform(2,0,0,2,0,0);b.clearRect(0,0,CHART_W,CHART_H);b.drawImage(art||cachedSeaChart(page),0,0,CHART_W,CHART_H);
+function renderSeaChart(progress=null){if(!chartCanvas)return;const page=chartChapter,b=chartCanvas.getContext('2d'),nodes=chartPoints(page),art=getMapArt(page);const chartDpr=save.compatMode?1:1.5;if(chartCanvas.width!==Math.round(CHART_W*chartDpr)){chartCanvas.width=Math.round(CHART_W*chartDpr);chartCanvas.height=Math.round(CHART_H*chartDpr)}b.setTransform(chartDpr,0,0,chartDpr,0,0);b.clearRect(0,0,CHART_W,CHART_H);b.drawImage(art||cachedSeaChart(page),0,0,CHART_W,CHART_H);
  /* Pada peta 2.5D, penanda kecil diletakkan pada pulau di dalam ilustrasi sebenar. */
  if(art){
   b.save();b.setLineDash([4,8]);b.lineWidth=2.5;b.strokeStyle='rgba(255,246,190,.70)';b.shadowColor='#052747';b.shadowBlur=4;b.beginPath();
@@ -1348,9 +1467,10 @@ function showSeaChapter(page){stopSpeech();if(voyage){clearTimeout(voyageTimer);
  const all=L.map((l,i)=>`<button class="lvl${l.boss?' boss':''}${l.miniboss?' miniboss':''}" type="button" data-island="${i}" ${unlocked(i)?'':'disabled'}><span class="ic">${needLicence(i)?'🔐':unlocked(i)?l.icon:'🔒'}</span><span class="tx"><span class="no">${l.boss?'PULAU LANUN':l.miniboss?'PEPERIKSAAN MINI BOSS':'KAEDAH '+l.no}</span><span class="nm">${ISLAND_NAMES[i]} · ${l.name}</span><span class="st">${starStr(save.stars[i]||0)}</span></span></button>`).join('');
  const nextIdx=L.findIndex((_,i)=>!save.stars[i]&&unlocked(i)),destination=nextIdx>=0?nextIdx:17;
  const stats=Object.entries(save.guideStats).map(([key,v])=>`<div class="teacher-stats">${key==='full'?'Panduan penuh':key==='focus'?'Panduan fokus':'Tanpa panduan'}: ${v.right||0}/${v.total||0} betul${v.total?` (${Math.round(v.right/v.total*100)}%)`:''}</div>`).join('');
- setModal(`<h2>🗺️ Peta Aksara Nusantara</h2><p class="small">14 cebisan ilmu • 3 Mini Boss • Pulau Lanun</p><div class="chart-tutor">🦜 Tiung: Tekan pulau berbendera atau butang hijau untuk mula!</div>${LIC.full?'':licenceStrip()}<div class="chart-nav"><button class="secondary" id="prevChart" type="button" aria-label="Bab sebelumnya">◀</button><span class="chapter-label">${CHAPTERS[chartChapter].icon} Bab ${chartChapter+1}/4<br>${CHAPTERS[chartChapter].name}</span><button class="secondary" id="nextChart" type="button" aria-label="Bab seterusnya">▶</button></div><canvas id="seaChart" class="sea-chart" width="960" height="600" aria-label="Peta laluan pulau bab ${chartChapter+1}"></canvas><div class="map-note">⛵ Kapal menunjukkan destinasi semasa • 🔒 laluan belum dibuka</div><div id="chartNotice" class="chart-notice" aria-live="polite"></div><button class="primary" id="startIsland" type="button">▶️ ${save.stars[destination]?'MAIN SEMULA':'MULA BELAJAR'}: ${ISLAND_NAMES[destination]}</button><details class="settings-fold" id="settingsFold"><summary>⚙️ Tetapan Pembelajaran & Guru</summary><div class="settings"><label class="teacher"><input type="checkbox" id="relax" ${save.relaxed?'checked':''}> Santai: tanpa pemasa</label><label class="teacher">Panduan warna <select class="guide-select" id="guideMode" aria-label="Panduan warna"><option value="full" ${save.guideMode==='full'?'selected':''}>Penuh — Rumi dan Jawi</option><option value="focus" ${save.guideMode==='focus'?'selected':''}>Fokus — petunjuk Rumi</option><option value="off" ${save.guideMode==='off'?'selected':''}>Tanpa panduan</option></select></label><label class="teacher"><input type="checkbox" id="voiceT" ${save.voiceOn!==false?'checked':''}> 🎙️ Suara Nakhoda</label><label class="teacher"><input type="checkbox" id="ambT" ${save.ambOn!==false?'checked':''}> 🌊 Bunyi laut</label><label class="teacher"><input type="checkbox" id="tts" ${save.ttsEnabled?'checked':''}> 🔈 Suara peranti (jika fail suara tiada)</label><label class="teacher"><input type="checkbox" id="motion" ${save.reducedMotion?'checked':''}> Kurangkan gerakan</label><label class="teacher"><input type="checkbox" id="teach" ${teacher?'checked':''}> Mod guru</label></div><div class="btnrow"><button class="secondary" id="toggleList">📋 ${save.mapList?'Sembunyi':'Buka'} Senarai Guru</button><button class="secondary" id="cabB">🛏️ Kabin / Manuskrip</button><button class="secondary" id="bottleB">🍾 Botol Mesej</button><button class="secondary" id="homeB">⚓ Pelabuhan</button></div><h3 class="sub">📊 Pentaksiran panduan warna</h3>${stats}<p class="small">Rekod setempat per percubaan; statistik ini tidak termasuk dalam kod pemindahan kemajuan guru.</p><div class="map map-list" id="mapList" ${save.mapList?'':'hidden'}>${all}</div></details>`,null,null);
+ setModal(`<h2>🗺️ Peta Aksara Nusantara</h2><p class="small">14 cebisan ilmu • 3 Mini Boss • Pulau Lanun</p><div class="chart-tutor">🦜 Tiung: Tekan pulau berbendera atau butang hijau untuk mula!</div>${LIC.full?'':licenceStrip()}<div class="chart-nav"><button class="secondary" id="prevChart" type="button" aria-label="Bab sebelumnya">◀</button><span class="chapter-label">${CHAPTERS[chartChapter].icon} Bab ${chartChapter+1}/4<br>${CHAPTERS[chartChapter].name}</span><button class="secondary" id="nextChart" type="button" aria-label="Bab seterusnya">▶</button></div><canvas id="seaChart" class="sea-chart" width="960" height="600" aria-label="Peta laluan pulau bab ${chartChapter+1}"></canvas><div class="map-note">⛵ Kapal menunjukkan destinasi semasa • 🔒 laluan belum dibuka</div><div id="chartNotice" class="chart-notice" aria-live="polite"></div><button class="primary" id="startIsland" type="button">▶️ ${save.stars[destination]?'MAIN SEMULA':'MULA BELAJAR'}: ${ISLAND_NAMES[destination]}</button><details class="settings-fold" id="settingsFold"><summary>⚙️ Tetapan Pembelajaran & Guru</summary><div class="settings"><label class="teacher"><input type="checkbox" id="relax" ${save.relaxed?'checked':''}> Santai: tanpa pemasa</label><label class="teacher">Panduan warna <select class="guide-select" id="guideMode" aria-label="Panduan warna"><option value="full" ${save.guideMode==='full'?'selected':''}>Penuh — Rumi dan Jawi</option><option value="focus" ${save.guideMode==='focus'?'selected':''}>Fokus — petunjuk Rumi</option><option value="off" ${save.guideMode==='off'?'selected':''}>Tanpa panduan</option></select></label><label class="teacher"><input type="checkbox" id="voiceT" ${save.voiceOn!==false?'checked':''}> 🎙️ Suara Nakhoda</label><label class="teacher"><input type="checkbox" id="ambT" ${save.ambOn!==false?'checked':''}> 🌊 Bunyi laut</label><label class="teacher"><input type="checkbox" id="tts" ${save.ttsEnabled?'checked':''}> 🔈 Suara peranti (jika fail suara tiada)</label><label class="teacher"><input type="checkbox" id="motion" ${save.reducedMotion?'checked':''}> Kurangkan gerakan</label><label class="teacher"><input type="checkbox" id="compat" ${save.compatMode?'checked':''}> 🖥️ Mod Serasi (render 1×, untuk tablet perlahan)</label><label class="teacher"><input type="checkbox" id="teach" ${teacher?'checked':''}> Mod guru</label></div><div class="btnrow"><button class="secondary" id="toggleList">📋 ${save.mapList?'Sembunyi':'Buka'} Senarai Guru</button><button class="secondary" id="cabB">🛏️ Kabin / Manuskrip</button><button class="secondary" id="bottleB">🍾 Botol Mesej</button><button class="secondary" id="homeB">⚓ Pelabuhan</button></div><h3 class="sub">📊 Pentaksiran panduan warna</h3>${stats}<p class="small">Rekod setempat per percubaan; statistik ini tidak termasuk dalam kod pemindahan kemajuan guru.</p><div class="map map-list" id="mapList" ${save.mapList?'':'hidden'}>${all}</div></details>`,null,null);
  /* Fakta dan tayangan semula adalah pilihan pemain; tidak muncul di layar pembukaan. */
- modal.querySelector('.settings-fold').insertAdjacentHTML('beforebegin','<div class="btnrow"><button class="secondary" type="button" id="replayZone" style="flex:1;min-height:48px">🎬 Lihat Zon (4 saat)</button><button class="secondary" type="button" id="factsB" style="flex:1;min-height:48px">🌊 30 Fakta Samudera</button></div>');
+ {const p=document.createElement('p');p.className='small';p.style.margin='6px 0';p.textContent='🎙️ Rakaman suara asli diutamakan. '+(voice?'TTS tersedia: '+voice.lang:'Tiada suara Melayu/Indonesia peranti dikesan; suara asli memerlukan folder audio.');modal.querySelector('.settings').appendChild(p)}
+  modal.querySelector('.settings-fold').insertAdjacentHTML('beforebegin','<div class="btnrow"><button class="secondary" type="button" id="replayZone" style="flex:1;min-height:48px">🎬 Lihat Zon (narasi penuh)</button><button class="secondary" type="button" id="factsB" style="flex:1;min-height:48px">🌊 30 Fakta Samudera</button></div>');
  document.getElementById('factsB').onclick=()=>showNauticalFacts(()=>showSeaChapter(chartChapter));
  document.getElementById('replayZone').onclick=()=>{const page=chartChapter;showZoneCinematic(page,()=>showSeaChapter(page),true)};
  /* Mod ujian dipilih oleh guru untuk satu sesi; tidak menukar panduan biasa yang tersimpan. */
@@ -1362,7 +1482,7 @@ function showSeaChapter(page){stopSpeech();if(voyage){clearTimeout(voyageTimer);
  chartCanvas.addEventListener('click',e=>{const rect=chartCanvas.getBoundingClientRect(),x=(e.clientX-rect.left)*CHART_W/rect.width,y=(e.clientY-rect.top)*CHART_H/rect.height;let nearest=null,dmin=Infinity;for(const p of chartNodes){const d=Math.hypot(x-p.x,y-p.y);if(d<dmin){dmin=d;nearest=p}}if(nearest&&dmin<Math.max(44,32*CHART_W/rect.width)){if(unlocked(nearest.i))startAt(nearest.i);else document.getElementById('chartNotice').textContent=`🔒 Selesaikan ${ISLAND_NAMES[nearest.i-1]} dahulu untuk membuka laluan.`}});
  document.getElementById('startIsland').onclick=()=>startAt(destination);
  document.getElementById('prevChart').onclick=()=>showSeaChapter(chartChapter-1);document.getElementById('nextChart').onclick=()=>showSeaChapter(chartChapter+1);document.getElementById('prevChart').disabled=chartChapter===0;document.getElementById('nextChart').disabled=chartChapter===3;
- for(const [id,key] of[['relax','relaxed'],['tts','ttsEnabled'],['motion','reducedMotion'],['voiceT','voiceOn'],['ambT','ambOn']])document.getElementById(id).onchange=e=>{save[key]=e.target.checked;if(key==='voiceOn'&&!save[key])stopVoice();if(key==='ambOn')setAmb(SND.want||'laut');if(key==='ttsEnabled'&&!save[key])stopSpeech();if(key==='reducedMotion'){syncMotion();particles.length=0;flash=shake=0}persist();cue('tap')};
+ for(const [id,key] of[['relax','relaxed'],['tts','ttsEnabled'],['motion','reducedMotion'],['voiceT','voiceOn'],['ambT','ambOn'],['compat','compatMode']])document.getElementById(id).onchange=e=>{save[key]=e.target.checked;if(key==='voiceOn'&&!save[key])stopSpeech();if(key==='ambOn')setAmb(SND.want||'laut');if(key==='ttsEnabled'&&!save[key])stopSpeech();if(key==='reducedMotion'){syncMotion();particles.length=0;flash=shake=0}if(key==='compatMode')resize();persist();cue('tap')};
  document.getElementById('guideMode').onchange=e=>{save.guideMode=e.target.value;save.suku=save.guideMode!=='off';persist();cue('tap')};
  document.getElementById('teach').onchange=e=>{teacher=e.target.checked;if(!teacher)assessmentMode=false;showSeaChapter(chartChapter);document.getElementById('settingsFold').open=true};
  document.getElementById('toggleList').onclick=()=>{save.mapList=!save.mapList;persist();showSeaChapter(chartChapter)};
@@ -1406,21 +1526,21 @@ function showStandardVoyage(i,done){
  chartCanvas.addEventListener('click',finish);
  voyageTimer=phaseTimeout(finish,duration);
 }
-function showZoneCinematic(page,done,replay=false){
- stopSpeech();clearTimeout(voyageTimer);page=Math.max(0,Math.min(3,page));
- chartChapter=page;chartCanvas=null;mode='voyage';lv=null;ruleBtn.hidden=true;progEl.innerHTML='';
- numEl.textContent=`ZON ${page+1}/4`;titleEl.textContent=ZONE_VIEWS[page].title;emojiEl.textContent=CHAPTERS[page].icon;hintEl.textContent='Pemandangan kepulauan';
- const info=ZONE_VIEWS[page],duration=4000;
- setModal(`<div class="zone-stage" id="zoneStage" aria-label="Pemandangan ${info.title}"><img class="zone-image" id="cinemaMapImage" src="${MAP_ART_SRC[page]}" alt="Ilustrasi 2.5D ${info.title}, digunakan juga pada peta interaktif zon ini"><div class="zone-head"><span class="zone-eyebrow">${CHAPTERS[page].icon} MEMASUKI ZON ${page+1} / 4</span><h2>${info.title}</h2><p>${info.tagline}</p></div><div class="zone-foot"><div class="zone-foot-copy">${info.invitation}<small>⏱️ Pemandangan 4 saat · sentuh untuk teruskan</small></div><button class="zone-skip" id="skipVoyage" type="button">⏩ Langkau</button></div><div class="zone-meter" aria-hidden="true"></div></div>`,null,null);
- modal.classList.add('chapter-cinematic');overlay.classList.add('cinema-open');setAmb('laut');say('z-'+page);
- const current={kind:'cinematic',page,done,duration,replay,start:0};voyage=current;
- const finish=()=>{if(voyage!==current)return;voyage=null;cancelPhaseTimeout(voyageTimer);if(!replay){save.zoneSeen[page]=true;persist()}done()};
- const begin=()=>{if(voyage!==current||current.start)return;current.start=performance.now();voyageTimer=phaseTimeout(finish,duration)};
- const img=document.getElementById('cinemaMapImage');
- if(img.complete)begin();else{img.addEventListener('load',begin,{once:true});img.addEventListener('error',begin,{once:true})}
- document.getElementById('skipVoyage').onclick=e=>{e.stopPropagation();finish()};
- document.getElementById('zoneStage').addEventListener('click',finish);
-}
+ function showZoneCinematic(page,done,replay=false){
+  stopSpeech();clearTimeout(voyageTimer);page=Math.max(0,Math.min(3,page));
+  chartChapter=page;chartCanvas=null;mode='voyage';lv=null;ruleBtn.hidden=true;progEl.innerHTML='';
+  numEl.textContent=`ZON ${page+1}/4`;titleEl.textContent=ZONE_VIEWS[page].title;emojiEl.textContent=CHAPTERS[page].icon;hintEl.textContent='Pemandangan kepulauan';
+  const info=ZONE_VIEWS[page],duration=4000;
+  setModal(`<div class="zone-stage" id="zoneStage" aria-label="Pemandangan ${info.title}"><img class="zone-image" id="cinemaMapImage" src="${MAP_ART_SRC[page]}" alt="Ilustrasi 2.5D ${info.title}, digunakan juga pada peta interaktif zon ini"><div class="zone-head"><span class="zone-eyebrow">${CHAPTERS[page].icon} MEMASUKI ZON ${page+1} / 4</span><h2>${info.title}</h2><p>${info.tagline}</p></div><div class="zone-foot"><div class="zone-foot-copy">${info.invitation}<small>⏱️ Pemandangan sekurang-kurangnya 4 saat · sentuh untuk teruskan</small></div><button class="zone-skip" id="skipVoyage" type="button">⏩ Langkau</button></div><div class="zone-meter" aria-hidden="true"></div></div>`,null,null);
+  modal.classList.add('chapter-cinematic');overlay.classList.add('cinema-open');setAmb('laut');
+  const current={kind:'cinematic',page,done,duration,replay,start:0,visualDone:false,audioDone:false};voyage=current;
+  const finish=()=>{if(voyage!==current)return;voyage=null;cancelPhaseTimeout(voyageTimer);stopSpeech();if(!replay){save.zoneSeen[page]=true;persist()}done()};
+  const check=()=>{if(voyage===current&&current.visualDone&&current.audioDone)finish()};
+  const begin=()=>{if(voyage!==current||current.start)return;current.start=performance.now();voyageTimer=phaseTimeout(()=>{current.visualDone=true;check()},duration)};
+  const img=document.getElementById('cinemaMapImage');if(img.complete)begin();else{img.addEventListener('load',begin,{once:true});img.addEventListener('error',begin,{once:true})}
+  document.getElementById('skipVoyage').onclick=e=>{e.stopPropagation();finish()};document.getElementById('zoneStage').addEventListener('click',finish);
+  say('z-'+page,null,()=>{if(voyage===current){current.audioDone=true;check()}})
+ }
 /* Teacher-friendly manuscript, using only the existing rule and example arrays. */
 function showLogbook(back){stopSpeech();mode='log';lv=null;ruleBtn.hidden=true;progEl.innerHTML='';numEl.textContent='MANUSKRIP AKSARA';titleEl.textContent='Log Nakhoda';emojiEl.textContent='📜';const done=ruleLv().filter(l=>save.stars[L.indexOf(l)]>0).length;
  const pages=ruleLv().map(l=>{const i=L.indexOf(l),open=save.stars[i]>0;return `<article class="log-page"><h3>${open?'📜':'🔒'} Halaman ${l.no}: ${ISLAND_NAMES[i]}</h3>${open?`<p>${l.rule}</p><div class="ex-row">${exHTML(l.ex.slice(0,3))}</div>`:'<p>Lengkapkan pulau ini untuk memulihkan halaman manuskrip.</p>'}</article>`}).join('');
@@ -1445,9 +1565,19 @@ function showRule(i){if(needLicence(i)){showPaywall(i);return}stopSpeech();li=i;
   const p=modal.querySelectorAll('p.small');if(p.length)p[p.length-1].textContent='🧑‍🏫 Rekod jawapan disimpan berasingan mengikut kaedah. Tiada syiling atau bintang diberikan dalam mod ini. Penerangan muncul selepas jawapan.'}}
 function play(i){if(needLicence(i)){showPaywall(i);return}stopSpeech();li=i;lv=L[i];mode='play';maxHearts=hearts=lv.hearts||HEARTS;ri=0;combo=0;levelCoins=0;ganas=false;bossMisses=new Set();bossWeakRules=new Set();assessmentRun=assessmentMode?{total:0,right:0}:null;particles.length=0;floats.length=0;rounds=buildRounds();setAmb(ambFor());hud();ruleBtn.hidden=assessmentMode;setupRound()}
 function initRound(){const m=M();m.show=null;m.why=null;m.init(R)}
-function setupRound(){resetPhaseTimers();const prev=R&&ri>0?rounds[ri-1]:null;R=rounds[ri];fb=null;setInstruction(R.m==='meriam'&&lv.no===4?'Tembak SEMUA hantu salah; biarkan ejaan betul sendirian':MH[R.m]);dotsUI();initRound();
- {const nw=!prev||prev.si!==R.si,mk=R.m==='meriam'&&lv.no===4?'m-meriam4':'m-'+R.m,hasWord=R.m!=='kerang'&&R.q!=='SOMBONG';if(nw)say(hasWord?[mk,wordKey(R)]:[mk],hasWord?R.q:null);else if(hasWord)speak(R.q)}
- if(!prev||prev.si!==R.si){mode='banner';banner={t:1.7,txt:`${MI[R.m]} ${MN[R.m]}`,sub:`Gelombang ${R.si+1} / ${lv.stages.length}`}}else mode='play'}
+ function setupRound(){resetPhaseTimers();const prev=R&&ri>0?rounds[ri-1]:null;R=rounds[ri];fb=null;
+  setInstruction(R.m==='meriam'&&lv.no===4?'Tembak SEMUA hantu salah; biarkan ejaan betul sendirian':MH[R.m]);dotsUI();initRound();
+  const nw=!prev||prev.si!==R.si,mk=R.m==='meriam'&&lv.no===4?'m-meriam4':'m-'+R.m,hasWord=R.m!=='kerang'&&R.q!=='SOMBONG';
+  const mustWait=['gunting','gerbang','kilat','raksasa'].includes(R.m);
+  if(nw||mustWait){mode='banner';banner={t:nw?1.7:.32,txt:`${MI[R.m]} ${MN[R.m]}`,sub:nw?`Gelombang ${R.si+1} / ${lv.stages.length}`:'Dengar dahulu, kemudian jawab'};}else{mode='play';banner=null}
+  const rid=R;roundVoiceReady=false;
+  const ready=()=>{if(R!==rid||!['play','banner'].includes(mode))return;roundVoiceReady=true};
+  if(nw)say(hasWord?[mk,wordKey(R)]:[mk],hasWord?R.q:null,ready);
+  else if(hasWord)say(wordKey(R),R.q,ready);
+  else ready();
+  /* Load just the upcoming instruction, not the full 218-file voice bank. */
+  if(rounds[ri+1]){const r=rounds[ri+1];prefetchVoices([r.m===R.m?wordKey(r):'m-'+r.m,wordKey(r)])}
+ }
 function answer(ok,x,y){if(mode!=='play')return;mode='react';reactionT=save.reducedMotion?.18:(R.m==='gerbang'?1.85:R.m==='pancing'?1.55:R.m==='sauh'?1.5:R.m==='magnet'||R.m==='gunting'||R.m==='meriam'?1.5:R.m==='tenun'||R.m==='sort'||R.m==='bina'?1.4:1.0);
  if(!assessmentMode){const key=save.guideMode,stat=save.guideStats[key]||(save.guideStats[key]={right:0,total:0});stat.total++;if(ok)stat.right++}recordRuleAnswer(ok);
  if(ok){burst(x,y);combo++;if(!assessmentMode){const gain=10*Math.min(combo,5);save.coins+=gain;levelCoins+=gain;phaseTimeout(()=>cue('coin'),250);floatText('+'+gain+' 🪙',x,y-40);if(combo>=3)floatText('COMBO x'+Math.min(combo,5)+'!',W/2,H*.3,'#7dffb2',30)}fb={ok:true};fbMax=fbT=1.6}else{if(lv.miniboss){bossMisses.add(ri);if(R.sourceRule)bossWeakRules.add(R.sourceRule)}hearts=Math.max(0,hearts-1);combo=0;particle(x,y,'#ff789b',18,1.1,'star');if(!save.reducedMotion)shake=4;cue('miss');fb={ok:false};fbMax=fbT=2.1}}
@@ -1483,21 +1613,23 @@ function drawFeedback(){if(!fb)return;const w=Math.min(W-36,380),h=Math.min(196,
  if(js)drawJawiSegs(js,W/2,y+h*.44,clamp(h*.27,28,52));else jawi(ansStr(),W/2,y+h*.44,clamp(h*.27,28,52),'#17496a','#ffffff',4);
  if(rs)drawRumiSegs(rs,W/2,y+h*.68,clamp(w*.05,15,19),'center','= ');else text('= '+(R.r||R.q),W/2,y+h*.68,clamp(w*.05,15,19),'#425e71','center',700);
  text((fb.ok?'💡 ':'🧑‍✈️ Nakhoda: ')+(M().why||R.why||lv.why),W/2,y+h*.86,clamp(w*.038,11,15),'#7a5a1f','center',700,w-24);ctx.restore()}
-function drawBanner(){if(!banner)return;const a=clamp(Math.min(banner.t,1.7-banner.t)/.25,0,1),w=Math.min(W-40,360),h=110,y=H*.42-h/2;ctx.save();ctx.globalAlpha=a;ctx.fillStyle='#071c4688';ctx.fillRect(0,0,W,H);shadow(()=>{RR(W/2-w/2,y,w,h,24);fill('#fff8e1');stroke('#f5b24d',5)},20,'#00000066');text(banner.sub,W/2,y+30,14,'#7b8d99','center',800);text(banner.txt,W/2,y+70,clamp(w*.08,20,28),'#17496a','center',800,w-20);ctx.restore()}
+function drawBanner(){if(!banner)return;const a=roundVoiceReady?clamp(Math.min(banner.t,1.7-banner.t)/.25,0,1):1,w=Math.min(W-40,360),h=110,y=H*.42-h/2;ctx.save();ctx.globalAlpha=a;ctx.fillStyle='#071c4688';ctx.fillRect(0,0,W,H);shadow(()=>{RR(W/2-w/2,y,w,h,24);fill('#fff8e1');stroke('#f5b24d',5)},20,'#00000066');text(banner.sub,W/2,y+30,14,'#7b8d99','center',800);text(banner.txt,W/2,y+70,clamp(w*.08,20,28),'#17496a','center',800,w-20);ctx.restore()}
 
 function world(){const inLvl=lv&&mode!=='home'&&mode!=='map';const theme=inLvl?lv.theme:'day';sky(theme);ocean(theme);sparkles();
  if((mode==='play'||mode==='react'||mode==='fb'||mode==='banner')&&R){if(R.m==='pancing')fishSchool();M().draw();drawPrompt();drawBanner()}
  else{boat(W/2,H*.84,clamp(W/670,.6,1.1));for(let i=0;i<7;i++){const x=(i*111+t*20)%(W+80)-40,y=H*.8+Math.sin(i+t)*18;fish(x,y,.35,'#ffc674',i%2===0)}const yy=H*.42+Math.sin(t*1.3)*12;shadow(()=>{ellipse(W/2,yy,70,70,'#fff6c7b9');jawi('جاوي',W/2,yy,42,'#fff','#54adc1',5)},30,'#fff0a2')}
  vignette()}
-function frame(ts){if(!last)last=ts;dt=Math.min(.04,(ts-last)/1000||.016);last=ts;t=save.reducedMotion?0:t+dt;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.save();if(shake>0&&!save.reducedMotion){ctx.translate(rand(-shake,shake),rand(-shake,shake));shake*=.85;if(shake<.4)shake=0}else shake=0;
+function frame(ts){if(!last)last=ts;dt=Math.min(.04,(ts-last)/1000||.016);last=ts;t=save.reducedMotion?0:t+dt;
+  const drawBackdrop=!document.hidden&&(!modalOpen||backdropDirty||ts-lastBackdropFrame>500);
+  if(drawBackdrop){lastBackdropFrame=ts;backdropDirty=false;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.save();if(shake>0&&!save.reducedMotion){ctx.translate(rand(-shake,shake),rand(-shake,shake));shake*=.85;if(shake<.4)shake=0}else shake=0;
  if(!modalOpen&&R&&mode==='play'&&pointer.tap&&pointer.y>qTop&&pointer.y<qBot&&Math.abs(pointer.x-W/2)<Math.min(W-24,440)/2&&R.m!=='kerang'){speak(R.q);pointer.tap=false}
- if(!modalOpen&&R&&(mode==='play'||mode==='react'||mode==='banner')){if(mode==='banner'){banner.t-=dt;if(banner.t<=0){banner=null;mode='play'}}else{M().update(dt*(mode==='play'?.82:1),mode==='play');if(mode==='react'){reactionT-=dt;if(reactionT<=0)showAnswerFeedback()}}}
+ if(!modalOpen&&R&&(mode==='play'||mode==='react'||mode==='banner')){if(mode==='banner'){banner.t=Math.max(0,banner.t-dt);if(banner.t<=0&&roundVoiceReady){banner=null;mode='play'}}else{M().update(dt*(mode==='play'?.82:1),mode==='play');if(mode==='react'){reactionT-=dt;if(reactionT<=0)showAnswerFeedback()}}}
  if(mode==='voyage'&&voyage&&voyage.kind==='cinematic'){
   /* Imej penuh skrin: hentikan lukisan latar kanvas yang terlindung. */
   ctx.fillStyle='#061729';ctx.fillRect(0,0,W,H);
  }else{
   world();updateParticles(dt);drawParticles();if(flash>0&&!save.reducedMotion){ctx.fillStyle=`rgba(255,255,230,${Math.min(.35,flash)})`;ctx.fillRect(0,0,W,H);flash-=dt*1.3}else flash=0;
- }ctx.restore();
+ }ctx.restore();}
  if(ts-lastChartFrame>(mode==='voyage'?22:45)){
   if(mode==='map'&&chartCanvas)renderSeaChart();
   else if(mode==='voyage'&&voyage&&voyage.kind==='sail'&&chartCanvas)renderSeaChart(save.reducedMotion?null:{i:voyage.i,value:clamp((ts-voyage.start)/voyage.duration,0,1)});
@@ -1519,7 +1651,7 @@ if(/[?&]semak\b/.test(location.search)){console.group('Semakan Bank Perkataan Na
  console.log(`${n} item disemak, ${bad} masalah`);console.groupEnd()}
 addEventListener('pagehide',persist);
 resize();showHome();requestAnimationFrame(frame);
-if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{if(mode==='play'&&R)initRound()});
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{if(R&&['play','react','banner','fb'].includes(mode))relayoutRound(W,H);backdropDirty=true});
 })();
 </script>
 </body></html>
