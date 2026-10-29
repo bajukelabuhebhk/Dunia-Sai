@@ -1,18 +1,18 @@
 {
- "version": "3655c9b21b",
+ "version": "b667f7d3bb",
  "core": {
   "files": {
    "/app/": "60adb35dfa48",
-   "/img/boss-gerai.jpg": "1b3bbf65104d",
-   "/img/ember-code.jpg": "18c258c10308",
-   "/img/hikayat-sungai.jpg": "e07f528e069d",
-   "/img/kembara-malaysia.jpg": "8590682fd440",
-   "/img/kenal-abc.jpg": "f785e43a601a",
-   "/img/kenal-jawi.jpg": "02bb8bd3a6af",
-   "/img/nakhoda-jawi.jpg": "6bce30d330fd",
-   "/img/robot-rumble.jpg": "eb47b9a0010e",
-   "/img/wira-matematik.jpg": "cff23d37d80f",
-   "/img/wonder-island.jpg": "ab0300febf5b",
+   "/img/boss-gerai.jpg": "5136ff6f0e7c",
+   "/img/ember-code.jpg": "a12b51a0b432",
+   "/img/hikayat-sungai.jpg": "ba4391a5dd3f",
+   "/img/kembara-malaysia.jpg": "0943df0e480c",
+   "/img/kenal-abc.jpg": "117435109d86",
+   "/img/kenal-jawi.jpg": "b1bff0b195a0",
+   "/img/nakhoda-jawi.jpg": "64953dcc9acf",
+   "/img/robot-rumble.jpg": "4edd8272150f",
+   "/img/wira-matematik.jpg": "38747e9a98f0",
+   "/img/wonder-island.jpg": "1ae683e5f7e8",
    "/": "78e9bd723489",
    "/manifest.json": "9a5f33949e56",
    "/promo/template": "77349aa14694",
@@ -25,11 +25,11 @@
    "/shared/js/anak.js": "b26ad114d73c",
    "/shared/js/balik.js": "2d3d840009ee",
    "/shared/js/config.js": "51803fc6a6f3",
-   "/shared/js/jejak.js": "5d84f1a184b3",
+   "/shared/js/jejak.js": "993517d588a5",
    "/shared/js/lesen-lib.js": "9f17920f43d7",
    "/shared/js/lesen.js": "35453cebccd4"
   },
-  "bytes": 701562
+  "bytes": 1091617
  },
  "games": {
   "boss-gerai": {
@@ -435,9 +435,9 @@
   },
   "kenal-jawi": {
    "files": {
-    "/app/kenal-jawi/": "c5d46a8fef10"
+    "/app/kenal-jawi/": "d8204e724896"
    },
-   "bytes": 2332321
+   "bytes": 3338567
   },
   "nakhoda-jawi": {
    "files": {
@@ -674,12 +674,19 @@
     "/app/nakhoda-jawi/audio/suara/z-1.mp3": "882baebeebc0",
     "/app/nakhoda-jawi/audio/suara/z-2.mp3": "290a3c565bc0",
     "/app/nakhoda-jawi/audio/suara/z-3.mp3": "d5957a8ec41a",
-    "/app/nakhoda-jawi/": "f7f216c094fa"
+    "/app/nakhoda-jawi/": "0b1942701246"
    },
-   "bytes": 6460794
+   "bytes": 6470058
   },
   "robot-rumble": {
    "files": {
+    "/app/robot-rumble/audio/bunyi/jatuh-air.mp3": "7d67d0c1ccd4",
+    "/app/robot-rumble/audio/bunyi/menang.mp3": "54254eb8b294",
+    "/app/robot-rumble/audio/bunyi/muzik-bengkel.mp3": "bd5dd902486b",
+    "/app/robot-rumble/audio/bunyi/pasang.mp3": "08083f1788d3",
+    "/app/robot-rumble/audio/bunyi/rekod.mp3": "67c2b74bfb9d",
+    "/app/robot-rumble/audio/bunyi/terhempas.mp3": "29ea5084f835",
+    "/app/robot-rumble/audio/bunyi/turbo.mp3": "9c27346a1de7",
     "/app/robot-rumble/audio/suara/beep_m1.mp3": "6682c1becc82",
     "/app/robot-rumble/audio/suara/beep_m10.mp3": "4a14d03b5761",
     "/app/robot-rumble/audio/suara/beep_m11.mp3": "30ee7b12e7ee",
@@ -789,9 +796,9 @@
     "/app/robot-rumble/audio/suara/win_m8.mp3": "5ed77de694ff",
     "/app/robot-rumble/audio/suara/win_m9.mp3": "1bd25403147f",
     "/app/robot-rumble/audio/suara/win_title.mp3": "d6ac57a097bc",
-    "/app/robot-rumble/": "f87dfe219168"
+    "/app/robot-rumble/": "4e74fc68ce50"
    },
-   "bytes": 5847756
+   "bytes": 6306691
   },
   "wira-matematik": {
    "files": {
