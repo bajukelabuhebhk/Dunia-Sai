@@ -38,7 +38,7 @@
       {
         id: 'wira-matematik', name: 'Wira Matematik', path: '/app/wira-matematik/', img: '/img/wira-matematik.jpg',
         subject: 'Matematik', age: '5 hingga 10 tahun', price: 15, pakej: true,
-        desc: 'RPG matematik: jawab betul, tewaskan raksasa. Tambah, tolak, darab, bahagi. BM dan English.',
+        desc: 'RPG matematik: 14 dunia, 42 pertempuran. Tambah, tolak, darab, bahagi, wang, masa, pecahan, ukuran dan data. BM dan English.',
         free: 'Tanah 1 dan 2',
         lic: { store: 'wm_licence', v1: 3, pk1: true },
       },

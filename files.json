@@ -1,5 +1,5 @@
 {
- "version": "2504a35cbc",
+ "version": "7a19681979",
  "core": {
   "files": {
    "/app/": "60adb35dfa48",
@@ -11,7 +11,7 @@
    "/img/kenal-jawi.jpg": "b1bff0b195a0",
    "/img/nakhoda-jawi.jpg": "64953dcc9acf",
    "/img/robot-rumble.jpg": "4edd8272150f",
-   "/img/wira-matematik.jpg": "38747e9a98f0",
+   "/img/wira-matematik.jpg": "b49e57729261",
    "/img/wonder-island.jpg": "1ae683e5f7e8",
    "/": "78e9bd723489",
    "/manifest.json": "9a5f33949e56",
@@ -24,12 +24,12 @@
    "/shared/icons/maskable-512.png": "78d51897dd77",
    "/shared/js/anak.js": "b26ad114d73c",
    "/shared/js/balik.js": "2d3d840009ee",
-   "/shared/js/config.js": "51803fc6a6f3",
+   "/shared/js/config.js": "a758df4ada90",
    "/shared/js/jejak.js": "993517d588a5",
    "/shared/js/lesen-lib.js": "9f17920f43d7",
    "/shared/js/lesen.js": "35453cebccd4"
   },
-  "bytes": 1091617
+  "bytes": 1120056
  },
  "games": {
   "boss-gerai": {
@@ -802,6 +802,20 @@
   },
   "wira-matematik": {
    "files": {
+    "/app/wira-matematik/assets/worlds/w01.svg": "eb59c34611b7",
+    "/app/wira-matematik/assets/worlds/w02.svg": "1cdd29cf3a00",
+    "/app/wira-matematik/assets/worlds/w03.svg": "fd8e9745db09",
+    "/app/wira-matematik/assets/worlds/w04.svg": "abaeb3f8d4f6",
+    "/app/wira-matematik/assets/worlds/w05.svg": "7a1daa8353da",
+    "/app/wira-matematik/assets/worlds/w06.svg": "a1670a1ac19b",
+    "/app/wira-matematik/assets/worlds/w07.svg": "1e214dad1d78",
+    "/app/wira-matematik/assets/worlds/w08.svg": "8aa6ec722c27",
+    "/app/wira-matematik/assets/worlds/w09.svg": "d15bb21f4bd5",
+    "/app/wira-matematik/assets/worlds/w10.svg": "759839a3392b",
+    "/app/wira-matematik/assets/worlds/w11.svg": "f2e5fc1ba9fa",
+    "/app/wira-matematik/assets/worlds/w12.svg": "7c8f6476b757",
+    "/app/wira-matematik/assets/worlds/w13.svg": "caa359d843b3",
+    "/app/wira-matematik/assets/worlds/w14.svg": "75e3558efb16",
     "/app/wira-matematik/audio/en-0.mp3": "b880fa7f6092",
     "/app/wira-matematik/audio/en-1.mp3": "5761522049ea",
     "/app/wira-matematik/audio/en-10.mp3": "fa90664aa603",
@@ -900,9 +914,21 @@
     "/app/wira-matematik/audio/ms-super-sihir.mp3": "1cbb2248f35a",
     "/app/wira-matematik/audio/ms-tambah.mp3": "7a7cfb9010f2",
     "/app/wira-matematik/audio/ms-tolak.mp3": "34ebae4126ff",
-    "/app/wira-matematik/": "2e29ba1c1957"
+    "/app/wira-matematik/css/cos-anim-v2.css": "f0342ea50786",
+    "/app/wira-matematik/css/ux-v5.css": "abb1ec3ae3e1",
+    "/app/wira-matematik/css/visual-v3.css": "9b1c9546c71a",
+    "/app/wira-matematik/css/visual-v4.css": "d25e313a8958",
+    "/app/wira-matematik/css/wm-monitor-r3.css": "4cad70c758a0",
+    "/app/wira-matematik/data/bank-1019.js": "8863691e5e9a",
+    "/app/wira-matematik/data/wm-monitor-r4-dummy.js": "0aaa8d7e2419",
+    "/app/wira-matematik/": "b92daaab2d8f",
+    "/app/wira-matematik/js/cos-anim-v2.js": "8f62d5f14363",
+    "/app/wira-matematik/js/ux-v5.js": "9b59ade775d3",
+    "/app/wira-matematik/js/visual-v3.js": "575f4405e5cc",
+    "/app/wira-matematik/js/visual-v4.js": "b9465e0c10c7",
+    "/app/wira-matematik/js/wm-monitor-r3.js": "ee50380defa2"
    },
-   "bytes": 1532720
+   "bytes": 2398834
   },
   "wonder-island": {
    "files": {
