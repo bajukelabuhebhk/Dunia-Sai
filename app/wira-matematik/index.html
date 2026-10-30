@@ -1,6 +1,91 @@
 <!doctype html><html lang="ms"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Wira Matematik</title>
 <meta name="theme-color" content="#0f4c3a">
+<style id="wm-rpg2-css">
+/* Wira Matematik RPG 2.0 — additive styles; original theme remains intact. */
+.rpg-ribbon{background:linear-gradient(110deg,#246c58,#244f83);border:2px solid rgba(255,255,255,.2);border-radius:20px;padding:12px;display:grid;gap:10px}
+.rpg-hub-title{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:1.15rem;font-weight:800}
+.rpg-statline{display:flex;align-items:center;gap:7px;flex-wrap:wrap;font-size:.9rem;font-weight:800}
+.rpg-xp{height:10px;border-radius:99px;background:rgba(0,0,0,.4);overflow:hidden;flex:1;min-width:80px}
+.rpg-xp>i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#58d6ff,#ffe17a)}
+.rpg-nav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.rpg-nav button,.rpg-smallbtn{min-height:46px;border:0;background:#fdf6e3;color:#123b2e;border-radius:13px;padding:7px 5px;font-weight:800;font-size:.86rem;box-shadow:0 3px 0 #baac88;cursor:pointer}
+.rpg-nav button:active,.rpg-smallbtn:active{transform:translateY(2px);box-shadow:0 1px 0 #baac88}
+.rpg-world-note{font-size:.86rem;color:#e3fce9;text-align:center;background:rgba(0,0,0,.2);border-radius:10px;padding:6px}
+.rpg-side-quest{width:100%;min-height:44px;margin-top:10px;background:rgba(255,255,255,.18);color:#fff;border:2px solid rgba(255,255,255,.45);border-radius:12px;font-size:.9rem;font-weight:800;cursor:pointer}
+.rpg-side-quest:disabled{opacity:.5;cursor:default}
+.rpg-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:999px;background:#e2f7d7;color:#14532d;font-weight:800;font-size:.8rem}
+.rpg-tag{display:inline-block;padding:2px 7px;border-radius:8px;background:rgba(0,0,0,.15);font-size:.82rem;font-weight:800}
+.rpg-section-title{font-size:1.25rem;font-weight:800;margin:0}
+.rpg-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;width:100%}
+.rpg-panel{background:#fdf6e3;color:#123b2e;border-radius:21px;padding:14px;display:grid;gap:9px}
+.rpg-panel h2{font-size:1.3rem;margin:0;line-height:1.1}
+.rpg-panel p{margin:0;color:#4a6b5e;font-size:1rem;line-height:1.3;font-weight:700}
+.rpg-hero-preview{width:150px;height:150px;max-width:100%;margin:auto;filter:drop-shadow(0 6px 3px rgba(0,0,0,.1))}
+.rpg-hero-preview svg{width:100%;height:100%;overflow:visible}
+.rpg-gear-card{border:3px solid #d4dcbf;background:#fffdf3;color:#123b2e;border-radius:17px;padding:10px 7px;display:grid;gap:5px;justify-items:center;text-align:center;min-height:143px}
+.rpg-gear-card.selected{border-color:#38a169;background:#eafce8}
+.rpg-gear-card.locked{opacity:.7;filter:grayscale(.35)}
+.rpg-gear-icon{font-size:2.4rem;line-height:1.1}
+.rpg-gear-name{font-size:.95rem;font-weight:800;line-height:1.1}
+.rpg-gear-note{font-size:.75rem;color:#526d5f;line-height:1.1}
+.rpg-gear-card button{min-height:44px;width:100%;font-size:.85rem;font-weight:800;background:#ffb703;color:#123b2e;border:0;border-radius:10px;cursor:pointer}
+.rpg-gear-card button:disabled{background:#d5dacd;cursor:default}
+.rpg-slot-label{font-size:1rem;color:#bbebd5;font-weight:800;margin-top:8px}
+.rpg-mastery-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px;padding:10px 12px;border-radius:14px;background:#fdf6e3;color:#123b2e;align-items:center}
+.rpg-mastery-row small{display:block;color:#4a6b5e;font-weight:700}
+.rpg-mastery-track{grid-column:1/-1;height:8px;background:#d6e4d8;border-radius:10px;overflow:hidden}
+.rpg-mastery-track i{display:block;height:100%;background:#3fbf7f;border-radius:10px}
+.rpg-battle-phase{position:absolute;left:50%;top:10px;transform:translateX(-50%);z-index:4;background:rgba(17,45,57,.82);color:#fff;border-radius:99px;padding:4px 9px;font-size:.77rem;font-weight:800;pointer-events:none;white-space:nowrap;max-width:55%;overflow:hidden;text-overflow:ellipsis}
+.rpg-stage-chip{position:absolute;left:50%;bottom:7px;transform:translateX(-50%);z-index:4;background:rgba(0,0,0,.4);color:#fff;border-radius:10px;padding:3px 9px;font-size:.75rem;font-weight:800;pointer-events:none}
+.rpg-power{display:flex;align-items:center;justify-content:center;gap:8px;min-height:45px}
+.rpg-power button{min-height:44px;min-width:180px;padding:7px 12px;border:0;border-radius:12px;color:#14372b;background:#94e6dd;font-weight:800;font-size:.92rem;box-shadow:0 3px 0 #2c9c95;cursor:pointer}
+.rpg-power button:disabled{opacity:.5;filter:grayscale(.4);cursor:default}
+.rpg-power .charge{font-weight:800;color:#ffe17a;letter-spacing:1px}
+.rpg-question{font-size:clamp(1.22rem,4.4vw,1.7rem);line-height:1.2;font-weight:800;display:block;padding-top:4px}
+.rpg-question-visual{font-size:1.3rem;line-height:1.25;padding:7px 4px;word-break:break-word}
+.rpg-data-bars{font-size:.97rem;font-weight:800;line-height:1.3;text-align:left;display:inline-block;white-space:nowrap}
+.rpg-question-answer{display:block;font-size:1.18rem;margin-top:5px;color:#24865a}
+.rpg-hint{font-size:.96rem;line-height:1.3;padding:6px;color:#244f4e;font-weight:800}
+.rpg-tip{font-size:.9rem;line-height:1.2;margin-top:7px;background:#fff1c9;border-radius:10px;padding:5px 7px;font-weight:800;color:#805315}
+.rpg-battle-choices .ans{font-size:clamp(1.05rem,4.6vw,1.8rem);min-height:58px;padding:8px 3px;overflow-wrap:anywhere}
+.rpg-interact{display:grid;gap:9px;justify-items:center;width:100%;background:rgba(255,255,255,.45);border-radius:17px;padding:12px;color:#123b2e}
+.rpg-sort-tiles{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;width:100%}
+.rpg-sort-tile{font-size:1.4rem;min-width:64px;min-height:51px;padding:6px 12px;background:#fffdf5;border:3px solid #3979c5;color:#123b2e;border-radius:13px;font-weight:800;cursor:pointer}
+.rpg-sort-tile:disabled{opacity:.35}
+.rpg-sort-progress{min-height:34px;font-size:1.18rem;font-weight:800;letter-spacing:.04em}
+.rpg-submit{background:#ffb703!important;color:#123b2e!important;min-width:150px;min-height:50px;border:0;border-radius:14px;font-size:1.15rem!important;font-weight:800;cursor:pointer;box-shadow:0 4px 0 #c98a00}
+.rpg-counter{display:flex;align-items:center;justify-content:center;gap:15px}
+.rpg-counter button{width:54px;height:54px;border:0;border-radius:15px;background:#3979c5;color:white;font-size:2rem;font-weight:800;cursor:pointer}
+.rpg-counter output{font-size:2.3rem;font-weight:800;min-width:80px;text-align:center}
+.rpg-object-row{font-size:1.4rem;max-width:100%;word-break:break-word}
+.rpg-quest-scene{background:linear-gradient(150deg,#327c73,#3f638c);color:#fff;border-radius:20px;padding:14px;text-align:center;display:grid;gap:8px}
+.rpg-npc{font-size:3.1rem;line-height:1}
+.rpg-quest-progress{font-weight:800;font-size:1rem;color:#ffdf70}
+.rpg-quest-btn{min-height:44px}
+.rpg-reward{background:#e1f7d7;border:2px solid #96c98e;padding:8px;border-radius:14px;font-weight:800;color:#205633}
+.rpg-book-note{font-size:.9rem;color:#a9f7d1;text-align:center}
+.app .langbtn{min-height:44px}
+@media(max-width:360px){.rpg-nav button{font-size:.77rem}.rpg-battle-choices .ans{font-size:1.1rem}.rpg-gear-icon{font-size:1.9rem}.rpg-sort-tile{min-width:58px}}
+@media(max-height:700px){.app .arena{height:205px}.rpg-power{min-height:40px}.rpg-power button{min-height:40px}.app .qcard{padding:9px 12px}.rpg-interact{padding:8px}}
+@media(orientation:landscape) and (max-height:620px) and (min-width:650px){
+  .app:has(.arena){max-width:1000px;gap:7px;padding-top:6px;padding-bottom:6px}
+  #view:has(.arena){display:grid;grid-template-columns:minmax(250px,1fr) minmax(290px,1fr);grid-template-rows:auto auto auto 1fr;column-gap:12px;row-gap:7px;align-items:stretch}
+  #view:has(.arena) .arena{grid-column:1;grid-row:1 / span 4;height:auto;min-height:225px}
+  #view:has(.arena) .qcard{grid-column:2;grid-row:1}
+  #view:has(.arena) .combo{grid-column:2;grid-row:2}
+  #view:has(.arena) .rpg-power{grid-column:2;grid-row:3}
+  #view:has(.arena) .answers{grid-column:2;grid-row:4;align-content:start;gap:7px}
+  #view:has(.arena) .ans{min-height:45px;padding:4px 0}
+  #view:has(.arena) .qtext{font-size:1.8rem}
+  #view:has(.arena) .rpg-question{font-size:1.15rem}
+  #view:has(.arena) .rpg-question-visual{font-size:1rem;padding:3px}
+  #view:has(.arena) .unit{width:112px;height:112px}
+  #view:has(.arena) .unit.boss{width:136px;height:136px}
+}
+@media(prefers-reduced-motion:reduce){.rpg-gear-card,.rpg-submit,.rpg-sort-tile{animation:none!important;transition:none!important}}
+
+</style>
 <style>
 /* Fonts are embedded so the game works offline and makes no network requests. Baloo 2: SIL Open Font License 1.1 */
 @font-face{font-family:'Baloo 2';font-weight:700;font-style:normal;font-display:swap;src:url(data:font/woff2;base64,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) format('woff2')}
@@ -195,7 +280,8 @@ header>.hl:last-child{flex:none;gap:6px}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--card);padding:10px 18px;border-radius:16px;font-weight:800;z-index:50;box-shadow:0 6px 18px rgba(0,0,0,.35);text-align:center;max-width:90vw}
 @media (prefers-reduced-motion:reduce){.anim-breathe,.anim-float,.node.now,.arena.quake{animation:none}}
 @media (max-width:360px){.qtext{font-size:2.2rem}.ans{font-size:1.9rem}.unit{width:104px;height:104px}.unit.boss{width:124px;height:124px}}
-</style><!-- dunia-sai --><link rel="manifest" href="/manifest.json"><script src="/shared/js/balik.js" defer></script></head><body>
+</style><link rel="stylesheet" href="css/visual-v3.css"><link rel="stylesheet" href="css/visual-v4.css">
+<link rel="stylesheet" href="css/ux-v5.css"><link rel="stylesheet" href="css/cos-anim-v2.css"><link rel="stylesheet" href="css/wm-monitor-r3.css"><!-- dunia-sai --><link rel="manifest" href="/manifest.json"><script src="/shared/js/balik.js" defer></script></head><body>
 <div class="app">
   <header>
     <div class="hl"><button class="iconbtn" id="backBtn" aria-label="Kembali" hidden>⬅</button><h1 id="hdr">Wira Matematik</h1></div>
@@ -439,12 +525,15 @@ function tts(text){if(!sound||!('speechSynthesis' in window))return;try{speechSy
 let curA=null,seq=0;const missing=new Set();
 const numKeys=n=>n<=20||n===100||n%10===0?[String(n)]:n<100?[String(n-n%10),String(n%10)]:null;
 const OPK={'+':'tambah','−':'tolak','×':'darab','÷':'bahagi'};
-function stopVoice(){seq++;if(curA){try{curA.pause()}catch(e){}curA=null}try{speechSynthesis.cancel()}catch(e){}}
+// All voice clips and TTS share one interruptible channel; SFX remains separate.
+function stopVoice(){seq++;if(curA){const a=curA;curA=null;try{a.onended=null;a.onerror=null;a.pause();a.currentTime=0}catch(e){}}try{speechSynthesis.cancel()}catch(e){}}
 function say(text,keys){stopVoice();if(!sound)return;const id=seq,pre=EN()?'en-':'ms-';
-  if(!keys||keys.includes(null)||!/^https?:$/.test(location.protocol)||keys.some(k=>missing.has(pre+k)))return tts(text);
-  (function go(i){if(id!==seq||i>=keys.length)return;const k=pre+keys[i],a=new Audio('audio/'+k+'.mp3');curA=a;
-    a.onended=()=>go(i+1);a.onerror=()=>{missing.add(k);if(id===seq&&i===0)tts(text)};
-    const pr=a.play();if(pr&&pr.catch)pr.catch(()=>{})})(0)}
+  const embedded=window.WM_AUDIO_DATA||null;
+  if(!keys||keys.includes(null)||(!embedded&&!/^https?:$/.test(location.protocol))||keys.some(k=>missing.has(pre+k)))return tts(text);
+  (function go(i){if(id!==seq||i>=keys.length)return;const k=pre+keys[i],a=new Audio(embedded&&embedded[k]?embedded[k]:'audio/'+k+'.mp3');curA=a;
+    a.onended=()=>{if(id===seq){curA=null;go(i+1)}};
+    a.onerror=()=>{missing.add(k);if(id===seq){curA=null;if(i===0)tts(text)}};
+    const pr=a.play();if(pr&&pr.catch)pr.catch(()=>{if(id===seq&&curA===a){curA=null;/* no double TTS on autoplay denial */}})})(0)}
 const nk=n=>numKeys(n)||[null];
 function setSound(v){sound=v;sndBtn.textContent=v?'🔊':'🔇';try{localStorage.setItem('wm_sound',v?'1':'0')}catch(e){}if(!v)stopVoice()}
 sndBtn.onclick=()=>{setSound(!sound);SFX.tap()};
@@ -558,7 +647,7 @@ function hintHTML(q){
   if(q.op==='×'){let h='';for(let i=0;i<q.a;i++)h+=dots(q.c,'⭐');return `<span class="op" style="width:100%">${t('groups')(q.a,q.c)}</span>`+h}
   return '';
 }
-const hasHint=(l,q)=>(l<=2)||(l===4&&q.a*q.c<=30&&q.op==='×');
+let hasHint=(l,q)=>(l<=2)||(l===4&&q.a*q.c<=30&&q.op==='×');
 
 /* ---------- Screens ---------- */
 let screen='home',B=null;
@@ -570,7 +659,7 @@ function wmHai(){let n='';try{n=String(JSON.parse(localStorage.getItem('ds_anak'
 function home(){
   stopBattle();screen='home';redraw=home;head('',null);
   const lv=1+wins();
-  view.innerHTML=`<div class="title"><div class="t1">${t('title')}</div><div class="t2">${t('subtitle')}</div>${wmHai()}</div>
+  view.innerHTML=`<div class="title"><div class="t1">${t('title')}</div><div class="t2">${t('subtitle')}</div></div>
   ${lang?'':`<div class="panel"><h2>Pilih bahasa · Choose language</h2><div class="row"><button class="btn" data-lang="ms">Bahasa Melayu</button><button class="btn" data-lang="en">English</button></div></div>`}
   <div class="panel"><h2>${t('pickHero')}</h2><div class="heroes">${HEROES.map(h=>`<button class="hcard${S.hero===h.id?' on':''}" data-h="${h.id}">${heroSVG(h.id)}${tr(h.name)}<small>${tr(h.sub)}</small></button>`).join('')}</div></div>
   <div class="panel lvl"><div>${lv}<small>${t('heroLevel')}</small></div><div>${totalStars()}<small>${t('stars')}</small></div><div>${wins()}/18<small>${t('monsters')}</small></div></div>
@@ -585,7 +674,7 @@ function home(){
   $('#bookB').onclick=()=>{SFX.tap();book()};
   $('#howB').onclick=()=>{SFX.tap();how()};
   $('#resetB').onclick=()=>{const r=$('#resetB').parentElement;r.innerHTML=`<span class="note">${t('resetQ')}</span><button class="btn alt" id="rsY">${t('resetYes')}</button><button class="btn" id="rsN">${t('cancel')}</button>`;
-    $('#rsY').onclick=()=>{S.stars={};save();home();toast(t('resetDone'))};$('#rsN').onclick=()=>home()};
+    $('#rsY').onclick=()=>{S.stars={};if(typeof resetRPGProgress==='function')resetRPGProgress();save();home();toast(t('resetDone'))};$('#rsN').onclick=()=>home()};
 }
 function how(){
   screen='how';redraw=how;head(t('howTitle'),home);
@@ -639,7 +728,8 @@ function battle(l,b){
       <div class="qtext" id="qt"></div><div class="hintbox" id="hb" hidden></div></div>
     <div class="combo" id="combo"></div>
     <div class="answers" id="ans"></div>`;
-  $('#sayB').onclick=()=>B&&B.q&&say(qSpeech(B.q),qKeys(B.q));
+  let lastSpeakerTap=0;
+  $('#sayB').onclick=()=>{const now=Date.now();if(now-lastSpeakerTap<220)return;lastSpeakerTap=now;if(B&&!B.dead&&B.q)say(qSpeech(B.q),qKeys(B.q))};
   $('#hintB').onclick=()=>{if(!B||!B.q)return;const hb=$('#hb');hb.innerHTML=hintHTML(B.q);hb.classList.toggle('rows',B.q.op==='×');hb.hidden=!hb.hidden;SFX.tap()};
   drawHud();nextQ();
   if(b===0&&l===0&&!wins())setTimeout(()=>toast(t('firstToast')),400);
@@ -691,7 +781,10 @@ async function superAttack(heroId,heroEl,monEl){
   sfxEl(arena,'flash');restart(arena,'quake');
 }
 async function answer(v,btn){
-  if(!B||B.busy)return;const me=B;me.busy=true;me.total++;
+  if(!B||B.busy||B.dead)return;const me=B;me.busy=true;
+  // Disable immediately after setting the synchronous guard; nextQ rebuilds the buttons.
+  document.querySelectorAll('#ans .ans').forEach(button=>{button.disabled=true});
+  me.total++;
   const q=me.q,hero=$('#uHero'),mon=$('#uMon'),hb=hero.firstElementChild,mb=mon.firstElementChild;
   $('#qt').classList.add('show');$('#qt').innerHTML=qHTML(q,true);
   if(v===q.ans){
@@ -700,10 +793,18 @@ async function answer(v,btn){
     drawHud();
     if(sup){await superAttack(me.hero.id,hero,mon);if(me.dead)return}
     else{const pi=Math.floor(Math.random()*t('praise').length);fx(hero,t('praise')[pi],'#bbf7d0');say(t('praise')[pi],['puji-'+(pi+1)]);
-      restart(hb,'lunge-r');SFX.slash();
-      const bolt=document.createElement('div');bolt.className='bolt';bolt.textContent=me.hero.fx;mon.parentElement.appendChild(bolt);setTimeout(()=>bolt.remove(),450);
+      // The Knight's first and second hits use WM6's physical melee cut.
+      // Ranged bolts remain on original Archer/Mage attacks only.
+      SFX.slash();
+      if(me.hero.id!=='kesatria'){
+        restart(hb,'lunge-r');
+        const bolt=document.createElement('div');bolt.className='bolt';bolt.textContent=me.hero.fx;
+        mon.parentElement.appendChild(bolt);setTimeout(()=>bolt.remove(),450);
+      }
       await wait(260);if(me.dead)return}
-    me.hp-=dmg;restart(mb,'hit');fx(mon,'-'+dmg,sup?'#fde047':'#fecaca');drawHud();
+    const phaseFloor=(me.b===2&&me.l>=6)?(me.hp>5?5:me.hp>2?2:0):0;
+    const dealt=Math.min(dmg,me.hp-phaseFloor);
+    me.hp=Math.max(phaseFloor,me.hp-dmg);restart(mb,'hit');fx(mon,'-'+dealt,sup?'#fde047':'#fecaca');drawHud();
     await wait(sup?900:650);if(me.dead)return;
     if(me.hp<=0){mb.classList.remove('anim-float','hit');restart(mb,'faint');SFX.win();await wait(900);if(me.dead)return;return result(true)}
     nextQ();
@@ -713,7 +814,9 @@ async function answer(v,btn){
     say(t('answerIs')(q.ans),['jawapannya',...nk(q.ans)]);
     await wait(500);if(me.dead)return;
     restart(mb,'lunge-l');await wait(240);if(me.dead)return;
-    me.hearts--;restart(hb,'hit');SFX.hurt();fx(hero,'💔','#fff');drawHud();
+    const protectedHit=!!me.rpgGuard;
+    if(protectedHit)me.rpgGuard=false;else me.hearts--;
+    restart(hb,'hit');SFX.hurt();fx(hero,protectedHit?'🛡️':'💔','#fff');drawHud();
     await wait(1300);if(me.dead)return;
     if(me.hearts<=0){SFX.lose();return result(false)}
     nextQ();
@@ -904,4 +1007,718 @@ const BGM=(()=>{
   show();
   return {update};
 })();
-</script></body></html>
+</script><script id="wm-rpg2-js">
+/* WIRA MATEMATIK RPG 2.0 — WM-RPG2-SPEC-001
+   Approved additive upgrade. Do not alter the original licence verifier, voice clips,
+   hero identities, legacy battle IDs, or existing stars. No network dependencies. */
+'use strict';
+
+const RPG2={version:'2.0.0',release:'WM-RPG2-001'};
+const R2={
+  ms:{camp:'🏕️ Kem Wira',inventory:'🎒 Inventori',quests:'📜 Quest',mastery:'📚 Penguasaan',
+    heroLv:'Tahap Wira',xp:'XP',equipment:'Equipment',equip:'Pakai',equipped:'Dipakai',locked:'Belum dibuka',
+    needStars:n=>`Perlu ${n} ⭐`,needLevel:n=>`Perlu Level ${n}`,side:'🤝 Misi Sampingan',questDone:'Selesai ✓',
+    mission:'Misi',returnMap:'🗺️ Peta Dunia',continue:'Teruskan',check:'Periksa ✓',
+    tapOrder:'Tekan nombor mengikut urutan',smallToBig:'Susun nombor daripada kecil kepada besar.',
+    countInstruction:'Gunakan − dan + untuk membina jawapan.',choiceHint:'Pilih jawapan yang paling tepat.',
+    power:{kesatria:'🛡️ Perisai Bijak',pemanah:'🏹 Panah Fokus',sihir:'✨ Sihir Visual'},
+    charge:'Jawab 2 soalan betul untuk aktifkan kuasa.',used:'Kuasa telah digunakan',
+    guard:'Perisai aktif! Satu kesilapan boleh dilindungi.',focus:'Satu pilihan yang salah disingkirkan.',
+    reveal:'Model bantuan dibuka.',powerReady:'Kuasa sedia digunakan!',
+    phase:['Fasa 1 · Perisai','Fasa 2 · Teras','Fasa 3 · Serangan Akhir'],
+    stage:['Belajar','Aplikasi','Boss'],newWorld:'Dunia Baharu',
+    reward:'Ganjaran Pengembaraan',earned:'Diperoleh',newItem:'Equipment baharu dibuka!',
+    npcTitle:'Bantu penduduk dunia ini melalui matematik.',questProgress:(n)=>`Cabaran ${n} / 3`,
+    questSuccess:'Misi berjaya! Penduduk berterima kasih kepada wira.',
+    questTry:'Belum tepat. Lihat petunjuk dan cuba lagi.',
+    repeatQuest:'Ulang Kaji Quest',startQuest:'Bantu NPC',
+    masteryTier:['Belajar','Lancar','Mahir'],
+    masteryDesc:'Penguasaan dinilai daripada jawapan berbeza. Bintang asal dikekalkan.',
+    rpgExplain:'Baca petunjuk ini sebelum mencuba lagi.',
+    sortWrong:'Urutan yang betul: ',
+    parental:'Tiada pembelian item. Semua equipment diperoleh melalui pembelajaran.',
+    sideNote:'Misi sampingan ialah latihan tambahan. Ia tidak menghalang kemajuan utama.',
+    noTimer:'Tiada timer. Ambil masa untuk berfikir.',
+    oldHelp:'Kuasa wira dan equipment tidak memberi jawapan secara automatik.'},
+  en:{camp:'🏕️ Hero Camp',inventory:'🎒 Inventory',quests:'📜 Quests',mastery:'📚 Mastery',
+    heroLv:'Hero Level',xp:'XP',equipment:'Equipment',equip:'Equip',equipped:'Equipped',locked:'Locked',
+    needStars:n=>`Need ${n} ⭐`,needLevel:n=>`Need Level ${n}`,side:'🤝 Side Quest',questDone:'Done ✓',
+    mission:'Mission',returnMap:'🗺️ World Map',continue:'Continue',check:'Check ✓',
+    tapOrder:'Tap the numbers in order',smallToBig:'Arrange the numbers from smallest to largest.',
+    countInstruction:'Use − and + to build your answer.',choiceHint:'Choose the best answer.',
+    power:{kesatria:'🛡️ Wise Shield',pemanah:'🏹 Focus Arrow',sihir:'✨ Visual Magic'},
+    charge:'Answer 2 questions correctly to charge your skill.',used:'Skill already used',
+    guard:'Shield active! One mistake can be protected.',focus:'One incorrect choice has been removed.',
+    reveal:'A visual hint is now available.',powerReady:'Skill is ready!',
+    phase:['Phase 1 · Shield','Phase 2 · Core','Phase 3 · Final Attack'],
+    stage:['Learn','Apply','Boss'],newWorld:'New World',
+    reward:'Adventure Rewards',earned:'Earned',newItem:'New equipment unlocked!',
+    npcTitle:'Help the people here using mathematics.',questProgress:n=>`Challenge ${n} / 3`,
+    questSuccess:'Quest complete! The villagers thank your hero.',
+    questTry:'Not quite. Read the hint and try again.',
+    repeatQuest:'Practice Quest Again',startQuest:'Help NPC',
+    masteryTier:['Learning','Fluent','Mastered'],
+    masteryDesc:'Mastery is based on varied answers. Original stars stay intact.',
+    rpgExplain:'Read this hint before trying again.',
+    sortWrong:'Correct order: ',
+    parental:'No item purchases. Equipment is earned through learning.',
+    sideNote:'Side quests are optional practice and never block main progress.',
+    noTimer:'No timer. Take your time to think.',
+    oldHelp:'Hero skills and equipment never answer automatically.'}
+};
+const r2=k=>R2[EN()?'en':'ms'][k];
+const bt=(ms,en)=>[ms,en];
+
+/* The first six approved lands remain byte-for-byte as defined in the original. */
+LANDS.push(
+  {name:bt('Kota Nombor','Number City'),emo:'🏙️',topic:bt('Nilai tempat & nombor besar','Place value & large numbers'),sky:['#407bb1','#b0d9f4'],ground:'#56748a',deco:['🏙️','🔢','🏢','✨'],
+   mons:[[bt('Robot Digit','Digit Bot'),'golem','#81c7ef','#316a9b'],[bt('Pengawal Angka','Number Guard'),'golem','#f8c478','#a77725'],[bt('Raja Nombor','Number King'),'dragon','#80b6f9','#345fbd']]},
+  {name:bt('Pasar Wira','Hero Market'),emo:'🛒',topic:bt('Wang & bajet','Money & budgets'),sky:['#e6a45f','#fff0b3'],ground:'#aa7344',deco:['🛒','🪙','🍎','🏬'],
+   mons:[[bt('Lendir Syiling','Coin Slime'),'slime','#f9d568','#b8821d'],[bt('Kelawar Kedai','Shop Bat'),'bat','#a686d1','#7657a8'],[bt('Raja Pasar','Market King'),'mush','#efac5e','#a65d2f']]},
+  {name:bt('Menara Masa','Time Tower'),emo:'⏰',topic:bt('Jam & tempoh masa','Clocks & duration'),sky:['#243b7c','#8e9ed4'],ground:'#56528e',deco:['⏰','🌙','⌛','⭐'],
+   mons:[[bt('Hantu Minit','Minute Ghost'),'ghost','#d4dbff','#7084c4'],[bt('Kelawar Jam','Clock Bat'),'bat','#b5c2ed','#6579b1'],[bt('Penjaga Masa','Time Keeper'),'golem','#a7a7ed','#5556aa']]},
+  {name:bt('Pulau Pecahan','Fraction Island'),emo:'🍕',topic:bt('Pecahan','Fractions'),sky:['#58bca8','#c5f1d1'],ground:'#3b8f6c',deco:['🍕','🌴','🥧','🌊'],
+   mons:[[bt('Lendir Separuh','Half Slime'),'slime','#fcd67a','#d28e39'],[bt('Cendawan Suku','Quarter Mushroom'),'mush','#ef9cac','#bd5774'],[bt('Ratu Pecahan','Fraction Queen'),'ghost','#b99dfb','#7658bf']]},
+  {name:bt('Makmal Perpuluhan','Decimal Lab'),emo:'💎',topic:bt('Perpuluhan & peratus','Decimals & percentages'),sky:['#324b87','#8dbad9'],ground:'#394f7e',deco:['🧪','💎','⚗️','✨'],
+   mons:[[bt('Robot Perpuluhan','Decimal Bot'),'golem','#89d5e9','#348a9e'],[bt('Lendir Peratus','Percent Slime'),'slime','#b79df0','#7057ac'],[bt('Profesor Kristal','Crystal Professor'),'golem','#e1a5f4','#9161b8']]},
+  {name:bt('Lembah Ukuran','Measurement Valley'),emo:'📏',topic:bt('Panjang, jisim & isi padu','Length, mass & capacity'),sky:['#669c6e','#d3eab7'],ground:'#658a53',deco:['📏','🌲','⚖️','🏞️'],
+   mons:[[bt('Golem Sentimeter','Centimetre Golem'),'golem','#9cbf75','#587a36'],[bt('Kelawar Kilogram','Kilogram Bat'),'bat','#b59b74','#726347'],[bt('Raja Ukuran','Measure King'),'dragon','#9db67e','#51703e']]},
+  {name:bt('Kota Bentuk','Shape City'),emo:'🏰',topic:bt('Bentuk, perimeter & luas','Shapes, perimeter & area'),sky:['#c47cb2','#f3d4de'],ground:'#7b4d90',deco:['🔺','🔷','🏰','📐'],
+   mons:[[bt('Lendir Segi Tiga','Triangle Slime'),'slime','#f19fba','#b45a89'],[bt('Golem Segi Empat','Rectangle Golem'),'golem','#b0a0e8','#6653aa'],[bt('Raja Geometri','Geometry King'),'dragon','#d399e3','#8e4cb7']]},
+  {name:bt('Istana Data','Data Palace'),emo:'📊',topic:bt('Graf, jadual & masalah harian','Charts, tables & real-world problems'),sky:['#d89a65','#ffe9bd'],ground:'#7a678c',deco:['📊','🏆','📜','🌟'],
+   mons:[[bt('Hantu Carta','Chart Ghost'),'ghost','#f4dcc8','#a78375'],[bt('Naga Jadual','Table Dragon'),'dragon','#e6bf7b','#a57a43'],[bt('Maharaja Data','Data Emperor'),'dragon','#dbc0fb','#7961c3']]}
+);
+
+/* Item thresholds are educational rewards, never paid upgrades. */
+const GEAR=[
+  {id:'cap',slot:'head',icon:'🪖',name:bt('Topi Pengembara','Explorer Cap'),stars:0,level:1,color:'#b5b8ab'},
+  {id:'crystalhelm',slot:'head',icon:'💎',name:bt('Helmet Kristal','Crystal Helm'),stars:12,level:4,color:'#82d2ef'},
+  {id:'crown',slot:'head',icon:'👑',name:bt('Mahkota Ilmu','Crown of Wisdom'),stars:60,level:14,color:'#ffe17a'},
+  {id:'tunic',slot:'body',icon:'🥋',name:bt('Baju Wira','Hero Tunic'),stars:0,level:1,color:'#8bc8a8'},
+  {id:'forestarmor',slot:'body',icon:'🛡️',name:bt('Zirah Hutan','Forest Armour'),stars:9,level:3,color:'#44bd8e'},
+  {id:'starrobe',slot:'body',icon:'🌟',name:bt('Jubah Bintang','Star Robe'),stars:36,level:10,color:'#bf94f0'},
+  {id:'basicweapon',slot:'weapon',icon:'⚔️',name:bt('Senjata Permulaan','Starter Weapon'),stars:0,level:1,color:'#d3dae4'},
+  {id:'flameweapon',slot:'weapon',icon:'🔥',name:bt('Senjata Bara','Ember Weapon'),stars:18,level:6,color:'#ff9438'},
+  {id:'thunderweapon',slot:'weapon',icon:'⚡',name:bt('Senjata Petir','Thunder Weapon'),stars:45,level:12,color:'#f7d64a'},
+  {id:'basicboots',slot:'boots',icon:'🥾',name:bt('But Kembara','Travel Boots'),stars:0,level:1,color:'#94684a'},
+  {id:'windboots',slot:'boots',icon:'💨',name:bt('But Angin','Wind Boots'),stars:24,level:8,color:'#7ac5df'},
+  {id:'lens',slot:'relic',icon:'🔍',name:bt('Kanta Nombor','Number Lens'),stars:6,level:2,color:'#f6cf6c'},
+  {id:'rune',slot:'relic',icon:'🔮',name:bt('Rune Pembelajaran','Learning Rune'),stars:32,level:9,color:'#af8ef8'},
+  {id:'nonepet',slot:'pet',icon:'✨',name:bt('Tanpa Teman','No Companion'),stars:0,level:1,color:'#e4f5f3'},
+  {id:'slimepet',slot:'pet',icon:'🐸',name:bt('Lendir Sahabat','Friendly Slime'),stars:15,level:5,color:'#7eda88'},
+  {id:'owlpet',slot:'pet',icon:'🦉',name:bt('Burung Bijak','Wise Owl'),stars:28,level:9,color:'#bd9a6d'},
+  {id:'dragonpet',slot:'pet',icon:'🐉',name:bt('Naga Mini','Mini Dragon'),stars:66,level:17,color:'#ed9b61'}
+];
+const SLOTS=['head','body','weapon','boots','relic','pet'];
+const SLOT_NAMES={ms:{head:'Kepala',body:'Badan',weapon:'Senjata',boots:'Kasut',relic:'Azimat',pet:'Teman'},en:{head:'Head',body:'Body',weapon:'Weapon',boots:'Boots',relic:'Relic',pet:'Companion'}};
+const defaultEquip={head:'cap',body:'tunic',weapon:'basicweapon',boots:'basicboots',relic:null,pet:'nonepet'};
+const safeNumber=n=>Number.isFinite(Number(n))?Math.max(0,Math.floor(Number(n))):0;
+function rpgLevel(){return Math.max(1+wins(),1+Math.floor(S.xp/120))}
+function normalizeRPGSave(){
+  if(!Number.isFinite(S.xp)||S.xp<0)S.xp=wins()*80+totalStars()*15;
+  S.xp=safeNumber(S.xp);
+  if(!Array.isArray(S.inventory))S.inventory=[];
+  S.inventory=S.inventory.filter(id=>GEAR.some(i=>i.id===id));
+  if(!S.equipped||typeof S.equipped!=='object'||Array.isArray(S.equipped))S.equipped={};
+  S.equipped=Object.assign({},defaultEquip,S.equipped);
+  if(!S.mastery||typeof S.mastery!=='object'||Array.isArray(S.mastery))S.mastery={};
+  if(!S.quests||typeof S.quests!=='object'||Array.isArray(S.quests))S.quests={};
+  S.rpgVersion=2;syncGear();save();
+}
+function syncGear(){
+  const before=S.inventory.length,stars=totalStars(),lv=rpgLevel();
+  GEAR.forEach(i=>{if(stars>=i.stars&&lv>=i.level&&!S.inventory.includes(i.id))S.inventory.push(i.id)});
+  SLOTS.forEach(slot=>{const item=GEAR.find(i=>i.id===S.equipped[slot]&&i.slot===slot);
+    if(!item||!S.inventory.includes(item.id))S.equipped[slot]=defaultEquip[slot]});
+  return S.inventory.length-before;
+}
+const haveItem=id=>S.inventory.includes(id);
+const isEquipped=id=>Object.values(S.equipped).includes(id);
+const xpWidth=()=>Math.round(S.xp%120/120*100);
+const slotName=s=>SLOT_NAMES[EN()?'en':'ms'][s];
+const escapeText=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+/* Varied, bounded question templates. Every stored answer is a number so the
+   existing battle scorer remains authoritative; interactive sorting uses 1/0. */
+const R2FORMAT={
+  plain:n=>String(n),money:n=>'RM'+(n/100).toFixed(2),decimal:n=>(n/10).toFixed(1),
+  clock:n=>`${String(Math.floor(n/60)).padStart(2,'0')}:${String(n%60).padStart(2,'0')}`,
+  minutes:n=>n+' min',cm:n=>n+' cm',grams:n=>n+' g',ml:n=>n+' mL',area:n=>n+' cm²'
+};
+function rpgOptions(ans,candidates=[],fmt='plain'){
+  const step=fmt==='money'?50:fmt==='clock'?15:fmt==='grams'||fmt==='ml'?100:fmt==='decimal'?1:1;
+  const set=new Set([ans]);
+  candidates.forEach(v=>{if(Number.isInteger(v)&&v>=0&&v!==ans)set.add(v)});
+  for(let k=1;set.size<4&&k<50;k++){
+    if(ans+k*step>=0)set.add(ans+k*step);
+    if(ans-k*step>=0)set.add(ans-k*step);
+  }
+  return shuffle([ans,...shuffle([...set].filter(x=>x!==ans)).slice(0,3)]);
+}
+function mathQ(ans,ms,en,options={}){
+  const q={ans,kind:'rpg',mode:options.mode||'choice',prompt:bt(ms,en),
+    hint:options.hint||bt('Gunakan maklumat yang diberikan dan kira langkah demi langkah.','Use the information given and solve one step at a time.'),
+    visual:options.visual||'',format:options.format||'plain',topic:options.topic||'',
+    key:'R2-'+ms+'-'+ans,choices:options.choices||rpgOptions(ans,options.distractors,options.format),
+    a:ans,c:0,op:'+',counterMax:options.counterMax||Math.max(10,ans+5),sortValues:options.sortValues||null};
+  return q;
+}
+const f2=(n,f='plain')=>R2FORMAT[f](n);
+const randSome=(list)=>list[rnd(0,list.length-1)];
+function sortQ(limit=9999){
+  let nums;do{nums=Array.from({length:3},()=>rnd(limit>100?1000:11,limit))}while(new Set(nums).size!==3);
+  const q=mathQ(1,'Susun nombor ini dari kecil ke besar.','Arrange these numbers from smallest to largest.',{
+    mode:'sort',sortValues:shuffle(nums),choices:[0,1],
+    hint:bt('Bandingkan nilai tempat dari kiri ke kanan.','Compare place values from left to right.'),
+    visual:'🔢 '+nums.map(n=>f2(n)).join(' · ')});
+  q.sortAnswer=[...nums].sort((a,b)=>a-b);q.key+='-'+q.sortAnswer.join('-');return q;
+}
+function makeAdventureQ(l,b){
+  const phase=B&&B.b===2&&B.l===l?(B.hp>5?0:B.hp>2?1:2):0;
+  const v=b===2?phase:b===0?rnd(0,1):rnd(1,2);
+  let a,c,ans,q;
+  switch(l){
+    case 6: // Place value and big numbers
+      if(v===0){
+        a=rnd(1200,9789);const p=randSome([1,10,100,1000]),digit=Math.floor(a/p)%10;ans=digit*p;
+        return mathQ(ans,`Berapakah nilai digit ${digit} pada tempat ${p===1000?'ribu':p===100?'ratus':p===10?'puluh':'sa'} dalam ${a.toLocaleString('en-US')}?`,
+          `What is the value of digit ${digit} in the ${p===1000?'thousands':p===100?'hundreds':p===10?'tens':'ones'} place of ${a.toLocaleString('en-US')}?`,{
+          hint:bt('Nilai digit = digit × nilai tempat.','Digit value = digit × place value.'),
+          distractors:[digit,ans+p,Math.max(0,ans-p),ans*10]});
+      }
+      if(v===1)return sortQ(8999);
+      a=rnd(101,989);c=Math.round(a/10)*10;
+      return mathQ(c,`Bundarkan ${a} kepada puluh terdekat.`,`Round ${a} to the nearest ten.`,{
+        hint:bt('Periksa digit sa: 5 atau lebih bermaksud naik satu puluh.','Look at the ones digit: 5 or more means round up.'),
+        distractors:[a,Math.floor(a/10)*10,Math.ceil(a/10)*10,c+100]});
+    case 7: // Money, stored in sen
+      if(v===0){a=rnd(3,16)*100+randSome([0,20,50,80]);c=rnd(2,12)*100+randSome([0,20,50]);ans=a+c;
+        return mathQ(ans,`Di pasar, buah berharga ${f2(a,'money')} dan roti ${f2(c,'money')}. Berapa jumlah harga?`,
+          `At the market, fruit costs ${f2(a,'money')} and bread costs ${f2(c,'money')}. What is the total?`,{
+          format:'money',visual:'🍎 + 🍞',hint:bt('Tambah ringgit dan sen dengan betul.','Add ringgit and sen carefully.'),
+          distractors:[ans+100,ans-100,ans+50,ans-50]});}
+      if(v===1){a=randSome([2000,3000,5000]);c=rnd(4,Math.floor(a/100)-3)*100+randSome([0,20,50]);ans=a-c;
+        return mathQ(ans,`Pembeli bayar ${f2(a,'money')} untuk barang berharga ${f2(c,'money')}. Berapa baki?`,
+          `A customer pays ${f2(a,'money')} for an item costing ${f2(c,'money')}. How much change?`,{
+          format:'money',visual:'🪙 🛍️',hint:bt('Baki = wang dibayar − harga barang.','Change = amount paid − price.'),
+          distractors:[ans+100,ans-100,ans+50,ans-50]});}
+      a=rnd(2,9)*100;c=rnd(2,9)*100;ans=2000-a-c;
+      return mathQ(ans,`Wira ada RM20.00. Bekalan A ${f2(a,'money')} dan B ${f2(c,'money')}. Berapa wang tinggal?`,
+        `Your hero has RM20.00. Supplies A cost ${f2(a,'money')} and B ${f2(c,'money')}. How much remains?`,{
+        format:'money',visual:'🎒 🧾',hint:bt('Jumlahkan kedua-dua harga, kemudian tolak daripada RM20.','Add both prices, then subtract from RM20.'),
+        distractors:[ans+100,ans-100,2000-a,2000-c]});
+    case 8: // Time in minutes since midnight
+      if(v===0){a=rnd(7,16)*60+randSome([0,15,30]);c=randSome([15,30,45,60]);ans=a+c;
+        return mathQ(ans,`Jam menunjukkan ${f2(a,'clock')}. ${c} minit kemudian, pukul berapa?`,
+          `The clock reads ${f2(a,'clock')}. What time is it ${c} minutes later?`,{
+          format:'clock',visual:'⏰',hint:bt('Tambah minit; setiap 60 minit ialah 1 jam.','Add minutes; 60 minutes make 1 hour.'),
+          distractors:[ans-15,ans+15,ans+60,ans-60]});}
+      if(v===1){a=rnd(8,14)*60+randSome([0,15,30]);c=randSome([30,45,60,75,90]);ans=c;
+        return mathQ(ans,`Bas bertolak ${f2(a,'clock')} dan tiba ${f2(a+c,'clock')}. Berapa minit perjalanan?`,
+          `A bus leaves at ${f2(a,'clock')} and arrives at ${f2(a+c,'clock')}. How many minutes is the trip?`,{
+          format:'minutes',visual:'🚌 ⏱️',hint:bt('Cari perbezaan antara waktu tiba dan bertolak.','Find the difference between arrival and departure.'),
+          distractors:[ans-15,ans+15,ans+60,ans/2]});}
+      a=rnd(7,12)*60;c=randSome([20,30,40]);const rest=randSome([10,15,20]);ans=a+c+rest;
+      return mathQ(ans,`Misi bermula ${f2(a,'clock')}. Latihan ${c} minit dan rehat ${rest} minit. Bilakah tamat?`,
+        `The quest starts at ${f2(a,'clock')}. Training takes ${c} minutes and rest ${rest} minutes. When does it end?`,{
+        format:'clock',visual:'📅 🏕️',hint:bt('Tambah tempoh latihan dan rehat kepada waktu mula.','Add training and break durations to the start time.'),
+        distractors:[a+c,ans+15,ans-15,ans+60]});
+    case 9: // Fractions
+      if(v===0){const den=randSome([2,3,4,5]);a=rnd(2,5)*den;c=rnd(1,den-1);ans=a*c/den;
+        return mathQ(ans,`${c}/${den} daripada ${a} buah ialah berapa?`,`What is ${c}/${den} of ${a} objects?`,{
+          visual:'🍕 '+('●'.repeat(Math.min(a,16))),hint:bt('Bahagikan jumlah kepada bahagian sama, kemudian ambil bahagian diperlukan.','Share into equal parts, then take the requested parts.'),
+          distractors:[ans+den,ans-den,Math.round(a/den),a]});}
+      if(v===1){const den=randSome([2,3,4,5]);a=rnd(1,den-1);c=den*randSome([2,3,4]);ans=a*c/den;
+        return mathQ(ans,`${a}/${den} = ?/${c}. Apakah nombor pengangka yang hilang?`,
+          `${a}/${den} = ?/${c}. What numerator is missing?`,{
+          visual:'🥧 ➗',hint:bt('Darab pengangka dan penyebut dengan faktor yang sama.','Multiply numerator and denominator by the same factor.'),
+          distractors:[ans+1,ans-1,c-a,a]});}
+      c=randSome([5,6,8,10]);a=rnd(1,c-2);const d=rnd(1,c-a-1);ans=a+d;
+      return mathQ(ans,`${a}/${c} + ${d}/${c} = ?/${c}. Cari pengangka.`,
+        `${a}/${c} + ${d}/${c} = ?/${c}. Find the numerator.`,{
+        visual:'🍰',hint:bt('Penyebut sama. Tambah pengangka sahaja.','Same denominator: add only the numerators.'),
+        distractors:[ans+1,ans-1,ans+c,Math.max(0,a-d)]});
+    case 10: // tenths and percent
+      if(v===0){a=rnd(10,48);c=rnd(11,49);ans=a+c;
+        return mathQ(ans,`${f2(a,'decimal')} + ${f2(c,'decimal')} = ?`,`${f2(a,'decimal')} + ${f2(c,'decimal')} = ?`,{
+          format:'decimal',visual:'🧪',hint:bt('Sejajarkan titik perpuluhan ketika menambah.','Align decimal points when adding.'),
+          distractors:[ans+10,ans-10,ans+1,ans-1]});}
+      if(v===1){a=rnd(35,95);c=rnd(10,a-10);ans=a-c;
+        return mathQ(ans,`${f2(a,'decimal')} − ${f2(c,'decimal')} = ?`,`${f2(a,'decimal')} − ${f2(c,'decimal')} = ?`,{
+          format:'decimal',visual:'⚗️',hint:bt('Sejajarkan titik perpuluhan ketika menolak.','Align decimal points when subtracting.'),
+          distractors:[ans+10,ans-10,ans+1,ans-1]});}
+      a=randSome([10,20,25,50]);c=randSome([40,60,80,100,120]);ans=a*c/100;
+      return mathQ(ans,`Berapakah ${a}% daripada ${c} kristal?`,`What is ${a}% of ${c} crystals?`,{
+        visual:'💎 %',hint:bt('Peratus bermaksud daripada 100. Kira bahagian yang diminta.','Percent means out of 100. Find that part.'),
+        distractors:[ans+10,ans-10,c-a,a]});
+    case 11: // Measures
+      if(v===0){a=rnd(1,5);c=rnd(1,9)*10;ans=a*100+c;
+        return mathQ(ans,`${a} m ${c} cm bersamaan berapa cm?`,`How many centimetres are in ${a} m ${c} cm?`,{
+          format:'cm',visual:'📏',hint:bt('1 meter = 100 sentimeter.','1 metre = 100 centimetres.'),
+          distractors:[a*10+c,a*100,ans+100,ans-10]});}
+      if(v===1){a=rnd(1,5);c=randSome([100,200,250,500,750]);ans=a*1000+c;
+        return mathQ(ans,`${a} kg ${c} g bersamaan berapa gram?`,`How many grams are in ${a} kg ${c} g?`,{
+          format:'grams',visual:'⚖️',hint:bt('1 kilogram = 1000 gram.','1 kilogram = 1000 grams.'),
+          distractors:[a*100+c,a*1000,ans+1000,ans-100]});}
+      a=rnd(1,3);c=randSome([100,200,300,500]);const extraMl=randSome([100,200,400]);ans=a*1000+c+extraMl;
+      return mathQ(ans,`${a} L ${c} mL air ditambah ${extraMl} mL. Berapakah jumlah dalam mL?`,
+        `${a} L ${c} mL of water plus ${extraMl} mL. What is the total in mL?`,{
+        format:'ml',visual:'🫗 💧',hint:bt('1 liter = 1000 mL. Tukar dahulu, kemudian tambah.','1 litre = 1000 mL. Convert, then add.'),
+        distractors:[a*100+c+extraMl,ans-extraMl,ans+100,ans-100]});
+    case 12: // Shapes and geometry
+      if(v===0){const sides=randSome([3,4,5,6,8]);ans=sides;
+        const shapeNames={3:bt('segi tiga','triangle'),4:bt('segi empat','quadrilateral'),5:bt('pentagon','pentagon'),6:bt('heksagon','hexagon'),8:bt('oktagon','octagon')};
+        return mathQ(ans,`Berapakah sisi bagi bentuk ${shapeNames[sides][0]}?`,
+          `How many sides does a ${shapeNames[sides][1]} have?`,{
+          visual:'📐 🔷',hint:bt('Kira semua sisi lurus pada bentuk itu.','Count each straight side of that shape.'),
+          distractors:[ans+1,ans-1,ans+2,ans-2]});}
+      if(v===1){a=rnd(3,12);c=rnd(3,10);ans=2*(a+c);
+        return mathQ(ans,`Taman segi empat tepat berukuran ${a} cm × ${c} cm. Berapakah perimeter?`,
+          `A rectangle is ${a} cm by ${c} cm. What is its perimeter?`,{
+          format:'cm',visual:'▭',hint:bt('Perimeter = 2 × (panjang + lebar).','Perimeter = 2 × (length + width).'),
+          distractors:[a*c,a+c,ans+2,ans-2]});}
+      a=rnd(4,12);c=rnd(3,9);ans=a*c;
+      return mathQ(ans,`Lantai segi empat tepat ${a} cm × ${c} cm. Berapakah luas?`,
+        `A rectangle floor is ${a} cm by ${c} cm. What is its area?`,{
+        format:'area',visual:'▦',hint:bt('Luas = panjang × lebar.','Area = length × width.'),
+        distractors:[2*(a+c),a+c,ans+a,ans-a]});
+    case 13: // Read and apply a chart
+      a=rnd(3,9);c=rnd(5,12);const dataC=rnd(2,7);
+      const visual=`<div class="rpg-data-bars">🍎 ${'▮'.repeat(a)} ${a}<br>🍐 ${'▮'.repeat(c)} ${c}<br>🍊 ${'▮'.repeat(dataC)} ${dataC}</div>`;
+      if(v===0){ans=Math.max(a,c,dataC);
+        return mathQ(ans,'Rujuk carta buah. Berapakah bilangan paling banyak?','Look at the fruit chart. What is the highest quantity?',{
+          visual,hint:bt('Bandingkan panjang bar atau nombor pada hujungnya.','Compare the bar lengths or their numbers.'),
+          distractors:[a,c,dataC,ans+2,ans-2]});}
+      if(v===1){ans=Math.abs(a-c);
+        return mathQ(ans,'Rujuk carta. Berapakah beza bilangan epal dan pir?','Use the chart. What is the difference between apples and pears?',{
+          visual,hint:bt('Tolak bilangan yang kecil daripada yang besar.','Subtract the smaller count from the larger.'),
+          distractors:[a+c,ans+1,ans+2,Math.abs(a-dataC)]});}
+      ans=a+c-dataC;
+      return mathQ(ans,'Jumlah epal dan pir, kemudian tolak bilangan oren. Berapakah hasilnya?',
+        'Add the apples and pears, then subtract the oranges. What is the result?',{
+        visual,hint:bt('Buat dua langkah: tambah, kemudian tolak.','Solve in two steps: add, then subtract.'),
+        distractors:[a+c,ans+dataC,ans+1,ans-1]});
+  }
+  return mathQ(1,'1 + 0 = ?','1 + 0 = ?');
+}
+
+function oldStoryQ(l,b,base){
+  if(l===0&&Math.random()<.28){
+    const a=rnd(1,5),c=rnd(1,5);return mathQ(a+c,`Kumpul ${a} epal merah dan ${c} epal hijau. Berapakah jumlah?`,
+      `Collect ${a} red and ${c} green apples. What is the total?`,{
+      mode:'counter',counterMax:Math.max(10,a+c+2),visual:'🍎'.repeat(a)+' 🍏'.repeat(c),
+      hint:bt('Kira semua buah satu demi satu.','Count all the fruit one by one.')});
+  }
+  if(l===3&&Math.random()<.28)return sortQ(99);
+  if(Math.random()>.45)return base;
+  const a=base.a,c=base.c,op=base.op;
+  if(l===0)return mathQ(base.ans,`Wira menemui ${a} batu dan ${c} lagi. Berapa jumlahnya?`,
+    `Your hero finds ${a} stones and ${c} more. How many in total?`,{
+    visual:'🪨 + 🪨',hint:bt('Tambah kedua-dua kumpulan.','Add the two groups.'),choices:base.choices});
+  if(l===1)return mathQ(base.ans,`Ada ${a} bekalan. ${c} telah digunakan. Berapa yang tinggal?`,
+    `There are ${a} supplies. ${c} are used. How many remain?`,{
+    visual:'🎒',hint:bt('Tolak bekalan yang digunakan.','Subtract the supplies used.'),choices:base.choices});
+  if(l===4)return mathQ(base.ans,`${a} kumpulan mempunyai ${c} bintang setiap satu. Berapa semua?`,
+    `${a} groups have ${c} stars each. How many altogether?`,{
+    visual:'⭐ ✕',hint:bt('Darab bilangan kumpulan dengan setiap kumpulan.','Multiply groups by stars per group.'),choices:base.choices});
+  if(l===5&&op==='÷')return mathQ(base.ans,`${a} ramuan dibahagi sama rata kepada ${c} wira. Berapa setiap wira?`,
+    `${a} potions are shared equally by ${c} heroes. How many each?`,{
+    visual:'🧪 ➗',hint:bt('Bahagikan kepada kumpulan sama banyak.','Divide into equal groups.'),choices:base.choices});
+  if(base.miss)return base;
+  return mathQ(base.ans,`${a} ${op} ${c} = ?`,`${a} ${op} ${c} = ?`,{
+    hint:bt('Kira mengikut operasi yang ditunjukkan.','Use the shown operation.'),choices:base.choices});
+}
+
+/* The original question renderer and MP3 narration still handle all original
+   arithmetic. Extended prompts use device narration when a recorded clip is
+   unavailable; the question and explanation remain visible without speech. */
+const legacyMakeQ=makeQ,legacyQHTML=qHTML,legacyHintHTML=hintHTML;
+const legacyQSpeech=qSpeech,legacyHasHint=hasHint;
+makeQ=function(l,b){
+  let q;
+  for(let i=0;i<12;i++){
+    q=l>=6?makeAdventureQ(l,b):oldStoryQ(l,b,legacyMakeQ(l,b));
+    if(!B||!B.rpgHistory||!B.rpgHistory.includes(q.key))break;
+  }
+  return q;
+};
+qHTML=function(q,show){
+  if(q.kind!=='rpg')return legacyQHTML(q,show);
+  const value=q.mode==='sort'?q.sortAnswer.join(' → '):f2(q.ans,q.format);
+  return `<span class="rpg-question">${escapeText(tr(q.prompt))}</span>`+
+    (q.visual?`<span class="rpg-question-visual">${q.visual}</span>`:'')+
+    (show?`<span class="rpg-question-answer">✓ ${escapeText(value)}</span>`:'');
+};
+qSpeech=function(q){return q.kind==='rpg'?tr(q.prompt):legacyQSpeech(q)};
+hintHTML=function(q){return q.kind==='rpg'?`<div class="rpg-hint">💡 ${escapeText(tr(q.hint))}</div>`:legacyHintHTML(q)};
+hasHint=function(l,q){return q.kind==='rpg'||legacyHasHint(l,q)};
+
+/* Layered SVG decorations use the original three hero drawings as the base. */
+const legacyHeroSVG=heroSVG;
+heroSVG=function(id){
+  const base=legacyHeroSVG(id),eq=S.equipped||defaultEquip;
+  const item=slot=>GEAR.find(i=>i.id===eq[slot]);
+  let layer='';
+  if(item('body')&&eq.body!=='tunic'){
+    const c=item('body').color;
+    layer+=`<path d="M40 79 L54 74 L66 74 L80 79 L78 100 L42 100 Z" fill="${c}" opacity=".68" stroke="#fef3c7" stroke-width="2"/>`;
+  }
+  if(item('head')&&eq.head!=='cap'){
+    const c=item('head').color;
+    layer+=`<path d="M33 40 Q34 7 60 6 Q86 7 88 40 L80 34 Q60 25 40 34Z" fill="${c}" stroke="#fff4bc" stroke-width="2" opacity=".94"/>`;
+    if(eq.head==='crown')layer+=`<path d="M40 18 L43 3 L53 12 L60 -2 L69 12 L78 3 L81 18 Z" fill="#ffe17a" stroke="#b86a10" stroke-width="2"/>`;
+  }
+  if(item('boots')&&eq.boots==='windboots'){
+    layer+='<rect x="44" y="100" width="14" height="13" rx="5" fill="#6dd8f4" stroke="#dff7ff" stroke-width="2"/><rect x="62" y="100" width="14" height="13" rx="5" fill="#6dd8f4" stroke="#dff7ff" stroke-width="2"/>';
+  }
+  if(item('weapon')&&eq.weapon!=='basicweapon'){
+    const c=item('weapon').color;
+    layer+=`<circle cx="105" cy="48" r="9" fill="${c}" opacity=".63"/><path d="M104 36 L109 46 L105 55 L99 46Z" fill="#fff" opacity=".83"/>`;
+  }
+  if(eq.relic==='lens'||eq.relic==='rune'){
+    layer+=`<circle cx="62" cy="84" r="7" fill="${item('relic').color}" stroke="#fff" stroke-width="2"/><circle cx="62" cy="84" r="2" fill="#fff"/>`;
+  }
+  if(eq.pet==='slimepet')layer+='<circle cx="12" cy="103" r="11" fill="#80df8b" stroke="#24865a" stroke-width="2"/><circle cx="9" cy="101" r="2"/><circle cx="16" cy="101" r="2"/>';
+  if(eq.pet==='owlpet')layer+='<circle cx="13" cy="97" r="12" fill="#b68b5b"/><circle cx="9" cy="96" r="4" fill="white"/><circle cx="17" cy="96" r="4" fill="white"/><circle cx="9" cy="96" r="2"/><circle cx="17" cy="96" r="2"/>';
+  if(eq.pet==='dragonpet')layer+='<path d="M0 99 Q12 71 24 99 L21 112 L4 112 Z" fill="#f69b65" stroke="#bd4e2e" stroke-width="2"/><circle cx="10" cy="97" r="2"/><circle cx="18" cy="97" r="2"/>';
+  return base.replace(/<\/svg>$/,layer+'</svg>');
+};
+
+function masteryRecord(l,q,correct){
+  if(l<0||l>=LANDS.length)return;
+  const key='L'+l,raw=S.mastery[key];
+  const m=raw&&typeof raw==='object'?raw:{seen:0,right:0,ids:[]};
+  if(!Array.isArray(m.ids))m.ids=[];
+  if(!Array.isArray(m.correctIds))m.correctIds=[];
+  const id=q.key||((q.prompt?q.prompt[0]:`${q.a}${q.op}${q.c}`)+'|'+q.ans);
+  if(!m.ids.includes(id)){
+    m.seen=safeNumber(m.seen)+1;
+    m.ids.push(id);if(m.ids.length>120)m.ids.shift();
+  }
+  if(correct&&!m.correctIds.includes(id)){
+    m.right=safeNumber(m.right)+1;m.correctIds.push(id);
+    if(m.correctIds.length>120)m.correctIds.shift();
+  }
+  S.mastery[key]=m;save();
+}
+function masteryTier(l){
+  const m=S.mastery['L'+l];if(!m)return 0;
+  const n=safeNumber(m.seen),ratio=safeNumber(m.right)/Math.max(1,n);
+  return n>=10&&ratio>=.85?2:n>=6&&ratio>=.7?1:0;
+}
+function phaseIndex(){return B&&B.b===2&&B.l>=6?(B.hp>5?0:B.hp>2?1:2):0}
+function progressXP(){return `<div class="rpg-statline"><span>Lv ${rpgLevel()}</span><span>✨ ${S.xp} XP</span><div class="rpg-xp" aria-label="XP ${xpWidth()}%"><i style="width:${xpWidth()}%"></i></div></div>`}
+
+/* Original screens are enhanced in place, not reimplemented. This retains
+   their navigation, demo locking, sound controls and signed licence flow. */
+T.ms.bookNote=n=>`${n} daripada ${LANDS.length*3} raksasa ditewaskan`;
+T.en.bookNote=n=>`${n} of ${LANDS.length*3} monsters defeated`;
+T.ms.resetQ='Padam bintang, XP, equipment, penguasaan dan quest? Lesen keluarga kekal.';
+T.en.resetQ='Delete stars, XP, equipment, mastery and quests? Your family licence stays.';
+T.ms.resetDone='Kemajuan permainan dipadam. Lesen kekal.';
+T.en.resetDone='Game progress deleted. Licence retained.';
+T.ms.howParent='Untuk ibu bapa: Matematik sekolah rendah Tahun 1–6. Dunia awal sesuai untuk murid yang sedang membina asas. Tiada timer; kemajuan disimpan pada peranti ini.';
+T.en.howParent='For parents: Primary-school maths, Years 1–6. Earlier lands build fundamental skills. No timer; progress is saved on this device.';
+T.ms.how.push('🎒 Di Kem Wira, pakai equipment yang diperoleh melalui pembelajaran. Tiada pembelian item.');
+T.en.how.push('🎒 Equip learning rewards at Hero Camp. No item purchases.');
+T.ms.how.push('🛡️ Kuasa khas aktif selepas 2 jawapan betul. Misi sampingan membantu latihan.');
+T.en.how.push('🛡️ Your skill charges after 2 correct answers. Side quests add practice.');
+
+const legacyHome=home,legacyMap=map,legacyBook=book,legacyHow=how;
+home=function(){
+  legacyHome();syncGear();
+  const panel=view.querySelector('.lvl');
+  if(panel){
+    const lv=panel.children[0],monster=panel.children[2];
+    if(lv&&lv.firstChild)lv.firstChild.nodeValue=rpgLevel();
+    if(monster&&monster.firstChild)monster.firstChild.nodeValue=wins()+'/'+LANDS.length*3;
+    const playRow=$('#play')&&$('#play').parentElement;
+    (playRow||panel).insertAdjacentHTML('afterend',`<section class="rpg-ribbon" aria-label="${r2('camp')}">
+      <div class="rpg-hub-title"><span>${r2('camp')}</span><span class="rpg-tag">RPG 2.0</span></div>
+      ${progressXP()}
+      <div class="rpg-nav"><button id="rpgInv">${r2('inventory')}</button><button id="rpgQuests">${r2('quests')}</button><button id="rpgMastery">${r2('mastery')}</button></div>
+      <div class="rpg-world-note">${r2('parental')}</div></section>`);
+    $('#rpgInv').onclick=()=>{SFX.tap();inventoryScreen()};
+    $('#rpgQuests').onclick=()=>{SFX.tap();questBoard()};
+    $('#rpgMastery').onclick=()=>{SFX.tap();masteryScreen()};
+  }
+};
+map=function(){
+  legacyMap();
+  view.querySelectorAll('.land').forEach((el,l)=>{
+    const enabled=!paid(l)&&unlocked(l,0),done=!!S.quests['L'+l];
+    el.insertAdjacentHTML('beforeend',`<button class="rpg-side-quest" data-side="${l}" ${enabled?'':'disabled'}>${r2('side')}${done?' · '+r2('questDone'):''}</button>`);
+  });
+  view.querySelectorAll('[data-side]').forEach(el=>el.onclick=()=>{SFX.tap();sideQuest(+el.dataset.side)});
+  view.insertAdjacentHTML('beforeend',`<div class="rpg-world-note">${r2('sideNote')} ${r2('noTimer')}</div>`);
+};
+book=function(){legacyBook();view.insertAdjacentHTML('afterbegin',`<div class="rpg-book-note">${LANDS.length} ${EN()?'worlds':'dunia'} · ${LANDS.length*3} ${EN()?'creatures':'raksasa'}</div>`)};
+how=function(){legacyHow();const box=view.querySelector('.result');if(box)box.insertAdjacentHTML('beforeend',`<div class="rpg-reward">${r2('oldHelp')}<br>${r2('noTimer')}</div>`)};
+
+function setBossHUD(){
+  if(!B||!B.rpgReady)return;
+  const p=$('#rpgPhase');
+  if(p)p.textContent=B.b===2&&B.l>=6?r2('phase')[phaseIndex()]:r2('stage')[B.b];
+  const count=$('#rpgStage');if(count)count.textContent=`${r2('mission')} ${B.b+1}/3 · ${r2('heroLv')} ${rpgLevel()}`;
+}
+function updatePowerButton(){
+  if(!B||!B.rpgReady)return;
+  const b=$('#rpgPowerBtn'),charge=$('#rpgCharge');if(!b||!charge)return;
+  const need=isEquipped('rune')?1:2,ready=B.right>=need&&!B.rpgPowerUsed;
+  b.disabled=!ready||B.busy;
+  b.textContent=B.rpgPowerUsed?r2('used'):r2('power')[B.hero.id];
+  charge.textContent=B.rpgPowerUsed?'✓':ready?'✨✨':'✨'.repeat(Math.min(B.right,need))+'○'.repeat(Math.max(0,need-B.right));
+  b.title=ready?r2('powerReady'):r2('charge');
+}
+function revealHint(){
+  if(!B||!B.q)return;
+  const h=$('#hb');h.innerHTML=hintHTML(B.q);h.hidden=false;
+}
+function useHeroPower(){
+  if(!B||B.busy||B.rpgPowerUsed||B.right<(isEquipped('rune')?1:2))return;
+  B.rpgPowerUsed=true;SFX.magic();
+  if(B.hero.id==='kesatria'){
+    B.rpgGuard=true;toast(r2('guard'));fx($('#uHero'),'🛡️','#a2f6fa');
+  }else if(B.hero.id==='pemanah'){
+    const wrong=[...document.querySelectorAll('#ans .ans[data-v]')].filter(x=>Number(x.dataset.v)!==B.q.ans&&!x.disabled);
+    if(B.q.mode==='choice'&&wrong.length){const el=wrong[0];el.disabled=true;el.style.opacity='.28';el.style.pointerEvents='none';toast(r2('focus'))}
+    else{revealHint();toast(r2('reveal'))}
+  }else{revealHint();toast(r2('reveal'));fx($('#uHero'),'✨','#ffe17a')}
+  updatePowerButton();
+}
+
+function renderRPGQuestion(){
+  if(!B||!B.q)return;
+  const q=B.q,box=$('#ans');if(!box)return;
+  box.classList.add('rpg-battle-choices');
+  box.style.display='grid';
+  box.style.gridTemplateColumns=q.choices.length===3?'repeat(3,1fr)':'repeat(2,1fr)';
+  if(q.kind!=='rpg')return;
+  if(q.mode==='choice'){
+    box.innerHTML=q.choices.map(v=>`<button class="ans" data-v="${v}">${escapeText(f2(v,q.format))}</button>`).join('');
+    box.querySelectorAll('.ans').forEach(btn=>btn.onclick=()=>answer(Number(btn.dataset.v),btn));
+    return;
+  }
+  box.style.display='block';
+  if(q.mode==='sort'){
+    box.innerHTML=`<div class="rpg-interact"><div class="rpg-tag">${r2('tapOrder')}</div><div class="rpg-sort-tiles" id="sortTiles">${q.sortValues.map(v=>`<button class="rpg-sort-tile" data-n="${v}">${v}</button>`).join('')}</div>
+      <div class="rpg-sort-progress" id="sortProgress">_ → _ → _</div><button class="ans rpg-submit" id="sortCheck" disabled>${r2('check')}</button></div>`;
+    const chosen=[];const check=$('#sortCheck');
+    box.querySelectorAll('.rpg-sort-tile').forEach(tile=>tile.onclick=()=>{
+      if(B.busy)return;tile.disabled=true;chosen.push(+tile.dataset.n);
+      $('#sortProgress').textContent=[...chosen,...Array(3-chosen.length).fill('_')].join(' → ');
+      check.disabled=chosen.length!==3;SFX.tap();
+    });
+    check.onclick=()=>answer(chosen.every((n,i)=>n===q.sortAnswer[i])?1:0,check);
+  }else{
+    const max=Math.min(100,Math.max(5,q.counterMax));let value=0;
+    box.innerHTML=`<div class="rpg-interact"><div class="rpg-tag">${r2('countInstruction')}</div><div class="rpg-counter"><button id="counterMinus" aria-label="Minus">−</button><output id="counterValue">0</output><button id="counterPlus" aria-label="Plus">+</button></div><button class="ans rpg-submit" id="counterCheck">${r2('check')}</button></div>`;
+    const out=$('#counterValue');
+    $('#counterMinus').onclick=()=>{value=Math.max(0,value-1);out.textContent=value;SFX.tap()};
+    $('#counterPlus').onclick=()=>{value=Math.min(max,value+1);out.textContent=value;SFX.tap()};
+    $('#counterCheck').onclick=()=>answer(value,$('#counterCheck'));
+  }
+}
+
+const legacyNextQ=nextQ,legacyDrawHud=drawHud,legacyBattle=battle,legacyAnswer=answer;
+nextQ=function(){
+  legacyNextQ();if(!B)return;
+  if(!Array.isArray(B.rpgHistory))B.rpgHistory=[];
+  B.rpgHistory.push(B.q.key);if(B.rpgHistory.length>6)B.rpgHistory.shift();
+  renderRPGQuestion();
+  const oldTip=$('#rpgTip');if(oldTip)oldTip.remove();
+  updatePowerButton();setBossHUD();
+};
+drawHud=function(){legacyDrawHud();updatePowerButton();setBossHUD()};
+battle=function(l,b){
+  if(paid(l)||!unlocked(l,b))return legacyBattle(l,b);
+  legacyBattle(l,b);if(!B)return;
+  B.rpgReady=true;B.rpgGuard=false;B.rpgPowerUsed=false;
+  const arena=view.querySelector('.arena');
+  arena.insertAdjacentHTML('beforeend',`<div class="rpg-battle-phase" id="rpgPhase"></div><div class="rpg-stage-chip" id="rpgStage"></div>`);
+  view.querySelector('.combo').insertAdjacentHTML('afterend',`<div class="rpg-power"><span class="charge" id="rpgCharge">○○</span><button id="rpgPowerBtn" disabled>${r2('power')[B.hero.id]}</button></div>`);
+  $('#rpgPowerBtn').onclick=useHeroPower;
+  const body=view.querySelector('#uHero .body');if(body)body.classList.add('rpg-equipped-hero');
+  updatePowerButton();setBossHUD();
+};
+answer=async function(v,btn){
+  if(!B||B.busy)return;
+  const q=B.q,correct=v===q.ans,land=B.l;
+  masteryRecord(land,q,correct);
+  if(!correct&&q.kind==='rpg'){
+    const card=view.querySelector('.qcard');
+    if(card)card.insertAdjacentHTML('beforeend',`<div class="rpg-tip" id="rpgTip">💡 ${escapeText(tr(q.hint))}</div>`);
+  }
+  await legacyAnswer(v,btn);
+};
+
+/* Learning rewards and result summaries. Legacy stars are still awarded by
+   the original result() and saved under their original LxBy keys. */
+let latestReward=null,lastResultData=null;
+const legacyResult=result,legacyResultScreen=resultScreen;
+resultScreen=function(R){
+  lastResultData=R;legacyResultScreen(R);
+  if(!R.won||!latestReward||latestReward.l!==R.l||latestReward.b!==R.b)return;
+  const row=view.querySelector('.result .row');if(!row)return;
+  const message=`<div class="rpg-reward">🎁 ${r2('reward')}<br>✨ +${latestReward.xp} XP · Lv ${rpgLevel()}`+
+    (latestReward.newItems?`<br>🎒 ${r2('newItem')} +${latestReward.newItems}`:'')+'</div>';
+  row.insertAdjacentHTML('beforebegin',message);
+  row.insertAdjacentHTML('afterend',`<button class="btn alt rpg-quest-btn" id="goCamp">${r2('camp')}</button>`);
+  $('#goCamp').onclick=()=>{SFX.tap();home()};
+};
+result=function(won){
+  // Idempotent settlement per battle instance, not per stage: replays still earn 8 XP.
+  // Lock before calling legacyResult, which clears B and persists the stars.
+  if(!B||B.dead||B._rewardFinalized)return;
+  B._rewardFinalized=true;
+  const info={l:B.l,b:B.b,right:B.right,first:!starsOf(B.l,B.b)};
+  latestReward=null;
+  legacyResult(won);
+  if(!won)return;
+  const gain=info.first?70+Math.min(35,info.right*5)+(info.b===2?40:0):8;
+  S.xp+=gain;
+  const newItems=syncGear();save();
+  latestReward={l:info.l,b:info.b,xp:gain,newItems};
+  if(lastResultData)resultScreen(lastResultData);
+};
+const battleBeforeRewards=battle;
+battle=function(l,b){latestReward=null;lastResultData=null;return battleBeforeRewards(l,b)};
+
+function inventoryScreen(){
+  stopBattle();syncGear();screen='rpgInventory';redraw=inventoryScreen;head(r2('inventory'),home);
+  view.innerHTML=`<section class="rpg-panel" style="text-align:center">
+    <h2>${r2('camp')} · Lv ${rpgLevel()}</h2><div class="rpg-hero-preview">${heroSVG(S.hero)}</div>
+    ${progressXP()}<p>${r2('parental')}</p></section>`+
+    SLOTS.map(slot=>{
+      const items=GEAR.filter(i=>i.slot===slot);
+      return `<h2 class="rpg-slot-label">${slotName(slot)} · ${r2('equipment')}</h2><div class="rpg-grid">`+
+        items.map(i=>{
+          const owned=haveItem(i.id),selected=S.equipped[slot]===i.id;
+          const need=!owned?[r2('needStars')(i.stars),r2('needLevel')(i.level)].join(' · '):'';
+          return `<div class="rpg-gear-card ${selected?'selected':''} ${owned?'':'locked'}">
+            <div class="rpg-gear-icon">${i.icon}</div><div class="rpg-gear-name">${escapeText(tr(i.name))}</div>
+            <div class="rpg-gear-note">${owned?selected?r2('equipped'):r2('earned'):need}</div>
+            <button data-equip="${i.id}" ${!owned||selected?'disabled':''}>${selected?'✓ '+r2('equipped'):owned?r2('equip'):r2('locked')}</button></div>`;
+        }).join('')+'</div>';
+    }).join('')+`<button class="btn alt" id="invBack">${r2('camp')}</button>`;
+  view.querySelectorAll('[data-equip]').forEach(el=>el.onclick=()=>{
+    const item=GEAR.find(i=>i.id===el.dataset.equip);
+    if(!item||!haveItem(item.id))return;
+    S.equipped[item.slot]=item.id;save();SFX.magic();inventoryScreen();
+  });
+  $('#invBack').onclick=()=>{SFX.tap();home()};
+}
+
+function resetRPGProgress(){
+  S.xp=0;S.inventory=[];S.equipped=Object.assign({},defaultEquip);
+  S.mastery={};S.quests={};syncGear();save();
+}
+
+function masteryScreen(){
+  stopBattle();screen='rpgMastery';redraw=masteryScreen;head(r2('mastery'),home);
+  view.innerHTML=`<section class="rpg-panel"><h2>${r2('mastery')}</h2><p>${r2('masteryDesc')}</p></section>`+
+    LANDS.map((L,l)=>{
+      const m=S.mastery['L'+l]||{seen:0,right:0},n=safeNumber(m.seen),good=safeNumber(m.right),tier=masteryTier(l);
+      const width=Math.min(100,n/10*100);
+      return `<div class="rpg-mastery-row"><div><strong>${l+1}. ${escapeText(tr(L.name))}</strong><small>${escapeText(tr(L.topic))} · ${good}/${n}</small></div><span class="rpg-badge">${r2('masteryTier')[tier]}</span>
+        <div class="rpg-mastery-track"><i style="width:${width}%"></i></div></div>`;
+    }).join('')+`<button class="btn alt" id="masteryBack">${r2('camp')}</button>`;
+  $('#masteryBack').onclick=()=>{SFX.tap();home()};
+}
+
+const NPCS=['👩‍🌾','🍄','⛏️','🌙','👨‍🏭','🏰','👩‍🔧','👩‍🍳','🧑‍✈️','🧑‍🌾','👩‍🔬','👷','🏗️','👩‍🏫'];
+const QUESTS={
+  ms:['Bantu petani mengira hasil tanaman.','Bantu pengumpul cendawan menyemak bekalan.',
+    'Susun kristal untuk membaiki lampu gua.','Bantu penduduk tasik menyusun bekalan.',
+    'Bantu tukang besi mengira bahan.','Bantu penjaga istana membahagikan ramuan.',
+    'Bantu jurutera menyusun nilai tempat.','Bantu peniaga mengurus wang dan baki.',
+    'Bantu pengembara tiba tepat pada masanya.','Bantu tukang masak membahagi makanan.',
+    'Bantu saintis menyukat ramuan.','Bantu pembina menyukat bahan.',
+    'Bantu arkitek membina bangunan.','Bantu guru membaca data kampung.'],
+  en:['Help a farmer count the harvest.','Help a mushroom collector count supplies.',
+    'Arrange crystals to repair cave lights.','Help lake villagers count supplies.',
+    'Help the blacksmith calculate materials.','Help the castle keeper share potions.',
+    'Help an engineer understand place value.','Help a merchant with money and change.',
+    'Help a traveller arrive on time.','Help a cook share food equally.',
+    'Help a scientist measure a mixture.','Help a builder measure materials.',
+    'Help an architect plan a building.','Help a teacher read village data.']
+};
+function questBoard(){
+  stopBattle();screen='rpgQuests';redraw=questBoard;head(r2('quests'),home);
+  view.innerHTML=`<section class="rpg-panel"><h2>${r2('quests')}</h2><p>${r2('sideNote')}</p></section>`+
+    LANDS.map((L,l)=>{
+      const isOpen=!paid(l)&&unlocked(l,0),done=!!S.quests['L'+l];
+      return `<section class="rpg-panel"><div class="rpg-hub-title"><span>${NPCS[l]} ${l+1}. ${escapeText(tr(L.name))}</span><span class="rpg-tag">${done?'✓':'⭐'}</span></div>
+        <p>${escapeText(QUESTS[EN()?'en':'ms'][l])}</p><button class="rpg-smallbtn" data-quest="${l}" ${isOpen?'':'disabled'}>${done?r2('repeatQuest'):r2('startQuest')}</button></section>`;
+    }).join('');
+  view.querySelectorAll('[data-quest]').forEach(el=>el.onclick=()=>{SFX.tap();sideQuest(+el.dataset.quest)});
+}
+
+let sideState=null;
+function sideQuest(l){
+  if(l<0||l>=LANDS.length||paid(l)||!unlocked(l,0))return map();
+  stopBattle();sideState={l,step:0,question:null};
+  showQuestQuestion();
+}
+function nextSideQuestion(){
+  if(!sideState)return;
+  const l=sideState.l;
+  for(let tries=0;tries<12;tries++){
+    const q=l>=6?makeAdventureQ(l,1):oldStoryQ(l,1,legacyMakeQ(l,1));
+    if(q.mode!=='choice')continue;
+    if(sideState.question&&q.key===sideState.question.key)continue;
+    sideState.question=q;return;
+  }
+  sideState.question=legacyMakeQ(l,1);
+}
+function showQuestQuestion(){
+  if(!sideState)return;
+  const {l,step}=sideState;
+  if(step>=3)return finishSideQuest();
+  if(sideState.renderedStep!==step){nextSideQuestion();sideState.renderedStep=step}
+  screen='rpgSide';redraw=showQuestQuestion;head(r2('side'),()=>{sideState=null;questBoard()});
+  const q=sideState.question;
+  view.innerHTML=`<section class="rpg-quest-scene"><div class="rpg-npc">${NPCS[l]}</div><h2 class="rpg-section-title">${escapeText(tr(LANDS[l].name))}</h2>
+    <div>${escapeText(QUESTS[EN()?'en':'ms'][l])}</div><div class="rpg-quest-progress">${r2('questProgress')(step+1)}</div>
+    <div class="rpg-object-row">${'🧱'.repeat(step)}${'▫️'.repeat(3-step)}</div></section>
+    <div class="qcard"><button class="qside qhint" id="questHint" aria-label="${t('hintAria')}">💡</button><button class="qside qsay" id="questSay" aria-label="${t('sayAria')}">🔈</button>
+      <div class="qtext">${qHTML(q,false)}</div><div id="questHelp" class="hintbox" hidden></div></div>
+    <div id="questStatus" class="rpg-quest-progress" style="text-align:center"></div>
+    <div class="answers rpg-battle-choices" id="questOptions" style="grid-template-columns:${q.choices.length===3?'repeat(3,1fr)':'repeat(2,1fr)'}">${q.choices.map(v=>`<button class="ans" data-v="${v}">${escapeText(q.kind==='rpg'?f2(v,q.format):String(v))}</button>`).join('')}</div>
+    <button class="btn alt" id="questExit">${r2('returnMap')}</button>`;
+  $('#questExit').onclick=()=>{sideState=null;map()};
+  $('#questSay').onclick=()=>say(qSpeech(q),q.kind==='rpg'?null:qKeys(q));
+  $('#questHint').onclick=()=>{const h=$('#questHelp');h.innerHTML=hintHTML(q);h.hidden=!h.hidden;SFX.tap()};
+  view.querySelectorAll('#questOptions .ans').forEach(btn=>btn.onclick=()=>{
+    const correct=+btn.dataset.v===q.ans;
+    masteryRecord(l,q,correct);
+    if(correct){
+      view.querySelectorAll('#questOptions .ans').forEach(b=>b.disabled=true);
+      btn.classList.add('ok');SFX.win();$('#questStatus').textContent='✅ '+t('praise')[0];
+      sideState.step++;setTimeout(()=>{if(sideState&&sideState.l===l)showQuestQuestion()},600);
+    }else{btn.classList.add('no');btn.disabled=true;SFX.wrong();
+      $('#questStatus').textContent=r2('questTry');$('#questHelp').innerHTML=hintHTML(q);$('#questHelp').hidden=false;}
+  });
+}
+function finishSideQuest(){
+  if(!sideState)return;
+  const l=sideState.l,first=!S.quests['L'+l];
+  S.quests['L'+l]=true;const gained=first?55:10;S.xp+=gained;
+  const newItems=syncGear();save();
+  screen='rpgQuestDone';redraw=()=>{};head(r2('quests'),questBoard);
+  view.innerHTML=`<section class="result stack"><div class="rpg-npc">${NPCS[l]}🎉</div><h2>${r2('questSuccess')}</h2><p>${escapeText(QUESTS[EN()?'en':'ms'][l])}</p>
+    <div class="rpg-reward">✨ +${gained} XP · Lv ${rpgLevel()} ${newItems?'· 🎒 '+r2('newItem'):''}</div>
+    <div class="row"><button class="btn" id="qAgain">${r2('repeatQuest')}</button><button class="btn alt" id="qMap">${r2('returnMap')}</button></div></section>`;
+  $('#qAgain').onclick=()=>sideQuest(l);
+  $('#qMap').onclick=()=>{sideState=null;map()};
+}
+
+normalizeRPGSave();
+home();
+
+
+
+
+
+</script><script src="js/visual-v3.js"></script><script src="data/bank-1019.js"></script><script src="js/visual-v4.js"></script>
+<script src="js/ux-v5.js"></script><script src="js/cos-anim-v2.js"></script><script src="data/wm-monitor-r4-dummy.js"></script><script src="js/wm-monitor-r3.js"></script></body></html>
