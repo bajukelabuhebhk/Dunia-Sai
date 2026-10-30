@@ -30,3 +30,16 @@
 .wmm-page .wmm-assignment-class input{min-height:20px;width:20px;flex:none}
 .wmm-page .wmm-class-btn:focus-visible,.wmm-page .wmm-student-btn:focus-visible,.wmm-page button:focus-visible{outline:3px solid #ed9c20;outline-offset:2px}
 @media(max-width:600px){.wmm-class-list,.wmm-check-grid{grid-template-columns:1fr}.wmm-class-btn{min-height:70px}.wmm-class-btn span{line-height:1.4}}
+
+/* Dunia Sai: Teacher Edition showcase (locked controls and offer popup) */
+.wmm-locked{opacity:.62;filter:grayscale(.3);cursor:not-allowed}
+input.wmm-locked,textarea.wmm-locked{pointer-events:auto;caret-color:transparent}
+.wmm-cikgu-cta{border:0;cursor:pointer;background:#ffd166;color:#4a2d00;font-weight:800}
+.wmm-lock-pop{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(5,15,30,.62)}
+.wmm-lock-box{max-width:360px;width:100%;background:#fffdf3;color:#123b2e;border-radius:22px;padding:20px;text-align:center;box-shadow:0 14px 40px rgba(0,0,0,.4)}
+.wmm-lock-box h3{margin:0;font-size:1.25rem}
+.wmm-lock-box p{margin:0;line-height:1.4;color:#33574a;font-weight:700}
+.wmm-lock-box a.wmm-btn{display:block;text-decoration:none;text-align:center}
+.wmm-card{overflow-wrap:anywhere}
+.wmm-card code{word-break:break-all;white-space:normal}
+.wmm-card input[type=file]{max-width:100%}
