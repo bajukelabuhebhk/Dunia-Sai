@@ -1,5 +1,5 @@
 {
- "version": "b667f7d3bb",
+ "version": "2504a35cbc",
  "core": {
   "files": {
    "/app/": "60adb35dfa48",
@@ -435,9 +435,9 @@
   },
   "kenal-jawi": {
    "files": {
-    "/app/kenal-jawi/": "d8204e724896"
+    "/app/kenal-jawi/": "b7cb5ede944e"
    },
-   "bytes": 3338567
+   "bytes": 2426146
   },
   "nakhoda-jawi": {
    "files": {
