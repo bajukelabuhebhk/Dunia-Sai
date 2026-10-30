@@ -1,5 +1,5 @@
 {
- "version": "6a0729c40f",
+ "version": "963ab78e22",
  "core": {
   "files": {
    "/app/": "60adb35dfa48",
@@ -932,9 +932,10 @@
   },
   "wonder-island": {
    "files": {
-    "/app/wonder-island/": "8dd011d5815c"
+    "/app/wonder-island/": "c6db4b2441af",
+    "/app/wonder-island/ruang.js": "2ede80c7d701"
    },
-   "bytes": 20958674
+   "bytes": 20988637
   }
  }
 }
