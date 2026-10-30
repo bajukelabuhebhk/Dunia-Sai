@@ -342,7 +342,7 @@ a.btn{text-decoration:none;display:inline-block}
 @keyframes pvTap{40%{transform:scale(.95)}80%{transform:scale(1.04)}}
 @media(max-height:620px){.pv .pc{padding-top:56px;padding-bottom:8px;gap:4px}.pv .pi{font-size:2.4rem}.pv .pj{font-size:1.6rem}.pv p{font-size:.95rem}.pv-stage{min-height:110px;padding:4px}.pv .play{padding:10px 32px;margin-top:3px;font-size:1.4rem}}
 @media(prefers-reduced-motion:reduce){.pv .pc::before,.pv .pc::after,.pv-stage,.pv-stage *{animation:none!important}}
-</style><!-- dunia-sai --><link rel="manifest" href="/manifest.json"><script src="/shared/js/balik.js" defer></script></head><body>
+</style><!-- dunia-sai --><link rel="manifest" href="/manifest.json"><script src="/shared/js/balik.js" defer></script><script src="/shared/js/ruang-ibubapa.js"></script></head><body>
 
 <div class="app">
   <header>
@@ -460,6 +460,20 @@ let sound=true, stars=0, full=false;
 const FREE=10; // huruf percuma dalam versi percubaan
 const KJ_GAME_IDS=['cari','padan','surih','kad','belon','makan','titik','pelekat'];
 let kjActiveGame='';
+/* Dunia Sai: Ruang Ibu Bapa (/shared/js/ruang-ibubapa.js). Setiap jawapan anak direkod ikut aktiviti dan huruf. */
+const kjJawab=(ok,x)=>{chime(ok);try{window.DSRuang&&DSRuang.jawab(kjActiveGame,ok,x&&x.j?x.j+' '+x.n:null)}catch(e){}};
+if(window.DSRuang)DSRuang.pasang({id:'kenal-jawi',nama:'Kenal Jawi',tajuk:'Anak belajar Jawi, kita faham perkembangannya.',
+ aktiviti:{cari:['🔍','Cari Huruf','bunyi'],padan:['🃏','Padankan','bentuk'],surih:['✍️','Surih Huruf','tulis'],kad:['📚','Kad Huruf','bunyi'],belon:['🎈','Pecah Belon','bunyi'],makan:['🐱','Beri Makan','bentuk'],titik:['🧺','Kira Titik','titik'],pelekat:['🎨','Pelekat',''],jambatan:['🌉','Jambatan Jawi','kata']},
+ kemahiran:[
+  {id:'bunyi',icon:'🔊',name:'Kenal bunyi huruf',tip:'Tunjuk huruf Jawi pada papan tanda masjid, kedai atau kotak makanan, kemudian minta anak sebut bunyinya.'},
+  {id:'bentuk',icon:'🔷',name:'Kenal bentuk huruf',tip:'Buat kad huruf daripada kertas. Sebut satu huruf, dan biar anak cari kad yang betul.'},
+  {id:'titik',icon:'🔵',name:'Kira titik huruf',tip:'Tulis ب ت ث besar-besar di atas kertas. Minta anak kira titik dan beritahu bezanya.'},
+  {id:'tulis',icon:'✍️',name:'Menulis (surih) huruf',tip:'Surih huruf dengan jari di atas pasir, tepung atau tapak tangan anak.'},
+  {id:'kata',icon:'🌉',name:'Membina perkataan (Jambatan Jawi)',tip:'Eja nama anak dalam Jawi bersama-sama dan tampal di pintu bilik.'}],
+ kata:{kemahiran:'Kemahiran Jawi',baru:'Baharu'},
+ item:{tajuk:'🔤 Huruf yang perlu latihan',kukuh:'⭐ Huruf yang sudah kukuh',kosong:'Belum ada rekod huruf. Main Cari Huruf, Pecah Belon, Beri Makan atau Kira Titik dahulu.'},
+ kemajuan(){const c=load('kj_game_completed_v2',{});return [[KJ_GAME_IDS.filter(k=>c&&c[k]).length+'/8','Aktiviti selesai'],[load('kj_done',[]).length+'/37','Huruf disurih']]},
+ nota(){return 'Aktiviti dan huruf yang sudah disurih sebelum ini tetap dikira.'}});
 const kjCompleted=()=>load('kj_game_completed_v2',{});
 function kjMarkDone(id){if(!id)return;const x=kjCompleted();if(x[id])return;x[id]=new Date().toISOString();save('kj_game_completed_v2',x)}
 function kjCertTier(){if(!full)return 1;const done=kjCompleted();return KJ_GAME_IDS.every(id=>done[id])&&traced.size===L.length?3:2}
@@ -708,6 +722,7 @@ function fit(){
 const scaleOf=el=>{const w=el.offsetWidth;return w?el.getBoundingClientRect().width/w:1};
 let fitT;addEventListener('resize',()=>{clearTimeout(fitT);fitT=setTimeout(fit,150)});
 function finish(score,total,again){
+  try{window.DSRuang&&DSRuang.selesai(kjActiveGame)}catch(e){}
   if(score>=Math.ceil(total*.6))kjMarkDone(kjActiveGame);
   stopGame();
   const s=score>=total*.9?3:score>=total*.6?2:1;
@@ -841,8 +856,8 @@ function kjBridgeRail(i){
  kjBridgeLayout('🚂 Gerabak Huruf','Gerabak ini ada cangkuk ke KIRI atau tidak?',i,KJ_BRIDGE_RAIL.length,
  `<div class="bridgetrain"><span dir="rtl">${d.letter}</span> <span style="font-family:inherit;font-size:2rem">🚃</span></div><div style="text-align:center"><span class="bridgechip" id="brchip" role="button" tabindex="0">${d.letter}</span></div><div class="bridgezones"><button class="bridgezone" data-answer="yes">🔗 Boleh sambung<br>di sebelah kiri</button><button class="bridgezone" data-answer="no">✋ Tidak boleh<br>sambung ke kiri</button></div>`);
  const choices=[...view.querySelectorAll('.bridgezone')];
- function choose(ans){if(locked)return;if((ans==='yes')!==d.yes){errors++;chime(false);document.getElementById('brmsg').textContent=errors>=2?`Petunjuk: ${d.yes?'Ada cangkuk di kiri':'Tiada cangkuk kiri'}. Cuba lagi!`:'Cuba lorong lain. 😊';return}
-  locked=true;chime(true);document.getElementById('brmsg').textContent=d.meaning;choices.find(b=>b.dataset.answer===ans).classList.add('ok');quietTimeout(()=>kjBridgeRail(i+1),1400,6000)}
+ function choose(ans){if(locked)return;if((ans==='yes')!==d.yes){errors++;kjJawab(false);document.getElementById('brmsg').textContent=errors>=2?`Petunjuk: ${d.yes?'Ada cangkuk di kiri':'Tiada cangkuk kiri'}. Cuba lagi!`:'Cuba lorong lain. 😊';return}
+  locked=true;kjJawab(true);document.getElementById('brmsg').textContent=d.meaning;choices.find(b=>b.dataset.answer===ans).classList.add('ok');quietTimeout(()=>kjBridgeRail(i+1),1400,6000)}
  const chip=document.getElementById('brchip');kjBridgeDrop(chip,choices,choose);
  const voiceLetter=L.find(x=>x.j===d.letter);if(voiceLetter)speak(Lc(voiceLetter));
  chip.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();choices[0].focus()}};
@@ -857,8 +872,8 @@ function kjBridgeShape(i){
  `<div class="bridgeword" dir="rtl">${sample}</div><div class="bridgejawi" dir="rtl">${d.word}</div><div class="bridgechoices">${Object.entries(KJ_BRIDGE_FORM_LABEL).map(([k,label])=>`<button data-shape="${k}" aria-label="${label}" style="font-family:inherit;font-size:1rem">${label}</button>`).join('')}</div>`);
  const voiceLetter=L.find(x=>x.j===d.letter);if(voiceLetter)speak(Lc(voiceLetter));
  view.querySelectorAll('[data-shape]').forEach(b=>b.onclick=()=>{if(locked)return;
-  if(b.dataset.shape!==form){errors++;chime(false);document.getElementById('brmsg').textContent=errors>=2?`Petunjuk: ${KJ_BRIDGE_FORM_LABEL[form]}. Tekan jawapan itu untuk teruskan.`:'Cuba perhatikan sambungan huruf!';return}
-  locked=true;b.style.background='#bcf1d2';chime(true);document.getElementById('brmsg').textContent=`Betul! ${d.note}`;quietTimeout(()=>kjBridgeShape(i+1),1600,6000)});
+  if(b.dataset.shape!==form){errors++;kjJawab(false);document.getElementById('brmsg').textContent=errors>=2?`Petunjuk: ${KJ_BRIDGE_FORM_LABEL[form]}. Tekan jawapan itu untuk teruskan.`:'Cuba perhatikan sambungan huruf!';return}
+  locked=true;b.style.background='#bcf1d2';kjJawab(true);document.getElementById('brmsg').textContent=`Betul! ${d.note}`;quietTimeout(()=>kjBridgeShape(i+1),1600,6000)});
 }
 function kjBridgeWords(i){
  setScreen(true);if(i>=KJ_BRIDGE_WORDS.length)return kjBridgeDone('words','Jeti Nakhoda berjaya!');
@@ -870,9 +885,9 @@ function kjBridgeWords(i){
  `<div class="bridgeword"><span id="brfirst">${d.parts[0]}</span><span class="target" id="brlast">؟</span></div><div class="bridgejawi" id="brresult" aria-label="Ruang perkataan">${d.parts[0]}…</div><div class="bridgechoices">${choices.map((p,k)=>`<button data-part="${kjEsc(p)}" aria-label="Suku kata ${k+1}">${p}</button>`).join('')}</div>`);
  // First syllable is prefilled. Child places the next syllable by tapping a tile.
  function choosePart(b){if(locked)return;
-  if(b.dataset.part!==d.parts[1]){errors++;chime(false);document.getElementById('brmsg').textContent=errors>=2?`Petunjuk: bunyinya '${d.note}'. Cuba lagi.`:'Cuba blok yang lain. 🙂';return}
+  if(b.dataset.part!==d.parts[1]){errors++;kjJawab(false);document.getElementById('brmsg').textContent=errors>=2?`Petunjuk: bunyinya '${d.note}'. Cuba lagi.`:'Cuba blok yang lain. 🙂';return}
   locked=true;b.style.background='#bcefd3';document.getElementById('brlast').textContent=d.parts[1];document.getElementById('brresult').textContent=d.jawi;
-  document.getElementById('brmsg').textContent=`✨ ${d.rumi.toUpperCase()} = ${d.jawi} · ${d.note}`;chime(true);quietTimeout(()=>kjBridgeWords(i+1),1900,8000)
+  document.getElementById('brmsg').textContent=`✨ ${d.rumi.toUpperCase()} = ${d.jawi} · ${d.note}`;kjJawab(true);quietTimeout(()=>kjBridgeWords(i+1),1900,8000)
  }
  const voiceWord=L.find(x=>String(x.w).toLowerCase()===d.rumi);if(voiceWord)speak(Wc(voiceWord));
  const slot=document.getElementById('brlast');
@@ -889,7 +904,7 @@ function kjBridgeWords(i){
 
 /* ---------- HOME ---------- */
 function home(){
-  setScreen(false);
+  setScreen(false);try{window.DSRuang&&DSRuang.henti()}catch(e){}
   const got=Math.min(Math.floor(stars/PER_STICKER),STICKERS.length);
   const need=got<STICKERS.length?PER_STICKER-(stars%PER_STICKER):0;
   view.innerHTML=`<div class="stack">
@@ -910,6 +925,7 @@ function home(){
       <span class="bridgebar"><i style="width:${kjBridgeHalfCount()*12.5}%"></i></span>
     </button>
     <p class="bridgehint" id="kjBridgeTodo">${kjBridgeUnlocked()?'Tahniah! Kamu boleh menyeberang jambatan.':KJ_GAME_IDS.map(id=>KJ_BRIDGE_LABEL[id]+' '+Math.min(kjBridgeData()[id]||0,KJ_BRIDGE_LIMIT[id])+'/'+KJ_BRIDGE_LIMIT[id]).join(' · ')}</p>
+    <button class="par" id="kjRuang">📊 Ruang Ibu Bapa: lihat kemajuan anak</button>
     ${full?`<button class="par" id="par">👨‍👩‍👧 Untuk ibu bapa: lesen</button>`:`<button class="demo" id="unl"><span style="font-size:1.6rem">🔒</span><span>Versi percubaan: ${FREE} daripada ${L.length} huruf.<br><b>Buka versi penuh · RM15</b></span></button>`}
     <section class="stick"><h2>Koleksi pelekat</h2>
       <div class="stk">${STICKERS.map((s,i)=>`<span class="${i<got?'':'lk'}">${s}</span>`).join('')}</div>
@@ -928,6 +944,7 @@ function home(){
   go('go1','g-cari',quiz);go('go2','g-padankan',match);go('go3','g-surih',map);go('go4','g-kad',()=>learn());
   go('go5','g-belon',balloon);go('go6','g-makan',feed);go('go7','g-titik',sortDots);go('go8','g-pelekat',board);
   const u=document.getElementById('unl');if(u)u.onclick=unlock;
+  document.getElementById('kjRuang').onclick=()=>{if(window.DSRuang)DSRuang.buka(home)};
   const pb=document.getElementById('par');if(pb)pb.onclick=()=>gate(licenceScreen);
 }
 
@@ -1000,11 +1017,11 @@ function quiz(){
     view.querySelectorAll('.tile').forEach(b=>b.onclick=()=>{
       if(locked||b.classList.contains('no'))return;
       const feedback=document.getElementById('g1fb');
-      if(b.dataset.j===target.j){locked=true;b.classList.add('ok');chime(true);if(!miss){score++;streak++;addStar()}else streak=0;
+      if(b.dataset.j===target.j){locked=true;b.classList.add('ok');kjJawab(true,target);if(!miss){score++;streak++;addStar()}else streak=0;
         feedback.textContent=`✅ Betul! ${target.w} — ${target.j}${streak>=3?' · 🔥 Hebat, '+streak+' berturut-turut!':''}`;
         feedback.className='g1-feedback show';
         speak(praise());q++;kjBridgeAdvance('cari',q);quietTimeout(next,2000,8000);}
-      else{miss=true;streak=0;b.classList.add('no');chime(false);feedback.textContent='💪 Cuba lagi! Dengar bunyi huruf.';feedback.className='g1-feedback show try-again';speak(Pc('cuba-lagi'),Pc('cari-huruf'),Lc(target));}
+      else{miss=true;streak=0;b.classList.add('no');kjJawab(false,target);feedback.textContent='💪 Cuba lagi! Dengar bunyi huruf.';feedback.className='g1-feedback show try-again';speak(Pc('cuba-lagi'),Pc('cari-huruf'),Lc(target));}
     });
   };
   next();
@@ -1030,9 +1047,9 @@ function match(){
     tries++;const [a,d]=open.map(k=>cards[k]);
     if(a.x===d.x){a.done=d.done=true;found++;kjBridgeAdvance('padan',found);
       open.forEach(k=>view.querySelector(`[data-i="${k}"]`).classList.add('ok'));
-      open=[];chime(true);addStar();
+      open=[];kjJawab(true);addStar();
       if(found===set.length)quietTimeout(()=>{kjMarkDone('padan');finish(tries<=set.length+3?set.length:tries<=set.length+6?Math.ceil(set.length*.7):Math.ceil(set.length*.5),set.length,match)},900);
-    }else{busy=true;chime(false);
+    }else{busy=true;kjJawab(false);
       const t=setTimeout(()=>{open.forEach(k=>{const e=view.querySelector(`[data-i="${k}"]`);if(e){e.classList.remove('open');e.innerHTML='<span class="back">?</span>'}});open=[];busy=false},1600);
       cleanup=()=>clearTimeout(t);}
   });
@@ -1136,7 +1153,7 @@ async function trace(i){
       else if(!dotsOk)tell('Jangan lupa titik! Sentuh setiap titik di tempatnya.','jangan-lupa-titik');
       else th.textContent=HINT;
     }
-    if(!done&&bodyCov>=NEED&&zonesOk&&dotsOk&&neat>=NEAT){th.textContent='Syabas!';hc.clearRect(0,0,size,size);hl.classList.remove('blink');drawing=false;done=true;chime(true);addStar();speak(praise(),Lc(x));
+    if(!done&&bodyCov>=NEED&&zonesOk&&dotsOk&&neat>=NEAT){th.textContent='Syabas!';hc.clearRect(0,0,size,size);hl.classList.remove('blink');drawing=false;done=true;kjJawab(true,x);addStar();speak(praise(),Lc(x));
       draw.parentElement.style.borderColor='var(--leaf)';
       const before=traced.size;traced.add(i);saveTraced();kjBridgeAdvance('surih',traced.size);const after=traced.size;if(after===L.length)kjMarkDone('surih');
       if(before<20&&after>=20)toast('Pelekat istimewa baru! 🌙');
@@ -1263,11 +1280,11 @@ function balloon(){
       el.style.transform=`translate(${b.x}px,${b.y}px)`;
       el.onclick=()=>{
         if(locked||b.gone)return;
-        if(x===target){locked=true;b.gone=true;el.classList.add('popd');popSnd();chime(true);
+        if(x===target){locked=true;b.gone=true;el.classList.add('popd');popSnd();kjJawab(true,target);
           const r=el.getBoundingClientRect(),a=ar.getBoundingClientRect(),k=scaleOf(ar);confetti(ar,(r.left-a.left)/k+42,(r.top-a.top)/k+45);
           if(!miss){score++;addStar()}speak(praise(),Lc(target));q++;kjBridgeAdvance('belon',q);
           quietTimeout(next,1000)}
-        else{miss=true;chime(false);const s=el.querySelector('.b');s.classList.remove('wob');void s.offsetWidth;s.classList.add('wob');speak(Pc('cuba-lagi'),Pc('pecahkan-belon'),Lc(target))}
+        else{miss=true;kjJawab(false,target);const s=el.querySelector('.b');s.classList.remove('wob');void s.offsetWidth;s.classList.add('wob');speak(Pc('cuba-lagi'),Pc('pecahkan-belon'),Lc(target))}
       };
       ar.appendChild(el);return b});
   }
@@ -1365,9 +1382,9 @@ function feed(){
       if(x===target){locked=true;const a=b.getBoundingClientRect(),p=pet.getBoundingClientRect();
         const cur=new DOMMatrix(getComputedStyle(b).transform);
         const k=scaleOf(fd);b.classList.add('eat');b.style.transform=`translate(${cur.m41+((p.left+p.width/2)-(a.left+a.width/2))/k}px,${cur.m42+((p.top+p.height/2)-(a.top+a.height/2))/k}px) scale(.4)`;
-        later(()=>{pet.classList.remove('open','nope');pet.classList.add('chew');pet.setAttribute('aria-label',KJ_FEED_PETS[face].name+' sedang makan');chime(true);speak(Pc('nyam'),praise())},350);
+        later(()=>{pet.classList.remove('open','nope');pet.classList.add('chew');pet.setAttribute('aria-label',KJ_FEED_PETS[face].name+' sedang makan');kjJawab(true,target);speak(Pc('nyam'),praise())},350);
         if(!miss){score++;addStar()}q++;kjBridgeAdvance('makan',q);quietTimeout(next,1900)}
-      else{miss=true;b.classList.add('back','no','reject');b.style.transform='';b.addEventListener('animationend',()=>b.classList.remove('reject'),{once:true});pet.classList.remove('nope','chew','open');void pet.offsetWidth;pet.classList.add('nope');pet.setAttribute('aria-label',KJ_FEED_PETS[face].name+' menolak biskut');chime(false);speak(Pc('cuba-lagi'),Pc('beri-makan'),Lc(target))}
+      else{miss=true;b.classList.add('back','no','reject');b.style.transform='';b.addEventListener('animationend',()=>b.classList.remove('reject'),{once:true});pet.classList.remove('nope','chew','open');void pet.offsetWidth;pet.classList.add('nope');pet.setAttribute('aria-label',KJ_FEED_PETS[face].name+' menolak biskut');kjJawab(false,target);speak(Pc('cuba-lagi'),Pc('beri-makan'),Lc(target))}
     }
   }
   next();
@@ -1396,9 +1413,9 @@ function sortDots(){
   lt.onclick=()=>speak(Lc(x));document.getElementById('rp').onclick=()=>speak(Lc(x),Pc('berapa-titik'));
   view.querySelectorAll('.bk').forEach(b=>b.onclick=()=>{
     if(locked)return;const n=+b.dataset.n,want=dots(x);
-    if(n===want){locked=true;b.classList.remove('no');b.classList.add('ok');chime(true);count[n]++;document.getElementById('c'+n).textContent=count[n];
+    if(n===want){locked=true;b.classList.remove('no');b.classList.add('ok');kjJawab(true,x);count[n]++;document.getElementById('c'+n).textContent=count[n];
       if(!miss){score++;addStar()}speak(Pc('titik-'+n),praise());q++;kjBridgeAdvance('titik',q);t=quietTimeout(next,1000)}
-    else{miss++;b.classList.remove('no');void b.offsetWidth;b.classList.add('no');chime(false);speak(Pc('kira-lagi'));
+    else{miss++;b.classList.remove('no');void b.offsetWidth;b.classList.add('no');kjJawab(false,x);speak(Pc('kira-lagi'));
       if(miss>=2)view.querySelector(`.bk[data-n="${want}"]`).classList.add('hintb')}
   });
   next();

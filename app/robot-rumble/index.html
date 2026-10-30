@@ -444,7 +444,7 @@ body.gfx-compatible .lab-overlay{backdrop-filter:none}
 .lic-wa{background:#16a34a;border-color:#22c55e;color:#fff;text-decoration:none;justify-content:center}
 .lic-id{font:800 16px var(--mono);letter-spacing:.06em;background:var(--deep);border-radius:10px;padding:8px;text-align:center}
 </style>
-<!-- dunia-sai --><link rel="manifest" href="/manifest.json"><script src="/shared/js/balik.js" defer></script></head>
+<!-- dunia-sai --><link rel="manifest" href="/manifest.json"><script src="/shared/js/balik.js" defer></script><script src="/shared/js/ruang-ibubapa.js"></script></head>
 <body>
 <header class="topbar">
   <div class="brand">
@@ -678,6 +678,7 @@ body.gfx-compatible .lab-overlay{backdrop-filter:none}
   <div class="mcard">
     <div class="row-between"><h3 id="mm-title" data-i18n="select_mission">Select Mission</h3><button class="btn btn-icon" id="btn-mm-close" type="button" data-i18n-aria="close" aria-label="Close">✕</button></div>
     <button class="btn btn-amber" id="btn-chal-open" type="button" data-i18n="chal_enter">🏁 Enter challenge code</button>
+    <button class="btn" id="btn-ruang" type="button" style="width:100%">👪 Ruang Ibu Bapa</button>
     <div id="lic-slot"></div>
     <div id="mission-list" style="display:flex;flex-direction:column;gap:8px"></div>
   </div>
@@ -2363,6 +2364,21 @@ var KJL2=(function(){
   }
   const partName = k => t('p_' + k);
   const missionName = id => t('m' + id + '_name');
+  // Dunia Sai: Ruang Ibu Bapa (/shared/js/ruang-ibubapa.js). Setiap ujian robot = satu rekod; gagal disimpan dengan sebabnya.
+  const RUANG_TIP = 'Tanya anak: "Kenapa robot gagal tadi, dan apa yang kamu ubah?" Menerangkan cubaan sendiri melatih cara berfikir seorang jurutera.';
+  if (window.DSRuang) DSRuang.pasang({ id: 'robot-rumble', nama: 'Robot Rumble', tajuk: 'Anak membina dan menguji robot, kita nampak cara dia berfikir.',
+    aktiviti: k => ['🤖', 'Misi ' + String(k).slice(1) + ': ' + missionName(+String(k).slice(1)), ''],
+    kemahiranData: ev => [...new Set(ev.map(x => x.k))].sort((a, b) => a.slice(1) - b.slice(1)).map(k => {
+      const rows = ev.filter(x => x.k === k);
+      return { icon: completed.includes(+k.slice(1)) ? '🏆' : '🔧', name: 'Misi ' + k.slice(1) + ': ' + missionName(+k.slice(1)), r: rows.reduce((a, x) => a + x.r, 0), f: rows.reduce((a, x) => a + x.f, 0), tip: RUANG_TIP };
+    }),
+    kata: { kemahiran: 'Misi yang dicuba', betul: 'Ujian berjaya', soalan: 'ujian', main: 'Sesi misi', kemahiranNota: 'Banyak ujian gagal itu biasa: jurutera belajar daripada setiap cubaan.' },
+    item: { mod: 'gagal', tajuk: '🔍 Sebab robot paling kerap gagal', kosong: 'Belum ada ujian yang gagal.', nota: 'Bantu anak membaca sebab ini di Makmal Kegagalan dan cuba satu perubahan setiap kali.' },
+    tipUmum: RUANG_TIP,
+    kemajuan: () => [[completed.length + '/' + RR.MISSION_IDS.length, 'Misi selesai']],
+    nota: () => 'Misi yang sudah selesai sebelum ini tetap dikira.' });
+  const ruangRekod = r => { if (!r || r.dsRuang || !window.DSRuang) return; r.dsRuang = true;
+    try { DSRuang.jawab('M' + r.missionId, !!r.success, r.success ? null : t(r.reason), { satu: true }); if (r.success) DSRuang.selesai('M' + r.missionId); } catch (e) {} };
 
   // ========================================================
   // STATE & PERSISTENCE (schema v3 with v1/v2 migration)
@@ -5368,6 +5384,7 @@ var KJL2=(function(){
   }
   function showResult() {
     const r = sim.result, card = $('r-card');
+    ruangRekod(r);
     card.classList.toggle('win', r.success);
     $('r-badge').textContent = r.success ? '🏆' : '🔍';
     $('r-title').textContent = r.success ? t('win_title') : t('fail_title');
@@ -6022,6 +6039,7 @@ var KJL2=(function(){
       $('mission-list').querySelector('.mission.cur')?.scrollIntoView({block:'nearest'});
     });
     $('btn-mm-close').addEventListener('click', () => closeModal('modal-missions'));
+    $('btn-ruang').addEventListener('click', () => { sound.click(); closeModal('modal-missions'); if (window.DSRuang) DSRuang.buka(); });
     $('mission-list').addEventListener('click', e => {
       const b = e.target.closest('[data-mission]'); if (!b) return;
       sound.snap(); closeModal('modal-missions'); setMission(+b.dataset.mission); switchTab('build');

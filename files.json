@@ -1,5 +1,5 @@
 {
- "version": "cdb8d5b1bd",
+ "version": "c6472a9598",
  "core": {
   "files": {
    "/app/": "60adb35dfa48",
@@ -27,9 +27,10 @@
    "/shared/js/config.js": "a758df4ada90",
    "/shared/js/jejak.js": "993517d588a5",
    "/shared/js/lesen-lib.js": "9f17920f43d7",
-   "/shared/js/lesen.js": "35453cebccd4"
+   "/shared/js/lesen.js": "35453cebccd4",
+   "/shared/js/ruang-ibubapa.js": "fe877b9cde9c"
   },
-  "bytes": 1120056
+  "bytes": 1138044
  },
  "games": {
   "boss-gerai": {
@@ -435,9 +436,9 @@
   },
   "kenal-jawi": {
    "files": {
-    "/app/kenal-jawi/": "b7cb5ede944e"
+    "/app/kenal-jawi/": "479e566f17f8"
    },
-   "bytes": 2426146
+   "bytes": 2428495
   },
   "nakhoda-jawi": {
    "files": {
@@ -674,9 +675,9 @@
     "/app/nakhoda-jawi/audio/suara/z-1.mp3": "882baebeebc0",
     "/app/nakhoda-jawi/audio/suara/z-2.mp3": "290a3c565bc0",
     "/app/nakhoda-jawi/audio/suara/z-3.mp3": "d5957a8ec41a",
-    "/app/nakhoda-jawi/": "0b1942701246"
+    "/app/nakhoda-jawi/": "e1786b743cbc"
    },
-   "bytes": 6470058
+   "bytes": 6471952
   },
   "robot-rumble": {
    "files": {
@@ -796,9 +797,9 @@
     "/app/robot-rumble/audio/suara/win_m8.mp3": "5ed77de694ff",
     "/app/robot-rumble/audio/suara/win_m9.mp3": "1bd25403147f",
     "/app/robot-rumble/audio/suara/win_title.mp3": "d6ac57a097bc",
-    "/app/robot-rumble/": "4e74fc68ce50"
+    "/app/robot-rumble/": "ae564f7f7102"
    },
-   "bytes": 6306691
+   "bytes": 6308782
   },
   "wira-matematik": {
    "files": {
@@ -932,10 +933,10 @@
   },
   "wonder-island": {
    "files": {
-    "/app/wonder-island/": "a2e1c32a0e42",
-    "/app/wonder-island/ruang.js": "d7058106aa24"
+    "/app/wonder-island/": "a1ec40cb2849",
+    "/app/wonder-island/ruang.js": "4afe3f64daa7"
    },
-   "bytes": 20973839
+   "bytes": 20962169
   }
  }
 }
