@@ -43,3 +43,6 @@ input.wmm-locked,textarea.wmm-locked{pointer-events:auto;caret-color:transparent
 .wmm-card{overflow-wrap:anywhere}
 .wmm-card code{word-break:break-all;white-space:normal}
 .wmm-card input[type=file]{max-width:100%}
+/* Dunia Sai: Parent Quests link, styled like the home nav buttons */
+.wmm-home-nav .wmm-misi-link{min-height:76px;border:2px solid #f0c36b;border-radius:17px;background:linear-gradient(145deg,#fff5d6,#ffe7b8);color:#5a3b00;font-weight:900;display:flex;align-items:center;gap:12px;padding:12px;text-align:left;font-size:clamp(14px,2.8vw,19px);box-shadow:0 5px 0 #b98a2c;text-decoration:none;touch-action:manipulation}
+.wmm-home-nav .wmm-misi-link>span:first-child{font-size:29px}

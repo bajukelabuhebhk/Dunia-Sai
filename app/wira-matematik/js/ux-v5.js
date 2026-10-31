@@ -103,6 +103,7 @@ home=function(){
  <button id="wm6Progress">📊 ${wm6T('Penguasaan Murid','Learning Progress')}</button>
  <button id="wm6Book">📖 ${wm6T('Koleksi Raksasa','Monster Collection')}</button>
  <button id="wm6Quest">📜 ${wm6T('Misi Sampingan','Side Quests')}</button>
+ <a class="wm6-more-link" href="misi/">📜 ${wm6T('Misi Khas Ibu Bapa','Parent Quests')}</a>
  <button id="wm6Teacher">👩‍🏫 ${wm6T('Ruang Guru / Ibu Bapa','Teacher / Parent Area')}</button>
  <button id="wm6How">❔ ${wm6T('Cara Main','How to Play')}</button>
  <button id="wm6Licence">🔒 ${full?wm6T('Lesen Aktif','Active Licence'):wm6T('Buka Versi Penuh','Unlock Full Game')}</button>

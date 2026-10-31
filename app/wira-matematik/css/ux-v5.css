@@ -85,3 +85,5 @@
  .wm6-option-row{gap:3px}.wm6-choice{min-height:36px;font-size:.7rem;padding:2px}
  .wm6-option-title{font-size:.75rem}
 }
+/* Dunia Sai: Parent Quests link in the More panel */
+.wm6-more a.wm6-more-link{display:flex;align-items:center;border:1px solid #76a2bdb0;border-radius:12px;min-height:49px;background:#17405c;color:#ffe7a3;font:800 .83rem var(--display);padding:8px 6px;text-decoration:none}
