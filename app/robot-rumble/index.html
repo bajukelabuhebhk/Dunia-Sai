@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<!-- RR-CC-011-SOLO: pemain berlumba seorang (bayang RX-9 dan rekod terbaik hanya bila butang 👻 ditekan); tetapan tersembunyi (gear, suspensi, tekanan tayar, brek, pemberat) dibuang, hanya komponen yang nampak pada robot; masa RX-9 dikira semula dengan tetapan tetap. -->
 <!-- RR-CC-010-STABIL: pembaikan kestabilan daripada ChatGPT (RR-CC-009-DS) digabung ke RR-CC-009-BUNYI: dialog bertindih, link cabaran rosak tidak menghentikan game, suara BM jatuh ke suara peranti jika klip rosak, had 40 blok, kurang blur GPU pada telefon, susun atur telefon kecil. -->
 <!-- RR-CC-009-BUNYI: muzik bengkel dan 6 bunyi ElevenLabs (folder audio/bunyi, kembali ke bunyi sintetik jika gagal dimuat), cabaran bayang untuk misi berkunci terus ke skrin lesen. Dibina daripada RR-CC-008-DS. -->
 <!-- RR-CC-008-DS: Dunia Sai. Suara BEEP BM (ElevenLabs, folder audio/suara), suara peranti untuk EN, lesen PK2- game 11 (M1-M5 percuma, RM15). Dibina daripada RR-CC-007-P01. -->
@@ -540,13 +541,13 @@ body.gfx-compatible .lab-overlay{backdrop-filter:none}
     <aside class="drawer" data-i18n-aria="parts_aria" aria-label="Parts">
       <div class="row-between"><h2 class="h-label" data-i18n="parts_inventory">PARTS INVENTORY</h2><span class="badge" id="sel-badge"></span></div>
       <div class="parts" id="parts"></div>
-      <div class="tune-row"><label id="lbl-gear" data-i18n="gear_ratio">Gear ratio</label><div class="seg" id="seg-gear" role="group" aria-labelledby="lbl-gear"></div></div>
-      <div class="tune-row"><label id="lbl-susp" data-i18n="suspension">Suspension</label><div class="seg" id="seg-susp" role="group" aria-labelledby="lbl-susp"></div></div>
+      <div class="tune-row" hidden><label id="lbl-gear" data-i18n="gear_ratio">Gear ratio</label><div class="seg" id="seg-gear" role="group" aria-labelledby="lbl-gear"></div></div>
+      <div class="tune-row" hidden><label id="lbl-susp" data-i18n="suspension">Suspension</label><div class="seg" id="seg-susp" role="group" aria-labelledby="lbl-susp"></div></div>
       <section class="garage" aria-labelledby="garage-h">
         <h3 class="h-label" id="garage-h" data-i18n="garage_title">GARAGE</h3>
-        <div class="tune-row"><label id="lbl-tyres" data-i18n="tyres">Tyre pressure</label><div class="seg" id="seg-tyres" role="group" aria-labelledby="lbl-tyres"></div></div>
-        <div class="tune-row"><label id="lbl-brakes" data-i18n="brakes">Brakes</label><div class="seg" id="seg-brakes" role="group" aria-labelledby="lbl-brakes"></div></div>
-        <div class="tune-row"><label id="lbl-ballast" data-i18n="ballast">Ballast</label><div class="seg" id="seg-ballast" role="group" aria-labelledby="lbl-ballast"></div></div>
+        <div class="tune-row" hidden><label id="lbl-tyres" data-i18n="tyres">Tyre pressure</label><div class="seg" id="seg-tyres" role="group" aria-labelledby="lbl-tyres"></div></div>
+        <div class="tune-row" hidden><label id="lbl-brakes" data-i18n="brakes">Brakes</label><div class="seg" id="seg-brakes" role="group" aria-labelledby="lbl-brakes"></div></div>
+        <div class="tune-row" hidden><label id="lbl-ballast" data-i18n="ballast">Ballast</label><div class="seg" id="seg-ballast" role="group" aria-labelledby="lbl-ballast"></div></div>
         <div class="tune-row"><label id="lbl-paint" data-i18n="paint">Paint</label><div class="paints" id="paints" role="group" aria-labelledby="lbl-paint"></div></div>
         <div class="tune-row"><label for="robot-name" data-i18n="robot_name">Robot name</label><input class="name-input" id="robot-name" maxlength="14" autocomplete="off" spellcheck="false"></div>
       </section>
@@ -594,6 +595,7 @@ body.gfx-compatible .lab-overlay{backdrop-filter:none}
       <div class="hud-btns">
         <button class="btn btn-icon" id="btn-pause" type="button" data-i18n-aria="pause" aria-label="Pause">❚❚</button>
         <button class="btn" id="btn-retry" type="button"><span aria-hidden="true">↻</span><span data-i18n="retry">RETRY</span></button>
+        <button class="btn btn-icon" id="btn-ghost" type="button" data-i18n-aria="ghost_toggle" aria-label="RX-9" aria-pressed="false">👻</button>
         <button class="btn btn-icon" id="btn-brain-toggle" type="button" data-i18n-aria="brain_toggle" aria-label="Robot Brain" aria-pressed="true">🧠</button>
         <button class="btn btn-sky" id="btn-tune" type="button" data-i18n="tune">TUNE</button>
       </div>
@@ -1600,7 +1602,7 @@ var KJL2=(function(){
       guide_title: '🤖 BEEP Engineering Coach', guide_progress: 'STEP {n} OF 3',
       guide_prev: 'Back', guide_next: 'Next', guide_finish: 'Let’s build!', guide_skip: 'Skip guide',
       guide_1_title: 'BUILD · Start with the hardware',
-      guide_1_body: 'Tap a part in the inventory, then tap a matching socket around your robot. Try changing the wheels, motor or gear ratio to see the engineering trade-offs.',
+      guide_1_body: 'Tap a part in the inventory, then tap a matching socket around your robot. Try changing the wheels, motor or battery parts to see the engineering trade-offs.',
       guide_1_tip: 'BEEP tip: heavy parts need stronger motors, and a high centre of mass can make a robot tip over.',
       guide_2_title: 'CODE · Tell your robot what to do',
       guide_2_body: 'Open CODE. START turns the robot on, MOVE drives it, SET POWER changes motor output, and sensors can tell it when to brake. Drag the handles to reorder instructions.',
@@ -1683,9 +1685,9 @@ var KJL2=(function(){
       chase_collapse: "COLLAPSE",
       pop_run: "RUN!",
       fail_caught: "Caught! The hazard behind you was faster than your robot.",
-      hint_fail_caught: "You need a higher average speed: a faster gear, large wheels, high tyre pressure, fewer heavy parts, or a well-timed 🚀 TURBO.",
+      hint_fail_caught: "You need a higher average speed: large wheels, fewer heavy parts, or a well-timed 🚀 TURBO.",
       fail_need_high_cargo: "This tall crate only fits on the High Cargo Rack.",
-      hint_fail_need_high_cargo: "Mount the High Cargo Rack, then fight the high centre of mass with ballast, the gyro and gentle power on slopes.",
+      hint_fail_need_high_cargo: "Mount the High Cargo Rack, then fight the high centre of mass with the gyro and gentle power on slopes.",
       m21_name: "Rockslide Escape",
       m22_name: "Typhoon Bridge",
       m23_name: "Lava Run",
@@ -1707,18 +1709,19 @@ var KJL2=(function(){
       win_m24: "Parcel saved from the sea! Fast, efficient and a precise stop.",
       win_m25: "ULTIMATE RUMBLE CHAMPION! Every system worked together.",
       hyp_m21: "To stay ahead of a chaser, your average speed must beat its speed; grip limits how hard the wheels can push on loose ground.",
-      hyp_m22: "A head-wind is an extra resisting force: the motor must supply wind force + rolling resistance. Higher tyre pressure adds a little clearance.",
-      hyp_m23: "Braking force is limited by friction: on slippery ground you need more distance or more grip (low tyre pressure, hard brakes).",
-      hyp_m24: "On a strict energy budget, every kilogram and every bit of rolling resistance costs joules; hard brakes shorten the stop.",
+      hyp_m22: "A head-wind is an extra resisting force: the motor must supply wind force + rolling resistance. Lighter robots need less force to push forward.",
+      hyp_m23: "Braking force is limited by friction: on slippery ground you need more distance, so slow down earlier with SET POWER.",
+      hyp_m24: "On a strict energy budget, every kilogram and every bit of rolling resistance costs joules; a slower approach shortens the stop.",
       hyp_m25: "Real engineering is trade-offs: centre of mass, torque, speed, grip, braking and code must all fit together.",
       b_TURBO: '🚀 TURBO', bd_TURBO: '150% boost · drains energy',
+      ghost_toggle: 'Show RX-9 ghost (optimum speed)', ghost_on: 'RX-9 ghost on: the purple robot shows the optimum speed. Tap 👻 again to race alone.', ghost_off: 'Racing alone. Tap 👻 any time to see the optimum speed.', race_intro_solo: 'Reach {t} s for ★★★!',
       cd_go: 'GO!', ghost_best: 'BEST', race_ready: 'Get ready… 3, 2, 1!',
       race_intro: 'Beat {t} s for ★★★ · race the RX-9 ghost!',
       pop_turbo: 'TURBO!', pop_danger: 'TOO FAST!', pop_tilt: 'TIPPING!', pop_close_call: 'CLOSE CALL!',
       pop_perfect: 'PERFECT STOP!', pop_photo: 'PHOTO FINISH!', pop_beat_rival: 'RX-9 DEFEATED!', pop_record: 'NEW RECORD!',
       pop_checkpoint: 'CHECKPOINT',
       r_beat: '👑 You beat RX-9! A true Rumble champion.', r_all_stars: '★★★ earned! Now beat RX-9’s time for the crown 👑',
-      r_next_star: 'Next: {s} at ≤ {t} s. Try TURBO, a faster gear or lighter parts!',
+      r_next_star: 'Next: {s} at ≤ {t} s. Try TURBO, larger wheels or lighter parts!',
       stars_aria: 'Stars earned', turbo_help: '🚀 TURBO over-volts the motor to 150% for 0.5–2 s: faster, but it burns energy, raises tipping risk and lengthens braking distance!',
       keys_hint: 'Keys: R retry · Space pause',
       subtitle: 'Kota Rekacipta Workshop', beep_aria: 'BEEP, your robot companion', tabs_aria: 'Modes',
@@ -1776,7 +1779,7 @@ var KJL2=(function(){
       d_wheel_small: 'Small radius turns motor torque into a strong push (F = T ÷ r), but top speed and ground clearance are low. It cannot climb steps taller than about 2 cm.',
       d_wheel_large: 'Large radius gives more speed and clearance and climbs 3 cm steps, but pushes with less force from the same torque.',
       d_wheel_caterpillar: 'Tracks grip strongly (μ 1.25), bridge gaps and climb tall steps, but they are heavy and waste energy in rolling friction.',
-      d_motor_standard: 'Spins fast but with modest torque. Great on flat ground; may stall on steep hills unless you change the gear ratio.',
+      d_motor_standard: 'Spins fast but with modest torque. Great on flat ground; may stall on steep hills, where the High-Torque Motor helps.',
       d_motor_torque: 'Strong but slow. Climbs well; extra torque can make wheels slip, and it draws more current.',
       d_battery_pack: 'Stores the electrical energy for everything. Stalling motors and slipping wheels drain it fastest.',
       d_cargo_low: 'Carries the crate close to the chassis: low centre of mass, high stability.',
@@ -1795,7 +1798,7 @@ var KJL2=(function(){
       m1_desc: 'Level ground: assemble chassis, wheels, motor and battery to reach the workshop gate.',
       m2_desc: 'Carry the crate up a steep 25° slope. Use SET POWER to tune your motor and avoid tipping or stalling.',
       m3_desc: 'Use the sonar and CODE to stop safely inside the green zone before the barricade.',
-      m4_desc: 'Cross the wobbly bridge: steps, ridges and a missing plank. Use SET POWER to control speed; tune wheels, suspension and torque.',
+      m4_desc: 'Cross the wobbly bridge: steps, ridges and a missing plank. Use SET POWER to control speed; choose the right wheels and motor.',
       m5_desc: 'Only 130 J left in the battery! Use SET POWER to manage energy, then stop on the tape line before the dock edge.',
       m6_name: 'Jungle Crossing', m7_name: 'Desert Energy Run', m8_name: 'Flood Rescue',
       m9_name: 'Automation Factory', m10_name: 'Mountain Expedition',
@@ -1820,7 +1823,7 @@ var KJL2=(function(){
       beep_m1: 'Let’s bring machines back to Kota Rekacipta! Connect tires, motor and battery and roll to the gate!',
       beep_m2: 'Steep 25° hill ahead! If the CoM is too high we tip backwards. Try the low rack or the gyro, and enough torque.',
       beep_m3: 'Barricade ahead! Mount the sonar, then write a Robot Brain rule to brake inside the green zone.',
-      beep_m4: 'It is dark in the chasm… The bridge has steps, ridges and a gap. Check clearance and suspension!',
+      beep_m4: 'It is dark in the chasm… The bridge has steps, ridges and a gap. Check your wheels and clearance!',
       beep_m5: 'Express parcel, almost-empty battery! Heavy parts and slipping wheels waste joules. Use the IR sensor to stop on the line.',
       beep_m6: 'Muddy jungle ahead! Choose traction carefully, and add a SET POWER block before MOVE.',
       beep_m7: 'The desert battery is low. Solar can recharge while you WAIT, but every motor action uses energy!',
@@ -1840,7 +1843,7 @@ var KJL2=(function(){
       win_m1: 'Splendid! The platform rolled smoothly through the workshop gate!',
       win_m2: 'Great design! The cargo stayed stable all the way to the hilltop!',
       win_m3: 'Perfect autonomous brake! The sonar spotted the barricade and the robot stopped in the safe zone!',
-      win_m4: 'You crossed the Dark Chasm! Clearance, suspension and torque worked together.',
+      win_m4: 'You crossed the Dark Chasm! Wheels, clearance and torque worked together.',
       win_m5: 'Parcel delivered on the line with energy to spare. That is an efficient machine!',
       win_m6: 'The muddy jungle is conquered! Smart power and good traction worked together.',
       win_m7: 'Desert crossed! You planned your program and conserved enough electrical energy.',
@@ -1860,13 +1863,13 @@ var KJL2=(function(){
       hyp_m1: 'Wheels + motor + battery produce forward force that overcomes rolling friction.',
       hyp_m2: 'Lowering the payload (or adding a righting moment) keeps the CoM inside the tip limit on a 25° slope.',
       hyp_m3: 'Sonar feedback triggers braking early enough: stopping distance = v² ÷ (2a).',
-      hyp_m4: 'Wheel radius must beat step height, ground clearance must beat ridge height, and the suspension must not bounce at speed.',
-      hyp_m5: 'Energy used ≈ force × distance ÷ efficiency. Light parts, the right gear and no slipping save joules.',
+      hyp_m4: 'Wheel radius must beat step height, ground clearance must beat ridge height, and the robot must not hit the steps too fast.',
+      hyp_m5: 'Energy used ≈ force × distance ÷ efficiency. Light parts, the right wheels and no slipping save joules.',
       hyp_m6: 'Available grip depends on tyre friction and ground conditions. Excess wheel force can cause slipping.',
       hyp_m7: 'Energy remaining = starting battery + harvested solar energy − energy consumed by motors and sensors.',
       hyp_m8: 'Sonar senses a hazard ahead; a brake rule uses that feedback to stop in the safe zone.',
       hyp_m9: 'Two sound strategies: predict arrival time using WAIT and motor power, or use sonar/IR feedback to stop at a red gate and automatically resume when it turns green.',
-      hyp_m10: 'Lower centre of mass, suitable gearing and tilt feedback reduce the risk of flipping on a slope.',
+      hyp_m10: 'Lower centre of mass, gentle power and tilt feedback reduce the risk of flipping on a slope.',
       hyp_m11: 'An event-driven program reacts to the measured tilt, rather than only a timer.',
       hyp_m12: 'An IR checkpoint can trigger a new set of instructions at a precise location.',
       hyp_m13: 'Wheel geometry limits step and gap crossing; software alone cannot repair unsuitable hardware.',
@@ -1932,7 +1935,7 @@ var KJL2=(function(){
       hint_fail_gate_closed_m16: 'The Conveyor gate opens from 10 to 28 seconds. Use its live indicator and reach it while green, or wait with a gate sensor.',
       hint_fail_code_sequence: 'Drag ▶ START to the top of the program.',
       hint_fail_gap: 'Wheels can roll over a gap smaller than about 1.6 × their radius. Large tires or tracks bridge it.',
-      hint_fail_bounce: 'Use Medium suspension, or slow down with 🎚 SET POWER or a higher gear before the steps.',
+      hint_fail_bounce: 'Slow down with 🎚 SET POWER before the steps.',
       hint_fail_tip: 'Tip limit = atan(support ÷ CoM height). Use the Low Rack, add the Gyro Stabilizer, or reduce power so acceleration is gentler.',
       hint_fail_tip_forward: 'Lower the cargo or add the gyro. Slower speed also means gentler braking.',
       hint_fail_crash: 'Stopping distance = v² ÷ (2a). Brake earlier (1.2 m rule) or drive slower with 🎚 SET POWER.',
@@ -1941,15 +1944,15 @@ var KJL2=(function(){
       hint_fail_late: 'Drive slower or brake at a longer distance.',
       hint_fail_early_bay: 'Let the IR sensor find the tape line instead of a timed stop.',
       hint_fail_late_bay: 'Slow down with 🎚 SET POWER so the braking distance is shorter.',
-      hint_fail_battery: 'Remove heavy parts you do not need, avoid tracks, pick a gear that keeps the motor near its sweet spot, or add the Solar Wing.',
-      hint_fail_bottom_out: 'Clearance = wheel radius − spring sag. Use larger wheels or stiffer suspension, or remove weight.',
+      hint_fail_battery: 'Remove heavy parts you do not need, avoid tracks, use lower power, or add the Solar Wing.',
+      hint_fail_bottom_out: 'Clearance = wheel radius − spring sag. Use larger wheels or remove weight.',
       hint_fail_step: 'Large tires climb steps up to about 3.4 cm; tracks climb up to 9 cm.',
-      hint_fail_step_torque: 'Try gear 2:1 or the High-Torque Motor for more climbing force.',
-      hint_fail_stall: 'Force at the wheel = gear × torque ÷ radius. Use a higher gear, the High-Torque Motor or smaller wheels.',
-      hint_fail_stall_flat: 'Remove weight or increase wheel force (gear or motor).',
+      hint_fail_step_torque: 'Try the High-Torque Motor for more climbing force.',
+      hint_fail_stall: 'Force at the wheel = torque ÷ radius. Use the High-Torque Motor or smaller wheels.',
+      hint_fail_stall_flat: 'Remove weight or use the High-Torque Motor.',
       hint_fail_stopped_short: 'Check STOP and WAIT blocks, and the order of your rules.',
       hint_fail_idle: 'Without ⚡ MOVE the motor never turns.',
-      hint_fail_timeout: 'Faster gear, more power, or fewer heavy parts.',
+      hint_fail_timeout: 'Larger wheels, more power, or fewer heavy parts.',
       hint_fail_paused: 'Tap ▶ to continue.',
       // Blocks
       b_START: '▶ START', b_MOVE: '⚡ MOVE', b_STOP: '🛑 STOP', b_SET_POWER: '🎚 SET POWER', b_WAIT: '⏱ WAIT',
@@ -1974,7 +1977,7 @@ var KJL2=(function(){
       guide_title: '🤖 Pembimbing Kejuruteraan BEEP', guide_progress: 'LANGKAH {n} DARIPADA 3',
       guide_prev: 'Kembali', guide_next: 'Seterusnya', guide_finish: 'Jom bina!', guide_skip: 'Langkau panduan',
       guide_1_title: 'BINA · Mulakan dengan komponen',
-      guide_1_body: 'Ketik komponen dalam inventori, kemudian ketik soket yang sepadan di sekeliling robot. Cuba tukar roda, motor atau nisbah gear dan lihat kesannya.',
+      guide_1_body: 'Ketik komponen dalam inventori, kemudian ketik soket yang sepadan di sekeliling robot. Cuba tukar roda, motor atau komponen lain dan lihat kesannya.',
       guide_1_tip: 'Petua BEEP: komponen berat memerlukan motor lebih kuat, manakala pusat graviti yang tinggi boleh menyebabkan robot terbalik.',
       guide_2_title: 'KOD · Berikan arahan kepada robot',
       guide_2_body: 'Buka KOD. MULA menghidupkan robot, GERAK memacunya, TETAP KUASA mengawal motor, dan sensor boleh mengarahkannya membrek. Seret pemegang untuk menyusun arahan.',
@@ -2057,9 +2060,9 @@ var KJL2=(function(){
       chase_collapse: "RUNTUHAN",
       pop_run: "LARI!",
       fail_caught: "Ditangkap! Bahaya di belakang lebih laju daripada robot anda.",
-      hint_fail_caught: "Anda perlukan purata laju yang lebih tinggi: gear laju, roda besar, tekanan tayar tinggi, kurangkan komponen berat, atau 🚀 TURBO pada masa yang tepat.",
+      hint_fail_caught: "Anda perlukan purata laju yang lebih tinggi: roda besar, kurangkan komponen berat, atau 🚀 TURBO pada masa yang tepat.",
       fail_need_high_cargo: "Peti tinggi ini hanya muat pada Rak Kargo Tinggi.",
-      hint_fail_need_high_cargo: "Pasang Rak Kargo Tinggi, kemudian lawan pusat jisim yang tinggi dengan pemberat, giroskop dan kuasa lembut di cerun.",
+      hint_fail_need_high_cargo: "Pasang Rak Kargo Tinggi, kemudian lawan pusat jisim yang tinggi dengan giroskop dan kuasa lembut di cerun.",
       m21_name: "Lari Tanah Runtuh",
       m22_name: "Jambatan Taufan",
       m23_name: "Larian Lahar",
@@ -2081,18 +2084,19 @@ var KJL2=(function(){
       win_m24: "Bungkusan diselamatkan dari laut! Laju, cekap dan berhenti tepat.",
       win_m25: "JUARA RUMBLE MUKTAMAD! Setiap sistem bekerjasama.",
       hyp_m21: "Untuk kekal di hadapan pengejar, purata laju anda mesti melebihi lajunya; cengkaman mengehadkan tolakan roda di tanah longgar.",
-      hyp_m22: "Angin sakal ialah daya rintangan tambahan: motor mesti membekalkan daya angin + rintangan golek. Tekanan tayar tinggi menambah sedikit kelegaan.",
-      hyp_m23: "Daya brek dihadkan oleh geseran: di permukaan licin anda perlukan jarak lebih jauh atau cengkaman lebih (tekanan tayar rendah, brek keras).",
-      hyp_m24: "Dengan bajet tenaga yang ketat, setiap kilogram dan rintangan golek menggunakan joule; brek keras memendekkan jarak berhenti.",
+      hyp_m22: "Angin sakal ialah daya rintangan tambahan: motor mesti membekalkan daya angin + rintangan golek. Robot yang ringan memerlukan daya yang kurang untuk bergerak.",
+      hyp_m23: "Daya brek dihadkan oleh geseran: di permukaan licin anda perlukan jarak lebih jauh, jadi perlahankan lebih awal dengan TETAP KUASA.",
+      hyp_m24: "Dengan bajet tenaga yang ketat, setiap kilogram dan rintangan golek menggunakan joule; laju yang lebih perlahan memendekkan jarak berhenti.",
       hyp_m25: "Kejuruteraan sebenar ialah pertukaran: pusat jisim, tork, laju, cengkaman, brek dan kod mesti sepadan.",
       b_TURBO: '🚀 TURBO', bd_TURBO: 'Rangsangan 150% · guna tenaga',
+      ghost_toggle: 'Tunjuk bayang RX-9 (laju optimum)', ghost_on: 'Bayang RX-9 dihidupkan: robot ungu menunjukkan laju optimum. Ketik 👻 sekali lagi untuk berlumba seorang.', ghost_off: 'Berlumba seorang. Ketik 👻 bila-bila masa untuk melihat laju optimum.', race_intro_solo: 'Capai {t} s untuk ★★★!',
       cd_go: 'GERAK!', ghost_best: 'TERBAIK', race_ready: 'Bersedia… 3, 2, 1!',
       race_intro: 'Capai {t} s untuk ★★★ · lumba dengan bayang RX-9!',
       pop_turbo: 'TURBO!', pop_danger: 'TERLALU LAJU!', pop_tilt: 'HAMPIR TERBALIK!', pop_close_call: 'NYARIS!',
       pop_perfect: 'HENTIAN SEMPURNA!', pop_photo: 'TAMAT SENGIT!', pop_beat_rival: 'RX-9 DITEWASKAN!', pop_record: 'REKOD BAHARU!',
       pop_checkpoint: 'TITIK SEMAK',
       r_beat: '👑 Anda mengalahkan RX-9! Juara Rumble sejati.', r_all_stars: '★★★ diperoleh! Kini kalahkan masa RX-9 untuk mahkota 👑',
-      r_next_star: 'Seterusnya: {s} pada ≤ {t} s. Cuba TURBO, gear lebih laju atau komponen lebih ringan!',
+      r_next_star: 'Seterusnya: {s} pada ≤ {t} s. Cuba TURBO, roda lebih besar atau komponen lebih ringan!',
       stars_aria: 'Bintang diperoleh', turbo_help: '🚀 TURBO menaikkan voltan motor ke 150% selama 0.5–2 s: lebih laju, tetapi membakar tenaga, menambah risiko terbalik dan memanjangkan jarak brek!',
       keys_hint: 'Kekunci: R cuba lagi · Space jeda',
       subtitle: 'Bengkel Kota Rekacipta', beep_aria: 'BEEP, rakan robot anda', tabs_aria: 'Mod',
@@ -2149,7 +2153,7 @@ var KJL2=(function(){
       d_wheel_small: 'Jejari kecil menukar tork motor kepada tolakan kuat (F = T ÷ j), tetapi laju maksimum dan kelegaan tanah rendah. Tidak dapat memanjat anak tangga lebih tinggi daripada kira-kira 2 cm.',
       d_wheel_large: 'Jejari besar memberi lebih laju dan kelegaan serta memanjat anak tangga 3 cm, tetapi daya tolakannya kurang dengan tork yang sama.',
       d_wheel_caterpillar: 'Trek mencengkam kuat (μ 1.25), merentasi celah dan memanjat anak tangga tinggi, tetapi berat dan membazir tenaga melalui geseran golek.',
-      d_motor_standard: 'Berputar laju tetapi torknya sederhana. Hebat di tanah rata; mungkin tersekat di bukit curam kecuali nisbah gear ditukar.',
+      d_motor_standard: 'Berputar laju tetapi torknya sederhana. Hebat di tanah rata; mungkin tersekat di bukit curam; Motor Tork Tinggi lebih sesuai di situ.',
       d_motor_torque: 'Kuat tetapi perlahan. Mendaki dengan baik; tork berlebihan boleh menyebabkan roda tergelincir dan menarik lebih banyak arus.',
       d_battery_pack: 'Menyimpan tenaga elektrik untuk semua komponen. Motor tersekat dan roda tergelincir paling cepat menghabiskannya.',
       d_cargo_low: 'Membawa peti dekat dengan casis: pusat jisim rendah, kestabilan tinggi.',
@@ -2166,7 +2170,7 @@ var KJL2=(function(){
       m1_desc: 'Tanah rata: pasang casis, roda, motor dan bateri untuk sampai ke pintu bengkel.',
       m2_desc: 'Bawa peti kargo mendaki cerun 25°. Guna TETAP KUASA untuk melaras motor supaya tidak terbalik atau tersekat.',
       m3_desc: 'Gunakan sonar dan KOD untuk berhenti dengan selamat dalam zon hijau sebelum penghadang.',
-      m4_desc: 'Seberangi jambatan goyang: anak tangga, bonjolan dan papan hilang. Guna TETAP KUASA untuk kawal laju; laras roda, suspensi dan tork.',
+      m4_desc: 'Seberangi jambatan goyang: anak tangga, bonjolan dan papan hilang. Guna TETAP KUASA untuk kawal laju; pilih roda dan motor yang sesuai.',
       m5_desc: 'Bateri tinggal 130 J! Guna TETAP KUASA untuk kawal tenaga, kemudian berhenti di garisan pita sebelum tepi pelantar.',
       m6_name: 'Merentas Rimba', m7_name: 'Tenaga Gurun', m8_name: 'Misi Banjir',
       m9_name: 'Kilang Automasi', m10_name: 'Ekspedisi Gunung',
@@ -2191,7 +2195,7 @@ var KJL2=(function(){
       beep_m1: 'Jom hidupkan semula mesin di Kota Rekacipta! Pasang tayar, motor dan bateri, kemudian bergerak ke pintu!',
       beep_m2: 'Bukit curam 25° di hadapan! Jika pusat jisim terlalu tinggi, robot terbalik ke belakang. Cuba rak rendah atau giroskop, dan tork yang cukup.',
       beep_m3: 'Penghadang di hadapan! Pasang sonar, kemudian tulis peraturan Minda Robot untuk membrek dalam zon hijau.',
-      beep_m4: 'Gelapnya lurah ini… Jambatan ada anak tangga, bonjolan dan celah. Semak kelegaan dan suspensi!',
+      beep_m4: 'Gelapnya lurah ini… Jambatan ada anak tangga, bonjolan dan celah. Semak roda dan kelegaan!',
       beep_m5: 'Bungkusan ekspres, bateri hampir kosong! Komponen berat dan roda tergelincir membazir joule. Guna sensor IR untuk berhenti di garisan.',
       beep_m6: 'Lumpur rimba di depan! Pilih roda sesuai dan tambah blok TETAP KUASA sebelum GERAK.',
       beep_m7: 'Bateri di gurun hampir lemah. Suria mengecas ketika TUNGGU, tetapi motor menggunakan tenaga!',
@@ -2211,7 +2215,7 @@ var KJL2=(function(){
       win_m1: 'Tahniah! Platform bergerak lancar melepasi pintu bengkel!',
       win_m2: 'Rekaan hebat! Kargo kekal stabil sehingga ke puncak bukit!',
       win_m3: 'Brek autonomi sempurna! Sonar mengesan penghadang dan robot berhenti dalam zon selamat!',
-      win_m4: 'Anda berjaya merentasi Lurah Gelap! Kelegaan, suspensi dan tork bekerjasama.',
+      win_m4: 'Anda berjaya merentasi Lurah Gelap! Roda, kelegaan dan tork bekerjasama.',
       win_m5: 'Bungkusan dihantar tepat di garisan dengan tenaga berbaki. Mesin yang cekap!',
       win_m6: 'Rimba berlumpur berjaya ditempuh! Kuasa terkawal dan cengkaman bekerjasama.',
       win_m7: 'Gurun berjaya direntas! Atur cara dan pengurusan tenaga anda berkesan.',
@@ -2231,13 +2235,13 @@ var KJL2=(function(){
       hyp_m1: 'Roda + motor + bateri menghasilkan daya ke hadapan yang mengatasi geseran golek.',
       hyp_m2: 'Merendahkan muatan (atau menambah momen pembetul) mengekalkan pusat jisim dalam had terbalik di cerun 25°.',
       hyp_m3: 'Maklum balas sonar mencetuskan brek cukup awal: jarak berhenti = v² ÷ (2a).',
-      hyp_m4: 'Jejari roda mesti melebihi tinggi anak tangga, kelegaan tanah mesti melebihi tinggi bonjolan, dan suspensi tidak boleh melantun ketika laju.',
-      hyp_m5: 'Tenaga digunakan ≈ daya × jarak ÷ kecekapan. Komponen ringan, gear yang betul dan tiada gelinciran menjimatkan joule.',
+      hyp_m4: 'Jejari roda mesti melebihi tinggi anak tangga, kelegaan tanah mesti melebihi tinggi bonjolan, dan robot tidak boleh melanggar anak tangga terlalu laju.',
+      hyp_m5: 'Tenaga digunakan ≈ daya × jarak ÷ kecekapan. Komponen ringan, roda yang betul dan tiada gelinciran menjimatkan joule.',
       hyp_m6: 'Cengkaman bergantung pada geseran tayar dan keadaan tanah. Daya roda berlebihan boleh menyebabkan gelinciran.',
       hyp_m7: 'Tenaga berbaki = bateri awal + tenaga suria dituai − tenaga digunakan motor dan sensor.',
       hyp_m8: 'Sonar mengesan bahaya di hadapan; peraturan brek menggunakan maklum balas untuk berhenti dalam zon selamat.',
       hyp_m9: 'Dua strategi sah: ramal masa ketibaan menggunakan TUNGGU dan kuasa, atau guna sonar/IR untuk berhenti ketika merah dan menyambung automatik apabila hijau.',
-      hyp_m10: 'Pusat jisim rendah, gear sesuai dan maklum balas condong mengurangkan risiko terbalik di cerun.',
+      hyp_m10: 'Pusat jisim rendah, kuasa yang lembut dan maklum balas condong mengurangkan risiko terbalik di cerun.',
       hyp_m11: 'Program dipacu peristiwa bertindak kepada bacaan condong sebenar, bukan pemasa sahaja.',
       hyp_m12: 'Penanda IR boleh mencetuskan arahan baharu pada kedudukan tertentu.',
       hyp_m13: 'Bentuk roda mengehadkan kemampuan merentas tangga dan jurang; kod tidak menggantikan perkakasan yang salah.',
@@ -2302,7 +2306,7 @@ var KJL2=(function(){
       hint_fail_gate_closed_m16: 'Pintu Kilang Berirama dibuka saat 10 hingga 28. Lihat penunjuk masa dan tiba semasa hijau, atau tunggu dengan sensor.',
       hint_fail_code_sequence: 'Seret ▶ MULA ke bahagian paling atas atur cara.',
       hint_fail_gap: 'Roda boleh melepasi celah yang lebih kecil daripada kira-kira 1.6 × jejarinya. Tayar besar atau trek boleh merentasinya.',
-      hint_fail_bounce: 'Guna suspensi Sederhana, atau perlahankan dengan 🎚 TETAP KUASA atau gear lebih tinggi sebelum anak tangga.',
+      hint_fail_bounce: 'Perlahankan dengan 🎚 TETAP KUASA sebelum anak tangga.',
       hint_fail_tip: 'Had terbalik = atan(sokongan ÷ tinggi pusat jisim). Guna Rak Rendah, pasang Penstabil Giroskop, atau kurangkan kuasa supaya pecutan lebih lembut.',
       hint_fail_tip_forward: 'Rendahkan kargo atau pasang giroskop. Laju lebih perlahan bermakna brek lebih lembut.',
       hint_fail_crash: 'Jarak berhenti = v² ÷ (2a). Brek lebih awal (peraturan 1.2 m) atau bergerak perlahan dengan 🎚 TETAP KUASA.',
@@ -2311,15 +2315,15 @@ var KJL2=(function(){
       hint_fail_late: 'Bergerak lebih perlahan atau brek pada jarak lebih jauh.',
       hint_fail_early_bay: 'Biarkan sensor IR mencari garisan pita dan bukan hentian bermasa.',
       hint_fail_late_bay: 'Perlahankan dengan 🎚 TETAP KUASA supaya jarak brek lebih pendek.',
-      hint_fail_battery: 'Tanggalkan komponen berat yang tidak perlu, elakkan trek, pilih gear yang mengekalkan motor di titik cekapnya, atau pasang Panel Suria.',
-      hint_fail_bottom_out: 'Kelegaan = jejari roda − mendapan spring. Guna roda lebih besar atau suspensi lebih tegar, atau kurangkan berat.',
+      hint_fail_battery: 'Tanggalkan komponen berat yang tidak perlu, elakkan trek, guna kuasa lebih rendah, atau pasang Panel Suria.',
+      hint_fail_bottom_out: 'Kelegaan = jejari roda − mendapan spring. Guna roda lebih besar atau kurangkan berat.',
       hint_fail_step: 'Tayar besar memanjat anak tangga sehingga kira-kira 3.4 cm; trek sehingga 9 cm.',
-      hint_fail_step_torque: 'Cuba gear 2:1 atau Motor Tork Tinggi untuk daya memanjat yang lebih.',
-      hint_fail_stall: 'Daya di roda = gear × tork ÷ jejari. Guna gear lebih tinggi, Motor Tork Tinggi atau roda lebih kecil.',
-      hint_fail_stall_flat: 'Kurangkan berat atau tingkatkan daya roda (gear atau motor).',
+      hint_fail_step_torque: 'Cuba Motor Tork Tinggi untuk daya memanjat yang lebih.',
+      hint_fail_stall: 'Daya di roda = tork ÷ jejari. Guna Motor Tork Tinggi atau roda lebih kecil.',
+      hint_fail_stall_flat: 'Kurangkan berat atau guna Motor Tork Tinggi.',
       hint_fail_stopped_short: 'Semak blok HENTI dan TUNGGU, serta susunan peraturan anda.',
       hint_fail_idle: 'Tanpa ⚡ GERAK, motor tidak akan berputar.',
-      hint_fail_timeout: 'Gear lebih laju, kuasa lebih tinggi, atau kurangkan komponen berat.',
+      hint_fail_timeout: 'Roda lebih besar, kuasa lebih tinggi, atau kurangkan komponen berat.',
       hint_fail_paused: 'Ketik ▶ untuk sambung.',
       b_START: '▶ MULA', b_MOVE: '⚡ GERAK', b_STOP: '🛑 HENTI', b_SET_POWER: '🎚 TETAP KUASA', b_WAIT: '⏱ TUNGGU',
       b_IF_SENSOR_CLOSE: '🔍 JIKA JARAK < 1.2 m → BREK', b_IF_SENSOR_FAR: '🔍 JIKA JARAK < 0.4 m → BREK',
@@ -2397,6 +2401,10 @@ var KJL2=(function(){
   let uid = 1;
   const withIds = arr => RR.sanitizeProgram(arr).map(b => ({ id: uid++, type: b.type, p: b.p }));
   let blueprint = { ...RR.DEFAULT_BLUEPRINT };
+  // RR-CC-011: only parts you can see on the robot change how it drives. Gear, suspension,
+  // tyre pressure, brakes and ballast stay at these values for the player's robot.
+  const FIXED_TUNING = { gear: 1, suspension: 'medium', tyres: 'normal', brakes: 'normal', ballast: 0 };
+  const fixTuning = bp => Object.assign(bp, FIXED_TUNING);
   let program = withIds([{ type: 'START' }, { type: 'MOVE' }]);
   let missionId = 1;
   let notebook = [];
@@ -2605,7 +2613,7 @@ var KJL2=(function(){
   }
   function applySave(data) {
     if (!data || typeof data !== 'object') return false;
-    if (data.blueprint) blueprint = RR.sanitizeBlueprint(data.blueprint);
+    if (data.blueprint) blueprint = fixTuning(RR.sanitizeBlueprint(data.blueprint));
     const prog = Array.isArray(data.program) ? data.program : Array.isArray(data.commandQueue) ? data.commandQueue : null;
     if (prog) program = withIds(prog);
     const mid = Number(data.missionId ?? data.activeMissionId);
@@ -2617,6 +2625,7 @@ var KJL2=(function(){
       for (const id of RR.MISSION_IDS) if (Number.isFinite(data.best[id]) && data.best[id] > 0) best[id] = Math.round(data.best[id] * 100) / 100;
     if (data.lang === 'en' || data.lang === 'bm') lang = data.lang;
     if (typeof data.muted === 'boolean') sound.muted = data.muted;
+    if (typeof data.showGhosts === 'boolean') showGhosts = data.showGhosts;
     if (data.graphicsMode === 'standard' || data.graphicsMode === 'compatible') graphicsMode = data.graphicsMode;
     if (typeof data.guideSeen === 'boolean') guideSeen = data.guideSeen;
     stars = sanitizeStars(data.stars, 3);
@@ -2644,7 +2653,7 @@ var KJL2=(function(){
     clearTimeout(saveTimer);
     store.set(SAVE_KEY, JSON.stringify({
       schemaVersion: 3, blueprint, program: program.map(({ type, p }) => ({ type, p })), missionId,
-      notebook, completed, best, lang, muted: sound.muted, graphicsMode, stars, crowns, robotName, guideSeen,
+      notebook, completed, best, lang, muted: sound.muted, showGhosts, graphicsMode, stars, crowns, robotName, guideSeen,
       challenge: challenge ? { code: challenge.code, attempts: challenge.attempts, beaten: challenge.beaten } : null
     }));
   }
@@ -2800,7 +2809,7 @@ var KJL2=(function(){
     } else {
       const gi = { tyres: t('ty_info_' + blueprint.tyres), brakes: t('br_info', { s: esc(t('br_' + blueprint.brakes)), d: RR.BRAKES[blueprint.brakes] }),
         ballast: t('bl_info', { kg: blueprint.ballast }), paint: t('paint_info') }[garageTopic];
-      box.innerHTML = gi || (t('gear_info', { g: blueprint.gear }) + '<br>' + t('susp_info', { s: esc(t('susp_' + blueprint.suspension)) }));
+      box.innerHTML = gi || esc(t('build_hint'));
     }
     $('sel-badge').textContent = selectedPart ? partName(selectedPart) : t('select_part');
   }
@@ -2818,7 +2827,7 @@ var KJL2=(function(){
     const from = redo ? redoStack : undoStack, to = redo ? undoStack : redoStack;
     if (!from.length) return;
     to.push({ ...blueprint });
-    blueprint = RR.sanitizeBlueprint(from.pop());
+    blueprint = fixTuning(RR.sanitizeBlueprint(from.pop()));
     sound.click(); updateUndoButtons(); refreshBuild(); save();
   }
   function selectPart(k) {
@@ -4264,33 +4273,33 @@ var KJL2=(function(){
   // ========================================================
   // RX-9 rival reference runs (verified headlessly: every one completes its mission without TURBO).
   // Wheel code: S small · L large · T tracks. Motor: F fast · Q high-torque. Extras: C low cargo, H high cargo, N sonar, I IR, P solar, Y gyro.
+  // RR-CC-011: RX-9 uses the same fixed set-up as the player, so its times (and the ★★★ targets) are reachable.
   const RIVAL_REF = {
-    1: ['LF1soft', '', 'START|SP100|MOVE'],
+    1: ['LF1medium', '', 'START|SP100|MOVE'],
     2: ['SQ1medium', 'C', 'START|SP100|MOVE'],
-    3: ['TF1soft', 'N', 'START|SP100|MOVE|IF_SENSOR_CLOSE'],
-    4: ['LF1soft', '', 'START|SP100|MOVE'],
-    5: ['LF1soft', 'I', 'START|SP100|MOVE|IF_IR_MARK'],
-    6: ['LF1soft', '', 'START|SP100|MOVE'],
-    7: ['LF1soft', 'P', 'START|WAIT0.5|SP100|MOVE'],
-    8: ['SF1soft', 'N', 'START|SP100|MOVE|IF_SENSOR_CLOSE'],
-    9: ['LF1soft', 'NI', 'START|WAIT4|SP100|MOVE'],
-    10: ['SF1soft', 'C', 'START|SP100|MOVE|IF_TILT_EXCEEDS30'],
-    11: ['LF1soft', '', 'START|SP80|MOVE|WAIT_FOR_TILT5|SP100'],
-    12: ['LF1soft', 'I', 'START|SP100|MOVE|WAIT_FOR_IR|SP80'],
+    3: ['TF1medium', 'N', 'START|SP100|MOVE|IF_SENSOR_CLOSE'],
+    4: ['TF1medium', '', 'START|SP100|MOVE'],
+    5: ['LF1medium', 'I', 'START|SP100|MOVE|IF_IR_MARK'],
+    6: ['LF1medium', '', 'START|SP100|MOVE'],
+    7: ['LF1medium', 'P', 'START|WAIT0.5|SP100|MOVE'],
+    8: ['SF1medium', 'N', 'START|SP100|MOVE|IF_SENSOR_CLOSE'],
+    9: ['LF1medium', 'NI', 'START|WAIT4|SP100|MOVE'],
+    10: ['SF1medium', 'C', 'START|SP100|MOVE|IF_TILT_EXCEEDS30'],
+    11: ['LF1medium', '', 'START|SP80|MOVE|WAIT_FOR_TILT5|SP100'],
+    12: ['LF1medium', 'I', 'START|SP100|MOVE|WAIT_FOR_IR|SP80'],
     13: ['TF1medium', 'I', 'START|SP80|MOVE|WAIT_FOR_IR|SP100'],
-    14: ['LF1soft', 'I', 'START|SP80|MOVE|WAIT_FOR_IR|SP100'],
-    15: ['LF1soft', 'NI', 'START|SP100|MOVE|IF_SENSOR_CLOSE|WAIT_FOR_IR|SP60'],
-    16: ['LF1soft', 'NI', 'START|SP70|MOVE|IF_GATE_CLOSED|WAIT_FOR_IR|SP100'],
-    17: ['SF1soft', 'CI', 'START|SP100|MOVE|IF_TILT_EXCEEDS15|WAIT_FOR_IR|WAIT0.5|STOP|WAIT1|MOVE|WAIT_FOR_IR|WAIT0.5|STOP|WAIT1|MOVE'],
-    18: ['LF1soft', 'I', 'START|SP100|MOVE|IF_TILT_EXCEEDS20|IF_IR_MARK'],
-    19: ['LF1soft', 'IP', 'START|SP100|MOVE|WAIT_FOR_IR|SP80|WAIT_FOR_IR|SP100|WAIT0.5'],
-    20: ['LQ1soft', 'CNI', 'START|SP80|MOVE|IF_TILT_EXCEEDS20|IF_SENSOR_CLOSE|WAIT_FOR_IR|SP100'],
-    // Extreme tier: the 4th field is the RX-9 garage set-up (tyres, brakes, ballast kg).
-    21: ['LF1soft', '', 'START|SP100|MOVE', 'high,soft,0'],
-    22: ['LF1soft', '', 'START|SP100|MOVE', 'high,soft,0'],
-    23: ['SF1soft', 'N', 'START|SP100|MOVE|IF_SENSOR_CLOSE', 'low,hard,0'],
-    24: ['LF1soft', 'I', 'START|SP100|MOVE|IF_IR_MARK', 'low,hard,1'],
-    25: ['LQ1soft', 'HN', 'START|SP100|MOVE|IF_TILT_EXCEEDS20|IF_SENSOR_CLOSE', 'normal,normal,0']
+    14: ['LF1medium', 'I', 'START|SP80|MOVE|WAIT_FOR_IR|SP100'],
+    15: ['LF1medium', 'NI', 'START|SP100|MOVE|IF_SENSOR_CLOSE|WAIT_FOR_IR|SP60'],
+    16: ['LF1medium', 'NI', 'START|SP70|MOVE|IF_GATE_CLOSED|WAIT_FOR_IR|SP100'],
+    17: ['SF1medium', 'CI', 'START|SP100|MOVE|IF_TILT_EXCEEDS15|WAIT_FOR_IR|WAIT0.5|STOP|WAIT1|MOVE|WAIT_FOR_IR|WAIT0.5|STOP|WAIT1|MOVE'],
+    18: ['LQ1medium', 'I', 'START|SP100|MOVE|IF_TILT_EXCEEDS20|IF_IR_MARK'],
+    19: ['LF1medium', 'IP', 'START|SP100|MOVE|WAIT_FOR_IR|SP80|WAIT_FOR_IR|SP100|WAIT0.5'],
+    20: ['LQ1medium', 'CNI', 'START|SP80|MOVE|IF_TILT_EXCEEDS20|IF_SENSOR_CLOSE|WAIT_FOR_IR|SP100'],
+    21: ['LQ1medium', '', 'START|SP100|MOVE'],
+    22: ['TF1medium', '', 'START|SP100|MOVE'],
+    23: ['TQ1medium', 'N', 'START|SP100|MOVE|IF_SENSOR_CLOSE'],
+    24: ['TQ1medium', 'I', 'START|SP100|MOVE|IF_IR_MARK'],
+    25: ['LQ1medium', 'HN', 'START|SP100|MOVE|IF_TILT_EXCEEDS20|IF_SENSOR_CLOSE']
   };
   function rivalSetup(id) {
     const ref = RIVAL_REF[id];
@@ -4319,6 +4328,7 @@ var KJL2=(function(){
   const GHOST_STRIDE = 3;                        // stored ghost samples: one every 3 physics ticks
   const GHOST_KEY = 'robot_rumble_ghosts_v1';
   let stars = {}, crowns = {};
+  let showGhosts = false;   // RR-CC-011: race alone unless the player taps 👻
   const rivalCache = {};
   const race = {
     phase: 'idle', cd: 0, goT: 0, timeScale: 1, slowBudget: 0, slowActive: false,
@@ -4568,7 +4578,7 @@ var KJL2=(function(){
     splits.forEach((sx, i) => {
       if (race.splitsShown.has(i) || nose < sx) return;
       race.splitsShown.add(i);
-      const ref = race.pb || race.rival, d = ref ? timeAtX(ref, sx - NOSE) : null;
+      const ref = showGhosts ? race.pb || race.rival : null, d = ref ? timeAtX(ref, sx - NOSE) : null;
       if (d == null) { popup(t('pop_checkpoint') + ' ✓', '#67e8f9', 24, 1); return; }
       const dd = d - sim.t, good = dd >= 0;
       popup(`${t('pop_checkpoint')} ${good ? '−' : '+'}${Math.abs(dd).toFixed(2)}s`, good ? '#4ade80' : '#f87171', 26, 1.3);
@@ -4626,8 +4636,8 @@ var KJL2=(function(){
     if (!sim || race.phase === 'idle') return;
     const tNow = race.phase === 'count' ? 0 : lerp(sim.t - FIXED_DT, sim.t, clamp(acc / FIXED_DT, 0, 1));
     const list = [];
-    if (race.rival) list.push([race.rival, race.rival.bp, race.rival.stats, 'RX-9', '232,121,249']);
-    if (race.pb) list.push([race.pb, race.pb.bp || sim.bp, race.pb.stats || sim.stats, t('ghost_best'), '56,189,248']);
+    if (race.rival && showGhosts) list.push([race.rival, race.rival.bp, race.rival.stats, 'RX-9', '232,121,249']);
+    if (race.pb && showGhosts) list.push([race.pb, race.pb.bp || sim.bp, race.pb.stats || sim.stats, t('ghost_best'), '56,189,248']);
     if (race.challenger) list.push([race.challenger, race.challenger.bp, race.challenger.stats, race.challenger.name, '251,146,60']);
     for (const [g, bp, stats, name, col] of list) {
       if (!bp.wheel_rear || !bp.wheel_front) continue;
@@ -4700,9 +4710,9 @@ var KJL2=(function(){
     if (race.phase === 'run' || race.phase === 'count') {
       const chips = [];
       const dr = race.phase === 'run' ? deltaVs(race.rival) : null;
-      if (race.rival) chips.push(['RX-9', dr]);
+      if (race.rival && showGhosts) chips.push(['RX-9', dr]);
       const dp = race.phase === 'run' ? deltaVs(race.pb) : null;
-      if (race.pb) chips.push([t('ghost_best'), dp]);
+      if (race.pb && showGhosts) chips.push([t('ghost_best'), dp]);
       if (race.challenger) chips.push([race.challenger.name, race.phase === 'run' ? deltaVs(race.challenger) : null]);
       if (sim.m.chase && race.phase === 'run' && sim.t > sim.m.chase.delay - 1)
         chips.push([t('chase_' + sim.m.chase.kind), null, Math.max(0, race.chaseGap ?? 9)]);
@@ -4762,7 +4772,7 @@ var KJL2=(function(){
       if (!go && race.rival) {
         ctx.font = '800 14px ui-rounded, system-ui, sans-serif'; ctx.globalAlpha = 1;
         const th = thresholds(missionId);
-        const msg = t('race_intro', { t: th.gold.toFixed(2) });
+        const msg = t(showGhosts ? 'race_intro' : 'race_intro_solo', { t: th.gold.toFixed(2) });
         ctx.lineWidth = 4; ctx.strokeText(msg, w / 2, h * 0.48 + Math.min(w, h) * 0.2);
         ctx.fillStyle = '#e2e8f0'; ctx.fillText(msg, w / 2, h * 0.48 + Math.min(w, h) * 0.2);
       }
@@ -5213,6 +5223,7 @@ var KJL2=(function(){
     closeResult();
     closeFailureLab(); closeReliability(); blackBox.frames.length=0;
     sound.init();
+    fixTuning(blueprint);
     sim = new RR.Sim(blueprint, program, missionId);
     sampleBlackBox(sim);
     startEnergy = Math.max(1, sim.energy);
@@ -5749,7 +5760,7 @@ var KJL2=(function(){
       const name = $('design-list').value, d = getDesigns()[name];
       if (!d) { say('no_saved'); return; }
       rememberAssembly();
-      blueprint = RR.sanitizeBlueprint(d.blueprint);
+      blueprint = fixTuning(RR.sanitizeBlueprint(d.blueprint));
       program = withIds(d.program);
       sound.snap(); say('loaded', { name });
       refreshBuild(); renderStack(); save();
@@ -6006,6 +6017,12 @@ var KJL2=(function(){
       else { if (race.phase === 'run') sound.engineStart(); if (race.phase !== 'done') music.start(); say('hello_test'); }
       setPauseButton();
     });
+    $('btn-ghost').addEventListener('click', () => {
+      showGhosts = !showGhosts; sound.click();
+      $('btn-ghost').setAttribute('aria-pressed', String(showGhosts));
+      say(showGhosts ? 'ghost_on' : 'ghost_off');
+      save();
+    });
     $('btn-brain-toggle').addEventListener('click', () => {
       const box = $('brain-mini'), show = box.hidden; box.hidden = !show;
       $('btn-brain-toggle').setAttribute('aria-pressed', String(show));
@@ -6080,6 +6097,7 @@ var KJL2=(function(){
       else { sound.init(); if (running && !paused && race.phase === 'run') sound.engineStart(); if (running && !paused) music.start(); sound.click(); }
       $('snd-on').hidden = sound.muted; $('snd-off').hidden = !sound.muted;
       $('btn-sound').setAttribute('aria-pressed', String(!sound.muted));
+    $('btn-ghost').setAttribute('aria-pressed', String(showGhosts));
       bgm.update();
       save();
     });
@@ -6144,6 +6162,7 @@ var KJL2=(function(){
     // initial paint
     $('snd-on').hidden = sound.muted; $('snd-off').hidden = !sound.muted;
     $('btn-sound').setAttribute('aria-pressed', String(!sound.muted));
+    $('btn-ghost').setAttribute('aria-pressed', String(showGhosts));
     updateUndoButtons();
     lastSay = { key: 'beep_m' + missionId, vars: null };
     applyI18n();
