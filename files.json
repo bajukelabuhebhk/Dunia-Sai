@@ -1,5 +1,5 @@
 {
- "version": "c6472a9598",
+ "version": "07a9494817",
  "core": {
   "files": {
    "/app/": "60adb35dfa48",
@@ -24,13 +24,13 @@
    "/shared/icons/maskable-512.png": "78d51897dd77",
    "/shared/js/anak.js": "b26ad114d73c",
    "/shared/js/balik.js": "2d3d840009ee",
-   "/shared/js/config.js": "a758df4ada90",
+   "/shared/js/config.js": "71f47819d98e",
    "/shared/js/jejak.js": "993517d588a5",
    "/shared/js/lesen-lib.js": "9f17920f43d7",
    "/shared/js/lesen.js": "35453cebccd4",
    "/shared/js/ruang-ibubapa.js": "fe877b9cde9c"
   },
-  "bytes": 1138044
+  "bytes": 1138047
  },
  "games": {
   "boss-gerai": {
@@ -922,14 +922,14 @@
     "/app/wira-matematik/css/wm-monitor-r3.css": "b160843f2f85",
     "/app/wira-matematik/data/bank-1019.js": "8863691e5e9a",
     "/app/wira-matematik/data/wm-monitor-r4-dummy.js": "0aaa8d7e2419",
-    "/app/wira-matematik/": "b92daaab2d8f",
+    "/app/wira-matematik/": "912af5403f11",
     "/app/wira-matematik/js/cos-anim-v2.js": "8f62d5f14363",
     "/app/wira-matematik/js/ux-v5.js": "9b59ade775d3",
     "/app/wira-matematik/js/visual-v3.js": "575f4405e5cc",
     "/app/wira-matematik/js/visual-v4.js": "b9465e0c10c7",
     "/app/wira-matematik/js/wm-monitor-r3.js": "18fb4b18b4b0"
    },
-   "bytes": 2404505
+   "bytes": 2404504
   },
   "wonder-island": {
    "files": {
