@@ -7,3 +7,55 @@
 /* Dunia Sai: nota lesen */
 .lock-note{margin:12px 0;line-height:1.5}.lock-note a{color:inherit;font-weight:800;text-decoration:underline}
 @media(max-width:420px){.topbar{flex-wrap:wrap;gap:4px}.top-actions{flex-wrap:wrap;justify-content:flex-end;min-width:0}#profilePill{max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}
+/* Dunia Sai: arena dan pertarungan raksasa */
+.map-title{margin:6px 0 10px}
+.arena-map{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.arena-card{position:relative;height:120px;border:2px solid #c4a876;border-radius:18px;overflow:hidden;padding:0;cursor:pointer;background:#1c2543;box-shadow:0 6px 0 #102c36}
+.arena-card .arena-bg{position:absolute;inset:0;width:100%;height:100%}
+.arena-card .arena-boss{position:absolute;right:6px;bottom:22px;width:56px;height:56px}
+.arena-card .arena-label{position:absolute;left:0;right:0;bottom:0;padding:5px 8px;background:#0d1328cc;color:#fff;font-weight:800;font-size:.78rem;text-align:left;display:flex;justify-content:space-between;gap:4px}
+.arena-card .arena-label b{color:#ffd97f;white-space:nowrap}
+.arena-card.current{border-color:#ffd97f;box-shadow:0 6px 0 #102c36,0 0 20px #ffd17988}
+.arena-card.quiet{filter:saturate(.75) brightness(.85)}
+.arena-stage{position:relative;height:210px;border-radius:18px;overflow:hidden;margin:10px 0 16px;border:2px solid #ffffff22}
+.arena-stage .arena-bg{position:absolute;inset:0;width:100%;height:100%}
+.arena-top{position:absolute;top:8px;left:8px;right:8px;display:flex;justify-content:space-between;gap:6px;z-index:2}
+.fighter{position:absolute;bottom:8px}
+.fighter.hero{left:6%;width:96px;height:124px}
+.fighter.hero svg{width:100%;height:100%}
+.fighter.foe{right:5%;width:118px;text-align:center}
+.fighter.foe svg{width:104px;height:104px;display:block;margin:0 auto;animation:bob 2.2s ease-in-out infinite}
+.fighter.foe.boss svg{width:124px;height:124px}
+.foe-name{font-weight:800;font-size:.72rem;color:#fff;text-shadow:0 1px 3px #000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hp{height:8px;background:#0008;border-radius:9px;overflow:hidden;margin-top:3px}
+.hp i{display:block;height:100%;background:linear-gradient(90deg,#ff5d5d,#ffb347);transition:width .4s}
+.hp-num{font-size:.68rem;color:#fff;text-shadow:0 1px 2px #000}
+.fighter.hero.atk{animation:lunge .45s ease}
+.fighter.foe.hit svg{animation:hit .5s ease}
+.fighter.foe.strike svg{animation:strike .5s ease}
+.fighter.foe.down svg{opacity:.35;filter:grayscale(1);animation:none;transform:rotate(-12deg) translateY(10px)}
+.arena-stage.ouch .fighter.hero{animation:shake .45s ease}
+.arena-stage.ouch::after{content:'';position:absolute;inset:0;background:#ff3b3b33;animation:fade .5s forwards;pointer-events:none}
+.dmg{position:absolute;top:-6px;right:10px;color:#ffd84a;font-size:1.4rem;text-shadow:0 2px 0 #000;animation:rise .8s forwards;z-index:3}
+.ko-banner{position:absolute;top:42px;left:50%;transform:translateX(-50%);background:#ffd84a;color:#3a2600;font-weight:900;padding:6px 14px;border-radius:999px;z-index:3;white-space:nowrap;animation:pop .6s ease;font-size:.85rem}
+.beast-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:8px}
+.beast{text-align:center;background:#ffffff0d;border-radius:12px;padding:6px 2px}
+.beast svg{width:100%;max-width:64px;height:auto}
+.beast small{display:block;font-size:.62rem;line-height:1.2;color:var(--muted)}
+.beast.unknown svg{filter:brightness(0) opacity(.35)}
+.beaten{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin:12px 0}
+.beaten .beast{width:84px}
+@keyframes bob{50%{transform:translateY(-5px)}}
+@keyframes lunge{40%{transform:translateX(60px)}}
+@keyframes hit{20%{transform:translateX(10px) rotate(6deg);filter:brightness(2)}60%{transform:translateX(-4px)}}
+@keyframes strike{40%{transform:translateX(-50px) scale(1.08)}}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+@keyframes rise{to{transform:translateY(-30px);opacity:0}}
+@keyframes fade{to{opacity:0}}
+@keyframes pop{0%{transform:translateX(-50%) scale(.4)}70%{transform:translateX(-50%) scale(1.1)}}
+@media(max-width:700px){.arena-map{grid-template-columns:repeat(2,1fr)}.beast-grid{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:420px){.arena-stage{height:190px}.fighter.hero{width:80px;height:104px}.fighter.foe{width:104px}.fighter.foe svg{width:90px;height:90px}.fighter.foe.boss svg{width:106px;height:106px}}
+@media(prefers-reduced-motion:reduce){.fighter *,.arena-stage *{animation:none!important}}
+/* stage kekal kelihatan semasa anak menjawab */
+.arena-stage{position:sticky;top:6px;z-index:5;box-shadow:0 8px 18px #0008}
+@media(max-width:420px){.arena-stage{height:160px}.fighter.hero{width:70px;height:90px}.fighter.foe svg{width:78px;height:78px}.fighter.foe.boss svg{width:92px;height:92px}.arena-top .tag{font-size:.7rem;padding:4px 8px}.ko-banner{top:36px}}

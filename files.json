@@ -1,5 +1,5 @@
 {
- "version": "ee8aa3f897",
+ "version": "6def462ae4",
  "core": {
   "files": {
    "/app/": "60adb35dfa48",
@@ -928,13 +928,14 @@
     "/app/wira-matematik/js/visual-v3.js": "575f4405e5cc",
     "/app/wira-matematik/js/visual-v4.js": "b9465e0c10c7",
     "/app/wira-matematik/js/wm-monitor-r3.js": "ae0d7972adf0",
-    "/app/wira-matematik/misi/app.js": "5c7780ef3e55",
+    "/app/wira-matematik/misi/app.js": "42a5710f7efe",
     "/app/wira-matematik/misi/fonts.css": "3e046e57fbed",
-    "/app/wira-matematik/misi/": "43bce10d7187",
+    "/app/wira-matematik/misi/": "640d0488a57f",
     "/app/wira-matematik/misi/questions.js": "96fc3e0576a6",
-    "/app/wira-matematik/misi/style.css": "8a4d62b9f595"
+    "/app/wira-matematik/misi/raksasa.js": "993870fab6a7",
+    "/app/wira-matematik/misi/style.css": "e7ff4d3c0179"
    },
-   "bytes": 3229750
+   "bytes": 3249683
   },
   "wonder-island": {
    "files": {
