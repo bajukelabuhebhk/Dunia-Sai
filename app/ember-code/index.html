@@ -31,7 +31,10 @@ footer{padding:6px max(10px,env(safe-area-inset-right)) calc(6px + env(safe-area
 .labActions button[data-lab-challenge=mix]{grid-column:1/-1}
 </style>
 <meta name="description" content="Ember Code: Living Battlefield — permainan menara taktikal dan pembelajaran kod, berjalan sepenuhnya dalam satu HTML.">
-<!-- dunia-sai --><link rel="manifest" href="/manifest.json"><script src="/shared/js/balik.js" defer></script></head>
+<style id="micro-fit">/* Dunia Sai: soalan mikro muat skrin telefon (kedua-dua jawapan kelihatan) */
+@media(max-width:990px) and (orientation:portrait){.microPanel{min-width:0;flex:1 1 0}.intelMini{flex:0 0 auto}}
+@media(max-width:500px){.panel{max-height:none}.intelMini{max-width:76px;font-size:10px;line-height:1.3}.microPanel{display:grid;grid-template-columns:1fr;gap:4px;padding:5px 6px}.microQuestion{font-size:14px;flex:none}.microChoices{display:grid;grid-template-columns:1fr 1fr;width:100%;flex:none}.microChoices button{min-height:38px;font-size:16px}.microResult{flex:none}}
+</style><!-- dunia-sai --><link rel="manifest" href="/manifest.json"><script src="/shared/js/balik.js" defer></script></head>
 <body>
 <header>
  <div class="branding"><div class="brand">✦ EMBER CODE</div><div class="subbrand" id="sectorSub">RESEARCH &amp; SIEGE · REVAMP 001</div></div>
