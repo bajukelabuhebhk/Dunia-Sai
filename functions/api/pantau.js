@@ -29,6 +29,26 @@ async function sama(a, b) {
   return d === 0;
 }
 
+/*
+ * Checks  Authorization: Bearer <PANTAU_KUNCI>  for every owner-only API (pantau, maklum-balas).
+ * Returns null when the key is right, otherwise { status, body } to send back.
+ * Wrong keys are counted per internet connection (shared counter), so guessing is slow everywhere.
+ * Expects sediakan(env.DB) to have run.
+ */
+export async function semakKunci(request, env) {
+  const db = env.DB;
+  const auth = (request.headers.get('authorization') || '').replace(/^Bearer\s+/i, '');
+  const pintu = 'p:' + (await hashIP(request, 'pantau', env.PANTAU_KUNCI));
+  if ((await had(db, pintu, 0, 3600e3)) >= SALAH_SEJAM) {
+    return { status: 429, body: { ralat: 'Terlalu banyak cubaan kunci salah. Cuba lagi selepas 1 jam.' } };
+  }
+  if (!(await sama(auth, env.PANTAU_KUNCI))) {
+    await had(db, pintu, 1, 3600e3);
+    return { status: 401, body: { ralat: 'Kunci salah.' } };
+  }
+  return null;
+}
+
 export const onRequestOptions = () => new Response(null, { status: 204, headers: CORS });
 
 export async function onRequestGet({ request, env }) {
@@ -37,15 +57,8 @@ export async function onRequestGet({ request, env }) {
   const db = env.DB;
   await sediakan(db);
 
-  const auth = (request.headers.get('authorization') || '').replace(/^Bearer\s+/i, '');
-  const pintu = 'p:' + (await hashIP(request, 'pantau', env.PANTAU_KUNCI));
-  if ((await had(db, pintu, 0, 3600e3)) >= SALAH_SEJAM) {
-    return json({ ralat: 'Terlalu banyak cubaan kunci salah. Cuba lagi selepas 1 jam.' }, 429);
-  }
-  if (!(await sama(auth, env.PANTAU_KUNCI))) {
-    await had(db, pintu, 1, 3600e3);
-    return json({ ralat: 'Kunci salah.' }, 401);
-  }
+  const tolak = await semakKunci(request, env);
+  if (tolak) return json(tolak.body, tolak.status);
   const url = new URL(request.url);
   const hari = [1, 7, 30, 90].includes(Number(url.searchParams.get('hari'))) ? Number(url.searchParams.get('hari')) : 7;
   const now = Date.now();

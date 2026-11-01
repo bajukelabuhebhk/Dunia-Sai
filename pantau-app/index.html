@@ -82,6 +82,19 @@
   .tetapan { font-size: .88rem; color: var(--muted); display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }
   .tetapan label { display: flex; gap: 6px; align-items: center; }
   .tetapan button, .tetapan a { border: 0; background: none; color: var(--hijau); padding: 0; font: 600 .88rem var(--font); cursor: pointer; }
+  .mb-ringkas { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+  .mb-ringkas span { background: var(--soft); border-radius: 999px; padding: 5px 11px; font-size: .84rem; }
+  .mb { list-style: none; margin: 0; padding: 0; }
+  .mb li { padding: 10px 0; border-top: 1px solid var(--grid); }
+  .mb li:first-child { border-top: 0; }
+  .mb .atas { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-size: .86rem; color: var(--muted); }
+  .mb .atas b { color: var(--ink); }
+  .mb .bt { letter-spacing: 1px; font-size: .9rem; }
+  .mb .rendah .bt { filter: saturate(.3); }
+  .mb p { margin: 4px 0 0; white-space: pre-wrap; overflow-wrap: anywhere; font-size: .94rem; }
+  .mb .baru { background: #f2b13a; color: #23314a; font-weight: 700; font-size: .72rem; padding: 1px 7px; border-radius: 999px; }
+  .mb .padam { margin-left: auto; border: 0; background: none; color: var(--muted); font-size: .8rem; padding: 2px 4px; }
+  .mb-tapis { font: 600 .85rem var(--font); background: var(--soft); color: var(--ink); border: 0; border-radius: 999px; padding: 6px 10px; }
   [hidden] { display: none !important; }
 </style>
 </head>
@@ -121,6 +134,15 @@
     <section class="kotak">
       <h2>Game <small>dibuka dan dimain</small></h2>
       <div class="skrol"><table id="game"></table></div>
+    </section>
+
+    <section class="kotak" id="mbKotak">
+      <h2 style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">💬 Maklum balas <small id="mbKecil">peribadi, hanya anda nampak</small>
+        <select class="mb-tapis" id="mbTapis" aria-label="Tapis maklum balas" style="margin-left:auto">
+          <option value="">Semua</option><option value="rendah">1 hingga 2 bintang</option><option value="teks">Ada tulisan</option>
+        </select></h2>
+      <div class="mb-ringkas" id="mbRingkas"></div>
+      <ul class="mb" id="mbSenarai"></ul>
     </section>
 
     <div class="dua">
@@ -192,6 +214,7 @@
       $('ralat').textContent = body.kunciPendek ? 'Kunci anda pendek. Tukar PANTAU_KUNCI di Cloudflare kepada 20 aksara atau lebih.' : '';
       tunjuk(false);
       lukis();
+      muatMb(key);
     } catch (e) {
       tunjuk(false);
       $('ralat').textContent = navigator.onLine === false ? 'Tiada internet. Nombor di bawah mungkin lama.' : e.message;
@@ -245,6 +268,48 @@
 
     $('dikemas').textContent = `Dikemas kini ${jam(d.kini)}`;
   }
+
+  /* ---------- Private feedback from /api/maklum-balas ---------- */
+  let mb = null;
+  const SIAPA = { ibubapa: 'Ibu/bapa', cikgu: 'Cikgu', anak: 'Anak', lain: 'Lain-lain' };
+  const bintang = (b) => '⭐'.repeat(b) + '<span style="opacity:.25">' + '⭐'.repeat(5 - b) + '</span>';
+  const bila = (ts) => new Date(ts).toLocaleString('ms-MY', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h23', timeZone: 'Asia/Kuala_Lumpur' });
+  async function muatMb(key) {
+    try {
+      const r = await fetch(`${API}/api/maklum-balas?hari=365`, { headers: { Authorization: `Bearer ${key}` }, cache: 'no-store' });
+      if (!r.ok) throw new Error();
+      mb = await r.json();
+      lukisMb();
+      // Everything shown now counts as seen next time, so "Baru" marks only what came in since
+      if (document.visibilityState === 'visible') store.setItem('pantau_mb_lihat', String(mb.kini));
+    } catch (e) { if (!mb) $('mbSenarai').innerHTML = '<li class="kosong">Maklum balas tidak dapat dimuat.</li>'; }
+  }
+  let mbLihat = Number(store.getItem('pantau_mb_lihat')) || 0;
+  function lukisMb() {
+    const d = mb, tapis = $('mbTapis').value;
+    const jumlah = d.game.reduce((s, g) => s + g.n, 0);
+    const purata = jumlah ? d.game.reduce((s, g) => s + g.purata * g.n, 0) / jumlah : 0;
+    const baru = d.senarai.filter((x) => x.ts > mbLihat).length;
+    $('mbKecil').textContent = jumlah ? `${n(jumlah)} dalam 12 bulan · purata ${purata.toFixed(1)} ⭐${baru ? ` · ${baru} baru` : ''}` : 'peribadi, hanya anda nampak';
+    $('mbRingkas').innerHTML = d.game.map((g) => `<span>${esc(namaGame(g.game))}: <b>${Number(g.purata).toFixed(1)} ⭐</b> (${n(g.n)})${g.rendah ? ` · ${n(g.rendah)} rendah` : ''}</span>`).join('');
+    const rows = d.senarai.filter((x) => !tapis || (tapis === 'rendah' ? x.bintang <= 2 : !!x.teks));
+    $('mbSenarai').innerHTML = rows.length ? rows.map((x) => `<li class="${x.bintang <= 2 ? 'rendah' : ''}">
+        <div class="atas"><span class="bt" aria-label="${x.bintang} bintang">${bintang(x.bintang)}</span><b>${esc(namaGame(x.game))}</b>
+          <span>${esc(SIAPA[x.siapa] || '')}</span><span>${x.device === 'komputer' ? '💻' : '📱'} ${esc(bila(x.ts))}</span>
+          ${x.ts > mbLihat ? '<span class="baru">Baru</span>' : ''}
+          <button class="padam" data-padam="${x.id}" title="Padam (contoh: spam)">🗑 Padam</button></div>
+        ${x.teks ? `<p>${esc(x.teks)}</p>` : ''}</li>`).join('')
+      : `<li class="kosong">${d.senarai.length ? 'Tiada yang sepadan dengan tapisan.' : 'Belum ada maklum balas. Ibu bapa boleh tekan 💬 di tepi kiri setiap game, atau di senarai game.'}</li>`;
+  }
+  $('mbTapis').addEventListener('change', () => mb && lukisMb());
+  $('mbSenarai').addEventListener('click', async (e) => {
+    const b = e.target.closest('[data-padam]');
+    if (!b || !confirm('Padam maklum balas ini? Ia tidak boleh dikembalikan.')) return;
+    const key = store.getItem('pantau_kunci');
+    const r = await fetch(`${API}/api/maklum-balas?id=${b.dataset.padam}`, { method: 'DELETE', headers: { Authorization: `Bearer ${key}` } }).catch(() => null);
+    if (r && r.ok) { mb.senarai = mb.senarai.filter((x) => String(x.id) !== b.dataset.padam); lukisMb(); }
+    else alert('Tidak dapat padam. Cuba lagi.');
+  });
 
   function negara(k) {
     if (!k || k === '?') return 'Tidak diketahui';

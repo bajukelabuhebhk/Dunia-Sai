@@ -99,8 +99,10 @@ function css(){if(document.getElementById('dsrCss'))return;const st=document.cre
 function buka(back,opt){if(!C)return;css();onBack=back||null;if(saveT)save();D=load();
  if(!root){root=document.createElement('div');root.id='dsr';root.setAttribute('role','dialog');root.setAttribute('aria-label','Ruang Ibu Bapa');document.body.append(root)}
  balik(false);if(C.gate!==false&&!(opt&&opt.gate===false)&&!lulus)gate();else draw();root.scrollTop=0}
-function balik(on){const b=document.getElementById('ds-balik');if(b)b.style.visibility=on?'':'hidden'}
+function balik(on){['ds-balik','ds-komen'].forEach(id=>{const b=document.getElementById(id);if(b)b.style.visibility=on?'':'hidden'})}
 function tutup(){if(root){root.remove();root=null}balik(true);lulus=false;if(onBack)onBack()}
+// Private feedback form (shared/js/maklum-balas.js); the parent already passed this room's gate
+function mb(){const go=()=>window.DSMaklumBalas&&window.DSMaklumBalas.buka({gate:false});if(window.DSMaklumBalas)return go();const s=document.createElement('script');s.src='/shared/js/maklum-balas.js';s.onload=go;document.head.appendChild(s)}
 function shell(inner){root.innerHTML=`<header class="dsr-top"><button type="button" class="dsr-back" id="dsrBack">← Kembali</button><h1>🏡 Ruang Ibu Bapa</h1></header><div class="dsr-wrap">${inner}</div>`;root.querySelector('#dsrBack').onclick=tutup}
 function gate(){shell(`<div class="dsr-gate"><div style="font-size:56px">👨‍👩‍👧</div><h2>Untuk ibu bapa</h2><p class="dsr-muted">Tekan dan tahan butang di bawah selama 3 saat.</p><button type="button" class="dsr-hold" id="dsrHold"><i id="dsrFill"></i><span>Tahan di sini</span></button></div>`);
  const b=root.querySelector('#dsrHold'),f=root.querySelector('#dsrFill');let t0=0,raf=0;
@@ -110,6 +112,7 @@ function gate(){shell(`<div class="dsr-gate"><div style="font-size:56px">👨‍
  b.onpointerup=b.onpointercancel=b.onpointerleave=stop;b.oncontextmenu=e=>e.preventDefault()}
 function draw(){shell(page());
  root.querySelectorAll('[data-close]').forEach(b=>b.onclick=tutup);
+ root.querySelectorAll('[data-mb]').forEach(b=>b.onclick=mb);
  root.querySelectorAll('[data-kid]').forEach(b=>b.onclick=()=>{pick=b.dataset.kid;draw()})}
 
 function page(){const K={...KATA,...(C.kata||{})},names=childNames();if(pick&&!names.includes(pick))pick='';
@@ -133,6 +136,7 @@ function page(){const K={...KATA,...(C.kata||{})},names=childNames();if(pick&&!n
  ${skills.length&&skills.some(x=>x.tip)?`<div class="dsr-card"><h3>🛒 Cadangan aktiviti di rumah</h3><p class="dsr-muted" style="color:#2c3a4f">${weak&&weak.tip?`<b>${weak.icon} ${esc(weak.name)}</b> paling perlu latihan sekarang (${weak.p}%). ${esc(weak.tip)}`:esc(C.tipUmum||'Biar anak main beberapa permainan dahulu. Kemudian kami cadangkan aktiviti mengikut kemahiran yang paling perlu dibantu.')}</p></div>`:''}
  <div class="dsr-card"><h3>🕘 ${esc(K.terkini)}</h3>${recent(ev,K)}</div>
  <div class="dsr-privacy">🔐 Data anak disimpan dalam telefon ini sahaja. Tiada ranking dan tiada data dihantar keluar.</div>
+ <div class="dsr-card"><h3>💬 Pendapat anda</h3><p class="dsr-muted">Ada cadangan atau masalah dengan game ini? Beritahu pembuat game secara peribadi. Tidak dipaparkan kepada orang lain.</p><button type="button" class="dsr-btn" data-mb="1" style="margin-top:10px">💬 Beri maklum balas</button></div>
  <button type="button" class="dsr-btn" data-close="1">← Kembali ke permainan</button>`}
 function recent(ev,K){const last=ev.slice(-6).reverse();if(!last.length)return '<p class="dsr-muted">Belum ada permainan direkod.</p>';
  return last.map(x=>{const g=info(x.k),d=new Date(x.t);return `<div class="dsr-row"><div class="ic">${g[0]}</div><div class="tx"><strong>${esc(g[1])}</strong><small>${d.toLocaleDateString('ms-MY',{day:'numeric',month:'short'})} ${d.toLocaleTimeString('ms-MY',{hour:'2-digit',minute:'2-digit'})}${x.a&&!pick?' · '+esc(x.a):''} · ${mins(x.s)} min · ${x.f}/${x.r} ${esc(K.betul.toLowerCase())}</small></div>${x.n?`<span class="dsr-chip good">${esc(K.baru)}</span>`:x.d?'<span class="dsr-chip grey">Selesai</span>':''}</div>`}).join('')}
