@@ -10,6 +10,7 @@ Satu laman, satu apps (PWA) untuk semua game belajar Dunia Sai oleh SgieldSai. T
 | `/promo/<nama>` | Halaman promo dari `PROMOS` dalam `shared/js/config.js` (contoh `/promo/pakej-5-game`) |
 | `/lesen`, `/beli`, `/main` | Pautan pendek untuk dikongsi |
 | `/pantau/` | Tandakan phone pemilik supaya tidak dikira, dan pautan ke apps Pantau |
+| `/api/maklum-balas` | Maklum balas peribadi dari ibu bapa (hanya pemilik boleh baca, melalui apps Pantau) |
 
 ## Cara ia berfungsi
 
@@ -57,6 +58,18 @@ Buka `https://dunia-sai.pages.dev/pantau/` sekali di setiap phone atau tablet an
 Had keselamatan: satu sambungan internet boleh hantar paling banyak 2000 acara sehari ke `/api/jejak` (lebih dari itu ditolak supaya dashboard tidak diisi lawatan palsu), dan selepas 10 kunci salah dalam 1 jam `/api/pantau` tolak sambungan itu selama sejam. Kiraan had disimpan dalam jadual `had` sebagai hash, bukan IP.
 
 Jadual dicipta sendiri pada acara pertama. Acara lebih lama dari 400 hari dipadam automatik.
+
+## Maklum balas peribadi (💬)
+
+Ibu bapa boleh beri bintang (1 hingga 5) dan cadangan untuk setiap game: butang 💬 di bawah 🏠 di tepi kiri setiap game, butang dalam Ruang Ibu Bapa, dan bahagian "Pendapat anda" di `/app/`. Sebelum borang dibuka, mereka perlu tekan dan tahan 3 saat (sama seperti Ruang Ibu Bapa) supaya anak kecil tidak hantar tanpa sengaja.
+
+Tiada ruang komen awam: maklum balas **tidak dipaparkan kepada sesiapa** kecuali anda, dalam apps Pantau (bahagian 💬 Maklum balas). Di situ anda nampak purata bintang setiap game, boleh tapis 1 hingga 2 bintang, dan padam spam.
+
+- Kod: borang `shared/js/maklum-balas.js`, API `functions/api/maklum-balas.js` (POST awam, GET dan DELETE perlu `PANTAU_KUNCI`).
+- Guna D1 (`DB`) dan `PANTAU_KUNCI` yang sama dengan Pantau, jadi tiada persediaan baharu. Jadual `maklum_balas` dicipta sendiri.
+- Selamat untuk kanak-kanak: tiada nama, IP atau cookie disimpan. E-mel, nombor telefon dan pautan yang ditaip dalam teks ditukar kepada `[dibuang]` sebelum disimpan.
+- Had spam: 8 maklum balas sehari bagi satu sambungan internet, medan tersembunyi untuk bot, teks paling panjang 600 aksara. Disimpan 2 tahun.
+- Ditulis semasa offline: disimpan dalam peranti (`ds_mb_tunggu`) dan dihantar sendiri bila ada internet.
 
 ## Deploy di Cloudflare
 

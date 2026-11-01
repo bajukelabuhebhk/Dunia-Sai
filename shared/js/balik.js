@@ -23,6 +23,26 @@
       'box-shadow:0 2px 8px rgba(0,0,0,.25)', 'opacity:.8', '-webkit-tap-highlight-color:transparent',
     ].join(';');
     document.body.appendChild(a);
+
+    // Private feedback for parents, just under the home tab (form in /shared/js/maklum-balas.js)
+    const k = document.createElement('button');
+    k.id = 'ds-komen';
+    k.type = 'button';
+    k.setAttribute('aria-label', 'Maklum balas untuk ibu bapa');
+    k.title = 'Maklum balas';
+    k.textContent = '💬';
+    k.style.cssText = a.style.cssText + ';border:0;margin:0;cursor:pointer;opacity:.6;font-size:16px;height:38px;' +
+      'transform:translateY(calc(-50% + 46px))';
+    k.addEventListener('click', bukaMaklumBalas);
+    document.body.appendChild(k);
+  }
+
+  function bukaMaklumBalas() {
+    if (window.DSMaklumBalas) return window.DSMaklumBalas.buka();
+    const s = document.createElement('script');
+    s.src = '/shared/js/maklum-balas.js';
+    s.onload = () => window.DSMaklumBalas && window.DSMaklumBalas.buka();
+    document.head.appendChild(s);
   }
   if (document.body) add(); else document.addEventListener('DOMContentLoaded', add);
 

@@ -118,6 +118,14 @@
       <div id="simpanSemuaNota" style="margin-top:6px"></div>
     </div>
   </section>
+
+  <section class="seksyen" id="maklum-balas" style="padding-top:0">
+    <div class="kotak">
+      <h2>💬 Pendapat anda</h2>
+      <p style="margin:0 0 10px;color:var(--muted)">Untuk ibu bapa dan cikgu: beri bintang dan cadangan untuk mana-mana game. Hanya pembuat game akan baca, tidak dipaparkan kepada orang lain.</p>
+      <button class="btn garis kecil" id="bukaMaklumBalas">💬 Beri maklum balas</button>
+    </div>
+  </section>
 </div>
 <footer class="kaki">© SgieldSai · Dunia Sai: Setiap Permainan, Satu Ilmu · <a href="/">Laman utama</a></footer>
 
@@ -126,6 +134,7 @@
 <script src="/shared/js/anak.js"></script>
 <script src="/shared/js/lesen-lib.js"></script>
 <script src="/shared/js/lesen.js"></script>
+<script src="/shared/js/maklum-balas.js"></script>
 <script>
 (() => {
   const $ = (id) => document.getElementById(id);
@@ -134,6 +143,8 @@
   let list = null;              // /files.json
   const saved = {};             // game id -> files already cached
   const progress = {};          // game id -> {done,total} while saving
+
+  $('bukaMaklumBalas').addEventListener('click', () => DSMaklumBalas.buka());
 
   /* ---------- Game cards ---------- */
   function render() {
