@@ -528,6 +528,61 @@ var KJL=(function(){
   return {PRODUCTS:PRODUCTS,parse:parse,extract:extract,verify:verify,normalize:normalize,enc32:enc32,dec32:dec32};
 })();
 </script>
+<script>/* Dunia Sai: lesen pakej PK2- */
+/* Bundle licence format v2 "PK2-" (shared by every Kenal game and the generator).
+   One licence opens any set of games. A licence = 14-byte record + 64-byte Ed25519 signature over
+   DOMAIN + record, written as "PK2-" + Crockford base32 in groups of 6. Record: version (2), key number,
+   6-byte random licence ID, issue day (days since 1 Jan 2026, big-endian), 4-byte game mask
+   (big-endian, bit n-1 set = game n included). Same signing key as the v1 licences.
+   Game numbers are fixed forever: 1 Kenal Jawi, 2 Kenal ABC, 3 Wira Matematik, 4 Hikayat Sungai Ilmu,
+   5 Wonder Island, 6 Kembara Malaysia Kita, 7 Adiwira Jawi (dropped, number reserved), 8 Boss Gerai, 9 Ember Code, 10 Nakhoda Jawi, 11 Robot Rumble. A new game takes the next free number (max 32).
+   A game only checks that its own number is in the signed mask, so a new bundle never needs a game update. */
+var KJL2=(function(){
+  var A='0123456789ABCDEFGHJKMNPQRSTVWXYZ',DOMAIN='KenalGames-bundle-v2|',VERSION=2,EPOCH=Date.UTC(2026,0,1),PRE='PK2',BYTES=78;
+  var GAMES={1:'Kenal Jawi',2:'Kenal ABC',3:'Wira Matematik',4:'Hikayat Sungai Ilmu',5:'Wonder Island',6:'Kembara Malaysia Kita',7:'Adiwira Jawi',8:'Boss Gerai',9:'Ember Code',10:'Nakhoda Jawi',11:'Robot Rumble'};
+  function enc32(bytes){var out='',bits=0,val=0;for(var i=0;i<bytes.length;i++){val=((val<<8)|bytes[i])&0xffff;bits+=8;while(bits>=5){out+=A[(val>>>(bits-5))&31];bits-=5}}if(bits>0)out+=A[(val<<(5-bits))&31];return out}
+  function dec32(s){var out=[],bits=0,val=0;for(var i=0;i<s.length;i++){var v=A.indexOf(s[i]);if(v<0)return null;val=((val<<5)|v)&0xfff;bits+=5;if(bits>=8){out.push((val>>>(bits-8))&255);bits-=8}}
+    if(bits>0&&(val&((1<<bits)-1))!==0)return null;return new Uint8Array(out)}
+  // Tolerant of spaces, dashes, line breaks, small letters and O/0, I/L/1 mix-ups
+  function normalize(t){return String(t||'').toUpperCase().replace(/[^0-9A-Z]/g,'').replace(/O/g,'0').replace(/[IL]/g,'1')}
+  function message(rec){var d=DOMAIN,m=new Uint8Array(d.length+rec.length);for(var i=0;i<d.length;i++)m[i]=d.charCodeAt(i);m.set(rec,d.length);return m}
+  function group(s,n){var o=[];for(var i=0;i<s.length;i+=n)o.push(s.slice(i,i+n));return o.join('-')}
+  function idText(rec){var s=enc32(rec.subarray(2,8));return 'PB-'+s.slice(0,5)+'-'+s.slice(5)}
+  function dayText(day){var d=new Date(EPOCH+day*864e5);return d.toISOString().slice(0,10)}
+  function gamesOf(rec){var m=((rec[10]<<24)|(rec[11]<<16)|(rec[12]<<8)|rec[13])>>>0,g=[];for(var i=0;i<32;i++)if(m&(1<<i))g.push(i+1);return g}
+  function name(games){return games.length===1?(GAMES[games[0]]||'Game')+' versi penuh':'Pakej '+games.length+' in 1'}
+  // The PK2 licence in a text (a licence alone, or a whole pasted WhatsApp message), or null
+  function find(text){
+    var m=String(text||'').match(/\bPK2(?:-[0-9A-Za-z]{1,6})+/i);if(m)return m[0];
+    return normalize(text).slice(0,3)===PRE?String(text):null}
+  function parse(text){
+    var n=normalize(text);
+    if(!n)return {ok:false,reason:'empty'};
+    if(n.slice(0,3)!==PRE)return {ok:false,reason:'format'};
+    var b=dec32(n.slice(3));
+    if(!b||b.length!==BYTES)return {ok:false,reason:'length'};
+    var rec=b.subarray(0,14),sig=b.subarray(14);
+    if(rec[0]!==VERSION)return {ok:false,reason:'unknown'};
+    var g=gamesOf(rec);
+    return {ok:true,rec:rec,sig:sig,keyNo:rec[1],id:idText(rec),issued:dayText((rec[8]<<8)|rec[9]),games:g,name:name(g)};
+  }
+  function format(rec,sig){var all=new Uint8Array(BYTES);all.set(rec,0);all.set(sig,14);return PRE+'-'+group(enc32(all),6)}
+  function b64(s){var bin=atob(s),u=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return u}
+  // game: the asking game's number; publicKeys: {keyNo: base64 key}; blocked: licence IDs ("PB-XXXXX-XXXXX")
+  // Returns {ok:true,id,keyNo,issued,games,name,text} or {ok:false,reason}; reason 'not-in-bundle' = genuine licence without this game
+  function verify(text,game,publicKeys,blocked,nacl){
+    var p=parse(text);if(!p.ok)return p;
+    var pk=publicKeys&&publicKeys[p.keyNo];if(!pk)return {ok:false,reason:'unknown-key'};
+    var good=false;try{good=nacl.sign.detached.verify(message(p.rec),p.sig,b64(pk))}catch(e){good=false}
+    if(!good)return {ok:false,reason:'signature'};
+    if(blocked&&blocked.indexOf(p.id)>=0)return {ok:false,reason:'blocked',id:p.id};
+    if(p.games.indexOf(game)<0)return {ok:false,reason:'not-in-bundle',games:p.games,name:p.name};
+    return {ok:true,id:p.id,keyNo:p.keyNo,issued:p.issued,games:p.games,name:p.name,text:format(p.rec,p.sig)};
+  }
+  return {GAMES:GAMES,find:find,parse:parse,verify:verify,name:name,normalize:normalize};
+})();
+
+</script>
 <script>
 (() => {
   const $ = id => document.getElementById(id);
@@ -2308,13 +2363,13 @@ var KJL=(function(){
   // the signature, so licences cannot be forged. Product 4 = Hikayat Sungai Ilmu, so a licence for
   // another game does not open this one. The demo is Chapter 1: the village, the raft, the river
   // and the Mud Leech, plus the Magnet Rescue mini game.
-  const SHOP = { price: 'RM15', wa: '601137865789', msg: 'Assalamualaikum, saya nak beli Hikayat Sungai Ilmu versi penuh (RM15).' };
+  const SHOP = { price: 'RM9.90', wa: '601137865789', msg: 'Assalamualaikum, saya nak beli Hikayat Sungai Ilmu versi penuh (RM9.90).' };
   const PRODUCT = 4;
   const PUBLIC_KEYS = { 2: 'QVgEegZrfviPeApvWbbbkzk3xI6ZKX0zKd2wEfy9pS0=' };   // key number -> Ed25519 public key. Safe to publish: it checks licences, it cannot make them
   const BLOCKED = [];   // licence IDs ("HS-XXXXX-XXXXX") that were leaked publicly
   const LIC_KEY = 'hikayat_licence';
   let licence = null, full = false;
-  const checkLicence = s => { try { return KJL.verify(s, PRODUCT, PUBLIC_KEYS, BLOCKED, nacl); } catch (e) { return { ok: false, reason: 'error' }; } };
+  const checkLicence = s => { try { const b=KJL2.find(s);return b?KJL2.verify(b,PRODUCT,PUBLIC_KEYS,BLOCKED,nacl):KJL.verify(s,PRODUCT,PUBLIC_KEYS,BLOCKED,nacl); } catch (e) { return { ok: false, reason: 'error' }; } };
   { let s = null; try { s = localStorage.getItem(LIC_KEY); } catch (e) {} if (s) { const r = checkLicence(s); if (r.ok) { licence = r; full = true; } } }
   const LT = {
     ms: { lockBtn: '🔒 Versi penuh', licBtn: '👨‍👩‍👧 Lesen', demoTag: 'Versi percubaan · Bab 1 percuma',
@@ -2349,7 +2404,7 @@ var KJL=(function(){
         blocked: 'This licence has been blocked. Please contact us.', error: 'Licence not valid. Check it again or contact us.' } },
   };
   const lT = () => LT[lang];
-  const licMsg = r => r.reason === 'other-game' ? lT().otherGame(r.game) : (lT().lic[r.reason] || lT().lic.signature);
+  const licMsg = r => r.reason==='not-in-bundle'?(lT().otherGame('x').startsWith('This')?'This bundle licence does not include Hikayat Sungai Ilmu.':'Lesen pakej ini tidak termasuk Hikayat Sungai Ilmu.'):r.reason === 'other-game' ? lT().otherGame(r.game) : (lT().lic[r.reason] || lT().lic.signature);
   const DEMO_LOCKED = new Set(['timah', 'ketam', 'buaya', 'c-2', 'c-3', 'door', 'rune', 'gate', 'rock-1', 'rock-2']);
   const demoLocked = e => !full && DEMO_LOCKED.has(e.id);
   const arcadeLocked = k => !full && k !== 'magnet';
