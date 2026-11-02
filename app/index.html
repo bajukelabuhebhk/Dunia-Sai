@@ -160,7 +160,7 @@
       else off = `<button class="offline" data-simpan="${g.id}">📥 Simpan offline (${mb(list.games[g.id].bytes)})</button>`;
       return `<div class="card">
         <a class="gambar" href="${g.path}"><img src="${g.img}" alt="" loading="lazy">
-          ${full ? '<span class="lencana hijau">✅ Versi penuh</span>' : `<span class="lencana">Percuma: ${esc(g.free)}</span>`}</a>
+          ${!g.lic ? '<span class="lencana hijau">🎁 Percuma sepenuhnya</span>' : full ? '<span class="lencana hijau">✅ Versi penuh</span>' : `<span class="lencana">Percuma: ${esc(g.free)}</span>`}</a>
         <div class="isi">
           <h3>${esc(g.name)}</h3>
           <p>${esc(g.desc)}</p>
@@ -265,7 +265,7 @@
   $('pakejNota').textContent = (P.promo ? `Harga biasa RM${P.price}, promo RM${P.promo} ${P.promoNote}. ` : '') +
     P.note;
   $('pakejWa').href = DS.waLink(`Assalamualaikum, saya nak beli ${P.name} Dunia Sai (RM${P.promo || P.price}).`);
-  $('harga').innerHTML = DS.GAMES.map((g) => `<li><span>${esc(g.name)}</span><b>RM${g.price}</b></li>`).join('');
+  $('harga').innerHTML = DS.GAMES.filter((g) => g.price > 0).map((g) => `<li><span>${esc(g.name)}</span><b>RM${g.price}</b></li>`).join('');
   $('waNo').textContent = DS.whatsappText;
 
   /* ---------- Offline ---------- */

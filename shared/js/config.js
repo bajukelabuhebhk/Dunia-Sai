@@ -20,6 +20,7 @@
     //   v1:    product number for single-game codes (KJ1-, KA1-, WM1-, HS1-, WD1-, KM1-)
     //   pk1:   the game also opens with Pakej Semua Game (PK1-)
     //   pk2:   game number inside a PK2- bundle code
+    // A game with no `lic` (and price 0) is free in full: no code needed.
     GAMES: [
       {
         id: 'kenal-jawi', name: 'Kenal Jawi', path: '/app/kenal-jawi/', img: '/img/kenal-jawi.jpg',
@@ -90,6 +91,13 @@
         desc: 'Bina robot, tulis kod dan uji di 25 misi: tork, geseran, sensor dan tenaga, dengan suara BEEP BM.',
         free: 'Misi M1 hingga M5',
         lic: { store: 'robot_rumble_lesen', pk2: 11 },
+      },
+      {
+        // Percuma sepenuhnya: tiada `lic`, jadi launcher terus anggap versi penuh dan tidak minta kod
+        id: 'lembah-embun', name: 'Lembah Embun', path: '/app/lembah-embun/', img: '/img/lembah-embun.jpg',
+        subject: 'Santai dan Jawi', age: 'Semua umur', price: 0, pakej: false,
+        desc: 'Ladang fantasi di kampung halaman: bertani, memancing, bela ayam dan tangkap kupu-kupu. Setiap barang yang ditemui tercatat dalam Kamus Kampung, Rumi dan Jawi.',
+        free: 'Percuma sepenuhnya',
       },
     ],
 
