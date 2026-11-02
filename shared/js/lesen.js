@@ -14,6 +14,7 @@
   // Same rules as the game's own checkLicence()
   function checkFor(game, text) {
     const L = game.lic;
+    if (!L) return { ok: false, reason: 'other-game' };  // free game, no code
     try {
       const pk2 = global.KJL2.find(text);
       if (pk2) {
@@ -32,6 +33,7 @@
 
   // Is this game's full version open on this device?
   function isFull(game) {
+    if (!game.lic) return true;  // free game
     const t = read(game.lic.store);
     return !!t && checkFor(game, t).ok;
   }
@@ -45,7 +47,7 @@
       const r = checkFor(g, code);
       if (!r.ok) { if (!firstFail || r.reason === 'signature' || r.reason === 'blocked') firstFail = r.reason; continue; }
       if (isFull(g)) { out.already.push(g); continue; }
-      if (write(g.lic.store, r.text)) out.unlocked.push(g);
+      if (g.lic && write(g.lic.store, r.text)) out.unlocked.push(g);
     }
     if (!out.unlocked.length && !out.already.length) out.reason = firstFail || 'format';
     return out;

@@ -153,7 +153,7 @@
         <p>${esc(g.desc)}</p>
         <span style="font-size:.85rem;color:var(--muted)">${esc(g.subject)} · ${esc(g.age)}</span>
         <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:6px">
-          <span class="harga">Versi penuh RM${g.price}</span>
+          <span class="harga">${g.price ? `Versi penuh RM${g.price}` : 'Percuma sepenuhnya'}</span>
           ${g.pakej ? '<span class="lencana">Dalam Pakej</span>' : ''}
         </div>
       </div>
