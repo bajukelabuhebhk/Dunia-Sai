@@ -59,9 +59,9 @@ footer{padding:6px max(10px,env(safe-area-inset-right)) calc(6px + env(safe-area
 </footer>
 <div class="overlay" id="menuModal"><section class="modal">
  <div class="menuHero"><svg viewBox="0 0 580 144" aria-hidden="true"><defs><linearGradient id="sky" x2=".7" y2="1"><stop stop-color="#2f6b7b"/><stop offset="1" stop-color="#0a203a"/></linearGradient></defs><path d="M0 0H580V144H0Z" fill="url(#sky)"/><path d="M0 97Q135 12 300 113Q430 37 580 91V144H0" fill="#254b56"/><path d="M0 119Q120 73 225 104T580 110" fill="none" stroke="#c2a078" stroke-width="16"/><path d="M0 119Q120 73 225 104T580 110" fill="none" stroke="#725d51" stroke-width="8"/><g transform="translate(430 66)"><path d="M-60 40L-48-15L0-46L48-15L60 40Z" fill="#1c3545" stroke="#90cdd2" stroke-width="4"/><path d="M-31 25L-20-19L0-37L20-19L31 25Z" fill="#2c8591"/><path d="M0 -26L15 0L0 22L-15 0Z" fill="#b8f9da" stroke="#48d7df" stroke-width="3"/><circle r="42" fill="none" stroke="#78f7ea55" stroke-width="4"/></g><g fill="#e3b772"><circle cx="57" cy="97" r="9"/><circle cx="149" cy="82" r="8"/><circle cx="256" cy="104" r="9"/></g><path d="M0 0L580 0" stroke="#7becdf" stroke-width="4"/></svg><div class="heroTitle">EMBER CODE<small>LAST CORE DEFENSE · TACTICAL REFORGE</small></div></div>
- <p id="menuLead">Lawan 3–5 pintu masuk dan sehingga 2 exit dengan menara, droid serta penyelidikan taktikal.</p>
+ <p id="menuLead">Setiap peta ada bentuk jalan sendiri. Pertahankan teras dengan menara, droid serta penyelidikan taktikal.</p>
  <div class="modeRow" id="gradeButtons"></div><div class="difficultyRow"><label id="difficultyLabel" for="difficultyChoice">⚔️ Kesukaran tempur / Battle difficulty</label><select id="difficultyChoice"><option value="santai">🌿 Santai / Relaxed</option><option value="standard">⚔️ Standard</option><option value="taktikal">🔥 Taktikal / Tactical</option></select></div>
- <label class="formLabel" for="mapChoice" id="mapLabel">PILIH PETA / MISSION</label><select id="mapChoice"></select>
+ <label class="formLabel" for="mapChoice" id="mapLabel">PILIH PETA / MISSION</label><select id="mapChoice"></select><div class="statusText" id="mapLore"></div>
  <div class="statusText" id="careerLine"></div><div class="modActions"><button id="playBtn" class="accent">⚔️ MULA MISI</button><button id="continueBtn">↪ SAMBUNG</button></div><div class="menuGrid"><button id="trainingBtn">🎓 LATIHAN KOD</button><button id="reportBtn">📊 IBU BAPA</button><button id="certificateBtn">🏅 SIJIL</button><button id="licenceBtn">🔓 LESEN PK2</button></div><div class="statusText" id="licenseStatus"></div>
 </section></div>
 <div class="overlay" id="quizModal"><section class="modal"><div class="modalRow"><span class="qtag" id="quizContext">🧪 MAKMAL</span><button id="readQuiz" aria-label="Read aloud">🔈</button><button id="closeQuiz">✕</button></div><div class="qtag" id="quizTopic"></div><div class="question" id="quizPrompt"></div><div class="quizAnswers" id="quizAnswers"></div><div class="quizExplain" id="quizExplain"></div><div class="modalRow"><button id="nextQuiz">SOALAN SETERUSNYA ▶</button></div></section></div>
@@ -137,18 +137,18 @@ var KJL2=(function(){
 
 /* Map names and descriptions in BM and EN, in the same order as SECTORS. */
 var SECTOR_TEXT=[
- {name:['Perimeter Luar','Outer Perimeter'],lore:['Darat: satu laluan. Misi pertama untuk belajar.','Land: one path. Your first training mission.'],weather:['☀️ Cerah • julat Vulcan +10%','☀️ Clear • Vulcan range +10%'],icon:'🏞'},
- {name:['Saluran Berkembar','Twin Conduit'],lore:['Darat: dua barisan robot dari dua arah.','Land: two robot columns from two sides.'],weather:['🌧 Hujan Ion • julat Tesla +15%','🌧 Ion Rain • Tesla range +15%'],icon:'🌧'},
- {name:['Teras Lingkaran','Spiral Core'],lore:['Darat: dua laluan berliku di kilang beku.','Land: two winding paths in a frozen factory.'],weather:['❄ Ribut Salji • musuh 8% lebih perlahan','❄ Blizzard • enemies 8% slower'],icon:'❄'},
- {name:['Kubu Orbit Langit','Sky Orbital Fortress'],lore:['Udara: dua laluan pesawat musuh. Guna menara UDARA.','Air: two enemy flight paths. Use AIR towers.'],weather:['☁ Awan Ion • Flak +12%','☁ Ion Clouds • Flak +12%'],icon:'✈'},
- {name:['Benteng Lautan','Ocean Bastion'],lore:['Laut: dua laluan kapal musuh. Guna menara LAUT.','Sea: two enemy shipping lanes. Use SEA towers.'],weather:['🌊 Air Pasang • Torpedo +12%','🌊 Rising Tide • Torpedo +12%'],icon:'⚓'},
- {name:['Bos Mini Tiga Penjuru','Triad Mini-Boss'],lore:['Bos mini: darat, udara dan laut serentak. Bina menara untuk setiap laluan.','Mini-boss: land, air and sea at once. Build a tower for every lane.'],weather:['⚠ Serangan tiga arah • musuh elit','⚠ Three-front attack • elite raiders'],icon:'⚠'},
- {name:['Sempadan Besi','Iron Frontier'],lore:['Darat: kilang besi dengan dua laluan serangan.','Land: an ironworks with two attack paths.'],weather:['🔥 Abu Kilang • Railgun/Prism +20%','🔥 Foundry Ash • Railgun/Prism +20%'],icon:'🔥'},
- {name:['Kota Kuantum','Quantum Citadel'],lore:['Darat: bandar kuantum dengan tiga laluan.','Land: a quantum city with three lanes.'],weather:['⚡ Plasma • semua menara 10% lebih laju','⚡ Plasma • all towers fire 10% faster'],icon:'⚡'},
- {name:['Tanah Gersang','Siege Badlands'],lore:['Darat: lembah berkubu dengan dua laluan berat.','Land: fortified canyons with two heavy routes.'],weather:['🏜 Debu • robot berat lebih laju','🏜 Dust • heavy walkers move faster'],icon:'🏜'},
- {name:['Pelabuhan Dalam','Abyssal Harbor'],lore:['Laut: tiga laluan kapal musuh.','Sea: three enemy naval lanes.'],weather:['🌊 Arus Dalam • Torpedo +12%','🌊 Deep Current • Torpedo +12%'],icon:'🌊'},
- {name:['Langit Cakerawala','Celestial Skyfall'],lore:['Udara: tiga laluan pesawat yang ramai.','Air: three busy flight paths.'],weather:['✨ Ribut Ion • Flak +12%','✨ Ion Storm • Flak +12%'],icon:'✨'},
- {name:['Nexus Omega Terakhir','OMEGA Final Nexus'],lore:['Bos terakhir: darat, udara dan laut menyerang satu teras.','Final boss: land, air and sea attack one core.'],weather:['☄ Pertempuran akhir • darat + udara + laut','☄ Final battle • land + air + sea'],icon:'☄'}
+ {name:['Perimeter Luar','Outer Perimeter'],lore:['Satu jalan berliku dan satu laluan udara. Misi latihan pertama.','One winding road and one flight path. Your first training mission.'],weather:['🍃 Angin Lembah • penerbang +8% laju','🍃 Valley Wind • flyers +8% speed'],icon:'🏞'},
+ {name:['Saluran Berkembar','Twin Conduit'],lore:['Dua jalan panjang di atas dan bawah, hanya bertemu dekat teras.','Two long roads along the top and bottom that only meet near the core.'],weather:['🌊 Arus Sungai • musuh perlahan di titik genting','🌊 River Tide • enemies slow at the chokepoint'],icon:'🌧'},
+ {name:['Teras Lingkaran','Spiral Core'],lore:['Teras di tengah. Dua jalan mengelilinginya dan menyerang dari belakang.','The core sits in the middle. Two roads circle round and strike from behind.'],weather:['❄ Beku • musuh darat perlahan di titik genting','❄ Frost • ground enemies slow at the chokepoint'],icon:'❄'},
+ {name:['Kubu Orbit Langit','Sky Orbital Fortress'],lore:['Satu jalan zig-zag dan DUA laluan udara. Gatling dan Teras Ember boleh tembak penerbang.','One zigzag road and TWO flight paths. Gatling and the Ember Core can hit flyers.'],weather:['☁ Ribut Ion • jarak tembakan turun ketika denyutan','☁ Ion Storm • firing range drops during a pulse'],icon:'✈'},
+ {name:['Benteng Lautan','Ocean Bastion'],lore:['Dua jalan di jeti pelabuhan. Teras di bawah kanan.','Two dock roads. The core sits low on the right.'],weather:['⚓ Angin Pelabuhan • penerbang +12% laju','⚓ Harbor Gust • flyers +12% speed'],icon:'⚓'},
+ {name:['Bos Mini Tiga Penjuru','Triad Mini-Boss'],lore:['Bos mini: tiga jalan dari kiri, atas dan bawah bertemu di satu zon genting.','Mini-boss: three roads from the left, top and bottom meet in one kill zone.'],weather:['⚠ Penggera Bos • musuh memecut dekat teras','⚠ Boss Alarm • invaders sprint near the core'],icon:'⚠'},
+ {name:['Sempadan Besi','Iron Frontier'],lore:['Dua teras. Dua jalan bersilang seperti huruf X, dua jalan lagi di tepi.','Two cores. Two roads cross in an X, two more run along the edges.'],weather:['🔥 Haba Kilang • Mortar +9%, musuh berat lebih tahan','🔥 Forge Heat • Mortar +9%, heavy enemies tougher'],icon:'🔥'},
+ {name:['Kota Kuantum','Quantum Citadel'],lore:['Tiga jalan bandar dengan selekoh tajam.','Three city streets with sharp turns.'],weather:['⚡ Medan Kuantum • robot sokongan dapat perisai','⚡ Quantum Field • support bots gain shields'],icon:'⚡'},
+ {name:['Tanah Gersang','Siege Badlands'],lore:['Terbalik! Teras di KIRI, musuh datang dari kanan melalui dua lurah.','Reversed! The core is on the LEFT, enemies come from the right through two canyons.'],weather:['🏜 Ribut Pasir • jarak menara turun semasa ribut','🏜 Sandstorm • tower range drops in a storm'],icon:'🏜'},
+ {name:['Pelabuhan Dalam','Abyssal Harbor'],lore:['Teras di bawah. Tiga jalan turun dari atas.','The core is at the bottom. Three roads come down from the top.'],weather:['🌊 Arus Dalam • penerbang memecut di separuh akhir','🌊 Deep Current • flyers dash in the final half'],icon:'🌊'},
+ {name:['Langit Cakerawala','Celestial Skyfall'],lore:['Satu jalan S yang panjang, dua jalan pendek dari atas dan bawah, dua laluan udara.','One long S road, two short roads from top and bottom, two flight paths.'],weather:['✨ Angin Langit • penerbang +15% laju','✨ Sky Wind • flyers +15% speed'],icon:'✨'},
+ {name:['Nexus Omega Terakhir','OMEGA Final Nexus'],lore:['Bos terakhir: teras di tengah, empat jalan dari setiap penjuru dan penerbang dari atas dan bawah.','Final boss: the core in the centre, four roads from every corner and flyers from above and below.'],weather:['☄ Gangguan Omega • jammer lebih kerap','☄ Omega Interference • jammers trigger more often'],icon:'☄'}
 ];
 
 /* EMBER CODE — bilingual question bank (BM first, EN second).
@@ -437,36 +437,46 @@ function along(route,d){const p=route.samples.points;d=clamp(d,0,route.samples.l
 function projectToLane(pos,filter='land'){let best=null;for(const route of stage.routes){if(route.type!==filter)continue;for(const p of route.samples.points){const d=dist(pos,p);if(!best||d<best.dist)best={x:p.x,y:p.y,dist:d,routeId:route.id,at:p.d}}}return best;}
 const DIFFICULTIES={santai:{hp:.78,speed:.92,count:.83,core:1.38,gold:315,label:['Santai','Relaxed']},standard:{hp:1,speed:1,count:1,core:1,gold:260,label:['Standard','Standard']},taktikal:{hp:1.23,speed:1.08,count:1.17,core:.76,gold:235,label:['Taktikal','Tactical']}};
 let battleDifficulty=DIFFICULTIES[safeGet('ember-difficulty')]?safeGet('ember-difficulty'):'standard';
-const PAD_PLANS=[
- [[0,.24,-1],[0,.54,1],[1,.22,1],[1,.5,-1],[0,.73,-1],[1,.76,1]],
- [[0,.21,-1],[0,.48,1],[1,.22,1],[1,.51,-1],[0,.7,-1],[1,.72,1]],
- [[0,.24,-1],[0,.58,1],[1,.25,1],[1,.56,-1],[0,.76,-1],[1,.75,1]],
- [[0,.21,-1],[0,.53,1],[1,.22,1],[1,.52,-1],[2,.36,1],[2,.65,-1]],
- [[0,.27,-1],[0,.59,1],[1,.2,1],[1,.53,-1],[2,.35,1],[2,.67,-1]],
- [[0,.22,-1],[0,.54,1],[1,.2,1],[1,.52,-1],[2,.33,1],[2,.66,-1]],
- [[0,.26,-1],[1,.23,1],[2,.32,-1],[3,.27,1],[0,.61,1],[1,.63,-1],[2,.68,1]],
- [[0,.24,-1],[1,.21,1],[2,.3,-1],[3,.36,1],[0,.58,1],[1,.6,-1],[3,.71,-1]],
- [[0,.26,-1],[1,.25,1],[2,.3,-1],[3,.32,1],[0,.6,1],[1,.63,-1],[2,.7,1]],
- [[0,.2,-1],[1,.24,1],[2,.34,-1],[3,.3,1],[0,.65,1],[1,.64,-1],[3,.7,1]],
- [[0,.23,-1],[1,.26,1],[2,.31,-1],[3,.37,1],[0,.6,1],[1,.62,-1],[3,.74,1]],
- [[0,.23,-1],[1,.21,1],[2,.3,-1],[3,.34,1],[0,.62,1],[1,.66,-1],[3,.71,1]]
-];
-/* One hand-authored path topology per sector. Each entry ends at the unique sector chokepoint; air is a separate entry.
-   Stage 1-3: 2 land + 1 air. Stage 4-6: 3 land + 1 air. Stage 7-12: 4 land + 1 air.
-   Later stages have two exit gates leading to a SHARED core health pool. */
+/* Ember Code map layouts. Every sector has its own road shape so the strategy changes from map to map.
+   land: enemy roads (off-screen start to the join). join: where roads merge before the core (null = roads go straight to the core).
+   cores: exit cores. exits: optional core index per land road. air: one or more flight paths. All points use the 896x560 board. */
 const TACTICAL_MAPS=[
- {join:[590,282],cores:[[837,282]],land:[ [[-32,115],[120,110],[245,130],[365,192],[477,222]], [[-32,442],[116,450],[237,401],[369,350],[474,329]] ],air:[[160,-28],[205,44],[421,85],[699,158]],hazard:'breeze'},
- {join:[605,278],cores:[[844,284]],land:[ [[-32,145],[121,126],[233,186],[354,153],[489,207]], [[-30,471],[122,420],[217,439],[375,344],[490,337]] ],air:[[190,-28],[250,84],[462,71],[710,160]],hazard:'tide'},
- {join:[592,262],cores:[[839,276]],land:[ [[-30,86],[148,113],[194,221],[374,199],[474,231]], [[-35,453],[140,432],[198,323],[386,368],[478,320]] ],air:[[86,-28],[167,65],[388,115],[692,140]],hazard:'frost'},
- {join:[614,269],cores:[[841,173],[843,411]],land:[ [[-28,82],[103,85],[207,154],[334,168],[488,222]], [[-30,454],[110,456],[230,364],[352,372],[475,322]], [[242,-28],[229,87],[339,121],[451,169],[534,206]] ],air:[[32,-28],[190,52],[415,58],[689,121]],hazard:'ion'},
- {join:[598,273],cores:[[840,295]],land:[ [[-28,138],[110,135],[207,220],[366,181],[477,229]], [[-28,452],[121,428],[250,411],[371,341],[475,325]], [[222,592],[237,476],[355,434],[463,373],[533,329]] ],air:[[110,-26],[271,57],[488,95],[699,148]],hazard:'harbor'},
- {join:[615,280],cores:[[845,180],[844,397]],land:[ [[-30,121],[105,105],[222,154],[339,203],[500,232]], [[-28,474],[119,465],[235,409],[339,358],[496,329]], [[275,-27],[262,95],[367,137],[479,174],[545,223]] ],air:[[38,-28],[229,53],[429,95],[702,147]],hazard:'alarm'},
- {join:[626,270],cores:[[846,162],[845,401]],land:[ [[-28,111],[106,114],[216,172],[335,198],[485,222]], [[-31,458],[117,432],[228,355],[369,353],[501,330]], [[235,-31],[226,78],[329,115],[458,183],[533,215]], [[245,588],[268,491],[382,436],[479,361],[556,313]] ],air:[[34,-29],[160,72],[409,83],[695,137]],hazard:'forge'},
- {join:[610,296],cores:[[846,170],[845,410]],land:[ [[-30,106],[131,111],[207,202],[356,199],[492,259]], [[-31,458],[103,473],[226,376],[371,381],[475,328]], [[220,-30],[228,77],[330,141],[461,188],[528,237]], [[198,592],[201,486],[357,447],[455,379],[520,336]] ],air:[[49,-25],[226,44],[440,84],[684,139]],hazard:'quantum'},
- {join:[625,269],cores:[[843,166],[848,411]],land:[ [[-30,142],[101,131],[233,107],[357,194],[493,228]], [[-31,431],[105,446],[244,469],[352,345],[497,331]], [[175,-28],[220,83],[334,145],[467,175],[541,218]], [[210,590],[257,498],[358,414],[470,361],[548,323]] ],air:[[30,-29],[180,54],[390,96],[692,133]],hazard:'sand'},
- {join:[620,288],cores:[[845,176],[845,401]],land:[ [[-27,99],[121,116],[260,178],[366,157],[498,239]], [[-29,467],[116,448],[237,397],[380,376],[491,335]], [[200,-26],[221,75],[330,118],[468,186],[539,241]], [[200,590],[258,501],[348,455],[489,377],[546,339]] ],air:[[25,-25],[208,42],[460,85],[712,143]],hazard:'current'},
- {join:[623,282],cores:[[846,165],[845,408]],land:[ [[-28,129],[113,103],[218,159],[375,180],[494,236]], [[-30,452],[124,468],[241,404],[355,349],[495,333]], [[213,-28],[207,70],[329,128],[449,201],[551,234]], [[229,588],[236,480],[340,430],[477,382],[544,327]] ],air:[[23,-26],[172,59],[399,85],[711,130]],hazard:'wind'},
- {join:[618,276],cores:[[845,171],[845,411]],land:[ [[-31,94],[117,106],[230,179],[356,180],[486,232]], [[-30,471],[111,454],[247,366],[367,372],[492,332]], [[218,-28],[237,79],[341,115],[458,192],[550,230]], [[205,590],[248,496],[358,432],[463,366],[546,331]] ],air:[[12,-26],[203,41],[423,89],[700,127]],hazard:'omega'}
+ {// 1 Perimeter Luar: one winding road, a gentle first mission
+  land:[ [[-30,170],[120,165],[230,230],[290,350],[400,420],[520,400],[580,320]] ],join:[650,280],cores:[[840,280]],
+  air:[ [[260,-28],[360,80],[600,140],[760,230]] ],hazard:'breeze'},
+ {// 2 Saluran Berkembar: two long roads along the top and bottom that only meet near the core
+  land:[ [[-30,100],[180,90],[360,115],[520,95],[640,150]], [[-30,460],[180,470],[360,445],[520,465],[640,410]] ],join:[715,280],cores:[[845,280]],
+  air:[ [[448,-28],[470,120],[640,220],[770,262]] ],hazard:'tide'},
+ {// 3 Teras Lingkaran: core in the middle; both roads circle round it and attack from the far side
+  land:[ [[-30,95],[250,80],[520,78],[720,110],[800,220]], [[-30,470],[250,485],[520,488],[720,455],[800,350]] ],join:[690,285],cores:[[430,285]],
+  air:[ [[-28,215],[120,255],[300,285]] ],hazard:'frost'},
+ {// 4 Kubu Orbit Langit: one zigzag road, two flight paths from above and below
+  land:[ [[-30,280],[130,280],[200,150],[330,130],[400,280],[470,420],[600,420],[640,320]] ],join:[705,280],cores:[[845,280]],
+  air:[ [[180,-28],[380,70],[620,110],[770,220]], [[180,588],[380,490],[620,450],[770,340]] ],hazard:'ion'},
+ {// 5 Benteng Lautan: dock roads, the core sits low on the right
+  land:[ [[-30,110],[300,105],[520,120],[600,230]], [[-30,400],[150,420],[260,330],[400,300],[520,350]] ],join:[640,385],cores:[[835,420]],
+  air:[ [[560,-28],[650,140],[780,330]] ],hazard:'harbor'},
+ {// 6 Bos Mini Tiga Penjuru: three fronts (left, top, bottom) meeting at one kill zone
+  land:[ [[-30,280],[140,255],[280,300],[430,280]], [[260,-28],[255,90],[380,140],[480,200]], [[260,588],[255,470],[380,420],[480,360]] ],join:[600,280],cores:[[845,280]],
+  air:[ [[-28,60],[320,40],[640,90],[800,220]] ],hazard:'alarm'},
+ {// 7 Sempadan Besi: two roads cross in an X to the opposite core; two edge roads run straight to the near core
+  land:[ [[-30,470],[150,455],[300,400],[380,330]], [[-30,90],[150,105],[300,160],[380,230]], [[220,-28],[320,60],[560,72],[700,110]], [[220,588],[320,500],[560,488],[700,450]] ],join:[460,280],cores:[[845,150],[845,410]],exits:[0,1,0,1],skipJoin:[2,3],
+  air:[ [[520,-28],[640,70],[820,150]] ],hazard:'forge'},
+ {// 8 Kota Kuantum: three city streets with square turns
+  land:[ [[-30,80],[170,80],[190,190],[340,190],[360,90],[520,90],[580,200]], [[-30,480],[170,480],[190,390],[340,390],[360,470],[520,470],[580,360]], [[-30,290],[150,290],[320,290],[480,285]] ],join:[645,285],cores:[[845,285]],
+  air:[ [[640,-28],[700,140],[790,240]] ],hazard:'quantum'},
+ {// 9 Tanah Gersang: the core is on the LEFT, enemies arrive from the right through two canyons
+  land:[ [[926,100],[730,95],[600,170],[440,130],[300,190]], [[926,460],[730,465],[600,390],[440,430],[300,370]] ],join:[210,280],cores:[[72,280]],
+  air:[ [[700,-28],[560,60],[360,110],[180,220]] ],hazard:'sand'},
+ {// 10 Pelabuhan Dalam: core at the bottom, three roads come down from the top
+  land:[ [[120,-28],[105,150],[150,300],[260,335],[360,305]], [[448,-28],[405,80],[491,160],[448,225]], [[776,-28],[791,150],[746,300],[636,335],[536,305]] ],join:[448,305],cores:[[448,462]],
+  air:[ [[926,140],[770,330],[560,440]] ],hazard:'current'},
+ {// 11 Langit Cakerawala: one long S road, short roads from the top and bottom, two flight paths
+  land:[ [[-30,120],[230,100],[330,220],[230,350],[340,460],[520,440],[580,350]], [[700,-28],[690,110],[600,195]], [[700,588],[690,450],[600,365]] ],join:[650,280],cores:[[845,280]],
+  air:[ [[-28,40],[380,50],[640,110],[790,220]], [[-28,520],[380,515],[640,460],[790,340]] ],hazard:'wind'},
+ {// 12 Nexus Omega: core in the centre, four roads from every corner and flyers from above and below
+  land:[ [[-30,70],[200,68],[330,75],[350,160],[240,200],[340,250]], [[926,70],[696,68],[566,75],[546,160],[656,200],[556,250]], [[-30,500],[200,502],[330,495],[350,410],[240,370],[340,320]], [[926,500],[696,502],[566,495],[546,410],[656,370],[556,320]] ],join:null,cores:[[448,285]],
+  air:[ [[448,-28],[440,90],[448,180]], [[448,588],[456,480],[448,390]] ],hazard:'omega'}
 ];
 const HAZARDS={
  breeze:[['Angin Lembah: penerbang +8% laju','Valley Wind: flyers +8% speed'],'air'],
@@ -509,35 +519,49 @@ function syncDamageMult(e,origin){let m=1;if(e.markUntil>clock)m*=1.2;if(e.isBlo
 function drawSyncLinks(ctx){if(!syncLinks.length)return;ctx.save();ctx.globalAlpha=.55+.25*Math.sin(clock*3);ctx.setLineDash([7,7]);ctx.lineDashOffset=-clock*22;for(const [a,b,c] of syncLinks){ctx.strokeStyle=c;ctx.lineWidth=3;ctx.shadowColor=c;ctx.shadowBlur=10;ctx.beginPath();ctx.moveTo(a.x,a.y-6);ctx.lineTo(b.x,b.y-6);ctx.stroke()}ctx.restore()}
 function drawMarks(ctx){ctx.save();ctx.strokeStyle='#ffd98a';ctx.lineWidth=2;for(const e of enemies)if(!e.dead&&e.markUntil>clock){ctx.beginPath();ctx.arc(e.x,e.y-(e.media==='air'?10:0),e.size+7,0,TAU);ctx.stroke()}
  for(const t of towers)if(t.zap&&t.zap.life>0){const pts=t.zap.pts;for(let i=1;i<pts.length;i++){const p0=pts[i-1],p1=pts[i],mx=(p0.x+p1.x)/2+rand(-9,9),my=(p0.y+p1.y)/2+rand(-9,9);glowLine(ctx,p0.x,p0.y,mx,my,'#ffd27a',3,12);glowLine(ctx,mx,my,p1.x,p1.y,'#ffd27a',3,12);glowLine(ctx,p0.x,p0.y,p1.x,p1.y,'#ffffffaa',1,3)}}ctx.restore()}
-function planPads(index,routes,join,cores){
- const result=[],plans=PAD_PLANS[index],land=routes.filter(r=>r.type==='land');
- const add=(x,y,kind='standard',high=false)=>{
-  x=Math.round(x);y=Math.round(y);
-  if(x<51||x>W-56||y<58||y>H-56)return false;
-  if(cores.some(p=>dist({x,y},p)<78)||result.some(p=>dist(p,{x,y})<63))return false;
-  const min=Math.min(...land.map(r=>Math.min(...r.samples.points.filter((_,i)=>i%4===0).map(p=>dist(p,{x,y})))));
-  if(min<51||min>185)return false;
-  result.push({id:result.length,x,y,kind,high});return true;
- };
- for(const [ri,f,side] of plans){const r=land[Math.min(ri,land.length-1)],p=along(r,r.samples.length*f),d=74;add(p.x-Math.sin(p.angle)*d*side,p.y+Math.cos(p.angle)*d*side,f>.6?'bend':'standard',false)}
- for(const [dx,dy] of [[-12,-80],[-40,84],[58,-88],[64,89],[-110,100],[-128,-99],[122,-94],[123,94]]){if(result.length>=11)break;add(join.x+dx,join.y+dy,'choke',false)}
- for(const [dx,dy] of [[-125,-105],[-163,109],[-200,-108],[-240,115]]){if(result.length>=12)break;add(cores[0].x+dx,cores[0].y+dy,'high',true)}
- // Keep tactical options available even on compact or crossing layouts.
- for(let x=90;x<=785&&result.length<(index>=6?11:index>=3?10:9);x+=70)for(const y of [85,480,160,405,238,323]){if(result.length>=(index>=6?11:index>=3?10:9))break;add(x,y,'high',true)}
+/* Tower pads are chosen from the road layout: greedy picks of the spots that cover the most road,
+   spread out so every road gets towers. Kill-zone pads sit by the join, high-ground pads are the farthest overlooks. */
+const PAD_COUNT=[9,9,10,10,10,11,11,11,11,11,11,12];
+function planPads(index,routes,join,cores,direct){
+ const land=routes.filter(r=>r.type==='land'),air=routes.filter(r=>r.type==='air');
+ const roadPts=land.flatMap(r=>r.samples.points.filter((_,i)=>i%3===0));
+ const samples=[...land.flatMap(r=>r.samples.points.filter((_,i)=>i%4===0).map(p=>({x:p.x,y:p.y,w:1,air:false}))),
+  ...air.flatMap(r=>r.samples.points.filter((_,i)=>i%4===0).map(p=>({x:p.x,y:p.y,w:.35,air:true})))].filter(p=>p.x>-10&&p.x<W+10&&p.y>-10&&p.y<H+10);
+ const cands=[];
+ for(let y=60;y<=H-58;y+=12)for(let x=54;x<=W-58;x+=12){const pt={x,y};
+  if(cores.some(c=>dist(pt,c)<80))continue;
+  let road=1e9;for(const q of roadPts){const d=dist(pt,q);if(d<road)road=d}
+  if(road<56||road>170)continue;cands.push({x,y,road})}
+ const R=150,result=[],want=PAD_COUNT[index]||10;
+ while(result.length<want){let best=null,bs=-1;
+  for(const c of cands){if(result.some(p=>dist(p,c)<68))continue;let sc=0;for(const q of samples){if(dist(c,q)<R)sc+=q.w}
+   sc*=c.road<120?1:.8;if(sc>bs){bs=sc;best=c}}
+  if(!best||bs<=0)break;result.push({id:result.length,x:best.x,y:best.y,road:best.road,kind:'standard',high:false});
+  for(const q of samples)if(dist(best,q)<R)q.w*=.45}
+ if(!direct)result.filter(p=>dist(p,join)<150).sort((a,b)=>dist(a,join)-dist(b,join)).slice(0,3).forEach(p=>p.kind='choke');
+ result.filter(p=>p.kind==='standard').sort((a,b)=>b.road-a.road).slice(0,index<3?2:3).forEach(p=>{p.kind='high';p.high=true});
+ result.sort((a,b)=>a.x-b.x||a.y-b.y).forEach((p,i)=>{p.id=i;delete p.road});
  return result;
 }
+const unitTo=(a,b)=>{const d=Math.max(.001,dist(a,b));return {x:(b.x-a.x)/d,y:(b.y-a.y)/d}};
 function makeStage(index){
- const config=MAP_ART[index],data=TACTICAL_MAPS[index],join={x:data.join[0],y:data.join[1]},cores=data.cores.map(([x,y],i)=>({x,y,id:i}));
+ const config=MAP_ART[index],data=TACTICAL_MAPS[index],direct=!data.join,cores=data.cores.map(([x,y],i)=>({x,y,id:i}));
+ const join=direct?{x:cores[0].x,y:cores[0].y}:{x:data.join[0],y:data.join[1]};
  const routes=[];
  data.land.forEach((points,i)=>{
-  const exitId=cores.length===1?0:i%2,final=cores[exitId];
-  const waypoints=[...points.map(([x,y])=>({x,y})),join,{x:lerp(join.x,final.x,.54),y:lerp(join.y,final.y,.7)},{x:final.x+21,y:final.y}];
+  const exitId=data.exits?data.exits[i]:cores.length===1?0:i%2,final=cores[exitId],pts=points.map(([x,y])=>({x,y}));
+  let waypoints;
+  if(direct||(data.skipJoin||[]).includes(i)){const u=unitTo(pts[pts.length-1],final);waypoints=[...pts,{x:final.x+u.x*21,y:final.y+u.y*21}]}
+  else{const mid={x:lerp(join.x,final.x,.54),y:lerp(join.y,final.y,.7)},u=unitTo(mid,final);waypoints=[...pts,join,mid,{x:final.x+u.x*21,y:final.y+u.y*21}]}
   routes.push({id:'lane_'+String.fromCharCode(65+i),type:'land',entry:i,exitId,waypoints,samples:makeCurve(waypoints)});
  });
- const airFinal=cores[Math.min(cores.length-1,index%2)],airPoints=data.air.map(([x,y])=>({x,y}));
- const airW=[...airPoints,{x:airFinal.x+22,y:airFinal.y}];routes.push({id:'lane_Air',type:'air',entry:routes.length,exitId:airFinal.id,waypoints:airW,samples:makeCurve(airW)});
- const pads=planPads(index,routes,join,cores);
- return {name:T(SECTOR_TEXT[index].name),code:index+1,config,routes,pads,merger:join,cores,core:cores[0],index,hazard:data.hazard,entryCount:routes.length};
+ data.air.forEach((path,k)=>{
+  const airFinal=cores[Math.min(cores.length-1,(index+k)%2)],pts=path.map(([x,y])=>({x,y})),u=unitTo(pts[pts.length-1],airFinal);
+  const airW=[...pts,{x:airFinal.x+u.x*22,y:airFinal.y+u.y*22}];
+  routes.push({id:data.air.length>1?'lane_Air'+(k+1):'lane_Air',type:'air',entry:routes.length,exitId:airFinal.id,waypoints:airW,samples:makeCurve(airW)});
+ });
+ const pads=planPads(index,routes,join,cores,direct);
+ return {name:T(SECTOR_TEXT[index].name),code:index+1,config,routes,pads,merger:join,direct,cores,core:cores[0],index,hazard:data.hazard,entryCount:routes.length};
 }
 function threatCost(kind){const m={scout:1,runner:1.35,tank:2.4,shield:1.5,swarm:.65,healer:1.8,air:1.7,jammer:2.2,splitter:1.7,commander:2.9,breaker:2.3,titan:6,siege:6.8,omega:8};return m[kind]||1}
 function escapeDamage(kind){return {scout:1,runner:1,tank:3,shield:2,swarm:1,healer:2,air:2,jammer:2,splitter:2,commander:3,breaker:3,titan:6,siege:7,omega:8}[kind]||1}
@@ -655,7 +679,7 @@ function beginWave(early=false){if(!game||game.phase!=='prep'||game.wave>=game.m
 /* Unique sector schedules: route rotations, threat roles, air assaults, phase bosses.
    Count and spawn cadence are separate from the age-based question grade. */
 function wavePlan(w,mapIndex=game?.map||0,difficulty=battleDifficulty){
- const sector=TACTICAL_MAPS[mapIndex],landCount=sector.land.length,airRoute=landCount,rank=mapIndex+1,policy=DIFFICULTIES[difficulty];
+ const sector=TACTICAL_MAPS[mapIndex],landCount=sector.land.length,airCount=sector.air.length,rank=mapIndex+1,policy=DIFFICULTIES[difficulty];
  const total=Math.round((7+1.9*w+.47*mapIndex)*policy.count);
  const focus=[['runner','shield'],['shield','healer'],['tank','splitter'],['air','jammer'],['splitter','breaker'],['breaker','commander'],['tank','jammer'],['commander','air'],['runner','breaker'],['jammer','splitter'],['air','commander'],['breaker','jammer']][mapIndex];
  const seq=[],interval=Math.max(.48,.98-.028*w-.012*mapIndex);
@@ -671,7 +695,7 @@ function wavePlan(w,mapIndex=game?.map||0,difficulty=battleDifficulty){
   if(w>=9&&role===8)kind=mapIndex>=6?'breaker':'healer';
   const aerial=(w>=3&&i%8===0)||(w>=6&&(mapIndex>=3)&&i%11===4);
   if(aerial)kind='air';
-  const lane=(i*3+w+mapIndex)%landCount,route=kind==='air'?airRoute:lane;
+  const lane=(i*3+w+mapIndex)%landCount,route=kind==='air'?landCount+(i%airCount):lane;
   seq.push({kind,route,at:+(i*interval+(i%6===0&&i>0?.8:0)).toFixed(2)});
  }
  seq.sort((a,b)=>a.at-b.at);
@@ -860,7 +884,7 @@ function drawSkulls(ctx){if(game.phase!=='prep')return;
  }
 }
 
-function drawChokepoint(ctx){const x=stage.merger.x,y=stage.merger.y;ctx.save();ctx.globalAlpha=.35+.13*Math.sin(clock*3);ctx.strokeStyle='#f8c777';ctx.lineWidth=3;ctx.setLineDash([6,9]);ctx.beginPath();ctx.ellipse(x,y,75,45,0,0,TAU);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='#f6d3a8';ctx.font='900 9px ui-monospace,monospace';ctx.textAlign='center';ctx.fillText('◆ CHOKEPOINT',x,y-50);ctx.restore()}
+function drawChokepoint(ctx){if(stage.direct)return;const x=stage.merger.x,y=stage.merger.y;ctx.save();ctx.globalAlpha=.35+.13*Math.sin(clock*3);ctx.strokeStyle='#f8c777';ctx.lineWidth=3;ctx.setLineDash([6,9]);ctx.beginPath();ctx.ellipse(x,y,75,45,0,0,TAU);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='#f6d3a8';ctx.font='900 9px ui-monospace,monospace';ctx.textAlign='center';ctx.fillText('◆ CHOKEPOINT',x,y-50);ctx.restore()}
 function drawBossMeter(ctx){const e=enemies.find(e=>e.boss&&!e.dead);if(!e)return;ctx.save();roundRect(ctx,315,15,260,28,8,'#251a30e6','#fa7f9a');ctx.fillStyle='#ffe7e0';ctx.font='900 10px ui-monospace,monospace';ctx.textAlign='left';ctx.fillText('☠ TITAN / OMEGA',327,27);ctx.fillStyle='#281022';ctx.fillRect(327,31,236,5);ctx.fillStyle='#ff758c';ctx.fillRect(327,31,236*clamp(e.hp/e.maxHp,0,1),5);ctx.restore()}
 function render(){terrain();g.save();g.clearRect(0,0,W,H);g.drawImage(terrainCache,0,0);if(game?.shakeTimer>0){const decay=game.shakeTimer/Math.max(.01,game.shakeDuration);g.translate((Math.random()-.5)*game.shakeMagnitude*2*decay,(Math.random()-.5)*game.shakeMagnitude*2*decay)}drawAmbient(g);drawFlow(g);drawChokepoint(g);stage.routes.forEach((r,i)=>drawEntryGate(g,r,i));drawPads(g);updateSync();drawSyncLinks(g);for(const t of towers)drawUnit(g,t);for(const t of towers)if(t instanceof BarracksTower){drawRally(g,t);for(const d of t.droids)drawDroid(g,d)}for(const e of enemies)drawEnemy(g,e);drawMarks(g);drawProjectiles(g);for(const core of stage.cores)drawCore(g,core);if(selected&&$('inspectPop').style.display!=='none'){g.strokeStyle='#a8ffe7';g.globalAlpha=.5;g.lineWidth=2;g.setLineDash([7,7]);g.beginPath();g.arc(selected.x,selected.y,selected.range,0,TAU);g.stroke();g.setLineDash([]);g.globalAlpha=1}drawFx(g);drawSkulls(g);drawBossMeter(g);if(rallyMode&&selected){g.strokeStyle='#b5fbff';g.lineWidth=2;g.setLineDash([8,8]);g.beginPath();g.arc(selected.x,selected.y,230,0,TAU);g.stroke();g.setLineDash([]);g.fillStyle='#d7fcff';g.font='900 16px system-ui';g.textAlign='center';g.fillText(L('TEKAN LALUAN UNTUK RALI','TAP A LANE TO RALLY'),W/2,490)}g.restore()}
 function animate(now){const dt=Math.min(.042,(now-last)/1000||.016);last=now;if(dt>.033){slowFrames++;if(slowFrames>55){lowFx=true;slowFrames=0}}else slowFrames=Math.max(0,slowFrames-1);try{tick(dt);render()}catch(e){console.error('Ember update failure',e);toast(L('Ralat enjin, lihat konsol','Engine error, see console'));game.paused=true}requestAnimationFrame(animate)}let slowFrames=0;
@@ -927,7 +951,8 @@ $('lang').onclick=()=>{lang=lang==='bm'?'en':'bm';safeSet('ember-lang',lang);sto
 $('sound').onclick=()=>{SoundFX.enabled=!SoundFX.enabled;safeSet('ember-sound',SoundFX.enabled?'on':'off');if(SoundFX.enabled)SoundFX.init();refreshUI()};
 $('pause').onclick=()=>{if(!game||game.finished)return;game.paused=!game.paused;toast(game.paused?L('⏸ DIJEDA','⏸ PAUSED'):L('▶ DISAMBUNG','▶ RESUMED'));refreshUI()};
 $('home').onclick=()=>{if(game?.phase==='wave'){game.paused=true;toast(L('Jeda pertempuran untuk ke menu','Battle paused to open menu'))}else if(game?.phase==='prep')saveCheckpoint();openMenu()};
-function renderMenu(){$('difficultyChoice').value=battleDifficulty;$('difficultyLabel').textContent=L('⚔️ Kesukaran pertempuran','⚔️ Battle difficulty');$('menuLead').textContent=L('12 sektor dengan 3–5 pintu masuk, sehingga 2 exit dan sistem Makmal taktikal. Pilih kategori soalan dan kesukaran tempur secara berasingan.','12 sectors with 3–5 entries, up to 2 exits and a tactical research lab. Choose question category and battle difficulty separately.');const btns=$('gradeButtons');btns.replaceChildren();for(const [key,bm,en] of [['tadika','🌱 Tadika','🌱 Preschool'],['rendah','🛡 Rendah','🛡 Primary'],['menengah','⚡ Menengah','⚡ Secondary']]){const b=document.createElement('button');b.textContent=L(bm,en);b.className=grade===key?'chosen':'';b.onclick=()=>{grade=key;safeSet('ember-grade',grade);renderMenu()};btns.appendChild(b)}const map=$('mapChoice');map.replaceChildren();for(let i=0;i<12;i++){const o=document.createElement('option');o.value=String(i);o.textContent=`${licenceLocked(i)?'🔒':sectorUnlocked(i)?'✅':'•'} ${i+1}. ${T(SECTOR_TEXT[i].name)}`;map.appendChild(o)}map.value=String(clamp(Number(map.value)||0,0,11));if(game&&game.phase!=='menu')map.value=String(game.map);const cleared=career.clearedSectors.length,stars=Object.values(career.stars).reduce((x,y)=>x+y,0);$('careerLine').textContent=`🎖 ${cleared}/12 ${L('peta','maps')} · ⭐ ${stars}/36 · 🧠 ${career.totalSolved||0} ${L('jawapan betul','correct answers')} · 🧪 ${L('Makmal','Lab')} ${labLevel()}/5`;$('licenseStatus').textContent=LIC.full?L('✅ Lesen KJL2 penuh aktif','✅ Full KJL2 licence active'):L('🎁 Peta 1–3 percuma · PK2 untuk peta 4–12','🎁 Maps 1–3 free · PK2 for maps 4–12');$('continueBtn').disabled=!getCheckpoint();$('menuLead').textContent=L('Dua lorong masuk bergabung di titik genting. Gunakan droid untuk menyekat, Mortar untuk letupan, Prism untuk perisai dan Vulcan untuk tembakan pantas.','Two entrances merge at a chokepoint. Droids hold enemies, Mortars blast groups, Prisms pierce armour, and Vulcans fire rapidly.');$('mapLabel').textContent=L('PILIH PETA / MISI','SELECT MAP / MISSION')}
+function renderMenu(){$('difficultyChoice').value=battleDifficulty;$('difficultyLabel').textContent=L('⚔️ Kesukaran pertempuran','⚔️ Battle difficulty');$('menuLead').textContent=L('12 peta dengan bentuk jalan yang berbeza, sehingga 2 teras dan sistem Makmal taktikal. Pilih kategori soalan dan kesukaran tempur secara berasingan.','12 maps with different road layouts, up to 2 cores and a tactical research lab. Choose question category and battle difficulty separately.');const btns=$('gradeButtons');btns.replaceChildren();for(const [key,bm,en] of [['tadika','🌱 Tadika','🌱 Preschool'],['rendah','🛡 Rendah','🛡 Primary'],['menengah','⚡ Menengah','⚡ Secondary']]){const b=document.createElement('button');b.textContent=L(bm,en);b.className=grade===key?'chosen':'';b.onclick=()=>{grade=key;safeSet('ember-grade',grade);renderMenu()};btns.appendChild(b)}const map=$('mapChoice');map.replaceChildren();for(let i=0;i<12;i++){const o=document.createElement('option');o.value=String(i);o.textContent=`${licenceLocked(i)?'🔒':sectorUnlocked(i)?'✅':'•'} ${i+1}. ${T(SECTOR_TEXT[i].name)}`;map.appendChild(o)}map.value=String(clamp(Number(map.value)||0,0,11));map.onchange=showMapLore;queueMicrotask(showMapLore);if(game&&game.phase!=='menu')map.value=String(game.map);const cleared=career.clearedSectors.length,stars=Object.values(career.stars).reduce((x,y)=>x+y,0);$('careerLine').textContent=`🎖 ${cleared}/12 ${L('peta','maps')} · ⭐ ${stars}/36 · 🧠 ${career.totalSolved||0} ${L('jawapan betul','correct answers')} · 🧪 ${L('Makmal','Lab')} ${labLevel()}/5`;$('licenseStatus').textContent=LIC.full?L('✅ Lesen KJL2 penuh aktif','✅ Full KJL2 licence active'):L('🎁 Peta 1–3 percuma · PK2 untuk peta 4–12','🎁 Maps 1–3 free · PK2 for maps 4–12');$('continueBtn').disabled=!getCheckpoint();$('menuLead').textContent=L('Setiap peta ada bentuk jalan sendiri. Gunakan droid untuk menyekat, Mortar untuk letupan, Prism untuk perisai dan Vulcan untuk tembakan pantas.','Every map has its own road layout. Droids hold enemies, Mortars blast groups, Prisms pierce armour, and Vulcans fire rapidly.');$('mapLabel').textContent=L('PILIH PETA / MISI','SELECT MAP / MISSION')}
+function showMapLore(){const i=clamp(Number($('mapChoice').value)||0,0,11),t=SECTOR_TEXT[i];$('mapLore').textContent=`${t.icon} ${T(t.lore)} · ${T(t.weather)}`}
 function openMenu(){renderMenu();showModal('menuModal')}
 $('difficultyChoice').onchange=e=>{if(DIFFICULTIES[e.target.value]){battleDifficulty=e.target.value;safeSet('ember-difficulty',battleDifficulty);renderMenu()}};
 $('playBtn').onclick=()=>{const i=Number($('mapChoice').value);if(licenceLocked(i)){openLicense();return}if(!sectorUnlocked(i)&&i>0){toast(L('Selesaikan peta sebelumnya dahulu','Clear previous maps first'));return}startRun(i)};
