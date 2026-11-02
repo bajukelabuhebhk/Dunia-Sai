@@ -1,5 +1,5 @@
 {
- "version": "07d9d6e98a",
+ "version": "45b173e319",
  "core": {
   "files": {
    "/app/": "f4c6669a5135",
@@ -438,9 +438,9 @@
   },
   "kenal-jawi": {
    "files": {
-    "/app/kenal-jawi/": "7a9664cf5412"
+    "/app/kenal-jawi/": "9cc9c70e5693"
    },
-   "bytes": 2836614
+   "bytes": 2836651
   },
   "lembah-embun": {
    "files": {
@@ -683,9 +683,9 @@
     "/app/nakhoda-jawi/audio/suara/z-1.mp3": "882baebeebc0",
     "/app/nakhoda-jawi/audio/suara/z-2.mp3": "290a3c565bc0",
     "/app/nakhoda-jawi/audio/suara/z-3.mp3": "d5957a8ec41a",
-    "/app/nakhoda-jawi/": "bdfc7cc17f28"
+    "/app/nakhoda-jawi/": "30d2c6cb818f"
    },
-   "bytes": 6471958
+   "bytes": 6471905
   },
   "robot-rumble": {
    "files": {
