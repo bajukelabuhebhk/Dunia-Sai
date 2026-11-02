@@ -38,6 +38,15 @@
   .pakej .kanan { background: #fff; color: var(--ink); border-radius: 18px; padding: 20px; text-align: center; }
   .pakej .besar { font-size: 2.6rem; font-weight: 900; color: var(--merah); line-height: 1.1; }
   .pakej .besar s { font-size: 1.1rem; color: var(--muted); font-weight: 600; margin-left: 6px; }
+  .tema { display: grid; gap: 14px; }
+  @media (min-width: 640px) { .tema { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1000px) { .tema { grid-template-columns: repeat(4, 1fr); } }
+  .tema .kotak { display: flex; flex-direction: column; gap: 6px; }
+  .tema h3 { margin: 0; font-size: 1.15rem; }
+  .tema ul { margin: 0; padding-left: 1.2em; color: var(--muted); font-size: .92rem; }
+  .tema .besar { font-size: 1.8rem; font-weight: 900; color: var(--merah); line-height: 1.1; }
+  .tema .besar s { font-size: .95rem; color: var(--muted); font-weight: 600; margin-left: 6px; }
+  .tema .btn { margin-top: auto; }
   .langkah { counter-reset: l; display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
   @media (min-width: 760px) { .langkah { grid-template-columns: repeat(4, 1fr); } }
   .langkah li { counter-increment: l; background: var(--card); border-radius: var(--r); box-shadow: var(--shadow); padding: 16px; }
@@ -56,7 +65,7 @@
     <div>
       <p class="cerita">Bermula Dengan Jawi, Terus Meneroka</p>
       <h1>Dunia Sai: <span>Setiap Permainan, Satu Ilmu</span></h1>
-      <p class="lead">8 game belajar untuk kanak-kanak Malaysia dalam satu apps: Jawi, ABC, Matematik, Sains, English, Geografi, Duit dan Koding. Main di telefon, tablet atau komputer.</p>
+      <p class="lead">11 game belajar untuk kanak-kanak Malaysia dalam satu apps: Jawi, ABC, Matematik, Sains, English, Geografi, Duit, Koding dan Robotik. Main di telefon, tablet atau komputer.</p>
       <div class="butang">
         <a class="btn" href="/app/">▶ Cuba percuma sekarang</a>
         <a class="btn wa" id="heroWa" target="_blank" rel="noopener">Beli melalui WhatsApp</a>
@@ -106,9 +115,10 @@
         <div class="besar" id="pakejHarga"></div>
         <p style="margin:6px 0 14px;color:var(--muted)" id="pakejNota"></p>
         <a class="btn wa" id="pakejWa" target="_blank" rel="noopener" style="width:100%">Beli Pakej melalui WhatsApp</a>
-        <p style="margin:10px 0 0;font-size:.85rem;color:var(--muted)">Kembara Malaysia Kita, Boss Gerai, Ember Code, Nakhoda Jawi dan Robot Rumble dijual berasingan.</p>
       </div>
     </div>
+    <h2 style="margin-top:28px">Atau pilih pakej ikut umur anak</h2>
+    <div class="tema" id="pakejTema"></div>
   </div>
 </section>
 
@@ -153,21 +163,29 @@
         <p>${esc(g.desc)}</p>
         <span style="font-size:.85rem;color:var(--muted)">${esc(g.subject)} · ${esc(g.age)}</span>
         <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:6px">
-          <span class="harga">${g.price ? `Versi penuh RM${g.price}` : 'Percuma sepenuhnya'}</span>
-          ${g.pakej ? '<span class="lencana">Dalam Pakej</span>' : ''}
+          <span class="harga">${g.price ? `Versi penuh ${DS.rm(g.price)}` : 'Percuma sepenuhnya'}</span>
+          ${g.price ? '<span class="lencana">Dalam Pakej</span>' : ''}
         </div>
       </div>
     </a>`).join('');
 
-  $('pakejTanda').textContent = P.promo ? `⭐ PROMO ${P.promoNote}` : '⭐ Paling berbaloi';
+  const worth = (Q) => DS.rm(DS.pakejWorth(Q));
+  $('pakejTanda').textContent = '⭐ Paling berbaloi';
   $('pakejNama').textContent = P.name;
   $('pakejLead').textContent = P.note;
-  $('pakejGame').innerHTML = DS.pakejGames().map((g) => `<li>${esc(g.name)} (RM${g.price})</li>`).join('');
-  $('pakejHarga').innerHTML = P.promo ? `RM${P.promo}<s>RM${P.price}</s>` : `RM${P.price}`;
-  $('pakejNota').textContent = P.promo
-    ? `Harga biasa RM${P.price}, promo RM${P.promo} ${P.promoNote}. Nilai jika beli satu-satu RM${P.worth}.`
-    : `Nilai jika beli satu-satu RM${P.worth}.`;
-  $('pakejWa').href = DS.waLink(`Assalamualaikum, saya nak beli ${P.name} Dunia Sai (RM${P.promo || P.price}).`);
+  $('pakejGame').innerHTML = DS.pakejGames(P).map((g) => `<li>${esc(g.name)} (${DS.rm(g.price)})</li>`).join('');
+  $('pakejHarga').innerHTML = `${DS.rm(P.price)}<s>${worth(P)}</s>`;
+  $('pakejNota').textContent = `Nilai jika beli satu-satu ${worth(P)}.`;
+  $('pakejWa').href = DS.waLink(`Assalamualaikum, saya nak beli ${P.name} Dunia Sai (${DS.rm(P.price)}).`);
+  $('pakejTema').innerHTML = DS.PAKEJ_TEMA.map((Q) => `
+    <div class="kotak">
+      <span class="lencana" style="align-self:flex-start">${esc(Q.age)}</span>
+      <h3>${esc(Q.name)}</h3>
+      <p style="margin:0;color:var(--muted)">${esc(Q.lead)}</p>
+      <ul>${DS.pakejGames(Q).map((g) => `<li>${esc(g.name)}</li>`).join('')}</ul>
+      <div class="besar">${DS.rm(Q.price)}<s>${worth(Q)}</s></div>
+      <a class="btn wa" target="_blank" rel="noopener" href="${DS.waLink(`Assalamualaikum, saya nak beli ${Q.name} Dunia Sai (${DS.rm(Q.price)}).`)}">Beli melalui WhatsApp</a>
+    </div>`).join('');
   $('heroWa').href = DS.waLink('Assalamualaikum, saya nak tahu tentang game Dunia Sai.');
   $('waNo').innerHTML = `<a href="https://wa.me/${DS.whatsapp}" target="_blank" rel="noopener">${DS.whatsappText}</a>`;
   $('itch').href = DS.itch;

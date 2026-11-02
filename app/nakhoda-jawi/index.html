@@ -855,7 +855,7 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden){stopSpeech
 
 /* ---------- Lesen keluarga PK2- (game 10). Pulau 1–7 percuma: Kaedah 1–4, Ketam Gergasi, Kaedah 5–6. ---------- */
 const FREE_ISLANDS=7;
-const SALE={price:'RM25',wa:'601137865789',msg:'Assalamualaikum, saya nak beli Nakhoda Jawi versi penuh (RM25).'};
+const SALE={price:'RM14.90',wa:'601137865789',msg:'Assalamualaikum, saya nak beli Nakhoda Jawi versi penuh (RM14.90).'};
 const LIC={GAME:10,KEYS:{2:"QVgEegZrfviPeApvWbbbkzk3xI6ZKX0zKd2wEfy9pS0="},BLOCKED:[],STORE:'nakhoda_jawi_lesen',full:false,info:null};
 function checkLicence(t){try{const b=KJL2.find(t);if(!b)return {ok:false,reason:KJL2.normalize(t)?'format':'empty'};return KJL2.verify(b,LIC.GAME,LIC.KEYS,LIC.BLOCKED,nacl)}catch(e){return {ok:false,reason:'error'}}}
 try{const t=localStorage.getItem(LIC.STORE);if(t){const r=checkLicence(t);if(r.ok){LIC.full=true;LIC.info=r}}}catch(_){}

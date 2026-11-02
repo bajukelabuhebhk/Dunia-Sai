@@ -108,7 +108,7 @@
         <a class="btn wa" id="pakejWa" target="_blank" rel="noopener">Beli melalui WhatsApp</a>
       </div>
       <div class="kotak">
-        <h2>Harga satu game</h2>
+        <h2>Pakej tema dan harga satu game</h2>
         <ul class="senarai-harga" id="harga"></ul>
         <p style="margin:10px 0 0;color:var(--muted);font-size:.9rem">Bayar melalui DuitNow atau online banking, hantar resit di WhatsApp <b id="waNo"></b>, terima kod lesen, tampal di atas.</p>
       </div>
@@ -261,11 +261,11 @@
   /* ---------- Prices ---------- */
   const P = DS.PAKEJ;
   $('pakejNama').textContent = P.name;
-  $('pakejHarga').innerHTML = P.promo ? `RM${P.promo}<s>RM${P.price}</s>` : `RM${P.price}`;
-  $('pakejNota').textContent = (P.promo ? `Harga biasa RM${P.price}, promo RM${P.promo} ${P.promoNote}. ` : '') +
-    P.note;
-  $('pakejWa').href = DS.waLink(`Assalamualaikum, saya nak beli ${P.name} Dunia Sai (RM${P.promo || P.price}).`);
-  $('harga').innerHTML = DS.GAMES.filter((g) => g.price > 0).map((g) => `<li><span>${esc(g.name)}</span><b>RM${g.price}</b></li>`).join('');
+  $('pakejHarga').innerHTML = `${DS.rm(P.price)}<s>${DS.rm(DS.pakejWorth(P))}</s>`;
+  $('pakejNota').textContent = P.note;
+  $('pakejWa').href = DS.waLink(`Assalamualaikum, saya nak beli ${P.name} Dunia Sai (${DS.rm(P.price)}).`);
+  $('harga').innerHTML = DS.PAKEJ_TEMA.map((Q) => `<li><span>${esc(Q.name)}<br><small style="color:var(--muted)">${DS.pakejGames(Q).map((g) => esc(g.name)).join(', ')}</small></span><b>${DS.rm(Q.price)}</b></li>`).join('') +
+    DS.GAMES.filter((g) => g.price > 0).map((g) => `<li><span>${esc(g.name)}</span><b>${DS.rm(g.price)}</b></li>`).join('');
   $('waNo').textContent = DS.whatsappText;
 
   /* ---------- Offline ---------- */
