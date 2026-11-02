@@ -361,7 +361,7 @@ a.btn{text-decoration:none;display:inline-block}
 @keyframes pvTap{40%{transform:scale(.95)}80%{transform:scale(1.04)}}
 @media(max-height:620px){.pv .pc{padding-top:56px;padding-bottom:8px;gap:4px}.pv .pi{font-size:2.4rem}.pv .pj{font-size:1.6rem}.pv p{font-size:.95rem}.pv-stage{min-height:110px;padding:4px}.pv .play{padding:10px 32px;margin-top:3px;font-size:1.4rem}}
 @media(prefers-reduced-motion:reduce){.pv .pc::before,.pv .pc::after,.pv-stage,.pv-stage *{animation:none!important}}
-</style><!-- dunia-sai --><link rel="manifest" href="/manifest.json"><script src="/shared/js/balik.js" defer></script></head><body>
+</style><!-- dunia-sai --><link rel="manifest" href="/manifest.json"><script src="/shared/js/balik.js" defer></script><script src="/shared/js/ruang-ibubapa.js"></script></head><body>
 
 <div class="app">
   <header>
@@ -425,6 +425,61 @@ var KJL=(function(){
   return {parse:parse,verify:verify,normalize:normalize,enc32:enc32,dec32:dec32};
 })();
 </script>
+<script>/* Dunia Sai: lesen pakej PK2- */
+/* Bundle licence format v2 "PK2-" (shared by every Kenal game and the generator).
+   One licence opens any set of games. A licence = 14-byte record + 64-byte Ed25519 signature over
+   DOMAIN + record, written as "PK2-" + Crockford base32 in groups of 6. Record: version (2), key number,
+   6-byte random licence ID, issue day (days since 1 Jan 2026, big-endian), 4-byte game mask
+   (big-endian, bit n-1 set = game n included). Same signing key as the v1 licences.
+   Game numbers are fixed forever: 1 Kenal Jawi, 2 Kenal ABC, 3 Wira Matematik, 4 Hikayat Sungai Ilmu,
+   5 Wonder Island, 6 Kembara Malaysia Kita, 7 Adiwira Jawi (dropped, number reserved), 8 Boss Gerai, 9 Ember Code, 10 Nakhoda Jawi, 11 Robot Rumble. A new game takes the next free number (max 32).
+   A game only checks that its own number is in the signed mask, so a new bundle never needs a game update. */
+var KJL2=(function(){
+  var A='0123456789ABCDEFGHJKMNPQRSTVWXYZ',DOMAIN='KenalGames-bundle-v2|',VERSION=2,EPOCH=Date.UTC(2026,0,1),PRE='PK2',BYTES=78;
+  var GAMES={1:'Kenal Jawi',2:'Kenal ABC',3:'Wira Matematik',4:'Hikayat Sungai Ilmu',5:'Wonder Island',6:'Kembara Malaysia Kita',7:'Adiwira Jawi',8:'Boss Gerai',9:'Ember Code',10:'Nakhoda Jawi',11:'Robot Rumble'};
+  function enc32(bytes){var out='',bits=0,val=0;for(var i=0;i<bytes.length;i++){val=((val<<8)|bytes[i])&0xffff;bits+=8;while(bits>=5){out+=A[(val>>>(bits-5))&31];bits-=5}}if(bits>0)out+=A[(val<<(5-bits))&31];return out}
+  function dec32(s){var out=[],bits=0,val=0;for(var i=0;i<s.length;i++){var v=A.indexOf(s[i]);if(v<0)return null;val=((val<<5)|v)&0xfff;bits+=5;if(bits>=8){out.push((val>>>(bits-8))&255);bits-=8}}
+    if(bits>0&&(val&((1<<bits)-1))!==0)return null;return new Uint8Array(out)}
+  // Tolerant of spaces, dashes, line breaks, small letters and O/0, I/L/1 mix-ups
+  function normalize(t){return String(t||'').toUpperCase().replace(/[^0-9A-Z]/g,'').replace(/O/g,'0').replace(/[IL]/g,'1')}
+  function message(rec){var d=DOMAIN,m=new Uint8Array(d.length+rec.length);for(var i=0;i<d.length;i++)m[i]=d.charCodeAt(i);m.set(rec,d.length);return m}
+  function group(s,n){var o=[];for(var i=0;i<s.length;i+=n)o.push(s.slice(i,i+n));return o.join('-')}
+  function idText(rec){var s=enc32(rec.subarray(2,8));return 'PB-'+s.slice(0,5)+'-'+s.slice(5)}
+  function dayText(day){var d=new Date(EPOCH+day*864e5);return d.toISOString().slice(0,10)}
+  function gamesOf(rec){var m=((rec[10]<<24)|(rec[11]<<16)|(rec[12]<<8)|rec[13])>>>0,g=[];for(var i=0;i<32;i++)if(m&(1<<i))g.push(i+1);return g}
+  function name(games){return games.length===1?(GAMES[games[0]]||'Game')+' versi penuh':'Pakej '+games.length+' in 1'}
+  // The PK2 licence in a text (a licence alone, or a whole pasted WhatsApp message), or null
+  function find(text){
+    var m=String(text||'').match(/\bPK2(?:-[0-9A-Za-z]{1,6})+/i);if(m)return m[0];
+    return normalize(text).slice(0,3)===PRE?String(text):null}
+  function parse(text){
+    var n=normalize(text);
+    if(!n)return {ok:false,reason:'empty'};
+    if(n.slice(0,3)!==PRE)return {ok:false,reason:'format'};
+    var b=dec32(n.slice(3));
+    if(!b||b.length!==BYTES)return {ok:false,reason:'length'};
+    var rec=b.subarray(0,14),sig=b.subarray(14);
+    if(rec[0]!==VERSION)return {ok:false,reason:'unknown'};
+    var g=gamesOf(rec);
+    return {ok:true,rec:rec,sig:sig,keyNo:rec[1],id:idText(rec),issued:dayText((rec[8]<<8)|rec[9]),games:g,name:name(g)};
+  }
+  function format(rec,sig){var all=new Uint8Array(BYTES);all.set(rec,0);all.set(sig,14);return PRE+'-'+group(enc32(all),6)}
+  function b64(s){var bin=atob(s),u=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return u}
+  // game: the asking game's number; publicKeys: {keyNo: base64 key}; blocked: licence IDs ("PB-XXXXX-XXXXX")
+  // Returns {ok:true,id,keyNo,issued,games,name,text} or {ok:false,reason}; reason 'not-in-bundle' = genuine licence without this game
+  function verify(text,game,publicKeys,blocked,nacl){
+    var p=parse(text);if(!p.ok)return p;
+    var pk=publicKeys&&publicKeys[p.keyNo];if(!pk)return {ok:false,reason:'unknown-key'};
+    var good=false;try{good=nacl.sign.detached.verify(message(p.rec),p.sig,b64(pk))}catch(e){good=false}
+    if(!good)return {ok:false,reason:'signature'};
+    if(blocked&&blocked.indexOf(p.id)>=0)return {ok:false,reason:'blocked',id:p.id};
+    if(p.games.indexOf(game)<0)return {ok:false,reason:'not-in-bundle',games:p.games,name:p.name};
+    return {ok:true,id:p.id,keyNo:p.keyNo,issued:p.issued,games:p.games,name:p.name,text:format(p.rec,p.sig)};
+  }
+  return {GAMES:GAMES,find:find,parse:parse,verify:verify,name:name,normalize:normalize};
+})();
+
+</script>
 <script>
 // e = gambar, w = perkataan contoh, hl = berapa huruf Rumi ditanda di awal, end = tanda di hujung
 const L=[
@@ -479,6 +534,20 @@ let sound=true, stars=0, full=false;
 const FREE=10; // huruf percuma dalam versi percubaan
 const KJ_GAME_IDS=['cari','padan','surih','kad','belon','makan','titik','pelekat'];
 let kjActiveGame='';
+/* Dunia Sai: Ruang Ibu Bapa (/shared/js/ruang-ibubapa.js). Setiap jawapan anak direkod ikut aktiviti dan huruf. */
+const kjJawab=(ok,x)=>{chime(ok);try{window.DSRuang&&DSRuang.jawab(kjActiveGame,ok,x&&x.j?x.j+' '+x.n:null)}catch(e){}};
+if(window.DSRuang)DSRuang.pasang({id:'kenal-jawi',nama:'Kenal Jawi',tajuk:'Anak belajar Jawi, kita faham perkembangannya.',
+ aktiviti:{cari:['🔍','Cari Huruf','bunyi'],padan:['🃏','Padankan','bentuk'],surih:['✍️','Surih Huruf','tulis'],kad:['📚','Kad Huruf','bunyi'],belon:['🎈','Pecah Belon','bunyi'],makan:['🐱','Beri Makan','bentuk'],titik:['🧺','Kira Titik','titik'],pelekat:['🎨','Pelekat',''],jambatan:['🌉','Jambatan Jawi','kata']},
+ kemahiran:[
+  {id:'bunyi',icon:'🔊',name:'Kenal bunyi huruf',tip:'Tunjuk huruf Jawi pada papan tanda masjid, kedai atau kotak makanan, kemudian minta anak sebut bunyinya.'},
+  {id:'bentuk',icon:'🔷',name:'Kenal bentuk huruf',tip:'Buat kad huruf daripada kertas. Sebut satu huruf, dan biar anak cari kad yang betul.'},
+  {id:'titik',icon:'🔵',name:'Kira titik huruf',tip:'Tulis ب ت ث besar-besar di atas kertas. Minta anak kira titik dan beritahu bezanya.'},
+  {id:'tulis',icon:'✍️',name:'Menulis (surih) huruf',tip:'Surih huruf dengan jari di atas pasir, tepung atau tapak tangan anak.'},
+  {id:'kata',icon:'🌉',name:'Membina perkataan (Jambatan Jawi)',tip:'Eja nama anak dalam Jawi bersama-sama dan tampal di pintu bilik.'}],
+ kata:{kemahiran:'Kemahiran Jawi',baru:'Baharu'},
+ item:{tajuk:'🔤 Huruf yang perlu latihan',kukuh:'⭐ Huruf yang sudah kukuh',kosong:'Belum ada rekod huruf. Main Cari Huruf, Pecah Belon, Beri Makan atau Kira Titik dahulu.'},
+ kemajuan(){const c=load('kj_game_completed_v2',{});return [[KJ_GAME_IDS.filter(k=>c&&c[k]).length+'/8','Aktiviti selesai'],[load('kj_done',[]).length+'/37','Huruf disurih']]},
+ nota(){return 'Aktiviti dan huruf yang sudah disurih sebelum ini tetap dikira.'}});
 const kjCompleted=()=>load('kj_game_completed_v2',{});
 function kjMarkDone(id){if(!id)return;const x=kjCompleted();if(x[id])return;x[id]=new Date().toISOString();save('kj_game_completed_v2',x)}
 function kjCertTier(){if(!full)return 1;const done=kjCompleted();return KJ_GAME_IDS.every(id=>done[id])&&traced.size===L.length?3:2}
@@ -512,7 +581,7 @@ stars=+load('kj_stars',0)||0;sound=load('kj_sound',1)!=0;
 const PUBLIC_KEYS={2:"QVgEegZrfviPeApvWbbbkzk3xI6ZKX0zKd2wEfy9pS0="}; // key number -> Ed25519 public key (base64). Safe to publish: it can check licences, not make them
 const BLOCKED=[]; // licence IDs ("KJ-XXXXX-XXXXX") that were leaked publicly
 let licence=null;
-const checkLicence=t=>{try{return KJL.verify(t,PUBLIC_KEYS,BLOCKED,nacl)}catch(e){return {ok:false,reason:'error'}}};
+const checkLicence=t=>{try{const b=KJL2.find(t);return b?KJL2.verify(b,1,PUBLIC_KEYS,BLOCKED,nacl):KJL.verify(t,PUBLIC_KEYS,BLOCKED,nacl)}catch(e){return {ok:false,reason:'error'}}};
 try{localStorage.removeItem('kj_full')}catch(e){}
 {let t=null;try{t=localStorage.getItem('kj_licence')}catch(e){}
  if(t){const r=checkLicence(t);if(r.ok){licence=r;full=true}}}
@@ -729,6 +798,7 @@ function fit(){
 const scaleOf=el=>{const w=el.offsetWidth;return w?el.getBoundingClientRect().width/w:1};
 let fitT;addEventListener('resize',()=>{clearTimeout(fitT);fitT=setTimeout(fit,150)});
 function finish(score,total,again){
+  try{window.DSRuang&&DSRuang.selesai(kjActiveGame)}catch(e){}
   if(score>=Math.ceil(total*.6))kjMarkDone(kjActiveGame);
   stopGame();
   const s=score>=total*.9?3:score>=total*.6?2:1;
@@ -967,8 +1037,8 @@ function kjBridgeRail(i){
  kjBridgeLayout('🚂 Gerabak Huruf','Gerabak ini ada cangkuk ke KIRI atau tidak?',i,KJ_BRIDGE_RAIL.length,
  `<div class="bridgetrain"><span dir="rtl">${d.letter}</span> <span style="font-family:inherit;font-size:2rem">🚃</span></div><div style="text-align:center"><span class="bridgechip" id="brchip" role="button" tabindex="0">${d.letter}</span></div><div class="bridgezones"><button class="bridgezone" data-answer="yes">🔗 Boleh sambung<br>di sebelah kiri</button><button class="bridgezone" data-answer="no">✋ Tidak boleh<br>sambung ke kiri</button></div>`);
  const choices=[...view.querySelectorAll('.bridgezone')];
- function choose(ans){if(locked)return;if((ans==='yes')!==d.yes){errors++;chime(false);document.getElementById('brmsg').textContent=errors>=2?`Petunjuk: ${d.yes?'Ada cangkuk di kiri':'Tiada cangkuk kiri'}. Cuba lagi!`:'Cuba lorong lain. 😊';return}
-  locked=true;chime(true);document.getElementById('brmsg').textContent=d.meaning;choices.find(b=>b.dataset.answer===ans).classList.add('ok');quietTimeout(()=>kjBridgeRail(i+1),1400,6000)}
+ function choose(ans){if(locked)return;if((ans==='yes')!==d.yes){errors++;kjJawab(false);document.getElementById('brmsg').textContent=errors>=2?`Petunjuk: ${d.yes?'Ada cangkuk di kiri':'Tiada cangkuk kiri'}. Cuba lagi!`:'Cuba lorong lain. 😊';return}
+  locked=true;kjJawab(true);document.getElementById('brmsg').textContent=d.meaning;choices.find(b=>b.dataset.answer===ans).classList.add('ok');quietTimeout(()=>kjBridgeRail(i+1),1400,6000)}
  const chip=document.getElementById('brchip');kjBridgeDrop(chip,choices,choose);
  const voiceLetter=L.find(x=>x.j===d.letter);if(voiceLetter)speak(Lc(voiceLetter));
  chip.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();choices[0].focus()}};
@@ -983,8 +1053,8 @@ function kjBridgeShape(i){
  `<div class="bridgeword" dir="rtl">${sample}</div><div class="bridgejawi" dir="rtl">${d.word}</div><div class="bridgechoices">${Object.entries(KJ_BRIDGE_FORM_LABEL).map(([k,label])=>`<button data-shape="${k}" aria-label="${label}" style="font-family:inherit;font-size:1rem">${label}</button>`).join('')}</div>`);
  const voiceLetter=L.find(x=>x.j===d.letter);if(voiceLetter)speak(Lc(voiceLetter));
  view.querySelectorAll('[data-shape]').forEach(b=>b.onclick=()=>{if(locked)return;
-  if(b.dataset.shape!==form){errors++;chime(false);document.getElementById('brmsg').textContent=errors>=2?`Petunjuk: ${KJ_BRIDGE_FORM_LABEL[form]}. Tekan jawapan itu untuk teruskan.`:'Cuba perhatikan sambungan huruf!';return}
-  locked=true;b.style.background='#bcf1d2';chime(true);document.getElementById('brmsg').textContent=`Betul! ${d.note}`;quietTimeout(()=>kjBridgeShape(i+1),1600,6000)});
+  if(b.dataset.shape!==form){errors++;kjJawab(false);document.getElementById('brmsg').textContent=errors>=2?`Petunjuk: ${KJ_BRIDGE_FORM_LABEL[form]}. Tekan jawapan itu untuk teruskan.`:'Cuba perhatikan sambungan huruf!';return}
+  locked=true;b.style.background='#bcf1d2';kjJawab(true);document.getElementById('brmsg').textContent=`Betul! ${d.note}`;quietTimeout(()=>kjBridgeShape(i+1),1600,6000)});
 }
 let kjWordOrder=[];
 function kjBridgeWords(i){
@@ -998,9 +1068,9 @@ function kjBridgeWords(i){
  `<div class="bridgeword"><span id="brfirst">${d.parts[0]}</span><span class="target" id="brlast">؟</span></div><div class="bridgejawi" id="brresult" aria-label="Ruang perkataan">${d.parts[0]}…</div><div class="bridgechoices">${choices.map((p,k)=>`<button data-part="${kjEsc(p)}" aria-label="Suku kata ${k+1}">${p}</button>`).join('')}</div>`);
  // First syllable is prefilled. Child places the next syllable by tapping a tile.
  function choosePart(b){if(locked)return;
-  if(b.dataset.part!==d.parts[1]){errors++;chime(false);document.getElementById('brmsg').textContent=errors>=2?`Petunjuk: bunyinya '${d.note}'. Cuba lagi.`:'Cuba blok yang lain. 🙂';return}
+  if(b.dataset.part!==d.parts[1]){errors++;kjJawab(false);document.getElementById('brmsg').textContent=errors>=2?`Petunjuk: bunyinya '${d.note}'. Cuba lagi.`:'Cuba blok yang lain. 🙂';return}
   locked=true;b.style.background='#bcefd3';document.getElementById('brlast').textContent=d.parts[1];document.getElementById('brresult').textContent=d.jawi;
-  document.getElementById('brmsg').textContent=`✨ ${d.rumi.toUpperCase()} = ${d.jawi} · ${d.note}`;chime(true);if(CLIP['w-'+d.rumi])speak({k:'w-'+d.rumi,t:d.rumi});quietTimeout(()=>kjBridgeWords(i+1),1900,8000)
+  document.getElementById('brmsg').textContent=`✨ ${d.rumi.toUpperCase()} = ${d.jawi} · ${d.note}`;kjJawab(true);if(CLIP['w-'+d.rumi])speak({k:'w-'+d.rumi,t:d.rumi});quietTimeout(()=>kjBridgeWords(i+1),1900,8000)
  }
  const voiceWord=L.find(x=>String(x.w).toLowerCase()===d.rumi);if(CLIP['w-'+d.rumi])speak({k:'w-'+d.rumi,t:d.rumi});else if(voiceWord)speak(Wc(voiceWord));
  const slot=document.getElementById('brlast');
@@ -1017,7 +1087,7 @@ function kjBridgeWords(i){
 
 /* ---------- HOME ---------- */
 function home(){
-  setScreen(false);
+  setScreen(false);try{window.DSRuang&&DSRuang.henti()}catch(e){}
   const got=Math.min(Math.floor(stars/PER_STICKER),STICKERS.length);
   const need=got<STICKERS.length?PER_STICKER-(stars%PER_STICKER):0;
   view.innerHTML=`<div class="stack">
@@ -1038,7 +1108,8 @@ function home(){
       <span class="bridgebar"><i style="width:${kjBridgeHalfCount()*12.5}%"></i></span>
     </button>
     <p class="bridgehint" id="kjBridgeTodo">${kjBridgeUnlocked()?'Tahniah! Kamu boleh menyeberang jambatan.':KJ_GAME_IDS.map(id=>KJ_BRIDGE_LABEL[id]+' '+Math.min(kjBridgeData()[id]||0,KJ_BRIDGE_LIMIT[id])+'/'+KJ_BRIDGE_LIMIT[id]).join(' · ')}</p>
-    ${full?`<button class="par" id="par">👨‍👩‍👧 Untuk ibu bapa: lesen</button>`:`<button class="demo" id="unl"><span style="font-size:1.6rem">🔒</span><span>Versi percubaan: ${FREE} daripada ${L.length} huruf.<br><b>Buka versi penuh · RM15</b></span></button>`}
+    <button class="par" id="kjRuang">📊 Ruang Ibu Bapa: lihat kemajuan anak</button>
+    ${full?`<button class="par" id="par">👨‍👩‍👧 Untuk ibu bapa: lesen</button>`:`<button class="demo" id="unl"><span style="font-size:1.6rem">🔒</span><span>Versi percubaan: ${FREE} daripada ${L.length} huruf.<br><b>Buka versi penuh · RM9.90</b></span></button>`}
     <section class="stick"><h2>Koleksi pelekat</h2>
       <div class="stk">${STICKERS.map((s,i)=>`<span class="${i<got?'':'lk'}">${s}</span>`).join('')}</div>
       <p>${need?`Kumpul ${need} bintang lagi untuk pelekat baru`:'Semua pelekat sudah dikumpul!'}</p>
@@ -1056,6 +1127,7 @@ function home(){
   go('go1','g-cari',quiz);go('go2','g-padankan',match);go('go3','g-surih',map);go('go4','g-kad',()=>learn());
   go('go5','g-belon',balloon);go('go6','g-makan',feed);go('go7','g-titik',sortDots);go('go8','g-pelekat',board);
   const u=document.getElementById('unl');if(u)u.onclick=unlock;
+  document.getElementById('kjRuang').onclick=()=>{if(window.DSRuang)DSRuang.buka(home)};
   const pb=document.getElementById('par');if(pb)pb.onclick=()=>gate(licenceScreen);
 }
 
@@ -1128,11 +1200,11 @@ function quiz(){
     view.querySelectorAll('.tile').forEach(b=>b.onclick=()=>{
       if(locked||b.classList.contains('no'))return;
       const feedback=document.getElementById('g1fb');
-      if(b.dataset.j===target.j){locked=true;b.classList.add('ok');chime(true);if(!miss){score++;streak++;addStar()}else streak=0;
+      if(b.dataset.j===target.j){locked=true;b.classList.add('ok');kjJawab(true,target);if(!miss){score++;streak++;addStar()}else streak=0;
         feedback.textContent=`✅ Betul! ${target.w} — ${target.j}${streak>=3?' · 🔥 Hebat, '+streak+' berturut-turut!':''}`;
         feedback.className='g1-feedback show';
         speak(praise());q++;kjBridgeAdvance('cari',q);quietTimeout(next,2000,8000);}
-      else{miss=true;streak=0;b.classList.add('no');chime(false);feedback.textContent='💪 Cuba lagi! Dengar bunyi huruf.';feedback.className='g1-feedback show try-again';speak(Pc('cuba-lagi'),Pc('cari-huruf'),Lc(target));}
+      else{miss=true;streak=0;b.classList.add('no');kjJawab(false,target);feedback.textContent='💪 Cuba lagi! Dengar bunyi huruf.';feedback.className='g1-feedback show try-again';speak(Pc('cuba-lagi'),Pc('cari-huruf'),Lc(target));}
     });
   };
   next();
@@ -1158,9 +1230,9 @@ function match(){
     tries++;const [a,d]=open.map(k=>cards[k]);
     if(a.x===d.x){a.done=d.done=true;found++;kjBridgeAdvance('padan',found);
       open.forEach(k=>view.querySelector(`[data-i="${k}"]`).classList.add('ok'));
-      open=[];chime(true);addStar();
+      open=[];kjJawab(true);addStar();
       if(found===set.length)quietTimeout(()=>{kjMarkDone('padan');finish(tries<=set.length+3?set.length:tries<=set.length+6?Math.ceil(set.length*.7):Math.ceil(set.length*.5),set.length,match)},900);
-    }else{busy=true;chime(false);
+    }else{busy=true;kjJawab(false);
       const t=setTimeout(()=>{open.forEach(k=>{const e=view.querySelector(`[data-i="${k}"]`);if(e){e.classList.remove('open');e.innerHTML='<span class="back">?</span>'}});open=[];busy=false},1600);
       cleanup=()=>clearTimeout(t);}
   });
@@ -1264,7 +1336,7 @@ async function trace(i){
       else if(!dotsOk)tell('Jangan lupa titik! Sentuh setiap titik di tempatnya.','jangan-lupa-titik');
       else th.textContent=HINT;
     }
-    if(!done&&bodyCov>=NEED&&zonesOk&&dotsOk&&neat>=NEAT){th.textContent='Syabas!';hc.clearRect(0,0,size,size);hl.classList.remove('blink');drawing=false;done=true;chime(true);addStar();speak(praise(),Lc(x));
+    if(!done&&bodyCov>=NEED&&zonesOk&&dotsOk&&neat>=NEAT){th.textContent='Syabas!';hc.clearRect(0,0,size,size);hl.classList.remove('blink');drawing=false;done=true;kjJawab(true,x);addStar();speak(praise(),Lc(x));
       draw.parentElement.style.borderColor='var(--leaf)';
       const before=traced.size;traced.add(i);saveTraced();kjBridgeAdvance('surih',traced.size);const after=traced.size;if(after===L.length)kjMarkDone('surih');
       if(before<20&&after>=20)toast('Pelekat istimewa baru! 🌙');
@@ -1308,7 +1380,7 @@ function celebrate10(){
     ${full?`<button class="btn" id="go">Teruskan →</button>`:`
     <div class="hint" style="color:var(--ink);font-weight:700">Huruf seterusnya sedang menunggu:</div>
     <div class="peek">${nx.map(x=>`<span>${x.j}</span>`).join('')}<span class="more">+${rest-nx.length}</span></div>
-    <button class="btn wa" id="go">🔓 Buka ${rest} huruf lagi · RM15</button>`}
+    <button class="btn wa" id="go">🔓 Buka ${rest} huruf lagi · RM9.90</button>`}
     <button class="btn" id="mp2">🗺️ Peta huruf</button></div>`;
   document.getElementById('go').onclick=()=>full?trace(FREE):unlock();
   document.getElementById('mp2').onclick=map;
@@ -1391,11 +1463,11 @@ function balloon(){
       el.style.transform=`translate(${b.x}px,${b.y}px)`;
       el.onclick=()=>{
         if(locked||b.gone)return;
-        if(x===target){locked=true;b.gone=true;el.classList.add('popd');popSnd();chime(true);
+        if(x===target){locked=true;b.gone=true;el.classList.add('popd');popSnd();kjJawab(true,target);
           const r=el.getBoundingClientRect(),a=ar.getBoundingClientRect(),k=scaleOf(ar);confetti(ar,(r.left-a.left)/k+42,(r.top-a.top)/k+45);
           if(!miss){score++;addStar()}speak(praise(),Lc(target));q++;kjBridgeAdvance('belon',q);
           quietTimeout(next,1000)}
-        else{miss=true;chime(false);const s=el.querySelector('.b');s.classList.remove('wob');void s.offsetWidth;s.classList.add('wob');speak(Pc('cuba-lagi'),Pc('pecahkan-belon'),Lc(target))}
+        else{miss=true;kjJawab(false,target);const s=el.querySelector('.b');s.classList.remove('wob');void s.offsetWidth;s.classList.add('wob');speak(Pc('cuba-lagi'),Pc('pecahkan-belon'),Lc(target))}
       };
       ar.appendChild(el);return b});
   }
@@ -1493,9 +1565,9 @@ function feed(){
       if(x===target){locked=true;const a=b.getBoundingClientRect(),p=pet.getBoundingClientRect();
         const cur=new DOMMatrix(getComputedStyle(b).transform);
         const k=scaleOf(fd);b.classList.add('eat');b.style.transform=`translate(${cur.m41+((p.left+p.width/2)-(a.left+a.width/2))/k}px,${cur.m42+((p.top+p.height/2)-(a.top+a.height/2))/k}px) scale(.4)`;
-        later(()=>{pet.classList.remove('open','nope');pet.classList.add('chew');pet.setAttribute('aria-label',KJ_FEED_PETS[face].name+' sedang makan');chime(true);speak(Pc('nyam'),praise())},350);
+        later(()=>{pet.classList.remove('open','nope');pet.classList.add('chew');pet.setAttribute('aria-label',KJ_FEED_PETS[face].name+' sedang makan');kjJawab(true,target);speak(Pc('nyam'),praise())},350);
         if(!miss){score++;addStar()}q++;kjBridgeAdvance('makan',q);quietTimeout(next,1900)}
-      else{miss=true;b.classList.add('back','no','reject');b.style.transform='';b.addEventListener('animationend',()=>b.classList.remove('reject'),{once:true});pet.classList.remove('nope','chew','open');void pet.offsetWidth;pet.classList.add('nope');pet.setAttribute('aria-label',KJ_FEED_PETS[face].name+' menolak biskut');chime(false);speak(Pc('cuba-lagi'),Pc('beri-makan'),Lc(target))}
+      else{miss=true;b.classList.add('back','no','reject');b.style.transform='';b.addEventListener('animationend',()=>b.classList.remove('reject'),{once:true});pet.classList.remove('nope','chew','open');void pet.offsetWidth;pet.classList.add('nope');pet.setAttribute('aria-label',KJ_FEED_PETS[face].name+' menolak biskut');kjJawab(false,target);speak(Pc('cuba-lagi'),Pc('beri-makan'),Lc(target))}
     }
   }
   next();
@@ -1524,9 +1596,9 @@ function sortDots(){
   lt.onclick=()=>speak(Lc(x));document.getElementById('rp').onclick=()=>speak(Lc(x),Pc('berapa-titik'));
   view.querySelectorAll('.bk').forEach(b=>b.onclick=()=>{
     if(locked)return;const n=+b.dataset.n,want=dots(x);
-    if(n===want){locked=true;b.classList.remove('no');b.classList.add('ok');chime(true);count[n]++;document.getElementById('c'+n).textContent=count[n];
+    if(n===want){locked=true;b.classList.remove('no');b.classList.add('ok');kjJawab(true,x);count[n]++;document.getElementById('c'+n).textContent=count[n];
       if(!miss){score++;addStar()}speak(Pc('titik-'+n),praise());q++;kjBridgeAdvance('titik',q);t=quietTimeout(next,1000)}
-    else{miss++;b.classList.remove('no');void b.offsetWidth;b.classList.add('no');chime(false);speak(Pc('kira-lagi'));
+    else{miss++;b.classList.remove('no');void b.offsetWidth;b.classList.add('no');kjJawab(false,x);speak(Pc('kira-lagi'));
       if(miss>=2)view.querySelector(`.bk[data-n="${want}"]`).classList.add('hintb')}
   });
   next();
@@ -1586,6 +1658,7 @@ function gate(then){
 // Each family gets its own licence, signed with a private key that is never in this file.
 // The game only checks the signature, so licences cannot be forged. A real licence can still be shared.
 const LIC_MSG={empty:'Sila tampal lesen anda dahulu.',
+  'not-in-bundle':'Lesen pakej ini tidak termasuk Kenal Jawi.',
   format:'Lesen tidak lengkap. Pastikan anda menyalin semuanya, dari KJ1- hingga huruf terakhir.',
   length:'Lesen tidak lengkap. Pastikan anda menyalin semuanya, dari KJ1- hingga huruf terakhir.',
   unknown:'Lesen ini untuk versi lain permainan. Sila muat turun versi terkini Kenal Jawi.',
@@ -1606,9 +1679,9 @@ function unlockScreen(){
     <div class="row"><button class="btn" id="go">Aktifkan</button><button class="btn" id="hm">🏠</button></div>
     <div class="msg" id="msg"></div>
     <div class="buy stack" style="gap:8px">
-      <div class="word" style="font-size:1.5rem">Hanya RM15</div>
+      <div class="word" style="font-size:1.5rem">Hanya RM9.90</div>
       <div class="hint">Belum ada lesen? WhatsApp Kenal Jawi. Bayar melalui DuitNow atau pindahan bank, dan lesen keluarga anda akan dihantar kepada anda.</div>
-      <a class="btn wa" href="https://wa.me/601137865789?text=${encodeURIComponent('Assalamualaikum, saya nak beli Kenal Jawi versi penuh (RM15).')}" target="_blank" rel="noopener">WhatsApp untuk beli</a>
+      <a class="btn wa" href="https://wa.me/601137865789?text=${encodeURIComponent('Assalamualaikum, saya nak beli Kenal Jawi versi penuh (RM9.90).')}" target="_blank" rel="noopener">WhatsApp untuk beli</a>
       <div class="hint">Atau mesej terus: <b style="user-select:all;-webkit-user-select:all;color:var(--ink)">011-3786 5789</b></div>
     </div></div>`;
   const inp=document.getElementById('lic'),msg=document.getElementById('msg');

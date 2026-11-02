@@ -1,0 +1,27 @@
+/* WM-COS-002 / WM-ANIM-002: lightweight layered cosmetics and archer/mage 2.5D FX */
+.wm8-info{font-size:.9rem;line-height:1.35;max-width:42rem;margin:.5rem auto 0;color:#d8f0ee;}
+.wm-cos-hero svg .wm8-back-layer{transform-origin:60px 80px;animation:wm8Halo 3.1s ease-in-out infinite alternate}
+.wm8-aura{transform-origin:60px 80px}
+.wm8-gear{pointer-events:none}
+.wm8-gear .wm8-helm{filter:drop-shadow(0 1px 1px #04162b88)}
+.wm8-gear .wm8-armor{filter:drop-shadow(0 1px 2px #04162b99)}
+.wm8-gear .wm8-weapon{filter:drop-shadow(0 0 1px #def5ff)}
+.arena .wm8-fx{position:absolute;z-index:14;pointer-events:none;display:flex;align-items:center;justify-content:center;will-change:transform,opacity;transform:translate3d(0,0,0)}
+.arena .wm8-arrow{font-size:33px;color:#fff6be;text-shadow:0 0 3px #fff,0 0 10px #ff8c19;animation:wm8Fly 460ms cubic-bezier(.17,.62,.8,.98) forwards;}
+.arena .wm8-arrow::after{content:'';position:absolute;width:48px;height:3px;right:20px;background:linear-gradient(90deg,transparent,#ffe59c);border-radius:20px;}
+.arena .wm8-orb{width:28px;height:28px;border-radius:50%;font-size:19px;color:#f8deff;background:radial-gradient(circle at 34% 28%,#fff,#edb6ff 37%,#9959f6 73%,#543cbd);box-shadow:0 0 13px #b978ff,0 0 22px #875aff88;animation:wm8Fly 490ms ease-in-out forwards}
+.arena .wm8-rune{font-size:52px;color:#e9c6ff;text-shadow:0 0 14px #9f73ff;animation:wm8Rune 540ms ease-out forwards;}
+.arena .wm8-charge{font-size:45px;color:#ffd68f;text-shadow:0 0 14px #ff6f21;animation:wm8Rune 680ms ease-out forwards}
+.arena .wm8-hit{width:42px;height:42px;border-radius:50%;border:3px solid #f9df83;color:#fff0a6;font-size:30px;text-shadow:0 0 9px #ffbc58;animation:wm8Impact 340ms ease-out forwards}
+.arena .wm8-magic-hit{border-color:#cb99ff;color:#e0b7ff;text-shadow:0 0 12px #a74bf7}
+.arena .wm8-meteor-circle{width:64px;height:64px;border-radius:50%;border:4px dashed #e6b4ff;box-shadow:0 0 18px #a672e9;background:#e8bbff22;font-size:34px;color:#fff;animation:wm8Rune 680ms ease-out forwards}
+#uHero.wm8-archer-cast .body{animation:wm8BowPull 550ms cubic-bezier(.12,.47,.31,.95) both}
+#uHero.wm8-mage-cast .body{animation:wm8StaffCast 650ms ease-out both;filter:drop-shadow(0 0 8px #d5a5ff)}
+.arena #uHero .body svg{filter:drop-shadow(1px 6px 3px #082e4e66)}
+@keyframes wm8BowPull{0%,100%{transform:translate3d(0,0,0) rotate(0)}20%{transform:translate3d(-5px,-2px,0) rotate(-5deg)}45%{transform:translate3d(-7px,-3px,0) rotate(-8deg)}65%{transform:translate3d(6px,-5px,0) rotate(5deg)}}
+@keyframes wm8StaffCast{0%,100%{transform:translate3d(0,0,0) rotate(0)}26%{transform:translate3d(-4px,-8px,0) rotate(-7deg)}58%{transform:translate3d(5px,-11px,0) rotate(6deg)}}
+@keyframes wm8Fly{0%{transform:translate3d(0,0,0) scale(.55);opacity:0}17%{opacity:1}90%{opacity:1}100%{transform:translate3d(var(--wm8-dx),var(--wm8-dy),0) scale(1.05);opacity:0}}
+@keyframes wm8Impact{0%{transform:translate3d(-50%,-50%,0) scale(.3);opacity:0}40%{opacity:1}100%{transform:translate3d(-50%,-50%,0) scale(1.7);opacity:0}}
+@keyframes wm8Rune{0%{transform:translate3d(-50%,-50%,0) scale(.2) rotate(-60deg);opacity:0}30%{opacity:1}100%{transform:translate3d(-50%,-50%,0) scale(1.4) rotate(60deg);opacity:0}}
+@keyframes wm8Halo{from{opacity:.65;transform:scale(.97)}to{opacity:1;transform:scale(1.04)}}
+@media(prefers-reduced-motion:reduce){.wm8-back-layer,#uHero.wm8-archer-cast .body,#uHero.wm8-mage-cast .body{animation:none!important}.arena .wm8-fx{display:none!important}}

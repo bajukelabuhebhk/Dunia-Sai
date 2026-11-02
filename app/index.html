@@ -108,7 +108,7 @@
         <a class="btn wa" id="pakejWa" target="_blank" rel="noopener">Beli melalui WhatsApp</a>
       </div>
       <div class="kotak">
-        <h2>Harga satu game</h2>
+        <h2>Pakej tema dan harga satu game</h2>
         <ul class="senarai-harga" id="harga"></ul>
         <p style="margin:10px 0 0;color:var(--muted);font-size:.9rem">Bayar melalui DuitNow atau online banking, hantar resit di WhatsApp <b id="waNo"></b>, terima kod lesen, tampal di atas.</p>
       </div>
@@ -116,6 +116,14 @@
     <div class="simpan-semua">
       <button class="btn garis kecil" id="simpanSemua">📥 Simpan semua game untuk main tanpa internet</button>
       <div id="simpanSemuaNota" style="margin-top:6px"></div>
+    </div>
+  </section>
+
+  <section class="seksyen" id="maklum-balas" style="padding-top:0">
+    <div class="kotak">
+      <h2>💬 Pendapat anda</h2>
+      <p style="margin:0 0 10px;color:var(--muted)">Untuk ibu bapa dan cikgu: beri bintang dan cadangan untuk mana-mana game. Hanya pembuat game akan baca, tidak dipaparkan kepada orang lain.</p>
+      <button class="btn garis kecil" id="bukaMaklumBalas">💬 Beri maklum balas</button>
     </div>
   </section>
 </div>
@@ -126,6 +134,7 @@
 <script src="/shared/js/anak.js"></script>
 <script src="/shared/js/lesen-lib.js"></script>
 <script src="/shared/js/lesen.js"></script>
+<script src="/shared/js/maklum-balas.js"></script>
 <script>
 (() => {
   const $ = (id) => document.getElementById(id);
@@ -134,6 +143,8 @@
   let list = null;              // /files.json
   const saved = {};             // game id -> files already cached
   const progress = {};          // game id -> {done,total} while saving
+
+  $('bukaMaklumBalas').addEventListener('click', () => DSMaklumBalas.buka());
 
   /* ---------- Game cards ---------- */
   function render() {
@@ -149,7 +160,7 @@
       else off = `<button class="offline" data-simpan="${g.id}">📥 Simpan offline (${mb(list.games[g.id].bytes)})</button>`;
       return `<div class="card">
         <a class="gambar" href="${g.path}"><img src="${g.img}" alt="" loading="lazy">
-          ${full ? '<span class="lencana hijau">✅ Versi penuh</span>' : `<span class="lencana">Percuma: ${esc(g.free)}</span>`}</a>
+          ${!g.lic ? '<span class="lencana hijau">🎁 Percuma sepenuhnya</span>' : full ? '<span class="lencana hijau">✅ Versi penuh</span>' : `<span class="lencana">Percuma: ${esc(g.free)}</span>`}</a>
         <div class="isi">
           <h3>${esc(g.name)}</h3>
           <p>${esc(g.desc)}</p>
@@ -250,11 +261,11 @@
   /* ---------- Prices ---------- */
   const P = DS.PAKEJ;
   $('pakejNama').textContent = P.name;
-  $('pakejHarga').innerHTML = P.promo ? `RM${P.promo}<s>RM${P.price}</s>` : `RM${P.price}`;
-  $('pakejNota').textContent = (P.promo ? `Harga biasa RM${P.price}, promo RM${P.promo} ${P.promoNote}. ` : '') +
-    P.note;
-  $('pakejWa').href = DS.waLink(`Assalamualaikum, saya nak beli ${P.name} Dunia Sai (RM${P.promo || P.price}).`);
-  $('harga').innerHTML = DS.GAMES.map((g) => `<li><span>${esc(g.name)}</span><b>RM${g.price}</b></li>`).join('');
+  $('pakejHarga').innerHTML = `${DS.rm(P.price)}<s>${DS.rm(DS.pakejWorth(P))}</s>`;
+  $('pakejNota').textContent = P.note;
+  $('pakejWa').href = DS.waLink(`Assalamualaikum, saya nak beli ${P.name} Dunia Sai (${DS.rm(P.price)}).`);
+  $('harga').innerHTML = DS.PAKEJ_TEMA.map((Q) => `<li><span>${esc(Q.name)}<br><small style="color:var(--muted)">${DS.pakejGames(Q).map((g) => esc(g.name)).join(', ')}</small></span><b>${DS.rm(Q.price)}</b></li>`).join('') +
+    DS.GAMES.filter((g) => g.price > 0).map((g) => `<li><span>${esc(g.name)}</span><b>${DS.rm(g.price)}</b></li>`).join('');
   $('waNo').textContent = DS.whatsappText;
 
   /* ---------- Offline ---------- */

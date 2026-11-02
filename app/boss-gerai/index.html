@@ -1160,8 +1160,30 @@ a.wa{display:flex;justify-content:center;align-items:center;min-height:48px;bord
  .app[data-phase="cash"] #cash-drawer .money-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;grid-template-rows:repeat(3,minmax(44px,1fr))!important}
  .app[data-phase="cash"] #cash-drawer .money-grid>.money-btn:nth-child(n){grid-column:auto!important;grid-row:auto!important}
 }
+
+/* TABLET-FIT · Tablet & skrin besar (1 Nov 2026)
+   1) Tinggi app ikut ruang skrin sebenar (bar navigasi/taskbar Android & iPad tidak lagi memotong butang bawah).
+   2) Kaunter Baki landskap guna lebar penuh: resit + wang di kiri, laci wang di kanan. */
+@media (min-width:601px) and (min-height:551px){
+ .app{height:var(--bg-vh,100dvh);max-width:1440px;padding:0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+ .app .stage .dock{padding-bottom:6px}
+}
+@media (min-width:601px) and (min-height:551px) and (min-aspect-ratio:6/5){
+ .app[data-phase="cash"] .panel{max-width:1240px!important;width:100%}
+ .app[data-phase="cash"] #cashier-screen{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);grid-template-rows:auto auto minmax(0,1fr);column-gap:10px;row-gap:6px}
+ .app[data-phase="cash"] #cashier-screen>.cash-register-top{grid-column:1/-1;grid-row:1}
+ .app[data-phase="cash"] #cashier-screen>.receipt{grid-column:1;grid-row:2}
+ .app[data-phase="cash"] #cashier-screen>#counter-tray{grid-column:1;grid-row:3;min-height:0!important;display:flex;flex-direction:column;justify-content:flex-start}
+ .app[data-phase="cash"] #counter-tray .counter-heading{flex:0 0 auto}
+ .app[data-phase="cash"] #counter-tray .chosen-list{flex:1 1 auto;min-height:0;overflow-y:auto}
+ .app[data-phase="cash"] #cashier-screen>#cash-drawer{grid-column:2;grid-row:2/4;min-height:0}
+ .app[data-phase="cash"] .cashier-machine .receipt .money-info-grid{grid-template-columns:1fr!important;gap:6px}
+ .app[data-phase="cash"] .cashier-machine .receipt .money-primary strong{font-size:clamp(24px,4.6dvh,40px)!important}
+}
 </style>
-<!-- dunia-sai --><link rel="manifest" href="/manifest.json"><script src="/shared/js/balik.js" defer></script></head>
+<script>/* TABLET-FIT: tinggi skrin sebenar */(function(){var r=document.documentElement;function f(){var v=window.visualViewport,h=Math.round(v&&v.scale===1?v.height:window.innerHeight);if(h>0)r.style.setProperty("--bg-vh",h+"px")}f();addEventListener("resize",f);addEventListener("orientationchange",function(){setTimeout(f,250)});if(window.visualViewport)visualViewport.addEventListener("resize",f)})();</script>
+<!-- dunia-sai --><link rel="manifest" href="/manifest.json"><script src="/shared/js/balik.js" defer></script><style id="ds-prestasi">/* Dunia Sai: prestasi (2 Nov 2026): kesan kabur/bayang berat dimatikan supaya game lebih laju; rupa hampir sama. Pasang semula jika game diganti. */*,*::before,*::after{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}</style>
+</head>
 <body>
 <div class="app" id="app" data-phase="order" data-cook="grill">
  <header class="top-hud">
@@ -1376,7 +1398,7 @@ const G=(function(){
     Boss Gerai ialah game 8 dalam lesen pakej PK2-. Lesen menyenaraikan game yang dibuka dan ditandatangani
     dengan kunci peribadi yang tiada dalam fail ini. Dijual sendiri, lesen hanya mengandungi game 8; pakej
     yang menanda game 8 juga membukanya. Versi percubaan: lokasi 1 hingga 3 (Kuala Lumpur). */
- const SALE={price:'RM15',wa:'601137865789',msg:'Assalamualaikum, saya nak beli Boss Gerai versi penuh (RM15).'};
+ const SALE={price:'RM9.90',wa:'601137865789',msg:'Assalamualaikum, saya nak beli Boss Gerai versi penuh (RM9.90).'};
  const DEMO_LEVELS=3;
  const LIC={GAME:8,KEYS:{2:"QVgEegZrfviPeApvWbbbkzk3xI6ZKX0zKd2wEfy9pS0="},BLOCKED:[],STORE:'boss_gerai_lesen',full:false,info:null};
  function checkLicence(t){try{const b=KJL2.find(t);if(!b)return {ok:false,reason:KJL2.normalize(t)?'format':'empty'};return KJL2.verify(b,LIC.GAME,LIC.KEYS,LIC.BLOCKED,nacl);}catch(e){return {ok:false,reason:'error'};}}
