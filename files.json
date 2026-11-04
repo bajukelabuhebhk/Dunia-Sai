@@ -1,5 +1,5 @@
 {
- "version": "a6f2c4c61f",
+ "version": "5bd61089c4",
  "core": {
   "files": {
    "/app/": "f4c6669a5135",
@@ -811,6 +811,16 @@
   },
   "wira-matematik": {
    "files": {
+    "/app/wira-matematik/assets/raksasa/01-gergasi-merah.png": "777550f0eec6",
+    "/app/wira-matematik/assets/raksasa/02-naga-azura.png": "f15d807f8c4e",
+    "/app/wira-matematik/assets/raksasa/03-lendir-hijau.png": "006899d4ebc4",
+    "/app/wira-matematik/assets/raksasa/04-golem-rune.png": "ad8a7cc01874",
+    "/app/wira-matematik/assets/raksasa/05-roh-berjubah.png": "3b14e97aff57",
+    "/app/wira-matematik/assets/raksasa/06-serigala-bayang.png": "63678e24fb5d",
+    "/app/wira-matematik/assets/raksasa/07-kraken-ungu.png": "1b82f1d5af57",
+    "/app/wira-matematik/assets/raksasa/08-pokok-pemangsa.png": "c690eb8836b1",
+    "/app/wira-matematik/assets/raksasa/09-yeti-ais.png": "3d1429188b0b",
+    "/app/wira-matematik/assets/raksasa/10-goblin-alkimia.png": "b842472cb147",
     "/app/wira-matematik/assets/worlds/w01.svg": "eb59c34611b7",
     "/app/wira-matematik/assets/worlds/w02.svg": "1cdd29cf3a00",
     "/app/wira-matematik/assets/worlds/w03.svg": "fd8e9745db09",
@@ -930,7 +940,7 @@
     "/app/wira-matematik/css/wm-monitor-r3.css": "14b1a9899df3",
     "/app/wira-matematik/data/bank-1019.js": "8863691e5e9a",
     "/app/wira-matematik/data/wm-monitor-r4-dummy.js": "0aaa8d7e2419",
-    "/app/wira-matematik/": "9cd347ab426c",
+    "/app/wira-matematik/": "4d34a5ac3540",
     "/app/wira-matematik/js/cos-anim-v2.js": "8f62d5f14363",
     "/app/wira-matematik/js/ux-v5.js": "34524844a4ee",
     "/app/wira-matematik/js/visual-v3.js": "575f4405e5cc",
@@ -943,7 +953,7 @@
     "/app/wira-matematik/misi/raksasa.js": "993870fab6a7",
     "/app/wira-matematik/misi/style.css": "e7ff4d3c0179"
    },
-   "bytes": 3254636
+   "bytes": 5666897
   },
   "wonder-island": {
    "files": {
