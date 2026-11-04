@@ -1,5 +1,5 @@
 {
- "version": "5bd61089c4",
+ "version": "90afb757a7",
  "core": {
   "files": {
    "/app/": "f4c6669a5135",
@@ -811,16 +811,34 @@
   },
   "wira-matematik": {
    "files": {
-    "/app/wira-matematik/assets/raksasa/01-gergasi-merah.png": "777550f0eec6",
-    "/app/wira-matematik/assets/raksasa/02-naga-azura.png": "f15d807f8c4e",
-    "/app/wira-matematik/assets/raksasa/03-lendir-hijau.png": "006899d4ebc4",
-    "/app/wira-matematik/assets/raksasa/04-golem-rune.png": "ad8a7cc01874",
-    "/app/wira-matematik/assets/raksasa/05-roh-berjubah.png": "3b14e97aff57",
-    "/app/wira-matematik/assets/raksasa/06-serigala-bayang.png": "63678e24fb5d",
-    "/app/wira-matematik/assets/raksasa/07-kraken-ungu.png": "1b82f1d5af57",
-    "/app/wira-matematik/assets/raksasa/08-pokok-pemangsa.png": "c690eb8836b1",
-    "/app/wira-matematik/assets/raksasa/09-yeti-ais.png": "3d1429188b0b",
-    "/app/wira-matematik/assets/raksasa/10-goblin-alkimia.png": "b842472cb147",
+    "/app/wira-matematik/assets/raksasa/01-gergasi-merah.webp": "d53bd4c81934",
+    "/app/wira-matematik/assets/raksasa/02-naga-azura.webp": "dc783ba53800",
+    "/app/wira-matematik/assets/raksasa/03-lendir-hijau.webp": "17cb2d9802ec",
+    "/app/wira-matematik/assets/raksasa/04-golem-rune.webp": "c79cda2267d4",
+    "/app/wira-matematik/assets/raksasa/05-roh-berjubah.webp": "85e8f7ec4fe1",
+    "/app/wira-matematik/assets/raksasa/06-serigala-bayang.webp": "72bbfd7af6c4",
+    "/app/wira-matematik/assets/raksasa/07-kraken-ungu.webp": "9f905a638870",
+    "/app/wira-matematik/assets/raksasa/08-pokok-pemangsa.webp": "5564dd9f68e8",
+    "/app/wira-matematik/assets/raksasa/09-yeti-ais.webp": "9661c258b70d",
+    "/app/wira-matematik/assets/raksasa/10-goblin-alkimia.webp": "cbc299ae8458",
+    "/app/wira-matematik/assets/raksasa/11-phoenix-kosmik.webp": "ca24e17ac0b9",
+    "/app/wira-matematik/assets/raksasa/12-naga-samudera-bintang.webp": "75ee07fa3993",
+    "/app/wira-matematik/assets/raksasa/13-golem-magma-diraja.webp": "c8daeb3d1a33",
+    "/app/wira-matematik/assets/raksasa/14-hidra-kosmik.webp": "37ac793e8994",
+    "/app/wira-matematik/assets/raksasa/15-golem-nebula.webp": "a0a0404a61e2",
+    "/app/wira-matematik/assets/raksasa/16-harimau-suria.webp": "745c2dc547fe",
+    "/app/wira-matematik/assets/raksasa/17-kobra-galaksi.webp": "7be4fece2a1c",
+    "/app/wira-matematik/assets/raksasa/18-badak-planet.webp": "bb3c1ac837f0",
+    "/app/wira-matematik/assets/raksasa/19-naga-konstelasi.webp": "11ed97ca4018",
+    "/app/wira-matematik/assets/raksasa/20-singa-gerhana.webp": "eac3153a4ec3",
+    "/app/wira-matematik/assets/raksasa/21-rubah-ninja.webp": "01a97609d120",
+    "/app/wira-matematik/assets/raksasa/22-kuda-laut-karang.webp": "63fa2517d7c3",
+    "/app/wira-matematik/assets/raksasa/23-kobra-pasir.webp": "a4c0f36fd886",
+    "/app/wira-matematik/assets/raksasa/24-penjaga-cendawan.webp": "b8afa3d55fef",
+    "/app/wira-matematik/assets/raksasa/25-kumbang-kristal.webp": "8afe3f204b87",
+    "/app/wira-matematik/assets/raksasa/26-badak-batu.webp": "838702e6eae7",
+    "/app/wira-matematik/assets/raksasa/27-banteng-lava.webp": "6463ff5ade0e",
+    "/app/wira-matematik/assets/raksasa/28-harimau-petir.webp": "1a3d456931c3",
     "/app/wira-matematik/assets/worlds/w01.svg": "eb59c34611b7",
     "/app/wira-matematik/assets/worlds/w02.svg": "1cdd29cf3a00",
     "/app/wira-matematik/assets/worlds/w03.svg": "fd8e9745db09",
@@ -940,7 +958,7 @@
     "/app/wira-matematik/css/wm-monitor-r3.css": "14b1a9899df3",
     "/app/wira-matematik/data/bank-1019.js": "8863691e5e9a",
     "/app/wira-matematik/data/wm-monitor-r4-dummy.js": "0aaa8d7e2419",
-    "/app/wira-matematik/": "4d34a5ac3540",
+    "/app/wira-matematik/": "5ce51a40146b",
     "/app/wira-matematik/js/cos-anim-v2.js": "8f62d5f14363",
     "/app/wira-matematik/js/ux-v5.js": "34524844a4ee",
     "/app/wira-matematik/js/visual-v3.js": "575f4405e5cc",
@@ -953,7 +971,7 @@
     "/app/wira-matematik/misi/raksasa.js": "993870fab6a7",
     "/app/wira-matematik/misi/style.css": "e7ff4d3c0179"
    },
-   "bytes": 5666897
+   "bytes": 5004289
   },
   "wonder-island": {
    "files": {
