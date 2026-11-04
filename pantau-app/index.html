@@ -145,6 +145,11 @@
       <ul class="mb" id="mbSenarai"></ul>
     </section>
 
+    <section class="kotak">
+      <h2>🤝 Promoter <small>pautan ?ref=KOD</small></h2>
+      <div class="skrol"><table id="promoter"></table></div>
+    </section>
+
     <div class="dua">
       <section class="kotak"><h2>Datang dari mana</h2><ul class="senarai" id="rujukan"></ul></section>
       <section class="kotak"><h2>Halaman</h2><ul class="senarai" id="halaman"></ul></section>
@@ -253,6 +258,12 @@
     $('game').innerHTML = `<thead><tr><th>Game</th><th>Dibuka</th><th>Orang</th><th>Main</th><th>Masa main</th><th>Purata</th></tr></thead><tbody>` +
       games.map((g) => `<tr><td>${esc(namaGame(g.game))}<div class="bar" style="width:${(100 * g.buka) / maxBuka}%"></div></td>
         <td>${n(g.buka)}</td><td>${n(g.orang)}</td><td>${n(g.main)}</td><td>${g.saat ? masa(g.saat) : '—'}</td><td>${g.main && g.saat ? masa(g.saat / g.main) : '—'}</td></tr>`).join('') + '</tbody>';
+
+    const pr = d.promoter || [];
+    $('promoter').innerHTML = pr.length
+      ? `<thead><tr><th>Kod</th><th>Lawatan</th><th>Orang</th><th>Tekan WhatsApp</th></tr></thead><tbody>` +
+        pr.map((p) => `<tr><td><b>${esc(p.k)}</b></td><td>${n(p.lawat)}</td><td>${n(p.orang)}</td><td>${n(p.wa)}</td></tr>`).join('') + '</tbody>'
+      : '<tbody><tr><td class="kosong">Belum ada. Bila promoter kongsi pautan dunia-sai.pages.dev/?ref=KOD, lawatan dan tekan WhatsApp muncul di sini. Jualan sebenar disemak dalam mesej WhatsApp (Kod rujukan) dan dashboard jualan.</td></tr></tbody>';
 
     senarai('rujukan', d.rujukan, (k) => k, 'Belum ada. Pelawat yang taip alamat sendiri atau buka dari apps tidak dikira di sini.');
     senarai('halaman', d.halaman, (k) => ({ '/': 'Laman utama', '/app/': 'Senarai game (apps)' }[k] || k));

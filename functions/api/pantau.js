@@ -85,13 +85,17 @@ export async function onRequestGet({ request, env }) {
     q(`SELECT page AS k, COUNT(*) AS n FROM events WHERE day >= ? AND type='lawat' AND game IS NULL
         GROUP BY page ORDER BY n DESC LIMIT 10`, dari),
     q(`SELECT ref AS k, COUNT(*) AS n FROM events WHERE day >= ? AND type='lawat' AND ref IS NOT NULL
-        GROUP BY ref ORDER BY n DESC LIMIT 10`, dari),
+        AND ref NOT LIKE 'aff:%' GROUP BY ref ORDER BY n DESC LIMIT 10`, dari),
     q(`SELECT COALESCE(country,'?') AS k, COUNT(DISTINCT visitor) AS n FROM events WHERE day >= ?
         GROUP BY k ORDER BY n DESC LIMIT 8`, dari),
     q(`SELECT device AS k, COUNT(DISTINCT visitor) AS n FROM events WHERE day >= ? GROUP BY device ORDER BY n DESC`, dari),
     q(`SELECT app AS k, COUNT(*) AS n FROM events WHERE day >= ? AND type='lawat' GROUP BY app`, dari),
     q(`SELECT COUNT(DISTINCT visitor) AS n, GROUP_CONCAT(DISTINCT game) AS games FROM events WHERE ts > ?`, now - 5 * 60e3),
     q(`SELECT ts, type, page, game, secs, country, device, app FROM events ORDER BY ts DESC LIMIT 30`),
+    // Promoter links (?ref=KOD): visits from the link, and WhatsApp taps by anyone who came through it
+    q(`SELECT substr(ref, 5) AS k, SUM(type='lawat') AS lawat,
+          COUNT(DISTINCT CASE WHEN type='lawat' THEN visitor || day END) AS orang, SUM(type='wa') AS wa
+        FROM events WHERE day >= ? AND ref LIKE 'aff:%' GROUP BY ref ORDER BY wa DESC, lawat DESC LIMIT 50`, dari),
   ]);
   const r = res.map((x) => x.results || []);
 
@@ -111,5 +115,6 @@ export async function onRequestGet({ request, env }) {
     apps: r[7],
     langsung: { pelawat: r[8][0].n, game: r[8][0].games ? r[8][0].games.split(',') : [] },
     terkini: r[9],
+    promoter: r[10],
   });
 }

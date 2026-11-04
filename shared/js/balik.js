@@ -49,6 +49,11 @@
   // Games opened directly (not from the launcher) still get offline support
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(function () {});
 
+  // Promoter code (?ref=) added to WhatsApp buy messages; see /shared/js/rujukan.js
+  const r = document.createElement('script');
+  r.src = '/shared/js/rujukan.js';
+  document.head.appendChild(r);
+
   // Anonymous open/play counts for the owner's dashboard (/pantau/)
   const j = document.createElement('script');
   j.src = '/shared/js/jejak.js';

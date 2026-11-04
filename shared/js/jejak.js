@@ -51,14 +51,20 @@
 
   let ref = null;
   try { const r = document.referrer && new URL(document.referrer); if (r && r.host !== location.host) ref = r.host.replace(/^www\./, ''); } catch (e) { /* no referrer */ }
-  const src = new URLSearchParams(location.search).get('utm_source') || new URLSearchParams(location.search).get('source');
-  send({ t: 'lawat', r: src ? String(src).slice(0, 40) : ref });
+  const qs = new URLSearchParams(location.search);
+  const src = qs.get('utm_source') || qs.get('source');
+  // Promoter links (?ref=AINA, see rujukan.js) are kept as "aff:AINA" so /pantau/ can list them apart
+  const aff = /^[A-Z0-9]{2,12}$/.test(String(qs.get('ref') || '').trim().toUpperCase()) ? String(qs.get('ref')).trim().toUpperCase() : null;
+  send({ t: 'lawat', r: aff ? 'aff:' + aff : src ? String(src).slice(0, 40) : ref });
 
   // WhatsApp buy links on the landing, launcher and promo pages. Only links to a number count:
   // a share link (wa.me/?text=..., like Robot Rumble's) lets the player pick a friend and is not a buyer.
   document.addEventListener('click', (ev) => {
     const a = ev.target.closest && ev.target.closest('a[href*="wa.me/"]');
-    if (a && /wa\.me\/\d/.test(a.getAttribute('href') || '')) send({ t: 'wa' }, true);
+    if (a && /wa\.me\/\d/.test(a.getAttribute('href') || '')) {
+      const k = window.DSRujukan && DSRujukan.kod();
+      send(k ? { t: 'wa', r: 'aff:' + k } : { t: 'wa' }, true);
+    }
   }, true);
 
   if (game) {
