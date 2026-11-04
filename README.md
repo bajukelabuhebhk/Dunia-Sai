@@ -38,6 +38,8 @@ Skrip ini tambah butang 🏠, tulis semula `files.json` dan naikkan `VERSION` da
 
 **Nama anak:** ibu bapa tulis nama anak sekali di `/app/` (boleh tambah dan tukar antara beberapa anak). Ia disimpan dalam peranti sahaja (`localStorage` `ds_anak`, `shared/js/anak.js`). Muka depan Kenal Jawi, Kenal ABC, Wira Matematik, Hikayat Sungai Ilmu dan Wonder Island menyapa anak dengan nama itu, dan sijil Kenal Jawi serta Kenal ABC terisi sendiri. Kemajuan permainan masih satu untuk setiap peranti, bukan berasingan untuk setiap anak. Pautan `https://<domain>/app/?nama=Aisyah` terus simpan nama. Jika game ini dikemas kini dari fail asal, tambah semula baris bertanda `Dunia Sai:` dalam game tersebut.
 
+**Pautan rakan (affiliate):** beri setiap rakan pautan `https://<domain>/?rakan=KOD` (boleh juga `/app/<game>/?rakan=KOD` atau `/promo/<nama>?rakan=KOD`). `shared/js/jejak.js` simpan kod itu dalam peranti pelawat selama 30 hari, dan setiap mesej WhatsApp beli (di laman, apps dan dalam game) berakhir dengan `Kod rakan: KOD`. Apps Pantau ada kotak 🤝 Rakan affiliate: orang yang datang dan tekan WhatsApp bagi setiap kod. Jualan sebenar disahkan dari mesej WhatsApp dan Rekod jualan penjana lesen.
+
 **Pautan lesen satu sentuhan:** hantar `https://<domain>/app/?lesen=<KOD>` kepada pembeli; kod diaktifkan bila pautan dibuka.
 
 ## Pantau pelawat (`/pantau/`)

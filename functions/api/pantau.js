@@ -92,6 +92,10 @@ export async function onRequestGet({ request, env }) {
     q(`SELECT app AS k, COUNT(*) AS n FROM events WHERE day >= ? AND type='lawat' GROUP BY app`, dari),
     q(`SELECT COUNT(DISTINCT visitor) AS n, GROUP_CONCAT(DISTINCT game) AS games FROM events WHERE ts > ?`, now - 5 * 60e3),
     q(`SELECT ts, type, page, game, secs, country, device, app FROM events ORDER BY ts DESC LIMIT 30`),
+    // Rakan (affiliate) codes from ?rakan= links: people who came, and WhatsApp buy taps carrying the code
+    q(`SELECT substr(ref, 7) AS k, COUNT(DISTINCT CASE WHEN type='lawat' THEN visitor || day END) AS orang,
+          SUM(type='wa') AS wa
+        FROM events WHERE day >= ? AND ref LIKE 'rakan:%' GROUP BY k ORDER BY wa DESC, orang DESC LIMIT 30`, dari),
   ]);
   const r = res.map((x) => x.results || []);
 
@@ -111,5 +115,6 @@ export async function onRequestGet({ request, env }) {
     apps: r[7],
     langsung: { pelawat: r[8][0].n, game: r[8][0].games ? r[8][0].games.split(',') : [] },
     terkini: r[9],
+    rakan: r[10],
   });
 }

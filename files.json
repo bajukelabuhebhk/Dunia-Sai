@@ -1,5 +1,5 @@
 {
- "version": "a6f2c4c61f",
+ "version": "bfd30f5c33",
  "core": {
   "files": {
    "/app/": "f4c6669a5135",
@@ -26,13 +26,13 @@
    "/shared/js/anak.js": "b26ad114d73c",
    "/shared/js/balik.js": "b25251d8c79c",
    "/shared/js/config.js": "df4d800b641a",
-   "/shared/js/jejak.js": "993517d588a5",
+   "/shared/js/jejak.js": "72b41696f3a8",
    "/shared/js/lesen-lib.js": "9f17920f43d7",
    "/shared/js/lesen.js": "d72df6c47647",
    "/shared/js/maklum-balas.js": "87d261af59ac",
    "/shared/js/ruang-ibubapa.js": "d83a0a76181d"
   },
-  "bytes": 1256730
+  "bytes": 1258413
  },
  "games": {
   "boss-gerai": {

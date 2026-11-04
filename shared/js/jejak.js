@@ -1,6 +1,6 @@
 /*
  * Anonymous counts for the owner's dashboard (/pantau/): page visits, games opened and played,
- * time spent in each game, and taps on WhatsApp buy links.
+ * time spent in each game, and taps on WhatsApp buy links (with the rakan/affiliate code, if any).
  *
  * Nothing personal is sent: no name, no licence code, no cookie or device id.
  * Events made while offline wait in localStorage and are sent when the internet is back.
@@ -11,6 +11,38 @@
   window.__dsJejak = true;
   const Q = 'ds_jejak_q';
   const store = (() => { try { return window.localStorage; } catch (e) { return null; } })();
+
+  // Rakan (affiliate) links: https://dunia-sai.pages.dev/?rakan=AMINAH (works on any page).
+  // The code is kept on this device for 30 days, and every WhatsApp buy message sent in that time
+  // ends with "Kod rakan: AMINAH", so the owner sees who brought the buyer. It runs on the owner's
+  // own devices too (before the ds_jejak_off check), so a test buy shows the code as well.
+  const RAKAN = 'ds_rakan';
+  const RAKAN_HARI = 30;
+  const kodBaru = String(new URLSearchParams(location.search).get('rakan') || '').toUpperCase().replace(/[^A-Z0-9_-]/g, '').slice(0, 20);
+  if (kodBaru.length >= 2) {
+    try { if (store) store.setItem(RAKAN, JSON.stringify({ k: kodBaru, ts: Date.now() })); } catch (e) { /* storage blocked */ }
+  }
+  function rakan() {
+    try {
+      const r = JSON.parse((store && store.getItem(RAKAN)) || 'null');
+      if (r && r.k && Date.now() - r.ts < RAKAN_HARI * 864e5) return r.k;
+    } catch (e) { /* bad value */ }
+    return null;
+  }
+  const isBuy = (a) => /wa\.me\/\d/.test(a.getAttribute('href') || '');
+  // Capture phase, so the message is changed before the link opens
+  document.addEventListener('click', (ev) => {
+    const a = ev.target.closest && ev.target.closest('a[href*="wa.me/"]');
+    const k = a && isBuy(a) && rakan();
+    if (!k) return;
+    try {
+      const u = new URL(a.href);
+      const t = u.searchParams.get('text') || '';
+      // encodeURIComponent (not searchParams.set) so spaces stay %20: WhatsApp can show "+" literally
+      if (!/Kod rakan:/i.test(t)) a.href = `https://wa.me${u.pathname}?text=${encodeURIComponent((t ? t + '\n\n' : '') + 'Kod rakan: ' + k)}`;
+    } catch (e) { /* leave the link as it is */ }
+  }, true);
+
   if (store && store.getItem('ds_jejak_off')) return;
 
   const page = location.pathname.replace(/index\.html$/, '').slice(0, 120);
@@ -52,13 +84,13 @@
   let ref = null;
   try { const r = document.referrer && new URL(document.referrer); if (r && r.host !== location.host) ref = r.host.replace(/^www\./, ''); } catch (e) { /* no referrer */ }
   const src = new URLSearchParams(location.search).get('utm_source') || new URLSearchParams(location.search).get('source');
-  send({ t: 'lawat', r: src ? String(src).slice(0, 40) : ref });
+  send({ t: 'lawat', r: kodBaru.length >= 2 ? 'rakan:' + kodBaru : src ? String(src).slice(0, 40) : ref });
 
   // WhatsApp buy links on the landing, launcher and promo pages. Only links to a number count:
   // a share link (wa.me/?text=..., like Robot Rumble's) lets the player pick a friend and is not a buyer.
   document.addEventListener('click', (ev) => {
     const a = ev.target.closest && ev.target.closest('a[href*="wa.me/"]');
-    if (a && /wa\.me\/\d/.test(a.getAttribute('href') || '')) send({ t: 'wa' }, true);
+    if (a && isBuy(a)) { const k = rakan(); send(k ? { t: 'wa', r: 'rakan:' + k } : { t: 'wa' }, true); }
   }, true);
 
   if (game) {

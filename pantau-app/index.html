@@ -145,6 +145,12 @@
       <ul class="mb" id="mbSenarai"></ul>
     </section>
 
+    <section class="kotak">
+      <h2>🤝 Rakan affiliate</h2>
+      <p class="kosong" style="margin:0 0 8px">Dari pautan <b>dunia-sai.pages.dev/?rakan=KOD</b>. Mesej WhatsApp pembeli berakhir dengan "Kod rakan: KOD", jadi semak jualan sebenar di WhatsApp dan Rekod jualan penjana lesen.</p>
+      <div class="skrol"><table id="rakan"></table></div>
+    </section>
+
     <div class="dua">
       <section class="kotak"><h2>Datang dari mana</h2><ul class="senarai" id="rujukan"></ul></section>
       <section class="kotak"><h2>Halaman</h2><ul class="senarai" id="halaman"></ul></section>
@@ -253,6 +259,12 @@
     $('game').innerHTML = `<thead><tr><th>Game</th><th>Dibuka</th><th>Orang</th><th>Main</th><th>Masa main</th><th>Purata</th></tr></thead><tbody>` +
       games.map((g) => `<tr><td>${esc(namaGame(g.game))}<div class="bar" style="width:${(100 * g.buka) / maxBuka}%"></div></td>
         <td>${n(g.buka)}</td><td>${n(g.orang)}</td><td>${n(g.main)}</td><td>${g.saat ? masa(g.saat) : '—'}</td><td>${g.main && g.saat ? masa(g.saat / g.main) : '—'}</td></tr>`).join('') + '</tbody>';
+
+    const rk = d.rakan || [];
+    $('rakan').innerHTML = rk.length
+      ? '<thead><tr><th>Kod rakan</th><th>Orang datang</th><th>Tekan WhatsApp</th></tr></thead><tbody>' +
+        rk.map((x) => `<tr><td><b>${esc(x.k)}</b></td><td>${n(x.orang)}</td><td>${n(x.wa)}</td></tr>`).join('') + '</tbody>'
+      : '<tbody><tr><td class="kosong">Belum ada pelawat dari pautan rakan dalam tempoh ini.</td></tr></tbody>';
 
     senarai('rujukan', d.rujukan, (k) => k, 'Belum ada. Pelawat yang taip alamat sendiri atau buka dari apps tidak dikira di sini.');
     senarai('halaman', d.halaman, (k) => ({ '/': 'Laman utama', '/app/': 'Senarai game (apps)' }[k] || k));
