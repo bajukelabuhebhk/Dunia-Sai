@@ -1,0 +1,20 @@
+/* Dunia Sai: Wira Melayu Fasa 1 */
+.wmm-on svg{display:none}
+.wm6-hero-drawing.wmm-on{width:clamp(130px,26dvh,230px);height:clamp(150px,30dvh,260px)}
+.wm6-costume-art.wmm-on{aspect-ratio:2/3;width:min(56vw,250px);height:auto;margin:auto}
+.wmm-portrait{position:relative;width:100%;height:100%;animation:wmmBreathe 3.2s ease-in-out infinite}
+.wmm-portrait img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;user-select:none}
+@keyframes wmmBreathe{50%{transform:translateY(-3px)}}
+@media(prefers-reduced-motion:reduce){.wmm-portrait{animation:none}}
+.wmm-wardrobe{width:100%;max-width:520px;margin:12px auto;text-align:left}
+.wmm-wardrobe h3{display:flex;justify-content:space-between;align-items:center;margin:0 0 8px}
+.wmm-wardrobe h3 small{font-size:.85rem;color:#ffd84a}
+.wmm-items{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px}
+.wmm-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;border-radius:14px;border:2px solid #ffffff33;background:#ffffff12;color:inherit;font:inherit;cursor:pointer;min-height:112px}
+.wmm-item b{font-size:.72rem;line-height:1.15;text-align:center}
+.wmm-item small{font-size:.66rem;opacity:.85}
+.wmm-icon{width:52px;height:52px;border-radius:10px;background-repeat:no-repeat;background-color:#0003}
+.wmm-item.r-common{border-color:#9aa3b5}.wmm-item.r-uncommon{border-color:#4cc36b}.wmm-item.r-rare{border-color:#3fa2ff}.wmm-item.r-epic{border-color:#a26bff}.wmm-item.r-legendary{border-color:#ffc23f}
+.wmm-item.worn{background:#ffd84a33;box-shadow:0 0 0 2px #ffd84a inset}
+.wmm-item.locked{opacity:.55}.wmm-item.locked .wmm-icon{filter:grayscale(1) brightness(.6)}
+.wmm-note,.wmm-soon{font-size:.75rem;opacity:.8;margin:8px 2px 0}
