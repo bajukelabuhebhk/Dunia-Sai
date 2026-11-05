@@ -64,12 +64,15 @@
   .simpan-semua { margin-top: 14px; color: var(--muted); font-size: .9rem; }
   .tiada-net { display: none; margin: 0 0 14px; padding: 10px 14px; border-radius: 12px; background: #eef0f4; font-size: .9rem; }
   .tiada-net.tunjuk { display: block; }
+  .topbar { flex-wrap: wrap; } .topbar .btn { white-space: nowrap; }
+  @media (max-width: 420px) { #mainTv .tv-penuh { display: none; } #mainTv { padding: 8px 12px; } }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header class="topbar">
     <a class="jenama" href="/"><img src="/shared/icons/icon-192.png" alt="">Dunia Sai</a>
+    <button class="btn garis kecil" id="mainTv" type="button" title="Paparkan game di TV atau monitor">📺 <span class="tv-penuh">Main di </span>TV</button>
     <button class="btn kecil kuning" id="pasang" hidden>📲 Pasang apps</button>
   </header>
 
@@ -135,6 +138,7 @@
 <script src="/shared/js/lesen-lib.js"></script>
 <script src="/shared/js/lesen.js"></script>
 <script src="/shared/js/maklum-balas.js"></script>
+<script src="/shared/js/main-tv.js"></script>
 <script>
 (() => {
   const $ = (id) => document.getElementById(id);
@@ -145,6 +149,7 @@
   const progress = {};          // game id -> {done,total} while saving
 
   $('bukaMaklumBalas').addEventListener('click', () => DSMaklumBalas.buka());
+  $('mainTv').addEventListener('click', () => DSMainTV.buka());
 
   /* ---------- Game cards ---------- */
   function render() {
