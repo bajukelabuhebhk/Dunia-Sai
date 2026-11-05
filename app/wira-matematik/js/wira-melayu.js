@@ -6,12 +6,21 @@ const WMM=(()=>{
  // Susunan dalam senarai = susunan lapisan (bawah ke atas). bintang = jumlah bintang RPG untuk membuka item.
  const ITEMS={
   kesatria:[
-   {id:'04',box:[177,359,371,597],bm:'Bengkung Diraja',en:'Royal Sash',r:'rare',bintang:30},
+   {id:'16',f:1,i:1,s:'bahu',bm:'Jubah Harimau Berang',en:'Fierce Tiger Cape',r:'mythic',bintang:115},
+   {id:'10',f:1,i:1,s:'bahu',bm:'Kain Bahu Songket',en:'Songket Shoulder Cape',r:'uncommon',bintang:20},
+   {id:'04',box:[177,359,371,597],s:'pinggang',bm:'Bengkung Diraja',en:'Royal Sash',r:'rare',bintang:30},
+   {id:'08',f:1,i:1,s:'pinggang',bm:'Samping Ombak Senja',en:'Sunset Wave Samping',r:'uncommon',bintang:10},
+   {id:'12',f:1,i:1,s:'pinggang',bm:'Samping Diraja Matahari',en:'Royal Sun Samping',r:'rare',bintang:45},
    {id:'02',box:[198,266,381,433],bm:'Rompi Perajurit',en:'Soldier Vest',r:'uncommon',bintang:5},
    {id:'06',box:[171,220,411,458],bm:'Baju Zirah',en:'Armour Coat',r:'epic',bintang:75},
-   {id:'03',box:[317,271,401,364],bm:'Pelindung Bahu',en:'Shoulder Guard',r:'rare',bintang:15},
+   {id:'09',f:1,i:1,s:'lengan',bm:'Sarung Lengan Pahlawan',en:'Warrior Arm Guards',r:'common',bintang:3},
+   {id:'11',f:1,i:1,s:'lengan',bm:'Gelang Lengan Petir Emas',en:'Golden Lightning Bracers',r:'rare',bintang:40},
+   {id:'03',box:[317,271,401,364],s:'bahu',bm:'Pelindung Bahu',en:'Shoulder Guard',r:'rare',bintang:15},
+   {id:'14',f:1,i:1,s:'bahu',bm:'Pelindung Bahu Cempaka',en:'Cempaka Shoulder Armour',r:'epic',bintang:65},
+   {id:'15',f:1,i:1,s:'bahu',bm:'Mantel Bahu Harimau',en:'Tiger Shoulder Mantle',r:'legendary',bintang:90},
    {id:'05',box:[246,248,345,377],bm:'Rantai Azimat',en:'Hero Pendant',r:'epic',bintang:50},
-   {id:'01',box:[200,94,367,202],bm:'Tengkolok Biasa',en:'Simple Tengkolok',r:'common',bintang:0},
+   {id:'01',box:[200,94,367,202],s:'kepala',bm:'Tengkolok Biasa',en:'Simple Tengkolok',r:'common',bintang:0},
+   {id:'13',f:1,i:1,s:'kepala',bm:'Tengkolok Songket Merah',en:'Red Songket Tengkolok',r:'epic',bintang:60},
    {id:'07',box:[98,59,410,558],bm:'Set Kesatria Legenda',en:'Legendary Knight Set',r:'legendary',bintang:100,set:true}
   ],
   // b = ada lapisan belakang (di belakang badan), f = lapisan hadapan, i = ikon sendiri
@@ -20,16 +29,21 @@ const WMM=(()=>{
    {id:'02',f:1,i:1,bm:'Sarung Lengan Penjejak',en:'Tracker Arm Wraps',r:'common',bintang:5},
    {id:'04',b:1,f:1,i:1,bm:'Tabung Panah Berukir',en:'Carved Quiver',r:'uncommon',bintang:20},
    {id:'05',b:1,f:1,i:1,bm:'Pelindung Bahu Rimba',en:'Forest Shoulder Guard',r:'rare',bintang:30},
+   {id:'07',b:1,f:1,i:1,bm:'Jubah Penjelajah Bayu',en:'Breeze Explorer Cape',r:'epic',bintang:55},
    {id:'06',b:1,f:1,i:1,bm:'Samping Penenun Awan',en:'Cloud Weaver Samping',r:'rare',bintang:40},
    {id:'08',f:1,i:1,bm:'Penguat Lengan Bersulam',en:'Embroidered Bracers',r:'epic',bintang:70},
    {id:'09',b:1,f:1,i:1,bm:'Hiasan Bahu Cempaka Emas',en:'Golden Cempaka Ornament',r:'legendary',bintang:85},
    {id:'10',b:1,f:1,i:1,bm:'Busur Helang Senja',en:'Twilight Hawk Bow',r:'mythic',bintang:110}
   ],
   sihir:[
+   {id:'07',b:1,f:1,i:1,bm:'Jubah Kelip Malam',en:'Twinkling Night Robe',r:'epic',bintang:55},
    {id:'02',f:1,i:1,bm:'Selendang Pengembara Awan',en:'Cloud Traveller Scarf',r:'common',bintang:5},
    {id:'03',b:1,f:1,i:1,bm:'Mantel Peta Bintang',en:'Star Map Mantle',r:'uncommon',bintang:10},
    {id:'04',f:1,i:1,bm:'Pending Cakera Emas',en:'Golden Disc Buckle',r:'uncommon',bintang:20},
+   {id:'05',f:1,i:1,bm:'Lencana Kompas Bintang',en:'Star Compass Pendant',r:'rare',bintang:30},
    {id:'06',b:1,f:1,i:1,bm:'Buku Carta Cakerawala',en:'Sky Chart Book',r:'rare',bintang:40},
+   {id:'01',f:1,i:1,s:'kepala',bm:'Tengkolok Peneliti Langit',en:'Sky Watcher Tengkolok',r:'common',bintang:0},
+   {id:'08',f:1,i:1,s:'kepala',bm:'Tengkolok Bintang Berkilau',en:'Shining Star Tengkolok',r:'epic',bintang:70},
    {id:'09',b:1,f:1,i:1,bm:'Tongkat Cahaya Aurora',en:'Aurora Light Staff',r:'legendary',bintang:85},
    {id:'10',b:1,f:1,i:1,bm:'Lingkaran Galaksi Pelangi',en:'Rainbow Galaxy Ring',r:'mythic',bintang:110}
   ]
@@ -52,7 +66,7 @@ const WMM=(()=>{
   const it=ITEMS[id].find(i=>i.id===itemId);if(!it||!open(it))return;
   let w=on(id);
   if(w.includes(itemId))w=w.filter(x=>x!==itemId);
-  else w=it.set?[itemId]:[...w.filter(x=>!ITEMS[id].find(i=>i.id===x)?.set),itemId]; // set lengkap tidak bertindih dengan item lain
+  else w=it.set?[itemId]:[...w.filter(x=>{const o=ITEMS[id].find(i=>i.id===x);return o&&!o.set&&!(it.s&&o.s===it.s)}),itemId]; // set lengkap tidak bertindih; item sama slot (s) bertukar
   st[id]=w;store();
  }
  // Ikon = lapisan aksesori itu sendiri, dipotong ke kotaknya (tiada tulisan Lv dalam ikon)
