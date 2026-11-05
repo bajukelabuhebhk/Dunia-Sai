@@ -14,9 +14,27 @@ const WMM=(()=>{
    {id:'01',box:[200,94,367,202],bm:'Tengkolok Biasa',en:'Simple Tengkolok',r:'common',bintang:0},
    {id:'07',box:[98,59,410,558],bm:'Set Kesatria Legenda',en:'Legendary Knight Set',r:'legendary',bintang:100,set:true}
   ],
-  pemanah:[],sihir:[]
+  // b = ada lapisan belakang (di belakang badan), f = lapisan hadapan, i = ikon sendiri
+  pemanah:[
+   {id:'01',b:1,f:1,i:1,bm:'Ikat Kepala Pucuk Rebung',en:'Bamboo Shoot Headband',r:'common',bintang:0},
+   {id:'02',f:1,i:1,bm:'Sarung Lengan Penjejak',en:'Tracker Arm Wraps',r:'common',bintang:5},
+   {id:'04',b:1,f:1,i:1,bm:'Tabung Panah Berukir',en:'Carved Quiver',r:'uncommon',bintang:20},
+   {id:'05',b:1,f:1,i:1,bm:'Pelindung Bahu Rimba',en:'Forest Shoulder Guard',r:'rare',bintang:30},
+   {id:'06',b:1,f:1,i:1,bm:'Samping Penenun Awan',en:'Cloud Weaver Samping',r:'rare',bintang:40},
+   {id:'08',f:1,i:1,bm:'Penguat Lengan Bersulam',en:'Embroidered Bracers',r:'epic',bintang:70},
+   {id:'09',b:1,f:1,i:1,bm:'Hiasan Bahu Cempaka Emas',en:'Golden Cempaka Ornament',r:'legendary',bintang:85},
+   {id:'10',b:1,f:1,i:1,bm:'Busur Helang Senja',en:'Twilight Hawk Bow',r:'mythic',bintang:110}
+  ],
+  sihir:[
+   {id:'02',f:1,i:1,bm:'Selendang Pengembara Awan',en:'Cloud Traveller Scarf',r:'common',bintang:5},
+   {id:'03',b:1,f:1,i:1,bm:'Mantel Peta Bintang',en:'Star Map Mantle',r:'uncommon',bintang:10},
+   {id:'04',f:1,i:1,bm:'Pending Cakera Emas',en:'Golden Disc Buckle',r:'uncommon',bintang:20},
+   {id:'06',b:1,f:1,i:1,bm:'Buku Carta Cakerawala',en:'Sky Chart Book',r:'rare',bintang:40},
+   {id:'09',b:1,f:1,i:1,bm:'Tongkat Cahaya Aurora',en:'Aurora Light Staff',r:'legendary',bintang:85},
+   {id:'10',b:1,f:1,i:1,bm:'Lingkaran Galaksi Pelangi',en:'Rainbow Galaxy Ring',r:'mythic',bintang:110}
+  ]
  };
- const R={common:['Biasa','Common'],uncommon:['Luar Biasa','Uncommon'],rare:['Jarang','Rare'],epic:['Epik','Epic'],legendary:['Legenda','Legendary']};
+ const R={common:['Biasa','Common'],uncommon:['Luar Biasa','Uncommon'],rare:['Jarang','Rare'],epic:['Epik','Epic'],legendary:['Legenda','Legendary'],mythic:['Mitos','Mythic']};
  let st={};try{st=JSON.parse(localStorage.getItem(KEY)||'{}')||{}}catch(_){st={}}
  const on=id=>Array.isArray(st[id])?st[id]:(st[id]=[]);
  const store=()=>{try{localStorage.setItem(KEY,JSON.stringify(st))}catch(_){}};
@@ -24,8 +42,11 @@ const WMM=(()=>{
  const open=it=>stars()>=it.bintang;
  function portrait(id){
   const worn=on(id).filter(x=>{const it=(ITEMS[id]||[]).find(i=>i.id===x);return it&&open(it)});
-  const layers=(ITEMS[id]||[]).filter(it=>worn.includes(it.id)).map(it=>`<img src="${DIR}${id}-${it.id}.webp" alt="" draggable="false">`).join('');
-  return `<div class="wmm-portrait"><img src="${DIR}${id}.webp" alt="" draggable="false">${layers}</div>`;
+  const items=(ITEMS[id]||[]).filter(it=>worn.includes(it.id)),img=f=>`<img src="${DIR}${f}" alt="" draggable="false">`;
+  // susunan: lapisan belakang, badan asas, lapisan hadapan
+  const back=items.filter(it=>it.b).map(it=>img(`${id}-${it.id}-b.webp`)).join('');
+  const front=items.filter(it=>it.f||!it.b).map(it=>img(it.f?`${id}-${it.id}-f.webp`:`${id}-${it.id}.webp`)).join('');
+  return `<div class="wmm-portrait">${back}${img(id+'.webp')}${front}</div>`;
  }
  function toggle(id,itemId){
   const it=ITEMS[id].find(i=>i.id===itemId);if(!it||!open(it))return;
@@ -35,7 +56,7 @@ const WMM=(()=>{
   st[id]=w;store();
  }
  // Ikon = lapisan aksesori itu sendiri, dipotong ke kotaknya (tiada tulisan Lv dalam ikon)
- function icon(id,it,B=52){const[x0,y0,x1,y1]=it.box,w=x1-x0,h=y1-y0,k=B*.92/Math.max(w,h);return `background-image:url('${DIR}${id}-${it.id}.webp');background-size:${512*k}px ${768*k}px;background-position:${(B-w*k)/2-x0*k}px ${(B-h*k)/2-y0*k}px`}
+function icon(id,it,B=52){if(it.i)return `background-image:url('${DIR}${id}-${it.id}-i.webp');background-size:contain;background-position:center`;const[x0,y0,x1,y1]=it.box,w=x1-x0,h=y1-y0,k=B*.92/Math.max(w,h);return `background-image:url('${DIR}${id}-${it.id}.webp');background-size:${512*k}px ${768*k}px;background-position:${(B-w*k)/2-x0*k}px ${(B-h*k)/2-y0*k}px`}
  function wardrobe(id){
   const list=ITEMS[id]||[];const s=stars();
   if(!list.length)return `<div class="wmm-wardrobe"><h3>🧥 ${wm6T('Aksesori Melayu','Malay Accessories')}</h3><p class="wmm-soon">${wm6T('Aksesori untuk wira ini akan datang.','Accessories for this hero are coming soon.')}</p></div>`;

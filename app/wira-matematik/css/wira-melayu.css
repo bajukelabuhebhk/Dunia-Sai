@@ -17,7 +17,8 @@
 .wmm-item.r-common{border-color:#9aa3b5}.wmm-item.r-uncommon{border-color:#4cc36b}.wmm-item.r-rare{border-color:#3fa2ff}.wmm-item.r-epic{border-color:#a26bff}.wmm-item.r-legendary{border-color:#ffc23f}
 .wmm-item.worn{background:#ffd84a33;box-shadow:0 0 0 2px #ffd84a inset}
 .wmm-item.locked{opacity:.55}.wmm-item.locked .wmm-icon{filter:grayscale(1) brightness(.6)}
-.wmm-note,.wmm-soon{font-size:.75rem;opacity:.8;margin:8px 2px 0}
+.wmm-note,.wmm-soon{font-size:.75rem;opacity:.85;margin:8px 2px 0}
+.wmm-wardrobe .wmm-note{background:rgba(0,0,0,.25)!important;color:#e8f0ff!important;border:0!important;border-radius:10px;padding:8px 10px}
 .wmm-chip{position:relative;z-index:2;margin-top:6px;border:1px solid #ffd84a99;background:#2a1d05cc;color:#ffd84a;font:inherit;font-size:.72rem;font-weight:800;padding:5px 12px;border-radius:999px;cursor:pointer}
 .wmm-teaser{position:fixed;inset:0;z-index:999;background:#000b;display:flex;align-items:center;justify-content:center;padding:16px}
 .wmm-teaser-box{background:#13213b;border:2px solid #ffd84a;border-radius:20px;max-width:340px;width:100%;padding:16px;text-align:center;color:#fff}
@@ -25,3 +26,4 @@
 .wmm-teaser-art{position:relative;width:150px;height:225px;margin:auto}
 .wmm-lock{position:absolute;right:0;top:0;font-size:1.6rem;background:#000a;border-radius:50%;padding:4px}
 .wmm-teaser .wm6-secondarybtn{margin-top:8px;width:100%}
+.wmm-item.r-mythic{border-color:#ff5d8f}
