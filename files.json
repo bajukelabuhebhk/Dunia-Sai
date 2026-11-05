@@ -1,5 +1,5 @@
 {
- "version": "dea46dad35",
+ "version": "807b61ea73",
  "core": {
   "files": {
    "/app/": "f4c6669a5135",
@@ -14,10 +14,10 @@
    "/img/robot-rumble.jpg": "4edd8272150f",
    "/img/wira-matematik.jpg": "b49e57729261",
    "/img/wonder-island.jpg": "1ae683e5f7e8",
-   "/": "8fa1800c6d01",
+   "/": "e5c939c3d2e6",
    "/manifest.json": "9a5f33949e56",
    "/promo/template": "77349aa14694",
-   "/shared/css/dunia.css": "988818953830",
+   "/shared/css/dunia.css": "7af9451f39ae",
    "/shared/icons/apple-touch-icon.png": "01fbaa6baf79",
    "/shared/icons/favicon.png": "ebf9f71bbb86",
    "/shared/icons/icon-192.png": "b097bae06ec7",
@@ -32,7 +32,7 @@
    "/shared/js/maklum-balas.js": "87d261af59ac",
    "/shared/js/ruang-ibubapa.js": "d83a0a76181d"
   },
-  "bytes": 1256730
+  "bytes": 1257183
  },
  "games": {
   "boss-gerai": {
@@ -43,9 +43,9 @@
   },
   "ember-code": {
    "files": {
-    "/app/ember-code/": "d4861984321b"
+    "/app/ember-code/": "26d000eb1557"
    },
-   "bytes": 4953774
+   "bytes": 5224304
   },
   "hikayat-sungai": {
    "files": {
@@ -54,11 +54,60 @@
     "/app/hikayat-sungai/audio/hs-10.mp3": "b4386184c007",
     "/app/hikayat-sungai/audio/hs-100.mp3": "c9d3bc6eb94a",
     "/app/hikayat-sungai/audio/hs-101.mp3": "d1a8fa0de21d",
+    "/app/hikayat-sungai/audio/hs-102.mp3": "fae6b2f6f9db",
+    "/app/hikayat-sungai/audio/hs-103.mp3": "18444a6ee516",
+    "/app/hikayat-sungai/audio/hs-104.mp3": "b98ed128872a",
+    "/app/hikayat-sungai/audio/hs-105.mp3": "d3450fb85240",
+    "/app/hikayat-sungai/audio/hs-106.mp3": "f00f260c826a",
+    "/app/hikayat-sungai/audio/hs-107.mp3": "58f104f9513a",
+    "/app/hikayat-sungai/audio/hs-108.mp3": "536a972ebfca",
+    "/app/hikayat-sungai/audio/hs-109.mp3": "e539a1e42283",
     "/app/hikayat-sungai/audio/hs-11.mp3": "2c5f3fbc1ae1",
+    "/app/hikayat-sungai/audio/hs-110.mp3": "281634191add",
+    "/app/hikayat-sungai/audio/hs-111.mp3": "c1749eecfbb9",
+    "/app/hikayat-sungai/audio/hs-112.mp3": "70be3933e42f",
+    "/app/hikayat-sungai/audio/hs-113.mp3": "9123c55a87a9",
+    "/app/hikayat-sungai/audio/hs-114.mp3": "9394bbce9a26",
+    "/app/hikayat-sungai/audio/hs-115.mp3": "e9af1773b219",
+    "/app/hikayat-sungai/audio/hs-116.mp3": "1b43096e8a96",
+    "/app/hikayat-sungai/audio/hs-117.mp3": "569aff19e344",
+    "/app/hikayat-sungai/audio/hs-118.mp3": "e9c0c740258f",
+    "/app/hikayat-sungai/audio/hs-119.mp3": "933285be6583",
     "/app/hikayat-sungai/audio/hs-12.mp3": "7610289cbcf7",
+    "/app/hikayat-sungai/audio/hs-120.mp3": "6a7900fd4a3b",
+    "/app/hikayat-sungai/audio/hs-121.mp3": "c1aaade455b3",
+    "/app/hikayat-sungai/audio/hs-122.mp3": "7ac8bb8dd240",
+    "/app/hikayat-sungai/audio/hs-123.mp3": "d8a2e535d50b",
+    "/app/hikayat-sungai/audio/hs-124.mp3": "bc8b617ed22a",
+    "/app/hikayat-sungai/audio/hs-125.mp3": "f7bda0cdd020",
+    "/app/hikayat-sungai/audio/hs-126.mp3": "073262a33360",
+    "/app/hikayat-sungai/audio/hs-127.mp3": "bfaab667993b",
+    "/app/hikayat-sungai/audio/hs-128.mp3": "d2e885f1f72a",
+    "/app/hikayat-sungai/audio/hs-129.mp3": "15de18d6d3eb",
     "/app/hikayat-sungai/audio/hs-13.mp3": "b22d43b48a4c",
+    "/app/hikayat-sungai/audio/hs-130.mp3": "dcc054d707b2",
+    "/app/hikayat-sungai/audio/hs-131.mp3": "0420a5fd6d0f",
+    "/app/hikayat-sungai/audio/hs-132.mp3": "60f9e2f8a250",
+    "/app/hikayat-sungai/audio/hs-133.mp3": "b1c6ee25bdc0",
+    "/app/hikayat-sungai/audio/hs-134.mp3": "b8066cb3c9b1",
+    "/app/hikayat-sungai/audio/hs-135.mp3": "5c9d2cf9be51",
+    "/app/hikayat-sungai/audio/hs-136.mp3": "21188e2deded",
+    "/app/hikayat-sungai/audio/hs-137.mp3": "4e11ed99fa11",
+    "/app/hikayat-sungai/audio/hs-138.mp3": "29f2554cd8f2",
+    "/app/hikayat-sungai/audio/hs-139.mp3": "5119763cbda0",
     "/app/hikayat-sungai/audio/hs-14.mp3": "ba744a499e8a",
+    "/app/hikayat-sungai/audio/hs-140.mp3": "cac1342d0c20",
+    "/app/hikayat-sungai/audio/hs-141.mp3": "ed8e043b5901",
+    "/app/hikayat-sungai/audio/hs-142.mp3": "bbb2a2a156c3",
+    "/app/hikayat-sungai/audio/hs-143.mp3": "05af1fabda31",
+    "/app/hikayat-sungai/audio/hs-144.mp3": "ad279112dc76",
+    "/app/hikayat-sungai/audio/hs-145.mp3": "7810f923f082",
+    "/app/hikayat-sungai/audio/hs-146.mp3": "04f6ff4fae5c",
+    "/app/hikayat-sungai/audio/hs-147.mp3": "3e8041e25afa",
+    "/app/hikayat-sungai/audio/hs-148.mp3": "3dcf19df5123",
+    "/app/hikayat-sungai/audio/hs-149.mp3": "04e6e2d7f70f",
     "/app/hikayat-sungai/audio/hs-15.mp3": "e8507696e980",
+    "/app/hikayat-sungai/audio/hs-150.mp3": "fe28c6ce8336",
     "/app/hikayat-sungai/audio/hs-16.mp3": "346144a63791",
     "/app/hikayat-sungai/audio/hs-17.mp3": "ba9c1a4f609e",
     "/app/hikayat-sungai/audio/hs-18.mp3": "2b99b7581537",
@@ -151,9 +200,9 @@
     "/app/hikayat-sungai/audio/hs-97.mp3": "2a60ccfe4331",
     "/app/hikayat-sungai/audio/hs-98.mp3": "fe9ed2e138ae",
     "/app/hikayat-sungai/audio/hs-99.mp3": "685316cf7628",
-    "/app/hikayat-sungai/": "4dc49eb10fc6"
+    "/app/hikayat-sungai/": "20d28b47a49a"
    },
-   "bytes": 3852347
+   "bytes": 5821357
   },
   "kembara-malaysia": {
    "files": {
@@ -444,12 +493,12 @@
   },
   "lembah-embun": {
    "files": {
-    "/app/lembah-embun/": "e74a70ca76fd",
+    "/app/lembah-embun/": "38b1a5ba2b7c",
     "/app/lembah-embun/muzik-gigit.mp3": "616c467e3d1f",
     "/app/lembah-embun/muzik-memancing.mp3": "c33031267751",
     "/app/lembah-embun/muzik-utama.mp3": "8ef23f8b92f3"
    },
-   "bytes": 2348752
+   "bytes": 2366853
   },
   "nakhoda-jawi": {
    "files": {
@@ -939,14 +988,19 @@
     "/app/wira-matematik/js/visual-v3.js": "575f4405e5cc",
     "/app/wira-matematik/js/visual-v4.js": "b9465e0c10c7",
     "/app/wira-matematik/js/wm-monitor-r3.js": "ae0d7972adf0",
-    "/app/wira-matematik/misi/app.js": "42a5710f7efe",
+    "/app/wira-matematik/misi/app.js": "5d79bf97c28f",
+    "/app/wira-matematik/misi/bunyi/hit.mp3": "4831678a66ef",
+    "/app/wira-matematik/misi/bunyi/hit2.mp3": "1c8fa09ff1c2",
+    "/app/wira-matematik/misi/bunyi/ko.mp3": "e8b81a06f19b",
+    "/app/wira-matematik/misi/bunyi/menang.mp3": "79db4228c550",
+    "/app/wira-matematik/misi/bunyi/ouch.mp3": "7e320b069e84",
     "/app/wira-matematik/misi/fonts.css": "3e046e57fbed",
     "/app/wira-matematik/misi/": "640d0488a57f",
     "/app/wira-matematik/misi/questions.js": "96fc3e0576a6",
     "/app/wira-matematik/misi/raksasa.js": "993870fab6a7",
     "/app/wira-matematik/misi/style.css": "e7ff4d3c0179"
    },
-   "bytes": 3254636
+   "bytes": 3322013
   },
   "wonder-island": {
    "files": {
