@@ -166,6 +166,13 @@ body.jawi #title h1 span{letter-spacing:0}
 @media (max-width:520px){.avwrap{grid-template-columns:1fr}#avPrev{justify-self:center;width:160px;height:190px;z-index:2;box-shadow:0 8px 16px #120d22}}
 .avrow{margin-bottom:10px}.avrow b{display:block;font-size:12px;color:var(--muted);margin-bottom:5px;font-weight:700}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip.lock{opacity:.55}
+.paper{background:#f6e9c6;color:#3b2a18;border-radius:6px 14px 10px 12px;padding:16px 16px 12px;box-shadow:0 3px 0 #b48d5b;line-height:1.75;font-size:14.5px;transform:rotate(-.3deg)}
+.paper p{margin:0 0 .6em}.paper .sig{text-align:end;font-weight:800;margin-top:6px}
+body.jawi .paper{font-family:var(--jawi);font-size:17px}
+.item.letter{cursor:pointer}.item.letter .env{font-size:28px;width:40px;text-align:center}.item .env{font-size:28px;width:40px;text-align:center}
+.cal{display:grid;gap:6px}.calrow{display:flex;justify-content:space-between;gap:10px;background:var(--ink2);border-radius:12px;padding:7px 12px;font-size:13.5px}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#ff5d73;margin-inline-start:6px;vertical-align:middle}
 .chip{border:2px solid var(--line);background:var(--ink2);border-radius:999px;padding:5px 11px;font-size:12.5px;font-weight:700;display:inline-flex;align-items:center;gap:6px}
 .chip.on{border-color:var(--gold);color:var(--gold);background:#4c3d72}
 .chip i{width:14px;height:14px;border-radius:50%;display:inline-block;border:1px solid #0005;flex:0 0 auto}
@@ -240,6 +247,7 @@ const IT={
  cendawan:{n:'Cendawan Cahaya',j:'چنداون چهاي',p:30,e:18,c:'forage',d:'Bercahaya biru di bawah pokok hutan.',dj:'برچهاي بيرو د باوه ڤوكوق هوتن.'},
  beri:{n:'Buah Kemunting',j:'بواه كمونتيڠ',p:20,e:12,c:'forage',d:'Dipetik dari semak di padang timur. Manis-masam.',dj:'دڤتيق دري سمق د ڤادڠ تيمور. مانيس-مسم.'},
  bulu:{n:'Bulu Pari',j:'بولو ڤاري',p:150,c:'forage',d:'Gugur dari pari-pari pada waktu malam.',dj:'ݢوݢور دري ڤاري٢ ڤد وقتو مالم.'},
+ kunang:{n:'Kunang-Kunang',j:'كونڠ٢',p:40,c:'forage',d:'Cahaya kecil dari malam kampung. Bercahaya lembut dalam balang.',dj:'چهاي كچيل دري مالم كامڤوڠ. برچهاي لمبوت دالم بالڠ.'},
  kayu:{n:'Kayu',j:'كايو',p:4,c:'mat',d:'Dari ranting dan kayu balak.',dj:'دري رنتيڠ دان كايو بالق.'},
  batu:{n:'Batu',j:'باتو',p:3,c:'mat',d:'Dipecahkan dengan cangkul.',dj:'دڤيچهكن دڠن چڠكول.'},
  serat:{n:'Serat',j:'سرت',p:2,c:'mat',d:'Dari rumput yang disabit.',dj:'دري رومڤوت يڠ دسابيت.'},
@@ -268,7 +276,7 @@ const NPC={
  belang:{n:'Pak Belang',j:'ڤق بلڠ',role:'Kucing ahli sihir bersara',rj:'كوچيڠ اهلي سيحير برسارا',love:['bulan','koi'],like:['pelangi','kabus'],gift:'Joran Bulan (zon tangkapan lebih besar)',gj:'جورن بولن (زون تڠكڤن لبيه بسر)',
   lines:[['Hmph. Petani baru. Jangan pijak ekor aku.','Ikan di kolam tu lebih aktif waktu malam, kalau kamu nak tahu.','Papan kenyataan tu, orang kampung letak pesanan di situ.'],['Kamu ni... boleh tahan juga. Purr.','Ikan Haruan Bulan. Itu baru hidangan seorang ahli sihir.'],['Aku dah ajar semua rahsia memancing. Hampir semua.','Kalau penat, lepak la di pangkin tepi kolam tu.']],
   lj:[['همف. ڤتاني بارو. جاڠن ڤيجق ايكور اكو.','ايكن د كولم تو لبيه اكتيف وقتو مالم، كالاو كامو نق تاهو.','ڤاڤن كڽاتاءن تو، اورڠ كامڤوڠ لتق ڤسنن د سيتو.'],['كامو ني... بوليه تاهن جوݢ. ڤورر.','ايكن هاروان بولن. ايت بارو هيدڠن سأورڠ اهلي سيحير.'],['اكو ده اجر سموا رهسيا ممانچيڠ. همڤير سموا.','كالاو ڤنت، لڤق لا د ڤڠكين تڤي كولم تو.']]},
- embun:{n:'Puteri Embun',j:'ڤوتري امبون',role:'Pari-pari kolam',rj:'ڤاري٢ كولم',love:['kristal','bulu'],like:['beri','cendawan'],gift:'Titisan Embun (penyiram basahkan 3 petak sekali gus)',gj:'تيتيسن امبون (ڤڽيرم باسهكن 3 ڤتق سكالي ݢوس)',
+ embun:{n:'Puteri Embun',j:'ڤوتري امبون',role:'Pari-pari kolam',rj:'ڤاري٢ كولم',love:['kristal','bulu','kunang'],like:['beri','cendawan'],gift:'Titisan Embun (penyiram basahkan 3 petak sekali gus)',gj:'تيتيسن امبون (ڤڽيرم باسهكن 3 ڤتق سكالي ݢوس)',
   lines:[['Oh! Manusia! Hai hai hai! Kamu nampak aku?','Setiap malam bulu kawan-kawanku gugur di padang. Kutiplah!','Bila hujan, aku yang siramkan ladang kamu. Sama-sama!'],['Kamu bau macam tanah lepas hujan. Aku suka!','Bunga Raya Kristal tu berdenting macam loceng kecil, kan?'],['Kawan baik! Kita kawan baik, kan? Kan?','Pokok Purba dah mula bernafas semula. Aku dapat rasa.']],
   lj:[['اوه! مانوسيا! هاي هاي هاي! كامو نمڤق اكو؟','ستياڤ مالم بولو كاون٢كو ݢوݢور د ڤادڠ. كوتيڤله!','بيلا هوجن، اكو يڠ سيرمكن لادڠ كامو. سام٢!'],['كامو باو مچم تانه لڤس هوجن. اكو سوك!','بوڠا راي كريستل تو بردنتيڠ مچم لوچڠ كچيل، كن؟'],['كاون باءيق! كيت كاون باءيق، كن؟ كن؟','ڤوكوق ڤوربا ده مولا برنفس سمولا. اكو داڤت راس.']]},
  rimba:{n:'Tok Rimba',j:'توق ريمبا',role:'Roh penjaga Pokok Purba',rj:'روح ڤنجاݢ ڤوكوق ڤوربا',love:['cendawan','labu'],like:['kayu','lobak'],gift:'Dua Pemercik Ajaib',gj:'دوا ڤمرچيق عجايب',
@@ -297,7 +305,7 @@ const BUTTERFLY={
 const nm=k=>{const o=IT[k]||BUTTERFLY[k]||TOOLS[k];return o?(LANG==='jawi'&&o.j?o.j:tr(o.n)):k};
 const ds=k=>{const o=IT[k]||BUTTERFLY[k];return o?(LANG==='jawi'&&o.dj?o.dj:tr(o.d)):''};
 const npcN=id=>J(NPC[id]["n"],NPC[id].j);
-const ALBUM=[['Tanaman','تانمن',['gandum','lobak','tomato','kristal','labu']],['Ikan','ايكن',['kabus','pelangi','bulan','koi']],['Hasil hutan','حاصيل هوتن',['cendawan','beri','bulu']],['Ternakan','ترناكن',['telur']],['Kupu-kupu','كوڤو٢',Object.keys(BUTTERFLY)]];
+const ALBUM=[['Tanaman','تانمن',['gandum','lobak','tomato','kristal','labu']],['Ikan','ايكن',['kabus','pelangi','bulan','koi']],['Hasil hutan','حاصيل هوتن',['cendawan','beri','bulu','kunang']],['Ternakan','ترناكن',['telur']],['Kupu-kupu','كوڤو٢',Object.keys(BUTTERFLY)]];
 const ALB_ALL=ALBUM.flatMap(a=>a[2]);
 const ALB_HINT={gandum:['Tanam Benih Padi Emas.','تانم بنيه ڤادي امس.'],lobak:['Tanam Benih Lobak Bulan.','تانم بنيه لوبق بولن.'],tomato:['Tanam Benih Cili Api Pari.','تانم بنيه چيلي اڤي ڤاري.'],kristal:['Benihnya dijual selepas Persembahan Ladang.','بنيهڽ دجوال سلڤس ڤرسمبهن لادڠ.'],labu:['Benihnya dijual selepas Persembahan Tasik.','بنيهڽ دجوال سلڤس ڤرسمبهن تاسيق.'],kabus:['Pancing di kolam pada waktu siang.','ڤنچيڠ د كولم ڤد وقتو سياڠ.'],pelangi:['Pancing di kolam, bila-bila masa.','ڤنچيڠ د كولم، بيلا٢ ماس.'],bulan:['Pancing di kolam selepas pukul 6 petang.','ڤنچيڠ د كولم سلڤس ڤوكول 6 ڤتڠ.'],koi:['Sangat jarang. Teruskan memancing.','ساڠت جارڠ. تروسكن ممانچيڠ.'],cendawan:['Hutan kecil di barat daya.','هوتن كچيل د بارت داي.'],beri:['Padang di sebelah timur.','ڤادڠ د سبله تيمور.'],bulu:['Muncul di merata kampung pada waktu malam.','مونچول د مرات كامڤوڠ ڤد وقتو مالم.'],kupu_biru:['Siang hari. Berdiri diam dan ketik bila dekat.','سياڠ هاري. بردييري ديام دان كتيق بيلا دكت.'],kupu_pink:['Siang hari. Berdiri diam dan ketik bila dekat.','سياڠ هاري. بردييري ديام دان كتيق بيلا دكت.'],kupu_emas:['Siang hari, sangat jarang.','سياڠ هاري، ساڠت جارڠ.'],kupu_bulan:['Malam hari.','مالم هاري.'],telur:['Beri ayam makan di reban, kemudian kutip telur esok pagi.','بري ايم ماكن د ربن، كمودين كوتيڤ تلور ايسوق ڤاݢي.']};
 const BUFF={hangat:['Hangat: tenaga -25%','هاڠت: تناݢ -25%','🍲'],pedas:['Pedas: laju +20%','ڤدس: لاجو +20%','🌶️'],kenyang:['Kenyang: zon ikan +20%','كڽڠ: زون ايكن +20%','🍳']};
@@ -386,7 +394,7 @@ function newState(){
  const s={v:1,day:1,time:360,gold:200,en:100,enMax:100,can:20,canMax:20,sel:'sabit',
   inv:{s_gandum:12,s_lobak:4},soil:{},dyn:{},shipped:{},weather:'cerah',tmr:'cerah',
   farmLv:0,unlock:{kristal:false,labu:false},flags:{},bundles:{},fr:{},orders:[],tut:0,tutN:0,
-  px:7*T+16,py:8*T+18,dir:0,stats:{harvest:0,fish:0},nightSpawned:false,orderSeq:0,seen:{},albClaim:0,zen:false,petGift:null,tools:{hoe:1,sickle:1},av:{...AV_DEFAULT},hens:{fed:false,eggs:0},buff:null,lastSeed:'s_gandum',pasarToast:0};
+  px:7*T+16,py:8*T+18,dir:0,stats:{harvest:0,fish:0},nightSpawned:false,orderSeq:0,seen:{},albClaim:0,zen:false,petGift:null,tools:{hoe:1,sickle:1},av:{...AV_DEFAULT},hens:{fed:false,eggs:0},buff:null,lastSeed:'s_gandum',pasarToast:0,mail:{got:{}},att:{},fd:{}};
  for(const id in NPC)s.fr[id]={p:0,talk:0,giftDay:0,got:false};
  for(const b of BUNDLES)s.bundles[b.id]={};
  const R=rng(99);
@@ -416,7 +424,7 @@ const npcTile={};for(const id in NPC_POS){const[x,y]=NPC_POS[id];npcTile[I(x,y)]
 const dynSolid=t=>t==='stone'||t==='log'||t==='pemercik';
 const PASAR={x0:31,y0:25,x1:33,y1:26};const inPasar=(x,y)=>x>=PASAR.x0&&x<=PASAR.x1&&y>=PASAR.y0&&y<=PASAR.y1;
 const pasarDay=d=>d%7===0;const pasarOpen=()=>!!S&&pasarDay(S.day)&&S.time>=1020&&S.time<1380;
-function solidAt(x,y){if(x<0||y<0||x>=MW||y>=MH)return true;const i=I(x,y);if(solidS[i])return true;if(inPasar(x,y)&&pasarOpen())return true;if(npcTile[i]&&i!==I(...NPC_POS.tiwi))return true;const d=S.dyn[i];if(d&&dynSolid(d.t))return true;return false}
+function solidAt(x,y){if(x<0||y<0||x>=MW||y>=MH)return true;const i=I(x,y);if(solidS[i])return true;if(inPasar(x,y)&&(pasarOpen()||festBuilt()))return true;if(npcTile[i]&&i!==I(...NPC_POS.tiwi))return true;const d=S.dyn[i];if(d&&dynSolid(d.t))return true;return false}
 
 // ================= ICONS (canvas -> dataURL) =================
 function blob(c,x,y,r,col){c.beginPath();c.arc(x,y,r,0,TAU);c.fillStyle=col;c.fill()}
@@ -439,6 +447,7 @@ function drawItem(c,k,x,y,s=1,t=0){
  case 'cendawan':sh();rr(c,-3,-1,6,12,3,'#f1ecdc');ell(c,0,-3,12,8,'#59d3e6');ell(c,0,-5,10,5,'#8cecf5');blob(c,-5,-4,1.6,'#fff');blob(c,3,-6,1.4,'#fff');blob(c,6,-2,1.2,'#fff');break;
  case 'beri':sh();ell(c,0,-8,6,3,'#5aa06a',.3);blob(c,-5,2,5,'#7a8cf0');blob(c,4,2,5,'#9a7ff0');blob(c,0,-3,5,'#8aa6ff');blob(c,-2,-5,1.5,'#fff');blob(c,-6,0,1.2,'#fff');break;
  case 'bulu':c.rotate(-.5);ell(c,0,0,5,13,'#ffd7f4');ell(c,1,0,3,11,'#c9f0ff');ln(c,0,13,0,-12,'#fff',1.4);star(c,5,-8,3,'#fff6a8');break;
+ case 'kunang':sh();rr(c,-8,-6,16,17,5,'rgba(230,245,255,.75)','#9ab',1);rr(c,-9,-10,18,5,2,'#a8713f');c.save();c.globalAlpha=.55;blob(c,0,3,9,'#f4ff9a');c.restore();blob(c,0,3,4,'#fff9b0');blob(c,0,3,2,'#ffffff');blob(c,-4,-1,1.1,'#f4ff9a');blob(c,4,6,1.1,'#f4ff9a');break;
  case 'kayu':sh();rr(c,-12,-4,24,11,5,'#a8713f');ell(c,10,1.5,4,5.5,'#e6c08a');ell(c,10,1.5,2,3,'#c79457');ln(c,-8,-1,4,-1,'#8a5a30',1.2);break;
  case 'batu':sh();ell(c,0,3,12,9,'#9aa0ad');ell(c,-2,0,8,6,'#b9bfca');blob(c,-4,-2,2,'#d5dae3');break;
  case 'serat':sh();for(let i=-2;i<=2;i++)ln(c,i*2,10,i*5,-10,'#7cc67f',2.2);rr(c,-6,1,12,4,2,'#d9b26a');break;
@@ -647,6 +656,7 @@ function drawDyn(c,i,d,t){
  case 'branch':ln(c,x+6,y+24,x+26,y+18,'#8a5a30',3);ln(c,x+16,y+21,x+20,y+14,'#8a5a30',2);ell(c,x+21,y+13,3,2,'#7cc67f');break;
  case 'cendawan':drawItem(c,'cendawan',cx,y+18,.8);break;
  case 'beri':drawItem(c,'beri',cx,y+18,.75);break;
+ case 'kunang':{const a=t*1.3+i*1.7,ox=Math.sin(a)*9+Math.sin(a*2.3)*3,oy=Math.cos(a*.9)*7,g=.4+.6*Math.max(0,Math.sin(t*2.2+i)),X=cx+ox,Y=y+8+oy;ell(c,cx,y+27,4,1.5,'rgba(0,0,0,.12)');c.save();c.globalAlpha=.22+.34*g;blob(c,X,Y,19,'#f4ff9a66');c.globalAlpha=.35+.4*g;blob(c,X,Y,9,'#f4ff9a88');c.globalAlpha=.6+.4*g;blob(c,X,Y,4.2,'#f9ffb8');blob(c,X,Y,2.1,'#ffffff');c.restore();break}
  case 'bulu':{const b=Math.sin(t*2.5+i)*3;ell(c,cx,y+27,6,2,'rgba(0,0,0,.15)');c.save();c.globalAlpha=.5+.3*Math.sin(t*4+i);blob(c,cx,y+14+b,12,'#ffe9fb55');c.restore();drawItem(c,'bulu',cx,y+14+b,.75);break}
  case 'pemercik':drawItem(c,'pemercik',cx,y+18,.9);break;
  }
@@ -686,7 +696,7 @@ function drawCrop(c,i,cr,t){
 // ================= CHARACTERS =================
 // ================= AVATAR (HD player) =================
 const SKIN=[['#f8dcc0','#e8bd98'],['#e2ae84','#c98f63'],['#b07a50','#8f5f3c']];
-const SKIN_N=[['Cerah','چره'],['Sawo Matang','ساوو متڠ'],['Gelap','ݢلڤ']];
+const SKIN_N=[['Cerah','چره','Fair'],['Sawo Matang','ساوو متڠ','Tan'],['Gelap','ݢلڤ','Deep']];
 const HAIRC='#3a2418',HAIRH='#6a4a34';
 const OUTFITS={l:[
  {n:'Baju Melayu Harian',j:'باجو ملايو هارين',baju:'#3f9e8f',bajuS:'#2f7f72',low:'#4a3d56',samp:['#7a3f8f','#c99ad8'],col:'teluk'},
@@ -695,6 +705,11 @@ const OUTFITS={l:[
  {n:'Baju Petani',j:'باجو ڤتاني',baju:'#6b8fc8',bajuS:'#52729f',low:'#b9a36e',samp:null,belt:'#7a5232',col:'teluk',roll:1},
  {n:'Songket Perayaan',j:'سوڠكيت ڤرايأن',baju:'#6a3f9a',bajuS:'#4f2c78',low:'#6a3f9a',samp:['#d9a83a','#7a4a1a'],col:'cekak',btn:'#e6c25a',motif:'#e6c25a'},
  {n:'Baju Layang & Pelikat',j:'باجو لايڠ & ڤليكت',baju:'#efe6cf',bajuS:'#d6c9a8',kain:'#8a5a30',kainP:'#e0b070',pat:'check',col:'teluk'},
+ {n:'Baju Melayu Hijau Pucuk',j:'باجو ملايو هيجاو ڤوچوق',baju:'#6fb87a',bajuS:'#4f9660',low:'#4f8f5e',samp:['#c9a23a','#fff1b0'],col:'teluk'},
+ {n:'Kemeja Batik Kampung',j:'كمجا باتيق كامڤوڠ',baju:'#d8944a',bajuS:'#b8742a',kain:'#3f3a6a',kainP:'#b9b0f0',pat:'batik',bpat:1,col:'teluk',roll:1},
+ {n:'Baju Pesta Layang',j:'باجو ڤستا لاياڠ',baju:'#ff8a5c',bajuS:'#d9683c',low:'#3f7fd0',samp:['#e8344a','#ffd84a'],col:'cekak',btn:'#fff6c8',motif:'#ffe9a8',fest:'layang'},
+ {n:'Baju Malam Kunang',j:'باجو مالم كونڠ',baju:'#2a2f5a',bajuS:'#1c2248',low:'#2a2f5a',samp:['#1c2248','#9fe6ff'],col:'cekak',btn:'#9fe6ff',motif:'#fff6a8',fest:'kunang'},
+ {n:'Baju Kenduri Putih',j:'باجو كندوري ڤوتيه',baju:'#f6f1e4',bajuS:'#d9d0b8',low:'#f6f1e4',samp:['#8a2f4a','#e6c25a'],col:'cekak',btn:'#e6c25a',fest:'kenduri'},
 ],p:[
  {n:'Baju Kurung Kedah',j:'باجو كوروڠ قدح',baju:'#e88ab0',bajuS:'#c96a92',kain:'#d86a98',kainP:'#ffd0e2',pat:'flower',bpat:1},
  {n:'Kebaya Labuh',j:'كباي لابوه',baju:'#8fc8e8',bajuS:'#6aa6c8',kain:'#3f6fa8',kainP:'#cfe6ff',pat:'batik',lace:1},
@@ -702,6 +717,11 @@ const OUTFITS={l:[
  {n:'Kebaya Nyonya',j:'كباي ڽوڽا',baju:'#c9a8e6',bajuS:'#a888c8',kain:'#6a3f9a',kainP:'#e6c8f5',pat:'flower',lace:1},
  {n:'Kerja Ladang',j:'كرجا لادڠ',baju:'#6fb38f',bajuS:'#4f9372',kain:'#4a5a3a',kainP:'#c9d98a',pat:'batik'},
  {n:'Songket Perayaan',j:'سوڠكيت ڤرايأن',baju:'#5a2f8a',bajuS:'#42206a',kain:'#5a2f8a',kainP:'#e6c25a',pat:'songket',motif:'#e6c25a'},
+ {n:'Baju Kurung Biru Laut',j:'باجو كوروڠ بيرو لاوت',baju:'#4f9fd0',bajuS:'#3a7fb0',kain:'#2f6fa0',kainP:'#bfe6ff',pat:'flower',bpat:1},
+ {n:'Kebaya Songket Delima',j:'كباي سوڠكيت ديليما',baju:'#d6355a',bajuS:'#b0204a',kain:'#8a2040',kainP:'#ffd36e',pat:'songket',motif:'#ffd36e',lace:1},
+ {n:'Baju Pesta Layang',j:'باجو ڤستا لاياڠ',baju:'#ffb347',bajuS:'#e0902a',kain:'#e8344a',kainP:'#fff1b0',pat:'flower',bpat:1,fest:'layang'},
+ {n:'Baju Malam Kunang',j:'باجو مالم كونڠ',baju:'#3a3f7a',bajuS:'#2a2f5a',kain:'#2a2f5a',kainP:'#9fe6ff',pat:'songket',motif:'#fff6a8',lace:1,fest:'kunang'},
+ {n:'Baju Kenduri Emas',j:'باجو كندوري امس',baju:'#f4ead2',bajuS:'#d9c9a0',kain:'#c9a23a',kainP:'#fff1b0',pat:'songket',motif:'#c9a23a',fest:'kenduri'},
 ]};
 const HAIRS={l:[['Kemas','كمس'],['Berjuntai','برجونتاي'],['Ikal','ايكل']],p:[['Sanggul','سڠݢول'],['Lurus Panjang','لوروس ڤنجڠ'],['Tocang','توچڠ']]};
 const HEADS={l:[['Tiada','تيادا'],['Terendak','ترندق'],['Tengkolok','تڠكولوق'],['Songkok','سوڠكوق']],p:[['Tiada','تيادا'],['Terendak','ترندق'],['Selendang','سلندڠ'],['Tudung','تودوڠ']]};
@@ -862,7 +882,7 @@ function avLoop(){const cvp=$('#avPrev');if(!cvp){avRAF=0;return}
  c.restore();avRAF=requestAnimationFrame(avLoop)}
 function openAvatar(first){
  if(first!==undefined)avFirst=first;const a=S.av,g=a.g;
- const row=(lab,f,list,cur,sw)=>`<div class="avrow"><b>${lab}</b><div class="chips">${list.map((it,i)=>`<button class="chip ${cur===i?'on':''}" data-a="av" data-f="${f}" data-v="${i}">${sw?`<i style="background:${sw(i)}"></i>`:''}${J(it.n||it[0],it.j||it[1])}</button>`).join('')}</div></div>`;
+ const row=(lab,f,list,cur,sw)=>`<div class="avrow"><b>${lab}</b><div class="chips">${list.map((it,i)=>`<button class="chip ${cur===i?'on':''}${it.fest&&!S.att[it.fest]?' lock':''}" data-a="av" data-f="${f}" data-v="${i}">${sw?`<i style="background:${sw(i)}"></i>`:''}${it.fest&&!S.att[it.fest]?'🔒 ':''}${J(it.n||it[0],it.j||it[1],it.e||it[2])}</button>`).join('')}</div></div>`;
  openSheet(hdr(J('Cipta Watak','چيڤتا واتق'),J('Pilih rupa dan busana kamu. Boleh ditukar bila-bila masa di cermin rumah.','ڤيليه روڤا دان بوسان كامو. بوليه دتوكر بيلا٢ ماس د چرمين رومه.'))+`<div class="avwrap"><canvas id="avPrev" aria-label="${J('Pratonton watak','ڤراتونتون واتق')}"></canvas><div>`+
   row(J('Jantina','جنتينا'),'g',[['Lelaki','لاكي٢'],['Perempuan','ڤرمڤوان']],g==='l'?0:1)+
   row(J('Busana','بوسان'),'outfit',OUTFITS[g],a.outfit,i=>OUTFITS[g][i].baju)+
@@ -924,7 +944,7 @@ const P={x:0,y:0,dir:0,moving:false,walk:0,swing:0,tool:'cangkul',path:null,pend
 const PET={x:0,y:0,ph:0,moving:false};
 let parts=[],floats=[],binAnim=0,paused=true,started=false,timeAcc=0,saveAcc=0,actHeld=false,actRepeat=0;
 const keys={};let joy=null;let tapTarget=null;let fishing=null;let rainDrops=[];
-function syncFromState(){P.x=S.px;P.y=S.py;P.dir=S.dir;if(collides(P.x,P.y)){P.x=7*T+16;P.y=8*T+18}PET.x=P.x-20;PET.y=P.y;camX=P.x-W/SC/2;camY=P.y-H/SC/2}
+function syncFromState(){P.kite=null;P.x=S.px;P.y=S.py;P.dir=S.dir;if(collides(P.x,P.y)){P.x=7*T+16;P.y=8*T+18}PET.x=P.x-20;PET.y=P.y;camX=P.x-W/SC/2;camY=P.y-H/SC/2}
 
 function playerTile(){return[Math.floor(P.x/T),Math.floor((P.y-3)/T)]}
 const DIRS=[[0,1],[-1,0],[1,0],[0,-1]];
@@ -949,7 +969,7 @@ function interactable(x,y){const o=staticAt.get(I(x,y));if(o&&['house','bin','we
 function wantsAction(x,y){
  if(x<0||y<0||x>=MW||y>=MH)return false;const i=I(x,y);
  if(interactable(x,y)||npcTile[i]||S.dyn[i]||S.soil[i])return true;
- if(inPasar(x,y)&&pasarOpen())return true;
+ if(inPasar(x,y)&&(pasarOpen()||festBuilt()))return true;
  if(isWater(x,y)&&(S.sel==='joran'||S.sel==='penyiram'))return true;
  if(inFarm(x,y,S.farmLv)&&(S.sel==='cangkul'||S.sel==='pemercik'))return true;
  return false;
@@ -959,6 +979,7 @@ function act(x,y){
  // face target
  const[px,py]=playerTile();if(x!==px||y!==py)setDirFromVec(x-px,y-py);
  if(inPasar(x,y)&&pasarOpen()){sfx('ui');openPasar();return true}
+ if(inPasar(x,y)&&festBuilt()){openFest();return true}
  const o=interactable(x,y);if(o){openStatic(o);return true}
  if(npcTile[i]){openNPC(npcTile[i]);return true}
  const d=S.dyn[i];
@@ -967,7 +988,7 @@ function act(x,y){
   if(d.t==='stone'){if(!toolCost(2))return true;swing('cangkul');delete S.dyn[i];give('batu',1);burst(wx,wy+6,'#b9bfca',12);sfx('rock');shake=2.2;floatTxt(wx,wy-8,'+1 '+nm('batu'),'batu');tutEv('clear');return true}
   if(d.t==='log'){if(!toolCost(2))return true;swing('cangkul');d.hp=(d.hp||3)-1;bump(i);burst(wx,wy+6,'#c79457',8);sfx('chop');shake=3;if(d.hp<=0){delete S.dyn[i];give('kayu',3);floatTxt(wx,wy-8,'+3 '+nm('kayu'),'kayu');tutEv('clear')}return true}
   if(d.t==='branch'){delete S.dyn[i];give('kayu',1);sfx('pick');floatTxt(wx,wy-8,'+1 '+nm('kayu'),'kayu');burst(wx,wy+6,'#c79457',6);return true}
-  if(['cendawan','beri','bulu'].includes(d.t)){delete S.dyn[i];give(d.t,1);sfx('pick');burst(wx,wy,d.t==='bulu'?'#ffd7f4':'#9ff0ff',12,'star');floatTxt(wx,wy-8,'+1 '+nm(d.t),d.t);return true}
+  if(['cendawan','beri','bulu','kunang'].includes(d.t)){delete S.dyn[i];give(d.t,1);sfx('pick');burst(wx,wy,d.t==='bulu'?'#ffd7f4':d.t==='kunang'?'#f4ff9a':'#9ff0ff',12,'star');floatTxt(wx,wy-8,'+1 '+nm(d.t),d.t);if(d.t==='kunang')kunangCaught();return true}
   if(d.t==='pemercik'){if(S.sel==='cangkul'){delete S.dyn[i];give('pemercik',1);sfx('pick');toast(J('Pemercik diangkat semula ke beg.','ڤمرچيق دأڠكت سمولا ك بيݢ.'));return true}toast(ds('pemercik'));return true}
  }
  const s=S.soil[i];
@@ -1069,7 +1090,7 @@ function spawnFeathers(){const n=S.weather==='bintang'?4:(Math.random()<.45?1:0)
  if(n){toast(S.weather==='bintang'?J('Bintang jatuh! Bulu Pari bertaburan di kampung malam ini.','بينتڠ جاتوه! بولو ڤاري برتابورن د كامڤوڠ مالم اين.'):J('Sehelai Bulu Pari bercahaya di suatu tempat…','سهلاي بولو ڤاري برچهاي د سواتو تمڤت…'));sfx('sparkle')}}
 function fmtTime(m){const h=Math.floor(m/60)%24,mm=Math.floor(m%60/10)*10;return String(h).padStart(2,'0')+':'+String(mm).padStart(2,'0')}
 function endDay(passedOut){
- cancelFishing();standUp();
+ P.kite=null;cancelFishing();standUp();
  paused=true;
  // shipping
  let total=0;const lines=[];for(const k in S.shipped){const q=S.shipped[k],v=q*(IT[k].p||0);total+=v;lines.push([k,q,v])}
@@ -1083,6 +1104,7 @@ function endDay(passedOut){
  for(const i in S.dyn)if(S.dyn[i].t==='pemercik'){const x=i%MW,y=(i/MW)|0;for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){const s=S.soil[I(x+dx,y+dy)];if(s)s.w=true}}
  // remove old feathers
  for(const i in S.dyn)if(S.dyn[i].t==='bulu'&&Math.random()<.5)delete S.dyn[i];
+ for(const i in S.dyn)if(S.dyn[i].t==='kunang')delete S.dyn[i];
  spawnForage(false);fillOrders(2);
  S.layNews=0;if(S.hens.fed){S.hens.eggs=Math.min(9,S.hens.eggs+3);S.layNews=3}S.hens.fed=false;
  S.petGift=null;if(Math.random()<.55){const pool=['beri','cendawan','kayu','s_gandum','s_lobak','beri','serat','teh'];if(Math.random()<.1)pool.push('bulu','bulu','bulu','bulu');const g=pool[Math.floor(Math.random()*pool.length)];give(g,1);S.petGift=g}
@@ -1096,12 +1118,13 @@ function showSummary(lines,total,passedOut){
  openSheet(`<div class="sh"><div><h3>${passedOut?J('Kamu tertidur di luar…','كامو ترتيدور د لوار…'):J('Selamat malam','سلامت مالم')}</h3><div class="sub">${passedOut?J('Puteri Embun menghantar kamu pulang. Tenaga pulih 60% sahaja.','ڤوتري امبون مڠهنتر كامو ڤولڠ. تناݢ ڤوليه 60% سهاج.'):J('Hari ','هاري ')+(S.day-1)+J(' selesai',' سلساي')}</div></div></div>
  <div class="sum">${rows}<div class="tot"><span>${J('Jualan','جوالن')}</span><span id="sumTot">0g</span></div></div>
  ${S.layNews?`<p class="muted" style="margin-top:12px">${J('Ayam kampung bertelur! Kutip telur di reban.','ايم كامڤوڠ برتلور! كوتيڤ تلور د ربن.')}</p>`:''}${pasarDay(S.day)?`<p class="muted" style="margin-top:12px"><b>${J('Hari ini ada Pasar Malam','هاري اين اد ڤاسر مالم')}</b> ${J('(5 petang hingga 11 malam).','(5 ڤتڠ هيڠݢ 11 مالم).')}</p>`:''}
+ ${festOf(S.day)?`<p class="muted" style="margin-top:12px"><b>${festOf(S.day).icon} ${JT(festOf(S.day).n)}</b> — ${JT(festOf(S.day).sub)}</p>`:''}${mailUnread()?`<p class="muted" style="margin-top:12px">✉️ ${J('Ada surat baharu dalam laci Atuk di rumah.','اد سورت بارو دالم لاچي اتوق د رومه.','There is a new letter in Grandpa\'s drawer at home.')}</p>`:''}
  ${S.petGift?`<p class="muted" style="margin-top:12px">${J('Lumut menunggu di depan pintu dengan hadiah kecil:','لوموت منوڠݢو د دڤن ڤينتو دڠن هديه كچيل:')} <b>${nm(S.petGift)}</b>.</p>`:''}
  <p class="muted" style="margin-top:12px">${J('Hari','هاري')} ${S.day}: ${WICON[S.weather]} ${wname(S.weather)}${S.weather==='hujan'?J(' · ladang disiram hujan',' · لادڠ دسيرم هوجن'):''}${S.flags.blessing?J(' · pari-pari menyiram ladang',' · ڤاري٢ مڽيرم لادڠ'):''}</p>
  <div class="row"><button class="btn gold" data-a="morning">${J('Selamat pagi!','سلامت ڤاݢي!')}</button></div>`,true);
  let v=0;const st=performance.now();const step=()=>{const k=Math.min(1,(performance.now()-st)/900);v=Math.round(total*k*(2-k));const el=$('#sumTot');if(el)el.textContent=v+'g';if(k<1)requestAnimationFrame(step);else if(total)sfx('coin')};requestAnimationFrame(step);
 }
-function morning(){closeSheet();syncFromState();banner(J('Hari ','هاري ')+S.day,`${WICON[S.weather]} ${wname(S.weather)}`)}
+function morning(){closeSheet();syncFromState();banner(J('Hari ','هاري ')+S.day,`${WICON[S.weather]} ${wname(S.weather)}`);const ff=festToday();if(ff)setTimeout(()=>{if(S&&started)banner(ff.icon+' '+JT(ff.n),JT(ff.sub))},2400);if(mailUnread())setTimeout(()=>{if(S&&started)toast('✉️ '+J('Ada surat baharu dalam laci Atuk.','اد سورت بارو دالم لاچي اتوق.','New letter in Grandpa\'s drawer.'))},ff?5200:1500)}
 
 // ================= ORDERS =================
 function fillOrders(max){
@@ -1128,6 +1151,7 @@ function updateGoal(){
  else{const done=BUNDLES.filter(b=>S.bundles[b.id].done).length;
   if(done>=4)txt=J('Pokok Purba mekar! Teruskan bertani, memancing dan berkawan dengan orang kampung.','ڤوكوق ڤوربا ميكر! تروسكن برتاني، ممانچيڠ دان بركاون دڠن اورڠ كامڤوڠ.');
   else{const b=BUNDLES.find(b=>!S.bundles[b.id].done);const miss=Object.entries(b.need).filter(([k,q])=>(S.bundles[b.id][k]||0)<q).map(([k,q])=>`${nm(k)} ${(S.bundles[b.id][k]||0)}/${q}`).slice(0,2).join(', ');txt=`${J('Pulihkan Pokok Purba','ڤوليهكن ڤوكوق ڤوربا')} (${done}/4). ${J(b.n,b.j)}: ${miss}`}}
+ {const ff=festToday();if(ff&&S.tut>=TUT.length&&festGoalOn(ff))txt=ff.icon+' '+JT(ff.hint)}
  $('#goalTxt').textContent=txt;
 }
 
@@ -1170,7 +1194,7 @@ function openStatic(o){
 }
 function openHouse(){
  openSheet(hdr(J('Rumah Kampung','رومه كامڤوڠ'),J('Waktu sekarang ','وقتو سكارڠ ')+fmtTime(S.time))+`<div class="say">${J('Tikar mengkuang, cerek di atas dapur kayu, dan meja kraf atuk di sudut.','تيكر مڠكواڠ، چيريق د اتس داڤور كايو، دان ميجا كراف اتوق د سودوت.')}</div>
- <div class="row"><button class="btn gold" data-a="sleep">${J('Tidur (hari baru)','تيدور (هاري بارو)')}</button><button class="btn" data-a="craft">${J('Dapur & Kraf','داڤور & كراف')}</button><button class="btn" data-a="avatar">${J('Cermin','چرمين')}</button><button class="btn" data-a="close">${J('Keluar','كلوار')}</button></div>`);
+ <div class="row"><button class="btn gold" data-a="sleep">${J('Tidur (hari baru)','تيدور (هاري بارو)')}</button><button class="btn" data-a="craft">${J('Dapur & Kraf','داڤور & كراف')}</button><button class="btn" data-a="avatar">${J('Cermin','چرمين')}</button><button class="btn" data-a="mail">✉️ ${J('Laci Atuk','لاچي اتوق','Grandpa\'s Drawer')}${mailUnread()?'<span class="dot"></span>':''}</button><button class="btn" data-a="close">${J('Keluar','كلوار')}</button></div>${calendarHTML()}`);
 }
 function openCraft(){
  const rows=RECIPES.filter(r=>!r.flag||S.flags[r.flag]).map(r=>{const ok=Object.entries(r.need).every(([k,q])=>cnt(k)>=q);return`<div class="item"><img src="${ICON[r.id]}" alt=""><div class="meta"><b>${nm(r.id)}</b><span>${ds(r.id)}</span><div class="need" style="margin:6px 0 0">${Object.entries(r.need).map(([k,q])=>`<span class="${cnt(k)>=q?'ok':''}"><img src="${ICON[k]}" alt="">${cnt(k)}/${q}</span>`).join('')}</div></div><button class="btn go" data-a="make" data-k="${r.id}" ${ok?'':'disabled'}>${J('Buat','بوات')}</button></div>`}).join('');
@@ -1312,6 +1336,11 @@ $('#sheet').addEventListener('click',e=>{
  case 'close':closeSheet();break;
  case 'sleep':closeSheet();endDay(false);break;
  case 'craft':openCraft();break;
+ case 'mail':openMail();break;
+ case 'letter':openLetter(+k);break;
+ case 'kite':startKite(+k);break;
+ case 'kmakan':kenduriMakan();break;
+ case 'kdonate':kenduriDonate(k);break;
  case 'make':{const r=RECIPES.find(x=>x.id===k);if(Object.entries(r.need).every(([kk,q])=>cnt(kk)>=q)){for(const[kk,q]of Object.entries(r.need))take(kk,q);give(r.id);sfx('chime');toast(nm(r.id)+J(' siap!',' سياڤ!'))}openCraft();break}
  case 'morning':morning();break;
  case 'ship':ship(k,999);openBin();break;
@@ -1337,8 +1366,8 @@ $('#sheet').addEventListener('click',e=>{
  case 'lang':setLang(k||(LANG==='jawi'?'rumi':'jawi'));openMenu();break;
  case 'qual':QUAL={auto:'jimat',jimat:'cantik',cantik:'auto'}[QUAL];LOWFX=QUAL==='jimat';try{localStorage.setItem('lembah_q',QUAL)}catch(e){}resize();openMenu();break;
  case 'avatar':openAvatar(false);break;
- case 'av':{const f=b.dataset.f,v=+b.dataset.v;if(f==='g')S.av.g=v?'p':'l';else S.av[f]=v;sfx('ui');openAvatar();break}
- case 'avRand':{const g=Math.random()<.5?'l':'p';S.av={g,skin:Math.floor(Math.random()*3),outfit:Math.floor(Math.random()*6),hair:Math.floor(Math.random()*3),head:Math.floor(Math.random()*4),acc:Math.floor(Math.random()*3)};sfx('pick');openAvatar();break}
+ case 'av':{const f=b.dataset.f,v=+b.dataset.v;if(f==='outfit'&&OUTFITS[S.av.g][v].fest&&!S.att[OUTFITS[S.av.g][v].fest]){const ft=FEST.find(x=>x.id===OUTFITS[S.av.g][v].fest);toast(JT(ft.lock));sfx('no');break}if(f==='g')S.av.g=v?'p':'l';else S.av[f]=v;sfx('ui');openAvatar();break}
+ case 'avRand':{const g=Math.random()<.5?'l':'p';S.av={g,skin:Math.floor(Math.random()*3),outfit:randOutfit(g),hair:Math.floor(Math.random()*3),head:Math.floor(Math.random()*4),acc:Math.floor(Math.random()*3)};sfx('pick');openAvatar();break}
  case 'avDone':{const fst=avFirst;avFirst=false;closeSheet();emote('laugh',1.4,'happy',1);sfx('chime');break}
  case 'snd':AU.on=!AU.on;openMenu();break;
  case 'mus':music.on=!music.on;openMenu();break;
@@ -1391,11 +1420,11 @@ function lightsList(t){
  const L=[];const add=(x,y,r,a=1)=>L.push([x,y,r,a]);
  add(P.x,P.y-16,70);
  for(const o of statics){if(o.k==='lamp')add(o.x*T+16,o.y*T-26,95);if(o.k==='house'){add(o.x*T+44,o.y*T+58,50);add(o.x*T+148,o.y*T+58,50)}if(o.k==='stall')add(o.x*T+64,o.y*T-6,110);if(o.k==='tree0'){const lv=Object.values(S.bundles).filter(b=>b.done).length;add(o.x*T+64,o.y*T-20,60+lv*40,.6+lv*.1)}}
- for(const i in S.dyn){const d=S.dyn[i];if(d.t==='cendawan'||d.t==='bulu'||d.t==='pemercik')add((i%MW)*T+16,((i/MW)|0)*T+16,d.t==='bulu'?55:40)}
+ for(const i in S.dyn){const d=S.dyn[i];if(d.t==='cendawan'||d.t==='bulu'||d.t==='pemercik'||d.t==='kunang')add((i%MW)*T+16,((i/MW)|0)*T+16,d.t==='bulu'?55:d.t==='kunang'?42:40)}
  for(const i in S.soil){const c=S.soil[i].c;if(c&&c.ready&&(c.k==='kristal'||c.k==='lobak'))add((i%MW)*T+16,((i/MW)|0)*T+14,34,.8)}
  const e=NPC_POS.embun;add(e[0]*T+16,e[1]*T,60);
  add(PET.x,PET.y-8,30,.6);
- if(pasarOpen())add((PASAR.x0+1.5)*T,PASAR.y0*T-20,130);
+ if(pasarOpen()||festBuilt())add((PASAR.x0+1.5)*T,PASAR.y0*T-20,130);
  for(const b of BF)if(b.k==='kupu_bulan')add(b.x,b.y-b.h,34,.8);
  return L;
 }
@@ -1467,6 +1496,8 @@ function render(t){
  for(const id in NPC_POS){if(id==='tiwi')continue;const[x,y]=NPC_POS[id];dr.push([y*T+24,()=>drawNPC(c,id,x*T+16,y*T+26,t,false)])}
  dr.push([PET.y,()=>drawPet(c,PET,t)]);
  if(pasarOpen())dr.push([(PASAR.y1+1)*T,()=>drawPasar(c,t)]);
+ if(festBuilt())dr.push([(PASAR.y1+1)*T,()=>drawFest(c,t)]);
+ if(P.kite)dr.push([1e6,()=>drawKiteFly(c,t)]);
  for(const h of HENS)if(!h.in)dr.push([h.y,()=>{drawHen(c,h,t);if(!S.hens.fed&&S.time<1140&&started){const b=Math.sin(t*3+h.x)*2;rr(c,h.x-8,h.y-34+b,16,13,6,'rgba(255,255,255,.92)');drawItem(c,'gandum',h.x,h.y-27+b,.3)}}]);
  for(const b of BF)dr.push([b.y,()=>{ell(c,b.x,b.y,4,1.5,'rgba(0,0,0,.12)');if(b.k==='kupu_bulan'){c.save();c.globalAlpha=.55+.25*Math.sin(t*3+b.fl);blob(c,b.x,b.y-b.h,10,'#d9f6ff66');c.restore()}drawButterfly(c,b.x,b.y-b.h,.9,b.k,b.fl)}]);
  if(started)dr.push([P.y,()=>drawPlayer(c,P,t)]);
@@ -1474,6 +1505,7 @@ function render(t){
  // fishing line
  if(fishing){const f=fishing,hx=P.x+(P.dir===1?-10:10),hy=P.y-34;c.beginPath();c.moveTo(hx,hy);c.quadraticCurveTo((hx+f.bx)/2,Math.min(hy,f.by)-20,f.bx,f.by);c.strokeStyle='#ffffffaa';c.lineWidth=1;c.stroke();const bb=f.ph==='bite'?Math.sin(t*30)*3:Math.sin(t*3)*1.5;blob(c,f.bx,f.by+bb,4,'#ff6f8e');blob(c,f.bx,f.by+bb-2,2,'#fff');if(f.ph==='bite'){blob(c,P.x,P.y-62,10,'#ffd36e');c.fillStyle='#4a2d10';c.font='bold 15px sans-serif';c.textAlign='center';c.fillText('!',P.x,P.y-57)}}
  if(S.time>=420&&S.time<1110&&S.weather!=='hujan')drawWau(c,t);
+ if(festToday()&&festToday().id==='layang'&&S.time>=420&&S.time<1110&&S.weather!=='hujan')drawSkyKites(c,t);
  // cloud shadows
  if(!LOWFX&&S.weather!=='hujan'&&darkness(S.time)<.3){for(let k=0;k<6;k++){const cx=((t*11+k*397)%(MW*T+700))-350,cy=(k*263+60)%(MH*T),r=150+k%3*40;if(cx+r<camX||cx-r>camX+vw||cy+r<camY||cy-r>camY+vh)continue;const g=c.createRadialGradient(cx,cy,0,cx,cy,r);g.addColorStop(0,'rgba(30,50,90,.11)');g.addColorStop(1,'rgba(30,50,90,0)');c.fillStyle=g;c.fillRect(cx-r,cy-r,r*2,r*2)}}
  drawParts(c,t);
@@ -1509,6 +1541,7 @@ function update(dt,t){
  // clock
  if(!S.zen)timeAcc+=dt*(P.sit?.35:1);while(timeAcc>=0.45){timeAcc-=0.45;S.time+=1}
  if(pasarDay(S.day)&&S.time>=1020&&S.pasarToast!==S.day){S.pasarToast=S.day;toast(J('Pasar Malam dibuka di padang timur!','ڤاسر مالم دبوك د ڤادڠ تيمور!'));sfx('chime')}
+ festTick(dt,t);
  if(S.time>=1140&&!S.nightSpawned){S.nightSpawned=true;spawnFeathers()}
  if(S.time>=1440){S.time=1440;endDay(true);return}
  saveAcc+=dt;if(saveAcc>30){saveAcc=0;S.px=P.x;S.py=P.y;S.dir=P.dir;save()}
@@ -1755,7 +1788,209 @@ $('#contBtn').onclick=()=>{audioInit();const sv=loadSave();if(sv){S=sv;migrate()
 $('#newBtn').onclick=()=>{audioInit();if(loadSave()){$('#titleBtns').style.display='none';$('#confirmNew').style.display='flex';return}newState();startGame();openAvatar(true)};
 $('#noNew').onclick=()=>{$('#titleBtns').style.display='';$('#confirmNew').style.display='none'};
 $('#yesNew').onclick=()=>{newState();save();startGame();openAvatar(true)};
-function migrate(){S.av=S.av||{...AV_DEFAULT};S.tools=S.tools||{hoe:1,sickle:1};S.hens=S.hens||{fed:false,eggs:0};S.lastSeed=S.lastSeed||'s_gandum';S.seen=S.seen||{};S.albClaim=S.albClaim||0;for(const id in NPC)if(!S.fr[id])S.fr[id]={p:0,talk:0,giftDay:0,got:false};for(const b of BUNDLES)if(!S.bundles[b.id])S.bundles[b.id]={};S.flags=S.flags||{};S.unlock=S.unlock||{}}
+// ================= V7: SURAT ATUK · PESTA · KALENDAR =================
+const JT=a=>J(a[0],a[1],a[2]);
+Object.assign(EN,{
+ 'Cipta Watak':'Create Character','Pilih rupa dan busana kamu. Boleh ditukar bila-bila masa di cermin rumah.':'Choose your look and outfit. You can change it any time at the mirror in your house.','Pratonton watak':'Character preview','Jantina':'Gender','Lelaki':'Male','Perempuan':'Female','Busana':'Outfit','Warna kulit':'Skin tone','Rambut':'Hair','Kepala':'Headwear','Aksesori':'Accessory','Rawak':'Random','Siap':'Done','Siap, mula bermain!':'Done, start playing!','Cermin':'Mirror','Tiada':'None',
+ 'Kemas':'Neat','Berjuntai':'Loose','Ikal':'Curly','Sanggul':'Bun','Lurus Panjang':'Long Straight','Tocang':'Braid','Terendak':'Terendak Hat','Selendang':'Shawl','Bunga Raya':'Hibiscus','Cermin Mata':'Glasses',
+ 'Baju Melayu Harian':'Everyday Baju Melayu','Baju Cekak Musang':'Cekak Musang Shirt','Baju Petani':'Farmer Shirt','Songket Perayaan':'Festive Songket','Baju Layang & Pelikat':'Layang Shirt & Pelikat','Baju Kurung Kedah':'Kedah Baju Kurung','Kebaya Labuh':'Long Kebaya','Baju Kurung Batik':'Batik Baju Kurung','Kebaya Nyonya':'Nyonya Kebaya','Kerja Ladang':'Farm Work Outfit',
+ 'Kunang-Kunang':'Firefly','Cahaya kecil dari malam kampung. Bercahaya lembut dalam balang.':'A tiny light from the village night. Glows softly in a jar.',
+ 'Tangkap pada Malam Kunang-Kunang.':'Catch them on Firefly Night.',
+ 'Baju Melayu Hijau Pucuk':'Green Shoot Baju Melayu','Kemeja Batik Kampung':'Village Batik Shirt','Baju Pesta Layang':'Kite Festival Outfit','Baju Malam Kunang':'Firefly Night Outfit','Baju Kenduri Putih':'White Kenduri Outfit',
+ 'Baju Kurung Biru Laut':'Sea Blue Baju Kurung','Kebaya Songket Delima':'Pomegranate Songket Kebaya','Baju Kenduri Emas':'Golden Kenduri Outfit'
+});
+ALB_HINT.kunang=['Tangkap pada Malam Kunang-Kunang.','تڠكڤ ڤد مالم كونڠ٢.'];
+
+// ---- Surat Atuk ----
+const LETTERS=[
+ {d:2,t:['Untuk cucu Atuk','اونتوق چوچو اتوق','For my grandchild'],rw:{g:50},b:[
+  'Cu, kalau kamu baca surat ini, maksudnya kamu dah balik.\nAtuk tinggalkan ladang ni untuk kamu. Tak besar, tapi tanahnya baik. Mulakan perlahan-lahan. Padi Emas cepat masak, sesuai untuk tangan baru.\nJangan risau pasal untung rugi. Yang penting hati kamu tenang.',
+  'چو، كالاو كامو باچ سورت اين، مقصودڽ كامو ده باليق.\nاتوق تيڠݢلكن لادڠ ني اونتوق كامو. تق بسر، تاڤي تانهڽ باءيق. مولاكن ڤرلاهن٢. ڤادي امس چڤت مسق، سسواي اونتوق تاڠن بارو.\nجاڠن ريساو ڤاسل اونتوڠ روݢي. يڠ ڤنتيڠ هاتي كامو تنڠ.',
+  'Dear one, if you are reading this letter, it means you have come home.\nGrandpa left this farm to you. It is not big, but the soil is good. Start slowly. Golden Rice grows fast, perfect for new hands.\nDo not worry about profit and loss. What matters is that your heart is calm.']},
+ {d:4,t:['Air pagi','اير ڤاݢي','Morning water'],rw:{i:['s_gandum',4]},b:[
+  'Pagi-pagi, air perigi paling sejuk. Atuk selalu siram sebelum matahari naik, supaya daun tak layu.\nKalau hujan, kamu rehat saja. Hujan pun sedang bekerja untuk kamu.',
+  'ڤاݢي٢، اير ڤريݢي ڤاليڠ سجوق. اتوق سلالو سيرم سبلوم ماتاهاري نايق، سوڤاي داون تق لايو.\nكالاو هوجن، كامو ريهت ساجا. هوجن ڤون سدڠ بكرجا اونتوق كامو.',
+  'In the early morning, the well water is the coolest. Grandpa always watered before the sun rose, so the leaves would not wilt.\nIf it rains, just rest. The rain is working for you too.']},
+ {d:7,t:['Kopi di kedai Opah','كوڤي د كداي اوڤه','Coffee at Opah\'s shop'],rw:{i:['teh',2]},b:[
+  'Dulu Atuk selalu singgah di kedai Opah Tiwi. Minum kopi, bual kosong.\nOrang kampung ni baik-baik belaka. Berbuallah dengan mereka, beri hadiah kecil. Hati orang tak boleh dibeli dengan syiling, cu.',
+  'دولو اتوق سلالو سيڠݢه د كداي اوڤه تيوي. مينوم كوڤي، بوال كوسوڠ.\nاورڠ كامڤوڠ ني باءيق٢ بلاك. بربوالله دڠن مريك، بري هديه كچيل. هاتي اورڠ تق بوليه دبلي دڠن شيليڠ، چو.',
+  'Grandpa always dropped by Opah Tiwi\'s shop. A cup of coffee, a little idle chat.\nThe villagers are all kind folk. Chat with them, give them small gifts. A person\'s heart cannot be bought with coins, dear.']},
+ {d:11,t:['Kucing yang berlagak','كوچيڠ يڠ برلاݢق','The proud cat'],rw:{g:100},b:[
+  'Kucing oren yang berlagak tu namanya Pak Belang. Dia ahli sihir, tapi dah bersara.\nJangan percaya kalau dia kata dia tak suka ikan. Haruan Bulan tu kegemaran dia, tapi cuma muncul lepas pukul enam petang.',
+  'كوچيڠ اورين يڠ برلاݢق تو نامڽ ڤق بلڠ. ديا اهلي سيحير، تاڤي ده برسارا.\nجاڠن ڤرچاي كالاو ديا كات ديا تق سوك ايكن. هاروان بولن تو كݢمرن ديا، تاڤي چوما مونچول لڤس ڤوكول انم ڤتڠ.',
+  'That proud orange cat is Pak Belang. He is a wizard, but retired.\nDo not believe him if he says he does not like fish. Moon Snakehead is his favourite, but it only appears after six in the evening.']},
+ {d:15,t:['Kawan di kolam','كاون د كولم','The friend in the pond'],rw:{i:['bulu',1]},b:[
+  'Di kolam tu ada pari-pari kecil. Atuk tak pernah cerita pada sesiapa, tapi dia kawan baik Atuk.\nBila bintang jatuh, bulu kawan-kawannya gugur di padang. Kutiplah, dan hormati mereka.',
+  'د كولم تو اد ڤاري٢ كچيل. اتوق تق ڤرنه چريتا ڤد سسياڤا، تاڤي ديا كاون باءيق اتوق.\nبيلا بينتڠ جاتوه، بولو كاون٢ڽ ݢوݢور د ڤادڠ. كوتيڤله، دان هورماتي مريك.',
+  'There is a little fairy in the pond. Grandpa never told anyone, but she was his dear friend.\nWhen the stars fall, her friends\' feathers drop onto the meadow. Gather them, and be kind to them.']},
+ {d:20,t:['Pokok Purba','ڤوكوق ڤوربا','The Ancient Tree'],rw:{g:150},b:[
+  'Pokok Purba tu bukan sekadar pokok. Ia mengingati setiap orang yang pernah menjaga kampung ni.\nBila Atuk penat, Atuk duduk di bawahnya dan dengar dahan menyanyi. Cubalah kamu duduk di situ.',
+  'ڤوكوق ڤوربا تو بوكن سكدر ڤوكوق. اي مڠيڠتي ستياڤ اورڠ يڠ ڤرنه منجاݢ كامڤوڠ ني.\nبيلا اتوق ڤنت، اتوق دودوق د باوهڽ دان دڠر داهن مڽاڽي. چوباله كامو دودوق د سيتو.',
+  'The Ancient Tree is more than a tree. It remembers everyone who has ever looked after this village.\nWhen Grandpa was tired, he sat beneath it and listened to the branches sing. Try sitting there yourself.']},
+ {d:26,t:['Bila kamu penat','بيلا كامو ڤنت','When you are tired'],rw:{i:['s_lobak',3]},b:[
+  'Ada hari kamu rasa penat dan kerja tak siap-siap. Itu biasa, cu. Ladang tak lari ke mana.\nDuduk di pangkin, tengok air kolam, dengar bunyi cengkerik. Orang yang tahu berhenti, dialah yang kerja lama.',
+  'اد هاري كامو راس ڤنت دان كرجا تق سياڤ٢. ايت بياسا، چو. لادڠ تق لاري ك مان.\nدودوق د ڤڠكين، تڠوق اير كولم، دڠر بوڽي چڠكريق. اورڠ يڠ تاهو برهنتي، ديله يڠ كرجا لام.',
+  'Some days you will feel tired and the work never ends. That is normal, dear. The farm is not going anywhere.\nSit on the bench, watch the pond, listen to the crickets. The one who knows when to stop is the one who works for years.']},
+ {d:33,t:['Sebulan sekali','سبولن سكالي','Once a month'],rw:{i:['teh',3]},b:[
+  'Sebulan sekali, kampung ni berkumpul. Ada layang-layang, ada kunang-kunang, ada kenduri.\nAtuk tak pernah tertinggal satu pun. Bukan sebab makanan, tapi sebab muka-muka yang Atuk sayang ada di situ.',
+  'سبولن سكالي، كامڤوڠ ني بركومڤول. اد لاياڠ٢، اد كونڠ٢، اد كندوري.\nاتوق تق ڤرنه ترتيڠݢل ساتو ڤون. بوكن سبب ماكانن، تاڤي سبب موك٢ يڠ اتوق سايڠ اد د سيتو.',
+  'Once a month, the village gathers. There are kites, fireflies and kenduri feasts.\nGrandpa never missed a single one. Not for the food, but because the faces he loved were there.']},
+ {d:40,t:['Rahsia bubur Opah','رهسيا بوبور اوڤه','Opah\'s porridge secret'],rw:{i:['gandum',5]},b:[
+  'Opah Tiwi pernah ajar Atuk masak bubur. Rahsianya, api kecil dan hati sabar.\nCuba masak sendiri, jangan asyik beli. Rasanya lain bila kita yang masak.',
+  'اوڤه تيوي ڤرنه اجر اتوق ماسق بوبور. رهسياڽ، اڤي كچيل دان هاتي صبر.\nچوبا ماسق سنديري، جاڠن اشيق بلي. راسڽ لاين بيلا كيت يڠ ماسق.',
+  'Opah Tiwi once taught Grandpa to cook porridge. The secret is a low flame and a patient heart.\nTry cooking it yourself instead of always buying. It tastes different when you make it.']},
+ {d:50,t:['Terima kasih, cu','تريما كاسيه، چو','Thank you, dear'],rw:{g:300,i:['kristal',1]},b:[
+  'Atuk tak pandai tulis panjang-panjang. Tapi Atuk bangga kamu balik.\nLadang ni bukan sekadar tanah. Ia rumah, dan rumah sentiasa tunggu kamu.\nTerima kasih, cu.',
+  'اتوق تق ڤنداي توليس ڤنجڠ٢. تاڤي اتوق بڠݢ كامو باليق.\nلادڠ ني بوكن سكدر تانه. اي رومه، دان رومه سنتياس تونݢو كامو.\nتريما كاسيه، چو.',
+  'Grandpa was never good at writing long letters. But Grandpa is proud you came home.\nThis farm is more than soil. It is a home, and a home always waits for you.\nThank you, dear.']}
+];
+const mailUnread=()=>S&&S.mail?LETTERS.reduce((n,l,i)=>n+(S.day>=l.d&&!S.mail.got[i]?1:0),0):0;
+function mailReward(l){const r=l.rw||{},p=[];if(r.g){S.gold+=r.g;p.push(r.g+'g')}if(r.i){give(r.i[0],r.i[1]);p.push(nm(r.i[0])+' ×'+r.i[1])}lastHud='';return p.join(' + ')}
+function openMail(){
+ const un=mailUnread(),next=LETTERS.find(l=>S.day<l.d);
+ const rows=LETTERS.map((l,i)=>S.day>=l.d?`<div class="item letter" data-a="letter" data-k="${i}" role="button" tabindex="0"><span class="env">${S.mail.got[i]?'📜':'✉️'}</span><div class="meta"><b>${JT(l.t)}</b><span>${S.mail.got[i]?J('Sudah dibaca','سوده دباچ','Read'):J('Baharu!','بارو!','New!')}</span></div></div>`:'').join('');
+ openSheet(hdr(J('Laci Atuk','لاچي اتوق','Grandpa\'s Drawer'),un?J('Ada surat belum dibaca','اد سورت بلوم دباچ','You have unread letters'):J('Surat-surat peninggalan Atuk','سورت٢ ڤنيڠݢالن اتوق','Letters Grandpa left behind'))+
+  `<div class="say">${J('Dalam tin biskut lama, ada surat-surat yang Atuk tinggalkan. Satu demi satu, bila tiba masanya.','دالم تين بيسكيت لام، اد سورت٢ يڠ اتوق تيڠݢلكن. ساتو دمي ساتو، بيلا تيبا مسڽ.','In an old biscuit tin lie the letters Grandpa left. One by one, when the time comes.')}</div><div class="list">${rows}</div>`+
+  (next?`<p class="muted" style="margin-top:10px">${J('Surat seterusnya akan ditemui pada Hari ','سورت سنجوتڽ اكن دتموي ڤد هاري ','The next letter will be found on Day ')}${next.d}.</p>`:`<p class="muted" style="margin-top:10px">${J('Semua surat sudah ditemui. Rumah ini masih mengingati Atuk.','سموا سورت سوده دتموي. رومه اين ماسيه مڠيڠتي اتوق.','All the letters have been found. This house still remembers Grandpa.')}</p>`)+
+  `<div class="row"><button class="btn" data-a="close">${J('Tutup','توتوڤ','Close')}</button></div>`);
+}
+function openLetter(i){
+ const l=LETTERS[i];if(!l||S.day<l.d)return;let rw='';
+ if(!S.mail.got[i]){S.mail.got[i]=1;rw=mailReward(l);sfx('chime')}
+ const txt=JT(l.b).split('\n').map(p=>`<p>${p}</p>`).join('');
+ openSheet(hdr(JT(l.t),J('Daripada Atuk','دري اتوق','From Grandpa'))+`<div class="paper">${txt}<div class="sig">— ${J('Atuk','اتوق','Grandpa')}</div></div>`+
+  (rw?`<p class="muted" style="margin-top:10px">🎁 ${J('Diterima: ','دتريما: ','Received: ')}<b>${rw}</b></p>`:'')+
+  `<div class="row"><button class="btn" data-a="mail">${J('Kembali','كمبالي','Back')}</button><button class="btn gold" data-a="close">${J('Tutup','توتوڤ','Close')}</button></div>`);
+}
+
+// ---- Kalendar & Pesta ----
+const FEST=[
+ {id:'layang',d:10,icon:'🪁',n:['Pesta Layang-Layang','ڤستا لاياڠ٢','Kite Festival'],sub:['Langit penuh warna hari ini!','لاڠيت ڤنوه ورنا هاري اين!','The sky is full of colour today!'],hint:['Gerai layang-layang di padang timur','ݢراي لاياڠ٢ د ڤادڠ تيمور','Kite stall in the east meadow'],
+  lock:['Datangi Pesta Layang-Layang untuk buka busana ini.','داتڠي ڤستا لاياڠ٢ اونتوق بوك بوسان اين.','Join the Kite Festival to unlock this outfit.']},
+ {id:'kunang',d:17,icon:'✨',n:['Malam Kunang-Kunang','مالم كونڠ٢','Firefly Night'],sub:['Selepas senja, kampung berkelip-kelip.','سلڤس سنجا، كامڤوڠ بركليڤ٢.','After dusk, the village twinkles.'],hint:['Tangkap kunang-kunang selepas senja','تڠكڤ كونڠ٢ سلڤس سنجا','Catch fireflies after dusk'],
+  lock:['Tangkap kunang-kunang pada Malam Kunang-Kunang untuk buka busana ini.','تڠكڤ كونڠ٢ ڤد مالم كونڠ٢ اونتوق بوك بوسان اين.','Catch fireflies on Firefly Night to unlock this outfit.']},
+ {id:'kenduri',d:24,icon:'🍛',n:['Kenduri Kampung','كندوري كامڤوڠ','Village Kenduri'],sub:['Semua orang berkumpul di padang timur.','سموا اورڠ بركومڤول د ڤادڠ تيمور.','Everyone gathers in the east meadow.'],hint:['Jemput makan di padang timur','جمڤوت ماكن د ڤادڠ تيمور','Come and eat in the east meadow'],
+  lock:['Makan atau sumbang hidangan di Kenduri Kampung untuk buka busana ini.','ماكن اتاو سومبڠ هيدڠن د كندوري كامڤوڠ اونتوق بوك بوسان اين.','Eat or share a dish at the Village Kenduri to unlock this outfit.']}
+];
+const FEST_WIN={layang:[480,1050],kenduri:[600,1020]};
+const cycDay=d=>((d-1)%28)+1;
+const festOf=d=>FEST.find(f=>f.d===cycDay(d))||null;
+const festToday=()=>S?festOf(S.day):null;
+function festBuilt(){const f=S&&festToday();if(!f||!FEST_WIN[f.id])return false;const w=FEST_WIN[f.id];return S.time>=w[0]&&S.time<w[1]}
+function nextDay(fn){for(let d=S.day;d<S.day+60;d++)if(fn(d))return d;return S.day}
+function calendarHTML(){
+ const rows=[...FEST.map(f=>({d:nextDay(x=>cycDay(x)===f.d),icon:f.icon,t:f.n})),{d:nextDay(x=>pasarDay(x)),icon:'🏮',t:['Pasar Malam','ڤاسر مالم','Night Market']}].sort((a,b)=>a.d-b.d).slice(0,4);
+ return `<div class="albsec">${J('Kalendar Kampung','كاليندر كامڤوڠ','Village Calendar')}</div><div class="cal">${rows.map(r=>`<div class="calrow"><span>${r.icon} ${JT(r.t)}</span><b>${r.d===S.day?J('Hari ini','هاري اين','Today'):r.d===S.day+1?J('Esok','ايسوق','Tomorrow'):J('Hari ','هاري ','Day ')+r.d}</b></div>`).join('')}</div>`;
+}
+function unlockAtt(id){if(S.att[id])return;S.att[id]=1;const o=OUTFITS[S.av.g].find(o=>o.fest===id);banner(J('Busana baharu dibuka!','بوسان بارو دبوك!','New outfit unlocked!'),o?J(o.n,o.j):'');sfx('fanfare')}
+function randOutfit(g){const ok=OUTFITS[g].map((o,i)=>i).filter(i=>!OUTFITS[g][i].fest||S.att[OUTFITS[g][i].fest]);return ok[Math.floor(Math.random()*ok.length)]}
+function openFest(){const f=festToday();if(!f)return;sfx('ui');if(f.id==='layang')openLayang();else if(f.id==='kenduri')openKenduri()}
+
+// ---- Layang-layang ----
+const KITE_COL=[['#e8344a','#ffd84a'],['#3f7fd0','#ffffff'],['#a56bff','#7fe3c8'],['#ffb347','#e8344a']];
+const KITE_N=[['Layang-layang Merah','لاياڠ٢ مراه','Red Kite'],['Layang-layang Biru','لاياڠ٢ بيرو','Blue Kite'],['Layang-layang Pelangi','لاياڠ٢ ڤلاڠي','Rainbow Kite']];
+function openLayang(){
+ const done=S.fd.layang===S.day;
+ openSheet(hdr(J('Gerai Layang-Layang','ݢراي لاياڠ٢','Kite Stall'),J('Pesta Layang-Layang · sebulan sekali','ڤستا لاياڠ٢ · سبولن سكالي','Kite Festival · once a month'))+
+  `<div class="say">${done?J('Seronok tak tadi? Terbanglah lagi kalau kamu mahu. Angin hari ni memang cantik!','سيرون تق تادي؟ تربڠله لاݢي كالاو كامو ماهو. اڠين هاري ني ممڠ چنتيق!','Wasn\'t that fun? Fly again if you like. The wind is lovely today!'):J('Mari, mari! Pilih satu layang-layang dan terbangkan setinggi langit. Nanti orang kampung pun ikut gembira!','ماري، ماري! ڤيليه ساتو لاياڠ٢ دان تربڠكن ستيڠݢي لاڠيت. ننتي اورڠ كامڤوڠ ڤون ايكوت ݢمبيرا!','Come, come! Pick a kite and send it high into the sky. The whole village will be happy to see it!')}</div>`+
+  `<div class="list">${KITE_COL.slice(0,3).map((c,k)=>`<div class="item"><span class="env" style="color:${c[0]}">🪁</span><div class="meta"><b>${JT(KITE_N[k])}</b><span>${J('Terbang sambil berjalan, kira-kira setengah minit','تربڠ سمبيل برجالن، كيرا٢ ستڠه مينيت','Fly it while you walk, about half a minute')}</span></div><button class="btn gold" data-a="kite" data-k="${k}">${J('Terbangkan','تربڠكن','Fly')}</button></div>`).join('')}</div>`+
+  `<div class="row"><button class="btn" data-a="close">${J('Tutup','توتوڤ','Close')}</button></div>`);
+}
+function startKite(c){closeSheet();P.kite={t:0,dur:30,c,x:P.x,y:P.y-70,rot:0,sp:.5};emote('smile',2,'happy',1);sfx('sparkle');toast(J('Berjalanlah, layang-layang akan mengekori kamu.','برجالنله، لاياڠ٢ اكن مڠيكوتي كامو.','Walk around, the kite will follow you.'))}
+function endKite(){
+ P.kite=null;
+ if(S.fd.layang!==S.day){S.fd.layang=S.day;S.gold+=60;for(const id in NPC)S.fr[id].p+=10;lastHud='';banner(J('Seronoknya!','سيرونوڽ!','So much fun!'),J('Orang kampung gembira. +60g','اورڠ كامڤوڠ ݢمبيرا. +60g','The villagers are happy. +60g'));sfx('fanfare');emote('laugh',1.8,'happy',1.2);unlockAtt('layang')}
+ else{toast(J('Seronoknya! Angin pun gembira.','سيرونوڽ! اڠين ڤون ݢمبيرا.','So fun! Even the wind is happy.'));emote('laugh',1.2)}
+}
+function kiteShape(c,x,y,rot,cols,sc,t,tail){
+ c.save();c.translate(x,y);c.rotate(rot);c.scale(sc,sc);
+ if(tail){c.beginPath();c.moveTo(0,23);for(let k=1;k<=7;k++)c.lineTo(Math.sin(t*3+k*.8)*(2+k*.9),23+k*7);c.strokeStyle=cols[1];c.lineWidth=1.8;c.stroke();for(let k=2;k<=7;k+=2){const bx=Math.sin(t*3+k*.8)*(2+k*.9),by=23+k*7;ell(c,bx-3,by,3,1.8,cols[0],.5);ell(c,bx+3,by,3,1.8,cols[0],-.5)}}
+ poly(c,[[0,-24],[19,-2],[0,24],[-19,-2]],cols[0],'#3a2a40');
+ poly(c,[[0,-14],[10,-2],[0,14],[-10,-2]],cols[1]);
+ ln(c,0,-24,0,24,'#3a2a4088',1);ln(c,-19,-2,19,-2,'#3a2a4088',1);blob(c,0,-2,2.6,cols[0]);blob(c,0,-2,1.1,'#fff');
+ c.restore();
+}
+function drawKiteFly(c,t){
+ const K=P.kite;if(!K)return;const cols=KITE_COL[K.c%4],hx=P.x+(P.dir===1?-9:9),hy=P.y-30;
+ ell(c,K.x,P.y+2,10,3,'rgba(20,40,30,.12)');
+ c.beginPath();c.moveTo(hx,hy);c.quadraticCurveTo((hx+K.x)/2+Math.sin(t*2)*7,(hy+K.y)/2+26,K.x,K.y+20);c.strokeStyle='rgba(255,255,255,.75)';c.lineWidth=1.1;c.stroke();
+ kiteShape(c,K.x,K.y,K.rot,cols,1.05,t,true);
+}
+function drawSkyKites(c,t){
+ let k=0;const vw=W/SC,vh=H/SC;
+ for(const id in NPC_POS){const[nx,ny]=NPC_POS[id],ax=nx*T+22,ay=ny*T+2,kx=ax+(k%2?-90:90)+Math.sin(t*.5+k*2)*34,ky=ay-170-k*16+Math.sin(t*.8+k)*10;
+  if(!((ax>camX-80&&ax<camX+vw+80&&ay>camY-60&&ay<camY+vh+80)||(kx>camX-80&&kx<camX+vw+80&&ky>camY-80&&ky<camY+vh+80))){k++;continue}
+  c.beginPath();c.moveTo(ax,ay);c.quadraticCurveTo((ax+kx)/2+Math.sin(t+k)*8,(ay+ky)/2+34,kx,ky+20);c.strokeStyle='rgba(255,255,255,.6)';c.lineWidth=1;c.stroke();
+  kiteShape(c,kx,ky,Math.sin(t*.9+k)*.18,KITE_COL[k%4],.85,t,true);k++}
+}
+
+// ---- Kunang-kunang ----
+function spawnKunang(){
+ let k=0,g=0;while(k<12&&g++<400){const x=2+Math.floor(Math.random()*40),y=2+Math.floor(Math.random()*30),i=I(x,y);if(solidAt(x,y)||S.dyn[i]||S.soil[i]||staticAt.has(i)||ground[i]===G_WATER||ground[i]===G_SAND)continue;if(x>=FARM.x0&&x<=FARM.x1&&y>=FARM.y0&&y<=FARM.y1)continue;S.dyn[i]={t:'kunang'};k++}
+ toast(J('Malam Kunang-Kunang! Tangkap cahaya kecil di merata kampung.','مالم كونڠ٢! تڠكڤ چهاي كچيل د مراتا كامڤوڠ.','Firefly Night! Catch the little lights across the village.'));sfx('sparkle');
+}
+function kunangCaught(){
+ S.fd.kcount=(S.fd.kday===S.day?S.fd.kcount:0)+1;S.fd.kday=S.day;unlockAtt('kunang');
+ if(S.fd.kcount===8){S.gold+=100;lastHud='';banner(J('Balang penuh!','بالڠ ڤنوه!','The jar is full!'),J('Bonus +100g','بونوس +100g','Bonus +100g'));sfx('fanfare');emote('laugh',1.6,'happy',1)}else emote('smile',.8);
+}
+
+// ---- Kenduri ----
+function openKenduri(){
+ const ate=S.fd.makan===S.day,dn=S.fd.sumbangDay===S.day?S.fd.sumbangN:0,foods=Object.keys(S.inv).filter(k=>IT[k]&&IT[k].c==='food');
+ openSheet(hdr(J('Kenduri Kampung','كندوري كامڤوڠ','Village Kenduri'),J('Semua orang bawa sesuatu','سموا اورڠ باوا سسواتو','Everyone brings something'))+
+  `<div class="say">${J('Jemput makan, cu! Nasi hangat, lauk kampung, semua ada. Kalau kamu bawa hidangan sekali, lagilah orang kampung gembira.','جمڤوت ماكن، چو! ناسي هاڠت، لاءوق كامڤوڠ، سموا اد. كالاو كامو باوا هيدڠن سكالي، لاݢيله اورڠ كامڤوڠ ݢمبيرا.','Come and eat, dear! Warm rice, village dishes, everything is here. If you bring a dish too, the villagers will be even happier.')}</div>`+
+  `<div class="row"><button class="btn gold" data-a="kmakan" ${ate?'disabled':''}>${ate?J('Sudah makan kenduri','سوده ماكن كندوري','Already ate'):J('Makan kenduri (tenaga penuh)','ماكن كندوري (تناݢ ڤنوه)','Eat at the kenduri (full energy)')}</button><button class="btn" data-a="close">${J('Tutup','توتوڤ','Close')}</button></div>`+
+  `<div class="albsec">${J('Sumbang hidangan','سومبڠ هيدڠن','Share a dish')} (${dn}/3)</div><div class="list">${foods.length?foods.map(k=>`<div class="item"><img src="${ICON[k]}" alt=""><div class="meta"><b>${nm(k)} ×${cnt(k)}</b><span>${J('+persahabatan dengan semua orang kampung, +40g','+ڤرسهباتن دڠن سموا اورڠ كامڤوڠ، +40g','+friendship with every villager, +40g')}</span></div><button class="btn gold" data-a="kdonate" data-k="${k}" ${dn>=3?'disabled':''}>${J('Sumbang','سومبڠ','Share')}</button></div>`).join(''):`<p class="muted">${J('Masak bubur, telur dadar atau cili jeruk di dapur rumah, kemudian bawa ke sini.','ماسق بوبور، تلور دادر اتاو چيلي جروق د داڤور رومه، كمودين باوا ك سيني.','Cook porridge, an omelette or pickled chili in the house kitchen, then bring it here.')}</p>`}</div>`);
+}
+function kenduriMakan(){
+ if(S.fd.makan===S.day)return;S.fd.makan=S.day;S.en=S.enMax;S.buff={k:'kenyang',day:S.day};lastHud='';sfx('eat');unlockAtt('kenduri');emote('laugh',1.5,'happy',1);
+ toast(J('Kenyang dan tenang. Tenaga penuh!','كڽڠ دان تنڠ. تناݢ ڤنوه!','Full and content. Energy restored!'));openKenduri();
+}
+function kenduriDonate(k){
+ const dn=S.fd.sumbangDay===S.day?S.fd.sumbangN:0;if(dn>=3||!take(k))return;
+ S.fd.sumbangDay=S.day;S.fd.sumbangN=dn+1;for(const id in NPC)S.fr[id].p+=12;S.gold+=40;lastHud='';
+ sfx('chime');burst(P.x,P.y-30,'#ffd36e',10,'star');floatTxt(P.x,P.y-44,'+40g');unlockAtt('kenduri');emote('smile',1);openKenduri();
+}
+
+// ---- Lukisan pesta ----
+function bunting(c,x1,y1,x2,y2,sag,t,n){
+ const cols=['#e8344a','#ffd84a','#3f7fd0','#8fd07c','#ff9db5','#a56bff'];
+ c.beginPath();c.moveTo(x1,y1);c.quadraticCurveTo((x1+x2)/2,(y1+y2)/2+sag*2,x2,y2);c.strokeStyle='#5e4a3a';c.lineWidth=1.2;c.stroke();
+ for(let k=0;k<n;k++){const u=(k+.5)/n,px=x1+(x2-x1)*u,py=y1+(y2-y1)*u+sag*2*u*(1-u)*2,sw=Math.sin(t*1.5+k)*1.2;poly(c,[[px-5,py],[px+5,py],[px+sw,py+11]],cols[k%cols.length])}
+}
+function drawFest(c,t){
+ const f=festToday();if(!f)return;const x=PASAR.x0*T,y=PASAR.y0*T,w=(PASAR.x1-PASAR.x0+1)*T;
+ ell(c,x+w/2,y+62,w/2+8,7,'rgba(0,0,0,.2)');
+ const sign=(txt,col,bd)=>{rr(c,x+w/2-50,y-62,100,19,5,col,bd,2);c.fillStyle='#fff6da';c.font=LANG==='jawi'?'700 12px "Noto Naskh Arabic", serif':'bold 10px Mali, sans-serif';c.textAlign='center';c.fillText(txt,x+w/2,y-49)};
+ for(const sx of[x+2,x+w-6])rr(c,sx,y-28,4,88,1,'#5e4a3a');
+ if(f.id==='layang'){
+  rr(c,x+6,y-8,w-12,40,4,'#d9a86a','#6e4426',2);
+  for(let k=0;k<4;k++)kiteShape(c,x+16+k*21,y+10+Math.sin(t*1.6+k)*1.5,Math.sin(t*1.2+k)*.07,KITE_COL[k],.5,t,false);
+  rr(c,x-2,y+30,w+4,28,5,'#c48650','#6e4426',2);
+  for(let k=0;k<5;k++)rr(c,x+6+k*17,y+36,12,6,2,KITE_COL[k%4][k%2],'#6e4426',1);
+  bunting(c,x-8,y-26,x+w+8,y-26,7,t,9);sign(JT(['LAYANG-LAYANG','لاياڠ٢','KITES']),'#3f7fd0','#1f3f78');
+ }else{
+  rr(c,x-10,y-34,w+20,12,3,'#2f9e6b','#1f6e4a',2);for(let k=0;k<7;k++)rr(c,x-8+k*((w+16)/7),y-34,(w+16)/14,12,2,'#fff6e6');
+  for(let k=0;k<8;k++){c.beginPath();c.arc(x-6+k*((w+12)/7.5),y-22,(w+12)/16,0,Math.PI);c.fillStyle=k%2?'#fff6e6':'#2f9e6b';c.fill()}
+  rr(c,x-4,y+18,w+8,30,5,'#a8713f','#6e4426',2);rr(c,x-4,y+16,w+8,9,3,'#fff3f0','#d9c9b8',1);
+  const plate=(px,py,food)=>{ell(c,px,py,8,4,'#ffffff');ell(c,px,py-1,6,2.6,'#e8e0d0');
+   if(food===0){ell(c,px,py-3,5,3.2,'#fffdf6')}else if(food===1){ell(c,px,py-2,5,3,'#a8532a');blob(c,px+1,py-3,1.4,'#d98a5a')}else if(food===2){ell(c,px,py-2,5,2.8,'#e8344a');blob(c,px-1,py-3,1.2,'#ff8a9a')}else if(food===3){ell(c,px,py-2,5,2.6,'#6fbf72');blob(c,px+1,py-3,1.3,'#fff')}else{c.beginPath();c.arc(px,py-2,4.6,Math.PI*1.1,Math.PI*1.9);c.strokeStyle='#ffd84a';c.lineWidth=2.4;c.stroke()}};
+  for(let k=0;k<6;k++)plate(x+11+k*14.6,y+30+(k%2)*1.5,k%5);
+  rr(c,x+w/2-6,y+6,12,10,3,'#cfe6ff','#7a98b8',1);ell(c,x+w/2,y+6,6,2.2,'#e6f4ff');
+  for(const lx of[x+2,x+w-2]){ln(c,lx,y-22,lx,y-14,'#5e4a3a',1);ell(c,lx,y-8+Math.sin(t*1.7+lx)*.8,5,7,'#e8344a');ell(c,lx,y-8,2,6,'#ff8a8a')}
+  sign(JT(['KENDURI KAMPUNG','كندوري كامڤوڠ','KENDURI']),'#2f6e66','#1f4a45');
+ }
+}
+let festGoalLast=null;
+function festGoalOn(f){if(!f)return false;if(f.id==='layang')return S.fd.layang!==S.day&&S.time<FEST_WIN.layang[1];if(f.id==='kenduri')return S.fd.makan!==S.day&&S.time<FEST_WIN.kenduri[1];return !(S.fd.kday===S.day&&S.fd.kcount>=8)}
+function festTick(dt,t){
+ if(P.kite){const K=P.kite;K.t+=dt;const tx=P.x+Math.sin(t*.7)*34,ty=P.y-150+Math.sin(t*1.1)*12,k=Math.min(1,dt*2.4);K.rot=Math.sin(t*1.4)*.22+(tx-K.x)*.004;K.x+=(tx-K.x)*k;K.y+=(ty-K.y)*k;K.sp-=dt;if(K.sp<=0){K.sp=.8;burst(K.x,K.y+8,KITE_COL[K.c%4][Math.random()<.5?0:1],3,'star')}if(K.t>=K.dur)endKite()}
+ const f=festToday();{const fg=!!festGoalOn(f);if(fg!==festGoalLast){festGoalLast=fg;updateGoal()}}if(!f)return;
+ if(S.festToast!==S.day){const open=f.id==='kunang'?S.time>=1140:S.time>=FEST_WIN[f.id][0];if(open&&f.id!=='kunang'){S.festToast=S.day;toast(f.icon+' '+JT(f.n)+' — '+JT(f.hint));sfx('chime')}}
+ if(f.id==='kunang'&&S.time>=1140&&S.kunangDay!==S.day){S.kunangDay=S.day;S.festToast=S.day;spawnKunang()}
+}
+
+function migrate(){S.av=S.av||{...AV_DEFAULT};S.mail=S.mail||{got:{}};S.mail.got=S.mail.got||{};S.att=S.att||{};S.fd=S.fd||{};S.tools=S.tools||{hoe:1,sickle:1};S.hens=S.hens||{fed:false,eggs:0};S.lastSeed=S.lastSeed||'s_gandum';S.seen=S.seen||{};S.albClaim=S.albClaim||0;for(const id in NPC)if(!S.fr[id])S.fr[id]={p:0,talk:0,giftDay:0,got:false};for(const b of BUNDLES)if(!S.bundles[b.id])S.bundles[b.id]={};S.flags=S.flags||{};S.unlock=S.unlock||{}}
 
 document.querySelectorAll('[data-lang]').forEach(b=>b.onclick=()=>{sfx('ui');setLang(b.dataset.lang)});
 function boot(data){
@@ -1768,7 +2003,7 @@ function boot(data){
 }
 window.claude?.hot?.snapshot?.(()=>started&&S?{S:{...S,px:P.x,py:P.y,dir:P.dir}}:{});
 window.claude?.hot?.ready?window.claude.hot.ready(boot):boot(window.claude?.hot?.data??{});
-window.__game={drawAvatar,AV:()=>S.av,openAvatar,get S(){return S},P,act,endDay,tap,openBag,startGame,newState,setSel:k=>{S.sel=k;refreshHotbar()},tp:(x,y)=>{P.x=x*T+16;P.y=y*T+18}};
+window.__game={openMail,openLetter,festBuilt,festToday,openFest,startKite,endKite,spawnKunang,openKenduri,openLayang,openHouse,mailUnread,festTick,LETTERS,OUTFITS,migrate,drawAvatar,AV:()=>S.av,openAvatar,get S(){return S},P,act,endDay,tap,openBag,startGame,newState,setSel:k=>{S.sel=k;refreshHotbar()},tp:(x,y)=>{P.x=x*T+16;P.y=y*T+18}};
 })();
 </script>
 </body></html>
