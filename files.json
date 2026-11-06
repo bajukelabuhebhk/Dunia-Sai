@@ -1,5 +1,5 @@
 {
- "version": "4209178e66",
+ "version": "76cb99ec06",
  "core": {
   "files": {
    "/app/": "200e0f0dec53",
@@ -25,7 +25,7 @@
    "/shared/icons/maskable-512.png": "78d51897dd77",
    "/shared/js/anak.js": "b26ad114d73c",
    "/shared/js/balik.js": "b25251d8c79c",
-   "/shared/js/config.js": "df4d800b641a",
+   "/shared/js/config.js": "1fdc7128cef9",
    "/shared/js/jejak.js": "993517d588a5",
    "/shared/js/lesen-lib.js": "9f17920f43d7",
    "/shared/js/lesen.js": "d72df6c47647",
@@ -482,15 +482,15 @@
     "/app/kenal-abc/audio/suku-zi.mp3": "2a04ce6009a6",
     "/app/kenal-abc/audio/suku-zo.mp3": "4279ed2cf1cb",
     "/app/kenal-abc/audio/suku-zu.mp3": "10618cf8f7b4",
-    "/app/kenal-abc/": "1ccf84be8ec6"
+    "/app/kenal-abc/": "c12b845075fb"
    },
-   "bytes": 3021436
+   "bytes": 3022002
   },
   "kenal-jawi": {
    "files": {
-    "/app/kenal-jawi/": "04be15a66815"
+    "/app/kenal-jawi/": "76cc12705d66"
    },
-   "bytes": 3434288
+   "bytes": 3434855
   },
   "lembah-embun": {
    "files": {
