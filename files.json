@@ -1,5 +1,5 @@
 {
- "version": "a7fb9c7bef",
+ "version": "49e0c430e4",
  "core": {
   "files": {
    "/app/": "200e0f0dec53",
@@ -201,7 +201,9 @@
     "/app/hikayat-sungai/audio/hs-97.mp3": "2a60ccfe4331",
     "/app/hikayat-sungai/audio/hs-98.mp3": "fe9ed2e138ae",
     "/app/hikayat-sungai/audio/hs-99.mp3": "685316cf7628",
-    "/app/hikayat-sungai/": "45b82bc032b4",
+    "/app/hikayat-sungai/": "b85aad0ccb71",
+    "/app/hikayat-sungai/peta/peta-kering.webp": "634371b6646f",
+    "/app/hikayat-sungai/peta/peta-penuh.webp": "e62f4c78c6df",
     "/app/hikayat-sungai/watak/adik-l.webp": "7f312600af8d",
     "/app/hikayat-sungai/watak/adik-p.webp": "676a598ada5b",
     "/app/hikayat-sungai/watak/buaya.webp": "e537750104ca",
@@ -210,7 +212,7 @@
     "/app/hikayat-sungai/watak/lintah.webp": "475c2150aad8",
     "/app/hikayat-sungai/watak/timah.webp": "2216b3ab92c7"
    },
-   "bytes": 6120953
+   "bytes": 7685704
   },
   "kembara-malaysia": {
    "files": {

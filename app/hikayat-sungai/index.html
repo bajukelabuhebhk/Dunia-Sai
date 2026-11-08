@@ -661,6 +661,10 @@ var KJL2=(function(){
   // Painted characters (Wira Matematik style). Emoji stay as the fallback until an image loads.
   const HSW = {}, HSW_KEYS = ['adik-l', 'adik-p', 'kancil', 'timah', 'lintah', 'ketam', 'buaya'];
   HSW_KEYS.forEach(k => { const i = new Image(); i.decoding = 'async'; i.src = 'watak/' + k + '.webp'; HSW[k] = i; });
+  // Painted HD map (Afiq 8 Nov): river dry until Sang Buaya is beaten, then full. 64 px per tile.
+  const PETA = { kering: new Image(), penuh: new Image() };
+  PETA.kering.src = 'peta/peta-kering.webp'; PETA.penuh.src = 'peta/peta-penuh.webp';
+  const petaOk = im => im.complete && im.naturalWidth > 0;
   const hswOk = k => !!(HSW[k] && HSW[k].complete && HSW[k].naturalWidth);
   const wImg = (k, cls = '') => `<img class="hsw ${cls}" src="watak/${k}.webp" alt="">`;
   // map size (world units, feet to head) of each painted character
@@ -1365,12 +1369,25 @@ var KJL2=(function(){
     ctx.save(); ctx.translate(-Math.round(cam.x) + sh[0], -Math.round(cam.y) + sh[1]);
     const x0 = Math.floor(cam.x / TS) - 1, y0 = Math.floor(cam.y / TS) - 1, x1 = x0 + VW + 2, y1 = y0 + VH + 2;
     const inView = (x, y) => x >= x0 - 1 && x <= x1 + 1 && y >= y0 - 1 && y <= y1 + 1;
+    const bg = PETA[st.f.buaya ? 'penuh' : 'kering'], hd = petaOk(bg);
+    if (hd) {
+      const k = bg.naturalWidth / (COLS * TS), sx = Math.max(0, cam.x - TS), sy = Math.max(0, cam.y - TS), sw = Math.min(COLS * TS - sx, VW * TS + 2 * TS), sh = Math.min(ROWS * TS - sy, VH * TS + 2 * TS);
+      ctx.drawImage(bg, sx * k, sy * k, sw * k, sh * k, sx, sy, sw, sh);
+      // things the painting can't know: the raft across the dry river, and lit pressure plates
+      const pn = PETA.penuh;
+      for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) {
+        const c = tileAt(x, y);
+        if (c === 'X' && st.f.raft && !st.f.buaya && petaOk(pn)) ctx.drawImage(pn, x * TS * k, y * TS * k, TS * k, TS * k, x * TS, y * TS, TS, TS);
+        else if (c === 'O' && ROCKS.some(r => r.x === x && r.y === y)) { ctx.fillStyle = 'rgba(95,212,224,.55)'; ctx.fillRect(x * TS + 2, y * TS + 2, TS - 4, TS - 4); }
+      }
+    } else {
     for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) if (x >= 0 && y >= 0 && x < COLS && y < ROWS) drawTile(map[y][x], x, y, time);
     for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) if (tileAt(x, y) === 'H' && tileAt(x - 1, y) !== 'H' && tileAt(x, y - 1) !== 'H') drawTile('H', x, y, time);
+    }
     // y-sorted draw list: entities, hazards, trees, checkpoints and the player
     const list = [];
     for (const e of ENT) if (alive(e) || e.kind === 'gate' || e.kind === 'door') list.push({ y: e.y, f: () => drawEnt(e, time) });
-    for (let y = y0; y <= y1 + 1; y++) for (let x = x0; x <= x1; x++) { const c = tileAt(x, y); if ((c === 'T' || c === 'P') && x >= 0 && y >= 0 && x < COLS && y < ROWS) list.push({ y, f: () => drawTall(c, x, y, time) }); }
+    for (let y = y0; y <= y1 + 1; y++) for (let x = x0; x <= x1; x++) { const c = tileAt(x, y); if (!hd && (c === 'T' || c === 'P') && x >= 0 && y >= 0 && x < COLS && y < ROWS) list.push({ y, f: () => drawTall(c, x, y, time) }); }
     for (const [cx, cy] of CHECKPOINTS) if (inView(cx, cy)) list.push({ y: cy - .1, f: () => drawFlag(cx, cy, time) });
     for (const hz of HAZ) { const [hx, hy] = hazPos(hz, time); if (inView(hx, hy)) list.push({ y: hz.kind === 'bee' ? hy + .6 : hy - .2, f: () => drawHaz(hz, hx, hy, time) }); }
     list.push({ y: P.py / TS + .01, f: () => drawPlayer(time) });
