@@ -1551,40 +1551,99 @@ var KJL2=(function(){
 
   // ----- lab tank -----
   function Tank(canvas) {
-    const c2 = canvas.getContext('2d'), W = 400, H = 220, TK = { l: 14, r: 386, t: 10, b: 212 }, SURF = 90, R = 22;
-    let sc = 1, dp = 1, salt = 0, on = true; const bodies = [], fx = [], grains = [];
-    const fit2 = () => { const r = canvas.getBoundingClientRect(); if (!r.width) return; dp = devicePixelRatio || 1; sc = Math.min(r.width / W, r.height / H); canvas.width = Math.round(r.width * dp); canvas.height = Math.round(r.height * dp); };
+    // Aquarium fills its whole box (taller on phones). W is fixed; H follows the box shape.
+    const c2 = canvas.getContext('2d'), W = 400, R = 22;
+    let H = 220, TK = { l: 14, r: 386, t: 10, b: 212 }, SURF = 90, sc = 1, dp = 1, salt = 0, on = true, wave = 0, waveX = 200, label = null;
+    const bodies = [], fx = [], grains = [], bubbles = [], dust = [];
+    const pebbles = Array.from({ length: 26 }, (_, i) => ({ x: 20 + ((i * 97) % 360), r: 3 + (i * 7) % 5, c: ['#d9c48f', '#c8ae76', '#e6d6a8', '#b99a62'][i % 4] }));
+    const weeds = [40, 72, 330, 356].map((x, i) => ({ x, h: 34 + i * 7 % 20, ph: i }));
+    const fit2 = () => {
+      const r = canvas.getBoundingClientRect(); if (!r.width) return; dp = devicePixelRatio || 1; sc = r.width / W;
+      const nh = Math.max(200, Math.min(560, r.height / sc));
+      if (Math.abs(nh - H) > 1) { const oldS = SURF; H = nh; TK = { l: 14, r: W - 14, t: 10, b: H - 8 }; SURF = Math.round(Math.max(80, H * .36)); for (const b of bodies) b.y += SURF - oldS; }
+      sc = Math.min(r.width / W, r.height / H); canvas.width = Math.round(r.width * dp); canvas.height = Math.round(r.height * dp);
+    };
     const ro = new ResizeObserver(fit2); ro.observe(canvas); fit2();
     const rhoW = () => 1 + salt * 0.04, sub = b => Math.max(0, Math.min(1, (b.y + R - SURF) / (2 * R)));
+    const FLOOR = () => TK.b - 14;
     const loop = time => {
       if (!on) return;
       const g = 0.32, w = rhoW();
       for (const b of bodies) {
         const f = sub(b); b.vy += g * (1 - (w / b.it.rho) * f); b.vy *= f > 0 ? 0.93 : 0.995;
-        if (f >= 1) { if (b.it.rho > w) b.vy = Math.max(b.vy, 0.7); else b.vy = Math.min(b.vy, -0.7); }
-        b.y += b.vy;
-        if (!b.wet && f > 0) { b.wet = true; SFX.splash(); if (!reduce) for (let i = 0; i < 18; i++) fx.push({ x: b.x, y: SURF, vx: (Math.random() - .5) * 4, vy: -1.5 - Math.random() * 3, life: 30 }); }
-        if (b.y + R > TK.b - 3) { b.y = TK.b - 3 - R; b.vy = 0; }
+        if (f >= 1) { if (b.it.rho > w) b.vy = Math.max(b.vy, 0.9); else b.vy = Math.min(b.vy, -0.9); }
+        b.y += b.vy; b.rot += b.spin; b.spin *= f > 0 ? .9 : 1;
+        if (!b.wet && f > 0) {
+          b.wet = true; SFX.splash(); wave = Math.min(9, 3 + Math.abs(b.vy) * .9); waveX = b.x; b.squash = 1;
+          if (!reduce) { for (let i = 0; i < 26; i++) { const a = -Math.PI / 2 + (Math.random() - .5) * 2.2, v = 2 + Math.random() * 4.5; fx.push({ x: b.x + (Math.random() - .5) * 20, y: SURF, vx: Math.cos(a) * v, vy: Math.sin(a) * v, life: 34, r: 1.6 + Math.random() * 2.4 }); }
+            fx.push({ ring: 1, x: b.x, y: SURF, life: 36 }); }
+        }
+        if (!reduce && b.wet && b.it.rho > w && f >= 1 && Math.random() < .5) bubbles.push({ x: b.x + (Math.random() - .5) * 26, y: b.y + (Math.random() - .5) * 20, r: 1.5 + Math.random() * 3, vy: -.8 - Math.random() * .8, ph: Math.random() * 6 });
+        const fl = FLOOR();
+        if (b.y + R > fl) {
+          if (b.vy > 1.2 && !b.landed) { b.landed = true; b.squash = 1; SFX.pick(); if (!reduce) for (let i = 0; i < 16; i++) dust.push({ x: b.x + (Math.random() - .5) * 30, y: fl, vx: (Math.random() - .5) * 2.4, vy: -Math.random() * 1.6, life: 40 }); }
+          b.y = fl - R; b.vy = 0; b.spin = 0;
+        }
+        if (b.squash > 0) b.squash = Math.max(0, b.squash - .06);
+        const settled = Math.abs(b.vy) < .25 && b.wet && (b.y + R >= fl - .5 || (f > 0 && f < 1));
+        b.still = settled ? (b.still || 0) + 1 : 0;
+        if (b.still === 30 && !label) label = { txt: b.y + R >= fl - .5 ? (lang === 'ms' ? '⬇️ Tenggelam!' : '⬇️ Sinks!') : (lang === 'ms' ? '⬆️ Terapung!' : '⬆️ Floats!'), x: b.x, y: b.y + R >= fl - .5 ? b.y - R - 18 : SURF - R - 22, t: 0, sink: b.y + R >= fl - .5 };
       }
-      for (const p of fx) { p.x += p.vx; p.y += p.vy; p.vy += .25; p.life--; }
+      for (const p of fx) { if (!p.ring) { p.x += p.vx; p.y += p.vy; p.vy += .22; if (p.y > SURF && p.vy > 0) p.life = 0; } p.life--; }
       for (const s of grains) { s.y += s.vy; s.vy += .15; if (s.y > SURF) s.life -= 4; s.life--; }
-      for (const a of [fx, grains]) for (let i = a.length - 1; i >= 0; i--) if (a[i].life <= 0) a.splice(i, 1);
-      const ox = (canvas.width / dp / sc - W) / 2;
-      c2.setTransform(dp * sc, 0, 0, dp * sc, ox * dp * sc, 0); c2.clearRect(-ox, 0, W + 2 * ox, H);
+      for (const q of bubbles) { q.y += q.vy; q.x += Math.sin(time / 180 + q.ph) * .3; if (q.y < SURF + 2) q.y = -99; }
+      for (const d of dust) { d.x += d.vx; d.y += d.vy; d.vx *= .95; d.vy *= .95; d.life--; }
+      for (const a of [fx, grains, dust]) for (let i = a.length - 1; i >= 0; i--) if (a[i].life <= 0) a.splice(i, 1);
+      for (let i = bubbles.length - 1; i >= 0; i--) if (bubbles[i].y < 0) bubbles.splice(i, 1);
+      wave *= .965;
+      const ox = (canvas.width / dp / sc - W) / 2, oy = canvas.height / dp / sc - H;
+      c2.setTransform(dp * sc, 0, 0, dp * sc, ox * dp * sc, oy * dp * sc); c2.clearRect(-ox, -oy, W + 2 * ox, H + oy);
+      const surfY = x => SURF + (reduce ? 0 : Math.sin(x / 22 + time / 500) * 1.6 + wave * Math.cos((x - waveX) / 14 - time / 90) * Math.exp(-Math.abs(x - waveX) / 120));
+      // glass back
+      c2.fillStyle = 'rgba(230,245,255,.55)'; c2.fillRect(TK.l, TK.t, TK.r - TK.l, TK.b - TK.t);
       const k = salt / 5, gr = c2.createLinearGradient(0, SURF, 0, TK.b);
-      gr.addColorStop(0, `rgb(${110 + 40 * k},${205 + 15 * k},${240 - 10 * k})`); gr.addColorStop(1, `rgb(${35 + 50 * k},${125 + 40 * k},${200 - 20 * k})`);
-      c2.fillStyle = gr; c2.beginPath(); c2.moveTo(TK.l, TK.b); for (let x = TK.l; x <= TK.r; x += 6) c2.lineTo(x, SURF + (reduce ? 0 : Math.sin(x / 22 + time / 500) * 1.6)); c2.lineTo(TK.r, TK.b); c2.closePath(); c2.fill();
+      gr.addColorStop(0, `rgb(${110 + 40 * k},${205 + 15 * k},${240 - 10 * k})`); gr.addColorStop(1, `rgb(${30 + 50 * k},${105 + 40 * k},${190 - 20 * k})`);
+      c2.fillStyle = gr; c2.beginPath(); c2.moveTo(TK.l, TK.b); for (let x = TK.l; x <= TK.r; x += 4) c2.lineTo(x, surfY(x)); c2.lineTo(TK.r, TK.b); c2.closePath(); c2.fill();
+      // light rays
+      if (!reduce) { c2.save(); c2.globalAlpha = .1; c2.fillStyle = '#fff'; for (let i = 0; i < 4; i++) { const x0 = 60 + i * 95 + Math.sin(time / 1400 + i) * 12; c2.beginPath(); c2.moveTo(x0, SURF); c2.lineTo(x0 + 26, SURF); c2.lineTo(x0 + 60, FLOOR()); c2.lineTo(x0 + 18, FLOOR()); c2.fill(); } c2.restore(); }
+      // sand floor, pebbles, weeds
+      const fl = FLOOR(); c2.fillStyle = '#e8d29c'; c2.beginPath(); c2.moveTo(TK.l, TK.b); c2.lineTo(TK.l, fl + 4); for (let x = TK.l; x <= TK.r; x += 20) c2.quadraticCurveTo(x + 10, fl - 2, x + 20, fl + 4); c2.lineTo(TK.r, TK.b); c2.fill();
+      for (const pb of pebbles) { c2.fillStyle = pb.c; c2.beginPath(); c2.ellipse(pb.x, TK.b - 5, pb.r, pb.r * .7, 0, 0, 7); c2.fill(); }
+      for (const wd of weeds) { c2.strokeStyle = '#2f9a5a'; c2.lineWidth = 4; c2.lineCap = 'round'; c2.beginPath(); c2.moveTo(wd.x, fl + 4); for (let t2 = 1; t2 <= 4; t2++) c2.lineTo(wd.x + (reduce ? 0 : Math.sin(time / 700 + wd.ph + t2) * 4 * t2 / 4), fl + 4 - wd.h * t2 / 4); c2.stroke(); }
+      for (const d of dust) { c2.fillStyle = `rgba(200,170,110,${d.life / 50})`; c2.beginPath(); c2.arc(d.x, d.y, 3, 0, 7); c2.fill(); }
       c2.fillStyle = '#fff'; for (const s of grains) { c2.globalAlpha = Math.max(0, Math.min(1, s.life / 30)); c2.fillRect(s.x, s.y, 2.2, 2.2); } c2.globalAlpha = 1;
-      c2.textAlign = 'center'; c2.textBaseline = 'middle'; c2.font = `${R * 1.9}px ${EMOJI}`; for (const b of bodies) c2.fillText(b.it.em, b.x, b.y + 1);
-      c2.fillStyle = 'rgba(40,130,200,.18)'; c2.fillRect(TK.l, SURF + 2, TK.r - TK.l, TK.b - SURF - 2);
-      c2.fillStyle = '#8fd3ff'; for (const p of fx) { c2.beginPath(); c2.arc(p.x, p.y, 2.2, 0, 7); c2.fill(); }
-      c2.strokeStyle = '#000'; c2.lineWidth = 4; c2.beginPath(); c2.moveTo(TK.l, TK.t); c2.lineTo(TK.l, TK.b); c2.lineTo(TK.r, TK.b); c2.lineTo(TK.r, TK.t); c2.stroke();
+      c2.strokeStyle = 'rgba(255,255,255,.75)'; c2.lineWidth = 1.2; for (const q of bubbles) { c2.beginPath(); c2.arc(q.x, q.y, q.r, 0, 7); c2.stroke(); }
+      // items: shadow on the sand, then the item (spin while falling, squash on impact, bob when floating)
+      for (const b of bodies) {
+        const depth = Math.max(0, Math.min(1, (fl - b.y) / (fl - SURF + 40)));
+        c2.fillStyle = `rgba(60,40,10,${.25 * (1 - depth)})`; c2.beginPath(); c2.ellipse(b.x, fl + 2, R * (1 - depth * .5), 4, 0, 0, 7); c2.fill();
+        const bob = (b.wet && sub(b) < 1 && !reduce) ? Math.sin(time / 380) * 1.5 : 0, sq = b.squash || 0;
+        c2.save(); c2.translate(b.x, b.y + 1 + bob); c2.rotate(reduce ? 0 : b.rot); c2.scale(1 + sq * .25, 1 - sq * .2);
+        c2.fillStyle = '#000'; c2.textAlign = 'center'; c2.textBaseline = 'middle'; c2.font = `${R * 1.9}px ${EMOJI}`; c2.fillText(b.it.em, 0, 0); c2.restore();
+      }
+      c2.fillStyle = 'rgba(40,130,200,.16)'; c2.fillRect(TK.l, SURF + 2, TK.r - TK.l, TK.b - SURF - 2);
+      for (const p of fx) {
+        if (p.ring) { const a = 1 - p.life / 36; c2.strokeStyle = `rgba(255,255,255,${.8 * (1 - a)})`; c2.lineWidth = 2; c2.beginPath(); c2.ellipse(p.x, SURF, 10 + a * 60, 3 + a * 6, 0, 0, 7); c2.stroke(); }
+        else { c2.fillStyle = '#bfe8ff'; c2.beginPath(); c2.arc(p.x, p.y, p.r, 0, 7); c2.fill(); }
+      }
+      // glass shine and frame
+      c2.fillStyle = 'rgba(255,255,255,.35)'; c2.fillRect(TK.l + 8, TK.t + 6, 6, TK.b - TK.t - 30); c2.fillRect(TK.l + 18, TK.t + 6, 2, TK.b - TK.t - 60);
+      c2.strokeStyle = '#000'; c2.lineWidth = 4; c2.lineJoin = 'round'; c2.beginPath(); c2.moveTo(TK.l, TK.t); c2.lineTo(TK.l, TK.b); c2.lineTo(TK.r, TK.b); c2.lineTo(TK.r, TK.t); c2.stroke();
+      c2.fillStyle = '#3a3f4a'; c2.fillRect(TK.l - 4, TK.b - 2, TK.r - TK.l + 8, 8);
+      if (label) {
+        label.t++; const a = Math.min(1, label.t / 10), y = label.y - Math.min(8, label.t / 2);
+        c2.globalAlpha = a; c2.font = `400 22px ${getComputedStyle(document.body).getPropertyValue('--display') || 'sans-serif'}`; c2.textAlign = 'center'; c2.textBaseline = 'middle';
+        const tw = c2.measureText(label.txt).width + 22, lx = Math.max(TK.l + tw / 2 + 4, Math.min(TK.r - tw / 2 - 4, label.x));
+        c2.fillStyle = label.sink ? '#ffe3a3' : '#c9f5d7'; c2.strokeStyle = '#000'; c2.lineWidth = 3; c2.beginPath(); c2.roundRect ? c2.roundRect(lx - tw / 2, y - 16, tw, 32, 12) : c2.rect(lx - tw / 2, y - 16, tw, 32); c2.fill(); c2.stroke();
+        c2.fillStyle = '#17301f'; c2.fillText(label.txt, lx, y + 1); c2.globalAlpha = 1;
+      }
       requestAnimationFrame(loop);
     };
     requestAnimationFrame(loop);
     return {
-      add(it, x) { const b = { it, x, y: -10, vy: 0, wet: false }; bodies.push(b); return b; }, rhoW, sub,
-      addSalt() { salt++; if (!reduce) for (let i = 0; i < 50; i++) grains.push({ x: 150 + Math.random() * 100, y: Math.random() * 20, vy: Math.random(), life: 70 }); return salt; },
+      add(it, x) { const b = { it, x, y: TK.t + R, vy: 2, wet: false, rot: (Math.random() - .5) * .6, spin: (Math.random() < .5 ? -1 : 1) * (.04 + Math.random() * .05), squash: 0 }; bodies.push(b); label = null; return b; }, rhoW, sub,
+      surf: () => SURF,
+      addSalt() { salt++; label = null; if (!reduce) for (let i = 0; i < 50; i++) grains.push({ x: 150 + Math.random() * 100, y: Math.random() * 20, vy: Math.random(), life: 70 }); return salt; },
       stop() { on = false; ro.disconnect(); },
     };
   }
@@ -1598,7 +1657,7 @@ var KJL2=(function(){
       const floats = it.rho < 1, ok = guessFloat === floats;
       $('pf').disabled = $('ps').disabled = true;
       tank.add(it, 200);
-      await wait(1300);
+      await wait(1900);
       ok ? SFX.good() : SFX.bad();
       if (ok) gainXP(10);
       st.gone.push(e.id);
@@ -1622,7 +1681,7 @@ var KJL2=(function(){
       const btn = () => { $('er').innerHTML = `<button class="btn" id="sb" type="button" data-adv>${esc(t().salt(n))}</button>`; $('sb').onclick = () => { n = tank.addSalt(); SFX.pick(); $('em').textContent = t().salted(n); btn(); }; };
       $('em').textContent = tx(fsQ('egg').why); voice(fsQ('egg').why); btn();
       const watch = setInterval(() => {
-        if (!won && egg.it.rho < tank.rhoW() && tank.sub(egg) < 1 && egg.y < 120) {
+        if (!won && egg.it.rho < tank.rhoW() && tank.sub(egg) < 1 && egg.y < tank.surf() + 30) {
           won = true; clearInterval(watch); SFX.win(); gainXP(20);
           $('em').textContent = t().eggUp; $('er').innerHTML = `<button class="btn" id="eb" type="button" data-adv>${esc(t().ok)}</button>`;
           $('eb').focus(); $('eb').onclick = () => { tank.stop(); closeOv(); res(); };
