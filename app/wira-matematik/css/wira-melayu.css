@@ -27,3 +27,12 @@
 .wmm-lock{position:absolute;right:0;top:0;font-size:1.6rem;background:#000a;border-radius:50%;padding:4px}
 .wmm-teaser .wm6-secondarybtn{margin-top:8px;width:100%}
 .wmm-item.r-mythic{border-color:#ff5d8f}
+
+/* Dunia Sai: Fasa 2, potret Wira Melayu dalam pertempuran. Potret 2:3, jadi dibesarkan ke atas supaya sama tinggi dengan raksasa. */
+.unit .wmm-portrait,.wm-actor .wmm-portrait{animation:none}
+.unit .body:has(>.wmm-portrait){display:flex;align-items:flex-end;justify-content:center}
+.unit .body>.wmm-portrait{width:120%;height:150%;flex:none;margin-bottom:-8%}
+.wm-actor .wmm-portrait{width:100%;height:auto;aspect-ratio:2/3}
+.wm6-result-figure .wmm-portrait,.rs .wmm-portrait,.rpg-hero-preview .wmm-portrait{width:100%;height:auto;aspect-ratio:2/3;max-height:260px}
+.hcard .wmm-portrait{width:100%;height:auto;aspect-ratio:2/3}
+.body:has(>.wmm-portrait)>.wm-gear-deco{display:none}

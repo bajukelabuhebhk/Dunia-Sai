@@ -78,7 +78,7 @@ function icon(id,it,B=52){if(it.i)return `background-image:url('${DIR}${id}-${it
   const sorted=[...list].sort((a,b)=>a.bintang-b.bintang);
   return `<div class="wmm-wardrobe"><h3>🧥 ${wm6T('Aksesori Melayu','Malay Accessories')} <small>⭐ ${s}</small></h3><div class="wmm-items">${sorted.map(it=>{const ok=open(it),w=on(id).includes(it.id);
    return `<button class="wmm-item r-${it.r} ${w?'worn':''} ${ok?'':'locked'}" data-wmm="${it.id}" aria-pressed="${w}" ${ok?'':'aria-disabled="true"'}><span class="wmm-icon" style="${icon(id,it)}"></span><b>${wm6T(it.bm,it.en)}</b><small>${ok?(w?wm6T('Dipakai','Worn'):wm6T(...R[it.r])):'🔒 ⭐ '+it.bintang}</small></button>`}).join('')}</div>
-   <p class="wmm-note">${wm6T('Kumpul bintang dalam pertempuran untuk membuka aksesori. Rupa dalam pertempuran akan dikemas kini kemudian.','Collect battle stars to unlock accessories. The in-battle look will be updated later.')}</p></div>`;
+   <p class="wmm-note">${wm6T('Kumpul bintang dalam pertempuran untuk membuka aksesori. Aksesori yang dipakai juga muncul dalam pertempuran.','Collect battle stars to unlock accessories. Worn accessories also appear in battle.')}</p></div>`;
  }
  return {ITEMS,portrait,toggle,wardrobe,open,gaya:()=>st.gaya||'melayu',setGaya:g=>{st.gaya=g;store()}};
 })();
@@ -122,4 +122,10 @@ function wmmFill(){
  const old=window[name];if(typeof old!=='function')return;
  window[name]=function(...a){const r=old.apply(this,a);try{wmmFill()}catch(e){console.warn(e)}return r};
 });
+// Dunia Sai: Wira Melayu Fasa 2. Semua skrin (pertempuran RPG, Arena, keputusan, pilih wira) guna heroSVG,
+// jadi dalam Gaya Wira Melayu ia memulangkan potret berlapis dengan aksesori yang dipakai.
+if(typeof heroSVG==='function'){
+ const wmmOldHeroSVG=heroSVG;
+ heroSVG=function(id){try{if(wmmStyle()&&WMM.ITEMS[id])return WMM.portrait(id)}catch(_){}return wmmOldHeroSVG(id)};
+}
 try{wmmFill()}catch(_){}
