@@ -55,4 +55,6 @@ h1, h2, h3 { line-height: 1.2; margin: 0 0 8px; }
 .seksyen > .wrap > h2 { font-size: 1.6rem; }
 .kotak { background: var(--card); border-radius: var(--r); box-shadow: var(--shadow); padding: 20px; }
 footer.kaki { padding: 28px 0 calc(28px + env(safe-area-inset-bottom)); color: var(--muted); font-size: .88rem; text-align: center; }
+footer.kaki .lencana { display: block; width: 150px; margin: 0 auto 14px; line-height: 0; }
+footer.kaki .lencana img { display: block; width: 150px; height: 40px; border-radius: 8px; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }

@@ -531,7 +531,7 @@ const STICKERS=["🐣","🐢","🦋","🐬","🐞","🦁","🐼","🦄","🚀","
 const PER_STICKER=5, ROUND=10;
 const view=document.getElementById('view'), scoreEl=document.getElementById('score'), homeBtn=document.getElementById('homeBtn');
 let sound=true, stars=0, full=false;
-const FREE=10; // huruf percuma dalam versi percubaan
+const FREE=17; // huruf percuma dalam versi percubaan
 const KJ_GAME_IDS=['cari','padan','surih','kad','belon','makan','titik','pelekat'];
 let kjActiveGame='';
 /* Dunia Sai: Ruang Ibu Bapa (/shared/js/ruang-ibubapa.js). Setiap jawapan anak direkod ikut aktiviti dan huruf. */
@@ -1157,7 +1157,7 @@ function preview(btnId,gid,k,fn){
   const name=[...b.childNodes].filter(n=>n.nodeType===3).map(n=>n.textContent).join('').trim();
   const g=[...b.classList].find(c=>/^g\d$/.test(c))||'';
   const scene=kjPreviewScene(gid);
-  const prog=gid==='cari'?`<p class="pp">🖼️ ${full?'37 gambar · 10 cabaran setiap sesi':'10 huruf demo · 37 gambar dalam versi penuh'}</p>`:gid==='surih'?`<p class="pp">${traced.size} / ${L.length} huruf siap</p>`:kjCompleted()[gid]?'<p class="pp">⭐ Sudah dimainkan</p>':'';
+  const prog=gid==='cari'?`<p class="pp">🖼️ ${full?'37 gambar · 10 cabaran setiap sesi':`${FREE} huruf demo · 37 gambar dalam versi penuh`}</p>`:gid==='surih'?`<p class="pp">${traced.size} / ${L.length} huruf siap</p>`:kjCompleted()[gid]?'<p class="pp">⭐ Sudah dimainkan</p>':'';
   const el=document.createElement('div');el.id='kjpv';el.className='pv';el.setAttribute('role','dialog');el.setAttribute('aria-modal','true');el.setAttribute('aria-label',name);
   el.innerHTML=`<div class="pc game ${g}"><button class="px" aria-label="Tutup">✕</button><div class="pi" aria-hidden="true">${ic}</div><h2>${name}</h2><div class="pj">${jl}</div>${scene?`<button type="button" class="pv-stage" aria-label="Cuba animasi ${name}">${scene.html}</button>`:''}<p>${PV_DESC[gid]||''}</p>${prog}<button class="play">▶ Main</button></div>`;
   document.body.appendChild(el);
@@ -1344,7 +1344,8 @@ async function trace(i){
       if(before<20&&after>=20)toast('Pelekat istimewa baru! 🌙');
       quietTimeout(()=>{if(!document.body.contains(draw))return;
         if(before<L.length&&after>=L.length)kjShowCertificates();
-        else if(before<FREE&&after>=FREE)celebrate10();
+        else if(before<10&&after>=10)celebrate10();
+        else if(!full&&before<FREE&&after>=FREE)celebrateFree();
         else step(i,1,trace)},1200)}
   };
   ready=true;pend.forEach(markDots);pend=[];check(false);
@@ -1373,18 +1374,29 @@ function map(){
 /* ---------- Celebration after the first 10 letters ---------- */
 function celebrate10(){
   setScreen(true);chime(true);speak(Pc('sepuluh-huruf'));
-  const nx=L.slice(FREE,FREE+5),rest=L.length-FREE;
   view.innerHTML=`<div class="prompt stack" style="align-items:center;gap:10px">
     <div class="pic" style="font-size:4rem">🥇</div>
     <h2 class="cel">Syabas!</h2>
-    <div class="word" style="font-size:1.5rem">Kamu dah kenal ${FREE} huruf Jawi!</div>
+    <div class="word" style="font-size:1.5rem">Kamu dah kenal 10 huruf Jawi!</div>
     <div class="hint">Pelekat istimewa baru: 🥇</div>
-    ${full?`<button class="btn" id="go">Teruskan →</button>`:`
+    <button class="btn" id="go">Teruskan →</button>
+    <button class="btn" id="mp2">🗺️ Peta huruf</button></div>`;
+  document.getElementById('go').onclick=()=>trace(10);
+  document.getElementById('mp2').onclick=map;
+}
+/* Demo end: all free letters traced */
+function celebrateFree(){
+  setScreen(true);chime(true);speak(praise());
+  const nx=L.slice(FREE,FREE+5),rest=L.length-FREE;
+  view.innerHTML=`<div class="prompt stack" style="align-items:center;gap:10px">
+    <div class="pic" style="font-size:4rem">🌟</div>
+    <h2 class="cel">Syabas!</h2>
+    <div class="word" style="font-size:1.5rem">Kamu dah kenal ${FREE} huruf Jawi!</div>
     <div class="hint" style="color:var(--ink);font-weight:700">Huruf seterusnya sedang menunggu:</div>
     <div class="peek">${nx.map(x=>`<span>${x.j}</span>`).join('')}<span class="more">+${rest-nx.length}</span></div>
-    <button class="btn wa" id="go">🔓 Buka ${rest} huruf lagi · RM9.90</button>`}
+    <button class="btn wa" id="go">🔓 Buka ${rest} huruf lagi · RM9.90</button>
     <button class="btn" id="mp2">🗺️ Peta huruf</button></div>`;
-  document.getElementById('go').onclick=()=>full?trace(FREE):unlock();
+  document.getElementById('go').onclick=unlock;
   document.getElementById('mp2').onclick=map;
 }
 
