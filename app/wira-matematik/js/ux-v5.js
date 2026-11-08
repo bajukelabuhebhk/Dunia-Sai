@@ -16,7 +16,7 @@ const wm6T=(bm,en)=>EN()?en:bm;
 const wm6Role={
  kesatria:['Pedang & perisai · lompat, slash, kombo kilat.','Sword & shield · leap, slash, lightning combo.'],
  pemanah:['Busur yang pantas · serangan anak panah.','Swift bow · arrow attacks.'],
- sihir:['Tongkat ajaib · serangan cahaya dan sihir.','Magic staff · light and spell attacks.']
+ sihir:['Tongkat falak · serangan cahaya bintang.','Star staff · starlight attacks.']
 };
 const wm6CoatNames=[['Asal','Original'],['Mentari','Sunrise'],['Zamrud','Emerald']];
 const wm6CrestNames=[['Bintang','Star'],['Permata','Gem'],['Sayap','Wings']];

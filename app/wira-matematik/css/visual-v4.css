@@ -107,3 +107,12 @@
 .wm4-bank-scene svg{height:100%;width:100%;filter:drop-shadow(0 6px 5px #001f34)}
 .wm4-bank-scene .wm-vs{align-self:center}
 @media(max-width:390px){.wm4-bank-scene{height:130px;min-height:130px!important}.wm4-bank-scene .wm-actor,.wm4-bank-scene .wm-enemy{height:112px}}
+/* Dunia Sai: ruang pertempuran lebih kecil (permintaan Afiq, 8 Nov 2026) supaya soalan dan pilihan jawapan dapat lebih ruang. */
+#view:has(.arena) .arena{height:clamp(140px,31dvh,290px)!important;flex:0 1 clamp(140px,31dvh,290px)}
+@media(max-height:650px) and (orientation:portrait){#view:has(.arena) .arena{height:26dvh!important;flex-basis:26dvh}}
+@media(orientation:portrait){
+ #view:has(.arena) .rpg-question{font-size:clamp(1.05rem,3.1dvh,1.75rem)}
+ #view:has(.arena) .rpg-question-visual{font-size:clamp(1rem,3dvh,1.5rem);max-height:none}
+ #view:has(.arena) .ans{height:clamp(50px,10dvh,92px)!important;font-size:clamp(1.3rem,3.6dvh,2.1rem)!important}
+}
+@media(orientation:landscape) and (max-height:620px) and (min-width:650px){#view:has(.arena) .arena{height:100%!important;flex:initial}}

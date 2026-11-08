@@ -26,14 +26,14 @@
         id: 'kenal-jawi', name: 'Kenal Jawi', path: '/app/kenal-jawi/', img: '/img/kenal-jawi.jpg',
         subject: 'Jawi', age: '4 hingga 6 tahun', price: 9.9, pakej: true,
         desc: 'Kenal 37 huruf Jawi sambil bermain, dengan suara dan 8 permainan.',
-        free: '10 huruf pertama',
+        free: '17 huruf pertama',
         lic: { store: 'kj_licence', v1: 1, pk1: true, pk2: 1 },
       },
       {
         id: 'kenal-abc', name: 'Kenal ABC', path: '/app/kenal-abc/', img: '/img/kenal-abc.jpg',
         subject: 'Membaca', age: '4 hingga 6 tahun', price: 5, pakej: true,
         desc: 'Huruf A hingga Z dengan bunyi dan gambar, suku kata dan eja kata.',
-        free: 'Huruf A hingga J',
+        free: 'Huruf A hingga Q',
         lic: { store: 'abc_licence', v1: 2, pk1: true, pk2: 2 },
       },
       {
