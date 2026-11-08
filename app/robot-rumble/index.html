@@ -512,6 +512,16 @@ body.gfx-compatible .lab-overlay{backdrop-filter:none}
 .cr-dots i{width:8px;height:8px;border-radius:50%;background:var(--line2)}
 .cr-dots i.on{background:var(--amber2)}
 .r-story{margin:0;font-weight:800;color:var(--emerald2)}
+
+/* RR-CC-012b (8 Nov 2026): kad keputusan muat skrin telefon. Tinggi sebenar skrin (--rr-vh) untuk
+   pelayar tanpa dvh; di telefon kad keputusan jadi lapisan penuh skrin; butang sentiasa nampak di bawah kad. */
+body{height:var(--rr-vh,100dvh)}
+.rcard>*{flex-shrink:0}
+.rcard{padding-bottom:0}
+.rcard .r-actions{position:sticky;bottom:0;z-index:1;background:var(--panel);padding:8px 0 10px;border-top:1px solid var(--line)}
+@media (max-width:720px), (orientation:landscape) and (max-height:540px){
+  .result{position:fixed;left:0;right:0;top:0;bottom:auto;height:var(--rr-vh,100dvh);z-index:50;padding:calc(8px + var(--safe-t)) calc(8px + var(--safe-r)) calc(8px + var(--safe-b)) calc(8px + var(--safe-l))}
+}
 </style>
 <!-- dunia-sai --><link rel="manifest" href="/manifest.json"><script src="/shared/js/balik.js" defer></script><script src="/shared/js/ruang-ibubapa.js"></script><style id="ds-prestasi">/* Dunia Sai: prestasi (2 Nov 2026): kesan kabur/bayang berat dimatikan supaya game lebih laju; rupa hampir sama. Pasang semula jika game diganti. */*,*::before,*::after{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}</style>
 </head>
@@ -6336,6 +6346,12 @@ var KJL2=(function(){
     });
   }
 
+  // RR-CC-012b: real visible height for phones whose browser has no dvh (toolbar/nav bar hid the result buttons).
+  const setVh = () => document.documentElement.style.setProperty('--rr-vh', Math.round((window.visualViewport && visualViewport.height) || window.innerHeight) + 'px');
+  setVh();
+  window.addEventListener('resize', setVh);
+  window.addEventListener('orientationchange', () => setTimeout(setVh, 250));
+  if (window.visualViewport) visualViewport.addEventListener('resize', setVh);
   function init() {
     loadSave();
     rig.el = $('rig'); rig.canvas = $('rig-canvas'); rig.fallback = $('rig-fallback');
