@@ -27,6 +27,7 @@ const WMM=(()=>{
   pemanah:[
    {id:'01',b:1,f:1,i:1,bm:'Ikat Kepala Pucuk Rebung',en:'Bamboo Shoot Headband',r:'common',bintang:0},
    {id:'02',f:1,i:1,bm:'Sarung Lengan Penjejak',en:'Tracker Arm Wraps',r:'common',bintang:5},
+   {id:'03',b:1,f:1,i:1,bm:'Selendang Laluan Hutan',en:'Forest Trail Shawl',r:'uncommon',bintang:10},
    {id:'04',b:1,f:1,i:1,bm:'Tabung Panah Berukir',en:'Carved Quiver',r:'uncommon',bintang:20},
    {id:'05',b:1,f:1,i:1,bm:'Pelindung Bahu Rimba',en:'Forest Shoulder Guard',r:'rare',bintang:30},
    {id:'07',b:1,f:1,i:1,bm:'Jubah Penjelajah Bayu',en:'Breeze Explorer Cape',r:'epic',bintang:55},

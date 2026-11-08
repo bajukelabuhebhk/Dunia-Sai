@@ -1,5 +1,5 @@
 {
- "version": "5386841032",
+ "version": "e0c4c7a000",
  "core": {
   "files": {
    "/app/": "f4c6669a5135",
@@ -842,6 +842,9 @@
     "/app/wira-matematik/assets/wira-melayu/pemanah-01-i.webp": "34b0c527feba",
     "/app/wira-matematik/assets/wira-melayu/pemanah-02-f.webp": "d57e049713ee",
     "/app/wira-matematik/assets/wira-melayu/pemanah-02-i.webp": "56f7c3ab2f77",
+    "/app/wira-matematik/assets/wira-melayu/pemanah-03-b.webp": "5f2abdebb309",
+    "/app/wira-matematik/assets/wira-melayu/pemanah-03-f.webp": "04a41744da68",
+    "/app/wira-matematik/assets/wira-melayu/pemanah-03-i.webp": "b36d1c96b3c0",
     "/app/wira-matematik/assets/wira-melayu/pemanah-04-b.webp": "0b2a7f84d31e",
     "/app/wira-matematik/assets/wira-melayu/pemanah-04-f.webp": "17e336352c9c",
     "/app/wira-matematik/assets/wira-melayu/pemanah-04-i.webp": "7688d7c37742",
@@ -1014,7 +1017,7 @@
     "/app/wira-matematik/js/ux-v5.js": "ce8c7674b392",
     "/app/wira-matematik/js/visual-v3.js": "575f4405e5cc",
     "/app/wira-matematik/js/visual-v4.js": "b9465e0c10c7",
-    "/app/wira-matematik/js/wira-melayu.js": "03f1b88d05d7",
+    "/app/wira-matematik/js/wira-melayu.js": "bf41c3eaa24e",
     "/app/wira-matematik/js/wm-monitor-r3.js": "ae0d7972adf0",
     "/app/wira-matematik/misi/app.js": "42a5710f7efe",
     "/app/wira-matematik/misi/fonts.css": "3e046e57fbed",
@@ -1023,7 +1026,7 @@
     "/app/wira-matematik/misi/raksasa.js": "993870fab6a7",
     "/app/wira-matematik/misi/style.css": "e7ff4d3c0179"
    },
-   "bytes": 4318875
+   "bytes": 4350241
   },
   "wonder-island": {
    "files": {
