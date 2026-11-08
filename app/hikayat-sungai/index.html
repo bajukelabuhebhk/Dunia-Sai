@@ -446,6 +446,24 @@ button:disabled { cursor:default; }
 
 /* itch embeds use a non-scrolling iframe: scroll inside the page instead */
 html,body{height:100%}html{overflow:hidden}body{overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+/* phone layout (Afiq 8 Nov): small header, question on top, bigger game, mission at the bottom */
+@media (max-width: 900px) {
+  .hud { order: 1; } .below { order: 2; } .stage { order: 3; } .quest { order: 4; } .controls { order: 5; }
+  .stage:not(:has(#ov.title-screen:not([hidden]))):not(:has(#ov.arcade:not([hidden]))):not(:has(#ov.lic-screen:not([hidden]))) { aspect-ratio: auto; height: clamp(300px, 58svh, 125vw); }
+  .below { padding: 10px 12px; gap: 8px; }
+}
+@media (max-width: 560px) {
+  .wrap { gap: 8px; }
+  .hud { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding: 6px 8px; gap: 5px; border-radius: 14px; }
+  .hud::-webkit-scrollbar { display: none; }
+  .hud .title { flex-basis: auto; margin-right: 0; flex: none; }
+  .hud .title > span:last-child { display: none; }
+  .brand-emoji { width: 32px; height: 32px; font-size: 1.15rem; border-radius: 10px; }
+  .hud .chip, .hud .icon-btn { flex: none; padding: 5px 7px; font-size: .78rem; border-radius: 10px; white-space: nowrap; }
+  .hud .arcade-head { margin-left: 0; }
+  .quest { padding: 7px 11px; }
+  .quest-text { margin: 2px 0 6px; }
+}
 /* painted characters */
 .hsw { height: 1.25em; width: auto; vertical-align: bottom; }
 .hero-characters .hsw, .hero-characters .avimg { height: 1.5em; }
@@ -833,7 +851,7 @@ var KJL2=(function(){
   let hearts = maxH();
 
   // ===================== map =====================
-  const TS = 16, COLS = 40, ROWS = 30, VW = 12, VH = 9;
+  const TS = 16, COLS = 40, ROWS = 30; let VW = 12, VH = 9;
   const map = [];
   const rx = y => 16 + Math.round(Math.sin(y / 4) * 1.3);
   const CROSS_Y = 15, DAM_Y = 6;
@@ -1152,7 +1170,9 @@ var KJL2=(function(){
   });
   cv.addEventListener('pointercancel',e=>{if(finger?.id===e.pointerId)clearTouchGesture();});
   cv.addEventListener('lostpointercapture',e=>{if(finger?.id===e.pointerId)clearTouchGesture();});
-  function fit() { const r = cv.getBoundingClientRect(); if (!r.width) return; dpr = Math.min(2, devicePixelRatio || 1); scale = r.width / (VW * TS); cv.width = Math.round(r.width * dpr); cv.height = Math.round(r.height * dpr); }
+  function fit() { const r = cv.getBoundingClientRect(); if (!r.width) return;
+    // phones: a taller, closer view (bigger characters); desktop keeps 12 x 9 tiles
+    const tall = r.height / r.width > .8; VW = tall ? 10 : 12; VH = Math.min(ROWS, tall ? VW * r.height / r.width : 9); dpr = Math.min(2, devicePixelRatio || 1); scale = r.width / (VW * TS); cv.width = Math.round(r.width * dpr); cv.height = Math.round(r.height * dpr); }
   new ResizeObserver(fit).observe(cv); fit();
 
   // ===================== world rendering =====================
