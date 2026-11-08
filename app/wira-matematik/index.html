@@ -698,7 +698,9 @@ const PREMIUM_DIR='/app/wira-matematik/assets/raksasa/';
 const _origNames={};
 function applyPremiumNames(){for(const k in PREMIUM_MON){const nm=PREMIUM_MON[k][1],[l,b]=k.split('-').map(Number),m=LANDS[l]&&LANDS[l].mons[b];if(!nm||!m)continue;if(!_origNames[k])_origNames[k]=m[0];m[0]=full?nm:_origNames[k]}}
 let _pmN=0;
-function premiumSVG(file,boss){const d=(_pmN++%7)*.35;return `<svg class="pm" viewBox="0 -14 120 134"><image class="pmi" style="animation-delay:-${d}s" href="${PREMIUM_DIR}${file}.webp" x="0" y="-8" width="120" height="120" preserveAspectRatio="xMidYMid meet"/>${boss?crown(60,-10):''}</svg>`}
+/* Sprite yang asalnya menghadap KANAN dipusing supaya semua raksasa menghadap KIRI (ke arah wira). */
+const PM_FLIP=new Set(['02','06','08','12','18','19','21','22','23','25','26','27','28']);
+function premiumSVG(file,boss){const d=(_pmN++%7)*.35,img=`<image class="pmi" style="animation-delay:-${d}s" href="${PREMIUM_DIR}${file}.webp" x="0" y="-8" width="120" height="120" preserveAspectRatio="xMidYMid meet"/>`;return `<svg class="pm" viewBox="0 -14 120 134">${PM_FLIP.has(file.slice(0,2))?`<g transform="translate(120 0) scale(-1 1)">${img}</g>`:img}${boss?crown(60,-10):''}</svg>`}
 const monArt=(l,b)=>{const m=LANDS[l].mons[b],pm=full&&PREMIUM_MON[l+'-'+b];return pm?premiumSVG(pm[0],b===2):monSVG(m[1],m[2],m[3],b===2)};
 
 /* ---------- Questions ---------- */
