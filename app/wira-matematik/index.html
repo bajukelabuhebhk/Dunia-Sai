@@ -1369,13 +1369,13 @@ function oldStoryQ(l,b,base){
   const a=base.a,c=base.c,op=base.op;
   if(l===0)return mathQ(base.ans,`Wira menemui ${a} batu dan ${c} lagi. Berapa jumlahnya?`,
     `Your hero finds ${a} stones and ${c} more. How many in total?`,{
-    visual:'🪨 + 🪨',hint:bt('Tambah kedua-dua kumpulan.','Add the two groups.'),choices:base.choices});
+    visual:'🪨'.repeat(a)+' + '+'🪨'.repeat(c),hint:bt('Tambah kedua-dua kumpulan.','Add the two groups.'),choices:base.choices});
   if(l===1)return mathQ(base.ans,`Ada ${a} bekalan. ${c} telah digunakan. Berapa yang tinggal?`,
     `There are ${a} supplies. ${c} are used. How many remain?`,{
-    visual:'🎒',hint:bt('Tolak bekalan yang digunakan.','Subtract the supplies used.'),choices:base.choices});
+    visual:'🎒'.repeat(a-c)+'❌'.repeat(c),hint:bt('Tolak bekalan yang digunakan.','Subtract the supplies used.'),choices:base.choices});
   if(l===4)return mathQ(base.ans,`${a} kumpulan mempunyai ${c} bintang setiap satu. Berapa semua?`,
     `${a} groups have ${c} stars each. How many altogether?`,{
-    visual:'⭐ ✕',hint:bt('Darab bilangan kumpulan dengan setiap kumpulan.','Multiply groups by stars per group.'),choices:base.choices});
+    visual:a*c<=24?Array.from({length:a},()=>'⭐'.repeat(c)).join('  '):'⭐ ✕',hint:bt('Darab bilangan kumpulan dengan setiap kumpulan.','Multiply groups by stars per group.'),choices:base.choices});
   if(l===5&&op==='÷')return mathQ(base.ans,`${a} ramuan dibahagi sama rata kepada ${c} wira. Berapa setiap wira?`,
     `${a} potions are shared equally by ${c} heroes. How many each?`,{
     visual:'🧪 ➗',hint:bt('Bahagikan kepada kumpulan sama banyak.','Divide into equal groups.'),choices:base.choices});

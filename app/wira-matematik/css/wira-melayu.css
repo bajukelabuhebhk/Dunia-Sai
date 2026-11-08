@@ -36,3 +36,4 @@
 .wm6-result-figure .wmm-portrait,.rs .wmm-portrait,.rpg-hero-preview .wmm-portrait{width:100%;height:auto;aspect-ratio:2/3;max-height:260px}
 .hcard .wmm-portrait{width:100%;height:auto;aspect-ratio:2/3}
 .body:has(>.wmm-portrait)>.wm-gear-deco{display:none}
+@media(max-height:700px) and (orientation:portrait){.unit .body>.wmm-portrait{height:118%;width:100%;margin-bottom:-6%}}
