@@ -1,5 +1,5 @@
 {
- "version": "5c8031113b",
+ "version": "d2ab533029",
  "core": {
   "files": {
    "/app/": "200e0f0dec53",
@@ -832,6 +832,15 @@
     "/app/robot-rumble/audio/suara/reset_done.mp3": "a2e8d5c7e449",
     "/app/robot-rumble/audio/suara/seeded_m2.mp3": "3ac4f586fe30",
     "/app/robot-rumble/audio/suara/storage_off.mp3": "fdab62774616",
+    "/app/robot-rumble/audio/suara/story_s01.mp3": "be33abc9e834",
+    "/app/robot-rumble/audio/suara/story_s02.mp3": "6403214a4b97",
+    "/app/robot-rumble/audio/suara/story_s03.mp3": "7482e05d1e98",
+    "/app/robot-rumble/audio/suara/story_s04.mp3": "e4e07b818bd6",
+    "/app/robot-rumble/audio/suara/story_s05.mp3": "43e4ff4e19b3",
+    "/app/robot-rumble/audio/suara/story_s06.mp3": "341b63781b36",
+    "/app/robot-rumble/audio/suara/story_s07.mp3": "d3e3e0867fed",
+    "/app/robot-rumble/audio/suara/story_s08.mp3": "d272f7ffeed5",
+    "/app/robot-rumble/audio/suara/story_s09.mp3": "990e82404bdc",
     "/app/robot-rumble/audio/suara/win_m1.mp3": "02ea72c9798c",
     "/app/robot-rumble/audio/suara/win_m10.mp3": "95de35fac488",
     "/app/robot-rumble/audio/suara/win_m11.mp3": "48c9914509c9",
@@ -858,9 +867,9 @@
     "/app/robot-rumble/audio/suara/win_m8.mp3": "5ed77de694ff",
     "/app/robot-rumble/audio/suara/win_m9.mp3": "1bd25403147f",
     "/app/robot-rumble/audio/suara/win_title.mp3": "d6ac57a097bc",
-    "/app/robot-rumble/": "acdf1ac54aa7"
+    "/app/robot-rumble/": "716144987e76"
    },
-   "bytes": 6315946
+   "bytes": 6581690
   },
   "wira-matematik": {
    "files": {

@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<!-- RR-CC-012-NADI: cerita "Operasi Nadi Terakhir" (RR-STORY-002) + Peta NADI gaya pelayaran Nakhoda Jawi. Kad taklimat (Dr. Hana / Pusat Kawalan, teks), kesan selepas menang, pembukaan, babak hujung bab M5/M10/M15/M20, penamat M25; 9 klip BEEP baharu story_s01-09. Kunci baharu robot_rumble_cerita_v1 sahaja; fizik, bintang, lesen dan kunci simpanan lama tidak berubah. Dibina daripada RR-CC-011 (main). -->
 <!-- RR-CC-011-SOLO: pemain berlumba seorang (bayang RX-9 dan rekod terbaik hanya bila butang 👻 ditekan); tetapan tersembunyi (gear, suspensi, tekanan tayar, brek, pemberat) dibuang, hanya komponen yang nampak pada robot; masa RX-9 dikira semula dengan tetapan tetap. -->
 <!-- RR-CC-010-STABIL: pembaikan kestabilan daripada ChatGPT (RR-CC-009-DS) digabung ke RR-CC-009-BUNYI: dialog bertindih, link cabaran rosak tidak menghentikan game, suara BM jatuh ke suara peranti jika klip rosak, had 40 blok, kurang blur GPU pada telefon, susun atur telefon kecil. -->
 <!-- RR-CC-009-BUNYI: muzik bengkel dan 6 bunyi ElevenLabs (folder audio/bunyi, kembali ke bunyi sintetik jika gagal dimuat), cabaran bayang untuk misi berkunci terus ke skrin lesen. Dibina daripada RR-CC-008-DS. -->
@@ -444,6 +445,73 @@ body.gfx-compatible .lab-overlay{backdrop-filter:none}
 .lic-price{font-size:18px;color:var(--amber3)}
 .lic-wa{background:#16a34a;border-color:#22c55e;color:#fff;text-decoration:none;justify-content:center}
 .lic-id{font:800 16px var(--mono);letter-spacing:.06em;background:var(--deep);border-radius:10px;padding:8px;text-align:center}
+
+/* RR-CC-012: Peta NADI + babak cerita (tanpa blur/bayang berat) */
+.nadi-card{width:min(1000px,100%);height:100%;max-height:100%;gap:6px}
+.nadi-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.nadi-top h3{margin:0;flex:1}
+#nadi-prog{font-size:12px;font-weight:800;color:var(--amber3)}
+.nadi-body{flex:1;min-height:0;display:flex;gap:8px}
+.nadi-map{flex:1;min-height:0;min-width:0;border-radius:14px;overflow:hidden;border:2px solid var(--line2);background:#0b1a2e}
+.nadi-side{width:280px;flex:none;display:flex;flex-direction:column;gap:6px;overflow-y:auto}
+@media (max-aspect-ratio:1/1){.nadi-body{flex-direction:column}.nadi-side{width:auto;max-height:44%}}
+.nadi-svg{width:100%;height:100%;display:block}
+.nadi-deco{font-size:26px;opacity:.75}
+.nadi-area{font-size:19px;font-weight:900;letter-spacing:.02em;opacity:.9}
+.nadi-road-lit{stroke:#fbbf24;stroke-width:6;stroke-linecap:round}
+.nadi-st{cursor:pointer}
+.nadi-st .nadi-dot{fill:#3f1d24;stroke:#f43f5e;stroke-width:3}
+.nadi-st .nadi-halo{fill:none;stroke:transparent;stroke-width:4}
+.nadi-st.on .nadi-dot{fill:#047857;stroke:#6ee7b7}
+.nadi-st.on .nadi-halo{stroke:rgba(110,231,183,.45)}
+.nadi-st.locked .nadi-dot{fill:#1e293b;stroke:#64748b}
+.nadi-st.sel .nadi-halo{stroke:#fbbf24;stroke-dasharray:6 5;animation:nadiSpin 6s linear infinite;transform-box:fill-box;transform-origin:center}
+.nadi-st.just .nadi-halo{animation:nadiPing 1.2s ease-out 2;transform-box:fill-box;transform-origin:center;stroke:#6ee7b7}
+.nadi-num{font-size:20px;font-weight:900;fill:#fff;pointer-events:none}
+.nadi-stars{font-size:14px;fill:#fde047;font-weight:900;pointer-events:none}
+.nadi-tower rect{stroke:#94a3b8;stroke-width:2}
+.nadi-tower-top{fill:#334155;stroke:#94a3b8;stroke-width:3}
+.nadi-tower.on .nadi-tower-top,.mood-hidup .nadi-tower-top{fill:#fde047;animation:nadiPulse 1.4s ease-in-out infinite}
+.mood-amaran .nadi-tower-top{fill:#f43f5e;animation:nadiBlink .7s steps(2) infinite}
+.mood-amaran .nadi-st.off .nadi-dot{animation:nadiBlink .9s steps(2) infinite}
+.mood-padam .nadi-dot{animation:nadiOff .5s both}
+.mood-gelap .nadi-dot{fill:#1e1b2e;stroke:#475569}
+.mood-gegar .nadi-deco{animation:nadiShake .35s linear infinite}
+.mood-hidup .nadi-dot{animation:nadiOn .6s both}
+.nadi-robot{pointer-events:none}
+@keyframes nadiSpin{to{transform:rotate(360deg)}}
+@keyframes nadiPing{0%{transform:scale(1);opacity:1}100%{transform:scale(1.9);opacity:0}}
+@keyframes nadiPulse{50%{opacity:.55}}
+@keyframes nadiBlink{50%{opacity:.25}}
+@keyframes nadiOff{from{fill:#047857;stroke:#6ee7b7}to{fill:#1e1b2e;stroke:#475569}}
+@keyframes nadiOn{from{fill:#1e1b2e}to{fill:#047857}}
+@keyframes nadiShake{25%{transform:translate(2px,-1px)}75%{transform:translate(-2px,1px)}}
+.nadi-brief{background:var(--panel2);border:2px solid var(--line2);border-radius:14px;padding:10px;display:flex;flex-direction:column;gap:6px}
+.nb-head{display:flex;gap:8px;align-items:center}
+.nb-head .mi{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;font-weight:900;color:#fff;flex:none}
+.nb-head small{color:var(--muted)}
+.nb-head>span:last-child{flex:1;text-align:left}
+.nb-head .nb-chap{font-weight:900;letter-spacing:.03em}
+@media (max-width:700px){.nadi-top h3{flex:1 1 calc(100% - 64px);font-size:16px}#btn-nadi-close{order:1}#nadi-prog{order:2;flex:1 1 100%}#btn-nadi-story{order:3;flex:1}#btn-nadi-list{order:4;flex:1}}
+.nb-line,.nb-impact{margin:0;font-size:14px;line-height:1.4}
+.nb-who{font-weight:900;color:var(--sky3)}
+.nb-impact{color:var(--emerald2);font-weight:800}
+.nadi-scenes{display:flex;flex-direction:column;gap:6px;background:var(--panel2);border:2px solid var(--line2);border-radius:14px;padding:10px}
+.nadi-hint{margin:0;font-size:12px;color:var(--muted)}
+.cr-card{width:min(640px,100%)}
+.cr-chap{margin:0;font-size:13px;letter-spacing:.06em;color:var(--amber2);text-transform:uppercase}
+.cr-vis{border-radius:12px;overflow:hidden;border:2px solid var(--line2);aspect-ratio:1000/620;max-height:38vh;background:#0b1a2e}
+.cr-vis .nadi-svg{height:100%}
+.cr-who{display:flex;align-items:center;gap:8px}
+.cr-av{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:24px;background:#1e293b;border:2px solid var(--line2)}
+.cr-av.cr-beep{background:var(--amber);border-color:var(--amber3)}
+.cr-text{margin:0;font-size:18px;line-height:1.45;font-weight:700;min-height:3em}
+.cr-text.vis{font-style:italic;color:var(--sky3);font-weight:600}
+.cr-text.alert{color:#fda4af}
+.cr-dots{display:flex;gap:5px;justify-content:center}
+.cr-dots i{width:8px;height:8px;border-radius:50%;background:var(--line2)}
+.cr-dots i.on{background:var(--amber2)}
+.r-story{margin:0;font-weight:800;color:var(--emerald2)}
 </style>
 <!-- dunia-sai --><link rel="manifest" href="/manifest.json"><script src="/shared/js/balik.js" defer></script><script src="/shared/js/ruang-ibubapa.js"></script><style id="ds-prestasi">/* Dunia Sai: prestasi (2 Nov 2026): kesan kabur/bayang berat dimatikan supaya game lebih laju; rupa hampir sama. Pasang semula jika game diganti. */*,*::before,*::after{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}</style>
 </head>
@@ -615,6 +683,7 @@ body.gfx-compatible .lab-overlay{backdrop-filter:none}
           <div class="r-stars" id="r-stars" hidden></div>
           <div class="r-race" id="r-race" hidden></div>
           <p id="r-msg"></p>
+          <p class="r-story" id="r-story" hidden></p>
           <div class="experiment" id="r-experiment" hidden></div>
           <div class="disc"><b id="r-disc-label"></b> <span id="r-disc"></span></div>
           <div class="metrics" id="r-metrics"></div>
@@ -730,6 +799,37 @@ body.gfx-compatible .lab-overlay{backdrop-filter:none}
     <div class="r-actions" style="justify-content:space-between">
       <button class="btn" id="guide-skip" type="button" data-i18n="guide_skip">Skip guide</button>
       <div class="r-actions"><button class="btn" id="guide-prev" type="button" data-i18n="guide_prev">Back</button><button class="btn btn-go" id="guide-next" type="button"></button></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="modal-nadi" hidden role="dialog" aria-modal="true" aria-labelledby="nadi-title">
+  <div class="mcard nadi-card">
+    <div class="nadi-top"><h3 id="nadi-title" data-i18n="nadi_title">📡 Peta NADI</h3><span id="nadi-prog"></span>
+      <button class="btn" id="btn-nadi-story" type="button" data-i18n="nadi_story">📖 Cerita</button>
+      <button class="btn" id="btn-nadi-list" type="button" data-i18n="nadi_list">📋 Senarai misi</button>
+      <button class="btn btn-icon" id="btn-nadi-close" type="button" data-i18n-aria="close" aria-label="Close">✕</button></div>
+    <div class="nadi-body">
+      <div class="nadi-map" id="nadi-map"></div>
+      <div class="nadi-side">
+        <div class="nadi-scenes" id="nadi-scenes" hidden></div>
+        <div class="nadi-brief" id="nadi-brief"></div>
+        <p class="nadi-hint" data-i18n="nadi_tap">Ketik stesen untuk taklimat misi.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="modal-cerita" hidden role="dialog" aria-modal="true" aria-labelledby="cr-chap">
+  <div class="mcard cr-card">
+    <h3 class="cr-chap" id="cr-chap"></h3>
+    <div class="cr-vis" id="cr-vis" aria-hidden="true"></div>
+    <div class="cr-who" id="cr-who"></div>
+    <p class="cr-text" id="cr-text" aria-live="polite"></p>
+    <div class="cr-dots" id="cr-dots" aria-hidden="true"></div>
+    <div class="r-actions" style="justify-content:space-between">
+      <button class="btn" id="cr-skip" type="button" data-i18n="cr_skip">Langkau</button>
+      <button class="btn btn-go" id="cr-next" type="button">Seterusnya ▶</button>
     </div>
   </div>
 </div>
@@ -5403,6 +5503,8 @@ var KJL2=(function(){
     // Initial result exposes the observation, not a solution. The child opts
     // into progressively stronger guidance inside Failure Lab.
     $('r-msg').textContent = r.success ? t(r.reason) : L('resultSummary');
+    $('r-story').hidden = !r.success;
+    $('r-story').textContent = r.success ? `📡 ${nadiStation(r.missionId)}: ${nadiImpact(r.missionId)}` : '';
     const previous = notebook.slice(1).find(e => e.missionId === r.missionId);
     const comparison = $('r-experiment');
     comparison.hidden = !previous;
@@ -5699,6 +5801,8 @@ var KJL2=(function(){
     $('speech-text').textContent = t(lastSay.key, lastSay.vars);
     renderParts(); refreshBuild(); renderPalette(); renderStack(); refreshDesignList(); updateStarBadge(); updateChallengeChip();
     if (!$('modal-missions').hidden) renderMissions();
+    if (!$('modal-nadi').hidden) renderNadi();
+    if (!$('modal-cerita').hidden && scene) renderScene();
     if (!$('modal-guide').hidden) renderGuide();
     if (!$('view-notebook').hidden) renderNotebook();
     if (sim) { buildBrainMini(); updateBrainMini(); updateHud(true); }
@@ -5935,6 +6039,303 @@ var KJL2=(function(){
   }
   document.addEventListener('click', e => { if (e.target.closest('[data-lic]')) { sound.click(); showPaywall(null); } });
 
+  // ========================================================
+  // RR-CC-012: CERITA "OPERASI NADI TERAKHIR" + PETA NADI
+  // Story text only wraps the missions. Physics, win rules, stars, RX-9,
+  // licence and the old save keys are untouched. Scenes already watched
+  // live in their own key (robot_rumble_cerita_v1).
+  // ========================================================
+  const STORY_KEY = 'robot_rumble_cerita_v1';
+  let storySeen = [];
+  (() => { const d = readJSON(STORY_KEY); if (d && Array.isArray(d.seen)) storySeen = d.seen.filter(x => typeof x === 'string').slice(0, 20); })();
+  function markSeen(id) {
+    if (storySeen.includes(id)) return;
+    storySeen.push(id);
+    store.set(STORY_KEY, JSON.stringify({ v: 1, seen: storySeen }));
+  }
+  // [x, y on a 1000x620 map, who briefs (H = Dr. Hana, P = Pusat Kawalan), station BM, station EN,
+  //  briefing BM, briefing EN, impact BM, impact EN]
+  const NADI = [null,
+    [500, 318, 'H', 'Bengkel Rekacipta', 'Rekacipta Workshop', 'Pasang roda, motor dan bateri. Bawa robot keluar pintu bengkel.', 'Fit wheels, motor and battery. Roll out of the workshop.', 'Unit penyelamat AKTIF!', 'Rescue unit ONLINE!'],
+    [395, 395, 'P', 'Stesen Bukit', 'Hill Station', 'Stesen Bukit perlukan bekalan. Bawa kargo naik cerun 25°.', 'Hill Station needs supplies. Carry cargo up the 25° slope.', '{robot} sampai. Stesen Bukit menyala!', '{robot} made it. Hill Station is back!'],
+    [300, 465, 'P', 'Pusat Bantuan', 'Help Centre', 'Hantar data laluan, tapi berhenti sebelum penghadang.', 'Deliver route data, but stop before the barrier.', 'Data laluan diterima!', 'Route data received!'],
+    [195, 520, 'H', 'Lurah Gelap', 'Dark Chasm', 'Lurah gelap. Jambatan lama satu-satunya jalan.', 'The chasm is dark. The old bridge is the only way.', 'Laluan selamat direkod!', 'Safe route recorded!'],
+    [85, 560, 'P', 'Terminal Pesisir', 'Coast Terminal', 'Terminal Pesisir perlukan bungkusan segera. Bateri sedikit!', 'Coast Terminal needs a rush parcel. Low battery!', 'Penghantaran pertama berjaya!', 'First delivery done!'],
+    [70, 445, 'P', 'Stesen Rimba', 'Jungle Station', 'Stesen Rimba senyap. Jalan berlumpur!', 'Jungle Station is silent. Muddy road!', 'Stesen Rimba berhubung!', 'Jungle Station connected!'],
+    [165, 345, 'H', 'Pemancar Gurun', 'Desert Beacon', 'Pemancar gurun rosak. Guna matahari dengan bijak.', 'The desert beacon is down. Use the sun wisely.', 'Data cuaca kembali!', 'Weather data is back!'],
+    [70, 250, 'P', 'Platform Banjir', 'Flood Platform', 'Air naik! Sampai ke platform dan berhenti dengan selamat.', 'Water rising! Reach the platform and stop safely.', 'Platform banjir selamat!', 'Flood platform secured!'],
+    [175, 165, 'H', 'Kilang Automasi', 'Automation Factory', 'Pintu kilang ikut jadual. Tiba ketika ia hijau.', 'The factory gate runs on a timer. Arrive while it’s green.', 'Data pemulihan diperoleh!', 'Repair data unlocked!'],
+    [95, 70, 'P', 'Pos Gunung', 'Mountain Post', 'Pos Gunung perlukan kargo. Cerun curam!', 'Mountain Post needs cargo. Steep slopes!', 'Kargo sampai. Ada gegaran direkod…', 'Cargo delivered. Tremors detected…'],
+    [245, 60, 'H', 'Stesen Tanah', 'Ground Station', 'Biar robot rasa cerun dan bertindak sendiri.', 'Let the robot feel the slope and act on its own.', 'Data kestabilan tanah dihantar!', 'Ground data sent!'],
+    [335, 140, 'P', 'Hutan Malam', 'Night Forest', 'Hutan gelap, tapi ada penanda IR di lantai.', 'Dark forest, but IR marks on the floor.', 'Stesen terpencil dijumpai!', 'Remote station found!'],
+    [425, 62, 'H', 'Jambatan Lama', 'Old Bridge', 'Jambatan rosak: jurang, tangga, bonjolan.', 'Broken bridge: gaps, steps, bumps.', 'Jambatan lulus untuk peralatan ringan!', 'Bridge cleared for light gear!'],
+    [515, 145, 'P', 'Jalan Ribut', 'Storm Road', 'Ribut! Jalan tengah licin.', 'Storm! The middle road is slippery.', 'Ribut ditempuh!', 'Storm crossed!'],
+    [605, 62, 'P', 'Stesen Isyarat', 'Signal Station', 'Mesej terakhir stesen mesti sampai.', 'The station’s last message must get through.', 'Mesej sampai. Kita tahu apa yang perlu dibaiki!', 'Message delivered. We know what to fix!'],
+    [700, 140, 'H', 'Kilang Berirama', 'Rhythm Factory', 'Pintu kilang baharu. Biar robot periksa sendiri bila selamat.', 'New factory gate. Let the robot check when it’s safe.', 'Data dua destinasi diterima!', 'Two delivery targets received!'],
+    [625, 245, 'P', 'Dua Stesen Kargo', 'Twin Cargo Stations', 'Dua stesen, dua penghantaran. Jangan langkau!', 'Two stations, two drops. Don’t skip one!', 'Kedua-dua stesen terima bekalan!', 'Both stations supplied!'],
+    [735, 305, 'H', 'Tebing Tinggi', 'High Cliff', 'Ronda tebing dengan kargo. Berhenti tepat.', 'Patrol the cliff with cargo. Stop exactly.', 'Tebing selamat untuk operasi!', 'Cliff route approved!'],
+    [630, 395, 'P', 'Stesen Kuasa Suria', 'Solar Power Station', 'Stesen Kuasa perlukan robot yang jimat tenaga.', 'Power Station needs an energy-wise robot.', 'Stesen Kuasa sedia!', 'Power Station ready!'],
+    [735, 480, 'H', 'Pusat Bantuan Utama', 'Main Relief Centre', 'Penghantaran besar. Semua kemahiran serentak!', 'The big delivery. Every skill at once!', 'Rangkaian bantuan kembali hidup!', 'Relief network is back!'],
+    [855, 555, 'P', 'Laluan Batu', 'Rock Pass', 'TANAH RUNTUH! Laju dan cengkam!', 'ROCKSLIDE! Speed and grip!', 'Laluan alternatif direkod!', 'Detour recorded!'],
+    [930, 455, 'P', 'Jambatan Taufan', 'Typhoon Bridge', 'Angin taufan di jambatan.', 'Typhoon winds on the bridge.', 'Laluan komunikasi disahkan!', 'Comms route confirmed!'],
+    [840, 370, 'P', 'Kaki Gunung Berapi', 'Volcano Foot', 'Lahar di belakang, dinding di depan!', 'Lava behind, wall ahead!', 'Selamat dari lahar!', 'Escaped the lava!'],
+    [935, 275, 'H', 'Jeti Pesisir', 'Coast Pier', 'Jeti runtuh dan bateri hampir habis. Berhenti tepat di garisan.', 'The pier is collapsing, battery low. Stop on the line.', 'Modul teras sampai ke pesisir!', 'Core module reached the coast!'],
+    [860, 150, 'H', 'Menara NADI', 'NADI Tower', 'Bawa modul teras ke Menara NADI. Ini dia!', 'Take the core module to the NADI Tower. This is it!', 'MENARA NADI HIDUP!', 'NADI TOWER ONLINE!']
+  ];
+  // Chapter areas: [cx, cy, rx, ry, colour, label BM, label EN, label x, label y]
+  const NADI_AREA = [
+    [300, 455, 250, 125, '#0ea5e9', 'Bab 1 · Bandar & Pesisir', 'Ch.1 · Town & Coast', 330, 590],
+    [125, 255, 110, 230, '#22c55e', 'Bab 2 · Rimba, Gurun, Gunung', 'Ch.2 · Jungle, Desert, Peak', 20, 24],
+    [425, 100, 215, 80, '#a855f7', 'Bab 3 · Lurah & Hutan Malam', 'Ch.3 · Chasm & Night Forest', 300, 205],
+    [680, 310, 115, 205, '#f59e0b', 'Bab 4 · Rangkaian Bekalan', 'Ch.4 · Supply Network', 560, 520],
+    [890, 360, 100, 250, '#f43f5e', 'Bab 5 · Laluan Menara', 'Ch.5 · Tower Route', 790, 610]
+  ];
+  // Light scenery on the map (emoji text, no images, no filters).
+  const NADI_DECO = [['🌊', 40, 600], ['🌊', 165, 600], ['⛵', 110, 600], ['🏘️', 430, 270], ['🏘️', 560, 330], ['🌳', 30, 370], ['🌴', 110, 395], ['🌵', 230, 300], ['🏜️', 225, 395],
+    ['💧', 30, 205], ['🏭', 225, 125], ['⛰️', 30, 110], ['🏔️', 165, 40], ['🌲', 300, 110], ['🌲', 375, 190], ['🌧️', 555, 210], ['⚙️', 760, 90], ['☀️', 560, 440], ['🪨', 920, 590], ['🌋', 780, 410], ['🌊', 975, 330], ['⚡', 920, 160]];
+  const CHAPTER_END = { 5: 'b1', 10: 'b2', 15: 'b3', 20: 'b4', 25: 'tamat' };
+  // Scene lines: [who, BM, EN, voice clip (BM, BEEP only), map mood]
+  const SCENES = {
+    buka: { bm: 'Pembukaan', en: 'Opening', lines: [
+      ['vis', 'Malam di Kota Rekacipta. Menara NADI menyala… kemudian ribut melanda.', 'Night in Kota Rekacipta. The NADI Tower glows… then the storm hits.', null, 'padam'],
+      ['pusat', 'AMARAN! Sistem NADI terputus. Kawasan gunung dan pesisir hilang hubungan!', 'ALERT! The NADI network is down. Mountain and coast have gone silent!', null, 'gelap'],
+      ['beep', 'Bip bip! Robot penyelamat besar tak boleh lalu jalan yang rosak!', 'Beep beep! The big rescue robots can’t pass the broken roads!', 'story_s01', 'gelap'],
+      ['hana', 'Masih ada satu peluang: robot kecil yang boleh kita ubah untuk setiap cabaran.', 'We still have one chance: a small robot we can rebuild for every challenge.', null, 'gelap'],
+      ['beep', 'Tapi robot itu belum siap… Oh! Awaklah juruteranya! Jom bina!', 'But it isn’t finished… Oh! You’re the engineer! Let’s build!', 'story_s02', 'gelap']] },
+    b1: { bm: 'Penutup Bab 1 · Percikan Harapan', en: 'End of Chapter 1 · Spark of Hope', lines: [
+      ['vis', 'Lima lampu hijau di peta… tetapi banyak lagi yang merah.', 'Five green lights on the map… but many are still red.', null, 'separa'],
+      ['beep', 'Kita berjaya! Eh… kenapa banyak lagi lampu merah?', 'We did it! Wait… why are so many lights still red?', 'story_s03', 'separa'],
+      ['hana', 'Ini baru permulaan. Kita perlu pergi lebih jauh.', 'This is just the start. We need to go further.', null, 'separa']] },
+    b2: { bm: 'Penutup Bab 2 · Jejak yang Terputus', en: 'End of Chapter 2 · Broken Trails', lines: [
+      ['vis', 'Pos Gunung merekod gegaran tanah.', 'The Mountain Post records ground tremors.', null, 'gegar'],
+      ['hana', 'Bukan ribut saja. Tanah gunung bergerak.', 'It’s not just the storm. The mountain ground is moving.', null, 'gegar'],
+      ['beep', 'Jadi robot kita kena belajar membaca dunia sendiri?', 'So our robot must learn to read the world by itself?', 'story_s04', 'gegar']] },
+    b3: { bm: 'Penutup Bab 3 · Bahasa Rahsia Mesin', en: 'End of Chapter 3 · The Secret Language of Machines', lines: [
+      ['hana', 'Kita dah tahu apa yang perlu dibaiki. Sekarang kita hantar semuanya.', 'We know what to fix. Now we deliver it all.', null, 'separa'],
+      ['beep', 'Banyak tempat, satu robot… tapi robot yang hebat!', 'So many places, one robot… but a great one!', 'story_s05', 'separa']] },
+    b4: { bm: 'Penutup Bab 4 · Rangkaian Harapan', en: 'End of Chapter 4 · Network of Hope', lines: [
+      ['vis', 'Kawasan yang dibantu bersorak… kemudian lampu amaran berkelip.', 'The towns cheer… then the warning lights flash.', null, 'separa'],
+      ['pusat', 'AMARAN! Tanah runtuh! Menara NADI masih tiada modul teras!', 'ALERT! Rockslide! The NADI Tower still has no core module!', null, 'amaran'],
+      ['beep', 'Modul terakhir? Di mana?', 'The last module? Where?', 'story_s06', 'amaran'],
+      ['hana', 'Di seberang kawasan paling berbahaya. Operasi Nadi Terakhir bermula.', 'Across the most dangerous land. Operation Last Pulse begins.', null, 'amaran']] },
+    tamat: { bm: 'Penamat · Kota Rekacipta Kembali Bernadi', en: 'Finale · Kota Rekacipta Has a Pulse Again', lines: [
+      ['vis', '{robot} berhenti di Menara NADI. Modul teras dipasang…', '{robot} stops at the NADI Tower. The core module goes in…', null, 'separa'],
+      ['pusat', 'Sistem NADI AKTIF! Semua stesen berhubung!', 'NADI is ONLINE! Every station is connected!', null, 'hidup'],
+      ['beep', 'Bip… bip… Kita berjaya? KITA BERJAYA!', 'Beep… beep… Did we do it? WE DID IT!', 'story_s07', 'hidup'],
+      ['hana', 'Bermula dengan dua roda, satu motor dan satu bateri. Lihat {robot} sekarang.', 'It started with two wheels, a motor and a battery. Look at {robot} now.', null, 'hidup'],
+      ['beep', 'Tapi robot cuma ikut arahan…', 'But robots only follow instructions…', 'story_s08', 'hidup'],
+      ['hana', 'Betul. Arahan itu datang daripada jurutera yang tak putus asa.', 'True. And those came from an engineer who never gave up.', null, 'hidup'],
+      ['hana', 'Jurutera hebat bukan yang tak pernah gagal, tapi yang belajar daripada setiap ujian.', 'Great engineers aren’t the ones who never fail, but the ones who learn from every test.', null, 'hidup'],
+      ['beep', 'Dan jurutera itu… AWAK!', 'And that engineer is… YOU!', 'story_s09', 'hidup']] }
+  };
+  const STORY_UI = {
+    bm: { nadi_title: '📡 Peta NADI', nadi_list: '📋 Senarai misi', nadi_story: '📖 Cerita', nadi_start: '▶ Mula misi', nadi_unlock: '🔓 Buka versi penuh',
+      nadi_prog: 'Stesen hidup', nadi_legend: '🏅 LEGENDA ROBOT RUMBLE', nadi_tap: 'Ketik stesen untuk taklimat misi.', nadi_done: 'Siap',
+      cr_next: 'Seterusnya ▶', cr_skip: 'Langkau', cr_build: '🔧 Bina robot pertama', cr_map: '📡 Ke Peta NADI', cr_go: 'Teruskan operasi ▶',
+      cr_hana: 'Dr. Hana', cr_pusat: 'Pusat Kawalan', cr_beep: 'BEEP', cr_scenes: 'Tonton semula babak', robot_default: 'Robot kita',
+      story_impact: 'Kesan' },
+    en: { nadi_title: '📡 NADI Map', nadi_list: '📋 Mission list', nadi_story: '📖 Story', nadi_start: '▶ Start mission', nadi_unlock: '🔓 Unlock full version',
+      nadi_prog: 'Stations online', nadi_legend: '🏅 ROBOT RUMBLE LEGEND', nadi_tap: 'Tap a station for the mission briefing.', nadi_done: 'Done',
+      cr_next: 'Next ▶', cr_skip: 'Skip', cr_build: '🔧 Build your first robot', cr_map: '📡 To the NADI Map', cr_go: 'Continue the mission ▶',
+      cr_hana: 'Dr. Hana', cr_pusat: 'Control Centre', cr_beep: 'BEEP', cr_scenes: 'Watch scenes again', robot_default: 'Our robot',
+      story_impact: 'Impact' }
+  };
+  Object.assign(I18N.bm, STORY_UI.bm); Object.assign(I18N.en, STORY_UI.en);
+  // BEEP's story lines go through t() so EN can use the device voice like every other line.
+  for (const sc of Object.values(SCENES)) for (const ln of sc.lines) if (ln[3]) { I18N.bm[ln[3]] = ln[1]; I18N.en[ln[3]] = ln[2]; VOICE_KEYS.add(ln[3]); }
+  const robotLabel = () => robotName || t('robot_default');
+  const storyFill = s => s.split('{robot}').join(robotLabel());
+  const nadiBrief = id => storyFill(NADI[id][lang === 'en' ? 6 : 5]);
+  const nadiImpact = id => storyFill(NADI[id][lang === 'en' ? 8 : 7]);
+  const nadiStation = id => NADI[id][lang === 'en' ? 4 : 3];
+
+  // ---------- map drawing ----------
+  let nadiPortrait = false;
+  const nadiXY = (x, y) => nadiPortrait ? [y, x] : [x, y];
+  function nadiLit(mood) {
+    if (mood === 'hidup') return id => true;
+    if (mood === 'padam' || mood === 'gelap') return id => false;
+    return id => completed.includes(id);
+  }
+  function nadiRobot() {
+    const c = (PAINT_COL[blueprint.paint] || PAINT_COL.amber);
+    return `<g class="nadi-robot" id="nadi-robot"><ellipse cx="0" cy="17" rx="20" ry="5" fill="rgba(0,0,0,.35)"/>
+      <rect x="-17" y="-14" width="34" height="24" rx="7" fill="${c[1]}" stroke="${c[0]}" stroke-width="3"/>
+      <rect x="-10" y="-8" width="20" height="10" rx="4" fill="#0f172a"/><circle cx="-5" cy="-3" r="2.6" fill="#7dd3fc"/><circle cx="5" cy="-3" r="2.6" fill="#7dd3fc"/>
+      <line x1="0" y1="-14" x2="0" y2="-22" stroke="${c[0]}" stroke-width="3"/><circle cx="0" cy="-24" r="4" fill="#fde047"/>
+      <circle cx="-11" cy="12" r="6" fill="#1f2937" stroke="#94a3b8" stroke-width="2"/><circle cx="11" cy="12" r="6" fill="#1f2937" stroke="#94a3b8" stroke-width="2"/></g>`;
+  }
+  function nadiSvg(opt) {
+    const mini = !!opt.mini, mood = opt.mood || 'separa', lit = nadiLit(mood);
+    const W = nadiPortrait ? 620 : 1000, H = nadiPortrait ? 1000 : 620;
+    let s = `<svg class="nadi-svg mood-${mood}${mini ? ' mini' : ''}" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="${esc(t('nadi_title'))}">`;
+    s += `<rect width="${W}" height="${H}" fill="#0b1a2e"/>`;
+    const sea = nadiXY(70, 640), sea2 = nadiXY(1000, 300);
+    s += `<ellipse cx="${sea[0]}" cy="${sea[1]}" rx="${nadiPortrait ? 140 : 300}" ry="${nadiPortrait ? 300 : 140}" fill="#0c4a6e"/>`;
+    s += `<ellipse cx="${sea2[0]}" cy="${sea2[1]}" rx="${nadiPortrait ? 160 : 60}" ry="${nadiPortrait ? 60 : 160}" fill="#0c4a6e"/>`;
+    NADI_AREA.forEach(a => {
+      const [cx, cy] = nadiXY(a[0], a[1]), rx = nadiPortrait ? a[3] : a[2], ry = nadiPortrait ? a[2] : a[3];
+      s += `<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="${a[4]}" opacity=".1" stroke="${a[4]}" stroke-opacity=".35" stroke-width="2" stroke-dasharray="6 8"/>`;
+    });
+    NADI_DECO.forEach(d => { const [x, y] = nadiXY(d[1], d[2]); s += `<text x="${x}" y="${y}" class="nadi-deco" text-anchor="middle">${d[0]}</text>`; });
+    const pts = RR.MISSION_IDS.map(id => nadiXY(NADI[id][0], NADI[id][1]));
+    s += `<polyline points="${pts.map(p => p.join(',')).join(' ')}" fill="none" stroke="#334155" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>`;
+    s += `<polyline points="${pts.map(p => p.join(',')).join(' ')}" fill="none" stroke="#64748b" stroke-width="2" stroke-dasharray="8 10"/>`;
+    for (let i = 1; i < pts.length; i++) {
+      const a = RR.MISSION_IDS[i - 1], b = RR.MISSION_IDS[i];
+      if (lit(a) && lit(b)) s += `<line class="nadi-road-lit" x1="${pts[i - 1][0]}" y1="${pts[i - 1][1]}" x2="${pts[i][0]}" y2="${pts[i][1]}"/>`;
+    }
+    const [tx, ty] = nadiXY(NADI[25][0], NADI[25][1]);
+    s += `<g class="nadi-tower${lit(25) ? ' on' : ''}"><rect x="${tx - 9}" y="${ty - 78}" width="18" height="52" rx="3" fill="#475569"/><circle cx="${tx}" cy="${ty - 84}" r="12" class="nadi-tower-top"/></g>`;
+    RR.MISSION_IDS.forEach((id, i) => {
+      const [x, y] = pts[i], locked = !mini && needLicence(id), on = lit(id);
+      const cls = 'nadi-st' + (on ? ' on' : ' off') + (locked ? ' locked' : '') + (!mini && id === opt.sel ? ' sel' : '');
+      const delay = mood === 'padam' ? ` style="animation-delay:${(0.4 + i * 0.07).toFixed(2)}s"` : '';
+      s += `<g class="${cls}" data-st="${id}"${mini ? '' : ` role="button" tabindex="0" aria-label="M${id} ${esc(nadiStation(id))}"`}>`;
+      if (!mini) s += `<circle cx="${x}" cy="${y}" r="36" fill="transparent"/>`;
+      s += `<circle class="nadi-halo" cx="${x}" cy="${y}" r="30"${delay}/><circle class="nadi-dot" cx="${x}" cy="${y}" r="22"${delay}/>`;
+      s += `<text x="${x}" y="${y + 7}" text-anchor="middle" class="nadi-num">${locked ? '🔒' : id}</text>`;
+      if (!mini && stars[id]) s += `<text x="${x}" y="${y + 44}" text-anchor="middle" class="nadi-stars">${'★'.repeat(stars[id])}</text>`;
+      s += '</g>';
+    });
+    if (!mini) s += nadiRobot();
+    return s + '</svg>';
+  }
+
+  // ---------- map modal ----------
+  let nadiSel = 1, nadiAnim = 0;
+  const robotY = y => y < 75 ? y + 52 : y - 46;   // keep the robot inside the map edge
+  function nadiPlaceRobot(id, offset) {
+    const g = $('nadi-robot'); if (!g) return;
+    const [x, y] = nadiXY(NADI[id][0], NADI[id][1]);
+    g.setAttribute('transform', `translate(${x + (offset ?? 0)} ${robotY(y)})`);
+  }
+  function renderNadi() {
+    const box = $('nadi-map');
+    nadiPortrait = box.clientHeight > box.clientWidth * 1.05;
+    box.innerHTML = nadiSvg({ sel: nadiSel });
+    nadiPlaceRobot(nadiSel);
+    const on = RR.MISSION_IDS.filter(id => completed.includes(id)).length;
+    $('nadi-prog').textContent = on >= 25 ? t('nadi_legend') : `${t('nadi_prog')}: ${on}/25 · ★ ${RR.MISSION_IDS.reduce((a, id) => a + (stars[id] || 0), 0)}/75`;
+    renderNadiBrief();
+  }
+  function renderNadiBrief() {
+    const id = nadiSel, who = NADI[id][2] === 'H' ? t('cr_hana') : t('cr_pusat'), done = completed.includes(id);
+    const lock = needLicence(id);
+    $('nadi-brief').innerHTML = `<div class="nb-head"><span class="mi" style="background:${MISSION_COL[id]}">${lock ? '🔒' : 'M' + id}</span>
+      <span><small class="nb-chap" style="color:${NADI_AREA[Math.floor((id - 1) / 5)][4]}">${esc(NADI_AREA[Math.floor((id - 1) / 5)][lang === 'en' ? 6 : 5])}</small><br><b>${esc(nadiStation(id))}</b>${missionName(id) !== nadiStation(id) || stars[id] ? `<br><small>${missionName(id) !== nadiStation(id) ? esc(missionName(id)) : ''}${stars[id] ? (missionName(id) !== nadiStation(id) ? ' · ' : '') + starString(stars[id]) : ''}</small>` : ''}</span></div>
+      <p class="nb-line"><span class="nb-who">${NADI[id][2] === 'H' ? '👩🏽‍🔬' : '📡'} ${esc(who)}:</span> ${esc(nadiBrief(id))}</p>
+      ${done ? `<p class="nb-impact">✅ ${esc(nadiImpact(id))}</p>` : ''}
+      <button class="btn ${lock ? 'btn-amber' : 'btn-go'}" type="button" id="nadi-go">${esc(t(lock ? 'nadi_unlock' : 'nadi_start'))}</button>`;
+    $('nadi-go').addEventListener('click', () => {
+      sound.snap();
+      if (needLicence(id)) { showPaywall(id); return; }
+      closeModal('modal-nadi'); setMission(id); switchTab('build');
+    });
+  }
+  function nadiSelect(id) { nadiSel = id; renderNadi(); }
+  // opt.travel: [from, to] → BEEP's robot drives along the road like the ship in Nakhoda Jawi.
+  function openNadi(opt = {}) {
+    cancelAnimationFrame(nadiAnim);
+    $('nadi-scenes').hidden = true;
+    nadiSel = opt.travel ? opt.travel[1] : (opt.sel || missionId);
+    openModal('modal-nadi');
+    renderNadi();
+    if (opt.travel) {
+      const [a, b] = opt.travel, A = nadiXY(NADI[a][0], NADI[a][1]), B = nadiXY(NADI[b][0], NADI[b][1]);
+      const g = $('nadi-robot'), t0 = performance.now(), dur = 1300;
+      $('nadi-map').querySelector(`[data-st="${a}"]`)?.classList.add('just');
+      const step = now => {
+        const k = Math.min(1, (now - t0) / dur), e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2, ya = robotY(A[1]), yb = robotY(B[1]);
+        const bob = Math.sin(k * Math.PI * 6) * 3;
+        g.setAttribute('transform', `translate(${A[0] + (B[0] - A[0]) * e} ${ya + (yb - ya) * e + bob})`);
+        if (k < 1) nadiAnim = requestAnimationFrame(step);
+      };
+      nadiAnim = requestAnimationFrame(step);
+    }
+    if (opt.then) opt.then();
+  }
+  function renderSceneList() {
+    const box = $('nadi-scenes');
+    const ok = id => id === 'buka' || storySeen.includes(id) || completed.includes(+Object.keys(CHAPTER_END).find(k => CHAPTER_END[k] === id));
+    box.innerHTML = `<b>${esc(t('cr_scenes'))}</b>` + Object.keys(SCENES).filter(ok).map(id =>
+      `<button class="btn" type="button" data-scene="${id}">🎬 ${esc(SCENES[id][lang === 'en' ? 'en' : 'bm'])}</button>`).join('');
+  }
+
+  // ---------- story scenes ----------
+  let scene = null;
+  function playScene(id, then, endKey) {
+    if (currentTab === 'test' && running && !paused) $('btn-pause').click();
+    scene = { id, i: 0, then, endKey: endKey || 'cr_map' };
+    openModal('modal-cerita');
+    renderScene();
+  }
+  function renderScene() {
+    const sc = SCENES[scene.id], ln = sc.lines[scene.i], last = scene.i === sc.lines.length - 1;
+    nadiPortrait = false;
+    $('cr-chap').textContent = sc[lang === 'en' ? 'en' : 'bm'];
+    $('cr-vis').innerHTML = nadiSvg({ mini: true, mood: ln[4] });
+    const who = ln[0], av = { beep: '🤖', hana: '👩🏽‍🔬', pusat: '📡', vis: '' }[who];
+    $('cr-who').hidden = who === 'vis';
+    $('cr-who').innerHTML = who === 'vis' ? '' : `<span class="cr-av cr-${who}">${av}</span><b>${esc(t('cr_' + who))}</b>`;
+    const tx = $('cr-text');
+    tx.textContent = storyFill(ln[lang === 'en' ? 2 : 1]);
+    tx.className = 'cr-text' + (who === 'vis' ? ' vis' : '') + (who === 'pusat' ? ' alert' : '');
+    $('cr-dots').innerHTML = sc.lines.map((_, i) => `<i class="${i === scene.i ? 'on' : ''}"></i>`).join('');
+    $('cr-next').textContent = t(last ? scene.endKey : 'cr_next');
+    $('cr-skip').hidden = last;
+    if (ln[3]) voice([ln[3]]); else stopVoice();
+    if (who === 'beep') beepFeel(ln[4] === 'amaran' || ln[4] === 'gelap' ? 'surprised' : 'happy', 3);
+  }
+  function endScene() {
+    if (!scene) return;
+    const s = scene; scene = null;
+    stopVoice(); markSeen(s.id); closeModal('modal-cerita');
+    if (s.then) s.then();
+  }
+  // After a win: chapter scene (first time), then the map with the robot driving on.
+  function afterWin(r) {
+    const id = r.missionId, next = RR.MISSION_IDS.includes(id + 1) ? id + 1 : null;
+    const toMap = () => openNadi(next ? { travel: [id, next] } : { sel: id });
+    const sc = CHAPTER_END[id];
+    if (sc && !storySeen.includes(sc)) {
+      if (sc === 'b1') playScene(sc, () => { toMap(); if (needLicence(6)) showPaywall(6); }, 'cr_go');
+      else playScene(sc, toMap, 'cr_map');
+    } else toMap();
+  }
+  function setupStory() {
+    $('btn-nadi-close').addEventListener('click', () => { cancelAnimationFrame(nadiAnim); closeModal('modal-nadi'); });
+    $('btn-nadi-list').addEventListener('click', () => {
+      sound.click(); closeModal('modal-nadi'); renderMissions(); openModal('modal-missions');
+      $('mission-list').querySelector('.mission.cur')?.scrollIntoView({ block: 'nearest' });
+    });
+    $('btn-nadi-story').addEventListener('click', () => {
+      sound.click(); const box = $('nadi-scenes');
+      if (box.hidden) renderSceneList();
+      box.hidden = !box.hidden;
+    });
+    $('nadi-scenes').addEventListener('click', e => {
+      const b = e.target.closest('[data-scene]'); if (!b) return;
+      sound.click(); $('nadi-scenes').hidden = true;
+      playScene(b.dataset.scene, null, 'cr_map');
+    });
+    const pick = e => { const g = e.target.closest('[data-st]'); if (g) { sound.click(); cancelAnimationFrame(nadiAnim); nadiSelect(+g.dataset.st); } };
+    $('nadi-map').addEventListener('click', pick);
+    $('nadi-map').addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(e); } });
+    $('modal-nadi').addEventListener('click', e => { if (e.target.id === 'modal-nadi') { cancelAnimationFrame(nadiAnim); closeModal('modal-nadi'); } });
+    $('cr-next').addEventListener('click', () => {
+      sound.click();
+      if (!scene) return;
+      if (scene.i < SCENES[scene.id].lines.length - 1) { scene.i++; renderScene(); } else endScene();
+    });
+    $('cr-skip').addEventListener('click', () => { sound.click(); endScene(); });
+    let rz = 0;
+    window.addEventListener('resize', () => {
+      clearTimeout(rz);
+      rz = setTimeout(() => { if (!$('modal-nadi').hidden) { cancelAnimationFrame(nadiAnim); renderNadi(); } }, 150);
+    });
+  }
+
   function init() {
     loadSave();
     rig.el = $('rig'); rig.canvas = $('rig-canvas'); rig.fallback = $('rig-fallback');
@@ -6032,8 +6433,8 @@ var KJL2=(function(){
     $('r-action').addEventListener('click', () => {
       const r = sim && sim.result;
       closeResult();
-      if (r && r.success && RR.MISSION_IDS.includes(r.missionId + 1)) setMission(r.missionId + 1);
       switchTab('build');
+      if (r && r.success) afterWin(r);
     });
     // notebook
     $('btn-nb-close').addEventListener('click', () => switchTab('build'));
@@ -6052,10 +6453,7 @@ var KJL2=(function(){
       else { closeGuide(); switchTab('build'); say('guide_finish'); }
     });
     // missions
-    $('btn-mission').addEventListener('click', () => {
-      renderMissions(); openModal('modal-missions');
-      $('mission-list').querySelector('.mission.cur')?.scrollIntoView({block:'nearest'});
-    });
+    $('btn-mission').addEventListener('click', () => { sound.click(); openNadi(); });
     $('btn-mm-close').addEventListener('click', () => closeModal('modal-missions'));
     $('btn-ruang').addEventListener('click', () => { sound.click(); closeModal('modal-missions'); if (window.DSRuang) DSRuang.buka(); });
     $('mission-list').addEventListener('click', e => {
@@ -6078,7 +6476,7 @@ var KJL2=(function(){
         return;
       }
       const typing = /^(INPUT|SELECT|TEXTAREA)$/.test(e.target.tagName);
-      if (!typing && !e.ctrlKey && !e.metaKey && !e.altKey && currentTab === 'test' && $('modal-save').hidden && $('modal-missions').hidden && $('modal-share').hidden && $('modal-challenge').hidden && $('modal-guide').hidden) {
+      if (!typing && !e.ctrlKey && !e.metaKey && !e.altKey && currentTab === 'test' && $('modal-save').hidden && $('modal-missions').hidden && $('modal-share').hidden && $('modal-challenge').hidden && $('modal-guide').hidden && $('modal-nadi').hidden && $('modal-cerita').hidden) {
         if (e.key === 'r' || e.key === 'R') { e.preventDefault(); sound.click(); startTest(); return; }
         if (e.key === ' ' && running) { e.preventDefault(); $('btn-pause').click(); return; }
       }
@@ -6087,7 +6485,7 @@ var KJL2=(function(){
       else if (!$('reliability-lab').hidden) { closeReliability();showResult(); }
       else if (modalStack.length) {
         const id = modalStack[modalStack.length - 1].id;
-        if (id === 'modal-guide') closeGuide(); else closeModal(id);
+        if (id === 'modal-guide') closeGuide(); else if (id === 'modal-cerita') endScene(); else closeModal(id);
       }
       else if (selectedPart) selectPart(selectedPart);
     });
@@ -6106,6 +6504,7 @@ var KJL2=(function(){
     $('btn-gfx').addEventListener('click', () => { sound.click(); setGraphicsMode(graphicsMode === 'compatible' ? 'standard' : 'compatible'); });
     $('beep').addEventListener('click', () => { sound.snap(); beepFeel('surprised', 0.9); say('beep_m' + missionId); });
     setupDesigns();
+    setupStory();
     $('robot-name').addEventListener('input', e => { robotName = cleanName(e.target.value); drawRig(); save(); });
     $('robot-name').addEventListener('change', e => { e.target.value = robotName; });
     $('r-share').addEventListener('click', () => { sound.click(); openShare(); });
@@ -6176,8 +6575,15 @@ var KJL2=(function(){
     challengeFromHash();
     // Existing players keep playing uninterrupted; the guide remains available
     // from the ? button even after it has been dismissed.
-    if (!guideSeen && !notebook.length && !completed.length && !hasChallengeLink)
-      requestAnimationFrame(() => { if ($('modal-challenge').hidden) openGuide(); });
+    // RR-CC-012: everyone sees the story opening once (skippable). New players
+    // then get the guide; returning players land on the NADI map.
+    const newPlayer = !guideSeen && !notebook.length && !completed.length;
+    if (!hasChallengeLink && (newPlayer || !storySeen.includes('buka')))
+      requestAnimationFrame(() => {
+        if (!$('modal-challenge').hidden) return;
+        if (!storySeen.includes('buka')) playScene('buka', newPlayer ? openGuide : () => openNadi(), newPlayer ? 'cr_build' : 'cr_map');
+        else openGuide();
+      });
     requestAnimationFrame(t0 => { lastFrame = t0; resizeRig(); requestAnimationFrame(frame); });
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
