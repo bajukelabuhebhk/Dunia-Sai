@@ -446,6 +446,15 @@ button:disabled { cursor:default; }
 
 /* itch embeds use a non-scrolling iframe: scroll inside the page instead */
 html,body{height:100%}html{overflow:hidden}body{overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+/* painted characters */
+.hsw { height: 1.25em; width: auto; vertical-align: bottom; }
+.hero-characters .hsw, .hero-characters .avimg { height: 1.5em; }
+.title-screen .art .hsw, .title-screen .art .avimg { height: 1.4em; margin: 0 .05em; }
+.dlg .face .hsw, .dlg .face .avimg { height: 1.7em; max-width: 1.6em; object-fit: contain; object-position: bottom; }
+.ftr .sprite .hsw, .ftr .sprite .avimg { height: 1.9em; display: block; }
+.ftr.foe .sprite .hsw.foe-img { height: 1.7em; }
+.maker-preview img { height: 190px; width: auto; }
+@media (max-width: 560px) { .maker-preview img { height: 130px; width: auto; } }
 </style>
 
 <div class="wrap">
@@ -631,13 +640,24 @@ var KJL2=(function(){
   };
 
   // ===================== content =====================
+  // Painted characters (Wira Matematik style). Emoji stay as the fallback until an image loads.
+  const HSW = {}, HSW_KEYS = ['adik-l', 'adik-p', 'kancil', 'timah', 'lintah', 'ketam', 'buaya'];
+  HSW_KEYS.forEach(k => { const i = new Image(); i.decoding = 'async'; i.src = 'watak/' + k + '.webp'; HSW[k] = i; });
+  const hswOk = k => !!(HSW[k] && HSW[k].complete && HSW[k].naturalWidth);
+  const wImg = (k, cls = '') => `<img class="hsw ${cls}" src="watak/${k}.webp" alt="">`;
+  // map size (world units, feet to head) of each painted character
+  const HSW_H = { kancil: 30, timah: 31, lintah: 20, ketam: 18, buaya: 34 };
+  function drawHsw(c, k, x, feetY, h, flip) {
+    const im = HSW[k], w = h * im.naturalWidth / im.naturalHeight;
+    c.save(); c.translate(x, feetY); if (flip) c.scale(-1, 1); c.drawImage(im, -w / 2, -h, w, h); c.restore();
+  }
   const WHO = {
-    kancil: { face: '🦌', name: L('Sang Kancil', 'Sang Kancil') },
+    kancil: { face: wImg('kancil'), name: L('Sang Kancil', 'Sang Kancil') },
     adik: { face: '🧒', name: L('Adik Saintis', 'Little Scientist') },
-    timah: { face: '👵', name: L('Mak Cik Timah', 'Auntie Timah') },
-    lintah: { face: '🪱', name: L('Lintah Lumpur', 'Mud Leech') },
-    ketam: { face: '🦀', name: L('Ketam Batu', 'Rock Crab') },
-    buaya: { face: '🐊', name: L('Sang Buaya Lumpur', 'Mud Crocodile') },
+    timah: { face: wImg('timah'), name: L('Mak Cik Timah', 'Auntie Timah') },
+    lintah: { face: wImg('lintah', 'foe-img'), name: L('Lintah Lumpur', 'Mud Leech') },
+    ketam: { face: wImg('ketam', 'foe-img'), name: L('Ketam Batu', 'Rock Crab') },
+    buaya: { face: wImg('buaya', 'foe-img'), name: L('Sang Buaya Lumpur', 'Mud Crocodile') },
     narr: { face: '📜', name: L('Hikayat', 'The Tale') },
     chest: { face: '🎁', name: L('Peti Harta', 'Treasure Chest') },
   };
@@ -1365,7 +1385,10 @@ var KJL2=(function(){
     const breathe = reduce ? 0 : Math.sin(time / 350) * .03;
     const walk = P.moving && !reduce ? Math.sin(P.t * Math.PI * 2) : 0;
     ctx.save(); ctx.translate(P.px + 8, P.py + 15 - step * 1.5); ctx.scale(-P.face * (1 - breathe * .5), 1 + breathe * .5);
-    paintAvatar(ctx, avOf(), walk, time, now < invulnUntil); ctx.restore();
+    const hk = heroKey(avOf());
+    if (hswOk(hk)) { ctx.rotate(walk * .06); drawHsw(ctx, hk, 0, 1, 33, true); if (now < invulnUntil) { ctx.globalAlpha = .35; ctx.globalCompositeOperation = 'lighter'; drawHsw(ctx, hk, 0, 1, 33, true); ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over'; } }
+    else paintAvatar(ctx, avOf(), walk, time, now < invulnUntil);
+    ctx.restore();
   }
   function drawEnt(e, time) {
     const X = e.x * TS + 8, Y = e.y * TS + 8, b = reduce ? 0 : Math.sin(time / 400 + e.x) * 1;
@@ -1400,6 +1423,14 @@ var KJL2=(function(){
     shadow(X, Y + 6, big / 2.6, 2.5);
     if (e.kind === 'chest') { ctx.fillStyle = `rgba(255,201,74,${.25 + .2 * Math.sin(time / 250)})`; ctx.beginPath(); ctx.arc(X, Y, 11, 0, 7); ctx.fill(); }
     if (e.kind === 'lab') { ctx.fillStyle = st.arcade[e.lab] ? 'rgba(160,230,170,.35)' : `rgba(150,220,255,${.3 + .2 * Math.sin(time / 300)})`; ctx.beginPath(); ctx.arc(X, Y, 11, 0, 7); ctx.fill(); }
+    const hh = HSW_H[e.id];
+    if (hh && hswOk(e.id)) {
+      const top = Y + 7 - hh + b * .6;
+      drawHsw(ctx, e.id, X, Y + 7, hh + (reduce ? 0 : Math.sin(time / 400 + e.x) * .5), e.x > P.x);
+      if (e.kind === 'foe' && !reduce) { ctx.globalAlpha = .5 + .5 * Math.sin(time / 250); drawEmoji('💢', X + 9, top + 2, 8); ctx.globalAlpha = 1; }
+      if ((e.id === 'kancil' && !st.f.talked) || (e.id === 'timah' && !st.f.egg && st.f.lintah)) drawSprite('❗', X, top - 4, 9);
+      return;
+    }
     drawSprite(e.em, X, Y - 3 + b - (big - 18) / 2, big);
     if (e.kind === 'foe' && !reduce) { ctx.globalAlpha = .5 + .5 * Math.sin(time / 250); drawEmoji('💢', X + 9, Y - 12 - (big - 18) / 2, 8); ctx.globalAlpha = 1; }
     if ((e.id === 'kancil' && !st.f.talked) || (e.id === 'timah' && !st.f.egg && st.f.lintah)) drawSprite('❗', X, Y - 17 + b, 9);
@@ -1423,6 +1454,7 @@ var KJL2=(function(){
       drawSprite('🐝', X, Y - 2 + z, 12); return;
     }
     const sq = reduce ? 1 : 1 + Math.sin(time / 160 + hy) * .15;
+    if (hswOk('lintah')) { shadow(X, Y + 6, 5, 1.6); ctx.save(); ctx.translate(X, Y + 7); ctx.scale(sq, 2 - sq); drawHsw(ctx, 'lintah', 0, 0, 13, hz.a && hz.b && hz.b[0] < hz.a[0]); ctx.restore(); return; }
     ctx.save(); ctx.translate(X, Y + 2); ctx.scale(sq, 2 - sq); drawSprite('🪱', 0, 0, 12); ctx.restore();
   }
 
@@ -1723,7 +1755,7 @@ var KJL2=(function(){
   }
 
   function ending() {
-    const o = openOv('title-screen', `<div class="art">🌊🦌${avImg()}🌊</div><h1>${esc(t().end)}</h1><p>${esc(t().endSub(st.stars, st.chests.length))}</p>
+    const o = openOv('title-screen', `<div class="art">${wImg('kancil')}${avImg()}${wImg('timah')}</div><h1>${esc(t().end)}</h1><p>${esc(t().endSub(st.stars, st.chests.length))}</p>
       <div class="row" style="justify-content:center"><button class="btn" id="ex" type="button" data-adv>${esc(t().explore)}</button><button class="btn ghost" id="ag" type="button">${esc(t().again)}</button></div>`);
     $('ex').onclick = closeOv;
     $('ag').onclick = () => { st = fresh(); save(); location.reload(); };
@@ -2354,7 +2386,7 @@ var KJL2=(function(){
     arcadeOpen=false; arcadeGame=null;
     const started = !!st.f.talked;
     const o=openOv('title-screen', `<div class="hero-content"><div class="eyebrow">✦ ${lang==='ms'?'PENGEMBARAAN SAINS':'SCIENCE ADVENTURE'} ✦</div>
-      <div class="hero-characters"><span>🦌</span><span>${st.av ? avImg() : '🧒'}</span><span>🐊</span></div>
+      <div class="hero-characters"><span>${wImg('kancil')}</span><span>${avImg()}</span><span>${wImg('buaya')}</span></div>
       ${hsHai()}<h1>Hikayat<br><span>Sungai Ilmu</span></h1><p>${esc(t().tagline)}</p>
       <div class="hero-actions"><button class="btn" id="go" type="button" data-adv>🗺️ ${esc(started?t().cont:t().start)}</button>
       <button class="btn secondary" id="arStart" type="button">🧪 ${esc(aT().hub)}</button>
@@ -2521,6 +2553,7 @@ var KJL2=(function(){
   st.items = st.items || [];
   const avDefault = () => ({ g: 'b', skin: 0, shirt: 4, name: '', wear: {} });
   const avOf = () => st.av || avDefault();
+  const heroKey = a => a && a.g === 'g' ? 'adik-p' : 'adik-l';
   const headEm = a => (a.g === 'g' ? '👧' : '👦') + TONES[a.skin];
 
   // Draws the hero with its feet at (0,0) on context c. step: walk phase (-1..1)
@@ -2555,8 +2588,9 @@ var KJL2=(function(){
   }
   function drawSpriteOn(c, em, x, y, size, white) { const s = spriteImg(em, size, white); c.drawImage(s, x - s.w / 2, y - s.w / 2, s.w, s.w); }
   // Portrait as an image, for dialogue, battle and title
-  const avCache = new Map();
+  const avCache = new Map(), HSW_OFF = false;
   function avatarURL(a = avOf()) {
+    if (!HSW_OFF) return 'watak/' + heroKey(a) + '.webp';
     const key = JSON.stringify(a); if (avCache.has(key)) return avCache.get(key);
     const K = 6, cv2 = document.createElement('canvas'); cv2.width = 30 * K; cv2.height = 34 * K;
     const g = cv2.getContext('2d'); g.scale(K, K); g.translate(15, 32); paintAvatar(g, a, 0, 0, false);
@@ -2591,9 +2625,7 @@ var KJL2=(function(){
           <div class="maker-preview"><img src="${avatarURL(draft)}" alt=""></div>
           <div class="maker-opts">
             <div class="seg"><button type="button" class="pick${draft.g === 'b' ? ' on' : ''}" data-g="b">👦 ${esc(aV().boy)}</button><button type="button" class="pick${draft.g === 'g' ? ' on' : ''}" data-g="g">👧 ${esc(aV().girl)}</button></div>
-            <label>${esc(aV().skin)}</label><div class="swatches">${TONES.map((tn, i) => `<button type="button" class="sw${draft.skin === i ? ' on' : ''}" data-skin="${i}" aria-label="${i}">${(draft.g === 'g' ? '👧' : '👦') + tn}</button>`).join('')}</div>
-            <label>${esc(aV().shirt)}</label><div class="swatches">${SHIRTS.map((c, i) => `<button type="button" class="sw dot${draft.shirt === i ? ' on' : ''}" data-shirt="${i}" style="--c:${c}" aria-label="${i}"></button>`).join('')}</div>
-            <label for="avName">${esc(aV().name)}</label><input id="avName" maxlength="12" autocomplete="off" placeholder="${esc(aV().namePh)}" value="${esc(draft.name)}">
+            <label for="avName">${esc(aV().name)}</label><input id="avName" maxlength="12" autocomplete="off" placeholder="${esc(aV().namePh)}" value="${esc(draft.name || "")}">
           </div></div>
         <div class="hero-actions"><button class="btn" id="avGo" type="button">${esc(editing ? aV().save : aV().go)}</button>${editing ? `<button class="btn secondary" id="avBack" type="button">${esc(lT().back)}</button>` : ''}</div>`);
       document.querySelectorAll('[data-g]').forEach(b => b.onclick = () => { draft.g = b.dataset.g; draft.name = $('avName').value.trim(); SFX.talk(); draw(); });
