@@ -27,3 +27,28 @@
 .wmm-lock{position:absolute;right:0;top:0;font-size:1.6rem;background:#000a;border-radius:50%;padding:4px}
 .wmm-teaser .wm6-secondarybtn{margin-top:8px;width:100%}
 .wmm-item.r-mythic{border-color:#ff5d8f}
+
+/* Dunia Sai: Fasa 2, potret Wira Melayu dalam pertempuran. Potret 2:3, jadi dibesarkan ke atas supaya sama tinggi dengan raksasa. */
+.unit .wmm-portrait,.wm-actor .wmm-portrait{animation:none}
+.unit .body:has(>.wmm-portrait){display:flex;align-items:flex-end;justify-content:center}
+.unit .body>.wmm-portrait{width:120%;height:150%;flex:none;margin-bottom:-8%}
+.wm-actor .wmm-portrait{width:100%;height:auto;aspect-ratio:2/3}
+.wm6-result-figure .wmm-portrait,.rs .wmm-portrait,.rpg-hero-preview .wmm-portrait{width:100%;height:auto;aspect-ratio:2/3;max-height:260px}
+.hcard .wmm-portrait{width:100%;height:auto;aspect-ratio:2/3}
+.body:has(>.wmm-portrait)>.wm-gear-deco{display:none}
+@media(max-height:700px) and (orientation:portrait){.unit .body>.wmm-portrait{height:118%;width:100%;margin-bottom:-6%}}
+/* Dunia Sai: kesan serangan PNG Kesatria, Pemanah, Ahli Falak (Fasa 2) */
+.arena .wmm-vfx{position:absolute;z-index:6;pointer-events:none;background:center/100% 100% no-repeat;opacity:0;transform-origin:0 50%;animation:wmmVfx1 .52s ease-out both}
+.arena .wmm-vfx.v2{transform-origin:50% 50%;animation:wmmVfx2 .76s ease-out both}
+.arena .wmm-vfx.v3{animation:wmmVfx3 1.15s cubic-bezier(.2,.7,.3,1) both}
+.arena .wmm-vfx.v3.h-kesatria{-webkit-mask-image:linear-gradient(90deg,transparent 4%,#000 18%);mask-image:linear-gradient(90deg,transparent 4%,#000 18%)}
+.arena .wmm-vfx.v4{animation:wmmVfx4 1.65s cubic-bezier(.2,.7,.3,1) both}
+.arena .wmm-vfx.v4.h-kesatria{-webkit-mask-image:linear-gradient(90deg,transparent 22%,#000 40%);mask-image:linear-gradient(90deg,transparent 22%,#000 40%)}
+@keyframes wmmVfx1{0%{opacity:0;transform:scaleX(.3)}25%{opacity:1;transform:scaleX(1)}70%{opacity:1}100%{opacity:0;transform:scaleX(1.05)}}
+@keyframes wmmVfx2{0%{opacity:0;transform:scale(.4) rotate(-8deg)}25%{opacity:1;transform:scale(1)}70%{opacity:1}100%{opacity:0;transform:scale(1.12)}}
+@keyframes wmmVfx3{0%{opacity:0;transform:scaleX(.15)}30%{opacity:1;transform:scaleX(1)}75%{opacity:1}100%{opacity:0;transform:scaleX(1.08)}}
+@keyframes wmmVfx4{0%{opacity:0;transform:scaleX(.1) scaleY(.7)}35%{opacity:1;transform:scaleX(1) scaleY(1)}80%{opacity:1}100%{opacity:0;transform:scaleX(1.1)}}
+.arena.wmm-shake{animation:wmmShake .32s linear}
+@keyframes wmmShake{25%{transform:translate(-4px,2px)}50%{transform:translate(4px,-2px)}75%{transform:translate(-2px,1px)}}
+.arena.wmm-png .wm8-fx,.arena.wmm-png .sfx.arrow,.arena.wmm-png .sfx.meteor{display:none}
+@media(prefers-reduced-motion:reduce){.arena .wmm-vfx{animation-duration:.4s!important}.arena.wmm-shake{animation:none}}
