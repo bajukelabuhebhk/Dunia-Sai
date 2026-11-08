@@ -183,6 +183,10 @@ header>.hl:last-child{flex:none;gap:6px}
 .arena .deco{position:absolute;font-size:1.6rem;opacity:.55;pointer-events:none}
 .unit{position:absolute;bottom:22px;width:124px;height:124px;display:flex;align-items:flex-end;justify-content:center}
 .unit svg{width:100%;height:100%;overflow:visible}
+.pmi{transform-box:fill-box;transform-origin:50% 100%;animation:pmBreathe 2.8s ease-in-out infinite}
+@keyframes pmBreathe{0%,100%{transform:translateY(0) scale(1,1)}50%{transform:translateY(-3px) scale(1.025,.975)}}
+.mcell .pmi,.result .rs .pmi{animation:none}
+@media (prefers-reduced-motion:reduce){.pmi{animation:none}}
 .unit::after{content:"";position:absolute;bottom:-4px;left:18%;right:18%;height:12px;border-radius:50%;background:rgba(0,0,0,.28);z-index:-1}
 .unit.hero{left:5%}
 .unit.mon{right:5%}
@@ -660,7 +664,42 @@ function monSVG(kind,c,d,boss){
     <circle cx="20" cy="56" r="2" fill="#222"/><circle cx="26" cy="54" r="2" fill="#222"/>${eyes(40,56,44,7)}<path d="M28 66 Q36 70 44 64" stroke="#222" stroke-width="3" fill="none" stroke-linecap="round"/>`;cr=crown(48,8)}
   return `<svg viewBox="0 -14 120 134">${s}${boss?cr:''}</svg>`;
 }
-const monArt=(l,b)=>{const m=LANDS[l].mons[b];return monSVG(m[1],m[2],m[3],b===2)};
+/* Kulit raksasa WebP: hanya aktif selepas lesen sah (full). Tanpa lesen, SVG asal digunakan seperti biasa.
+   Kunci 'tanah-raksasa' -> [fail, [nama BM, nama EN] atau null]. Slot yang tiada di sini kekal SVG. Nama turut ditukar (applyPremiumNames). */
+const PREMIUM_MON={'0-0':['03-lendir-hijau',null],
+  '0-2':['01-gergasi-merah',['Gergasi Merah','Red Giant']],
+  '1-0':['08-pokok-pemangsa',['Pokok Pemangsa','Man-eater Plant']],
+  '1-1':['06-serigala-bayang',['Serigala Bayang','Shadow Wolf']],
+  '1-2':['24-penjaga-cendawan',['Penjaga Cendawan','Mushroom Warden']],
+  '2-0':['25-kumbang-kristal',['Kumbang Kristal','Crystal Beetle']],
+  '2-1':['09-yeti-ais',['Yeti Ais','Ice Yeti']],
+  '2-2':['04-golem-rune',['Golem Rune','Rune Golem']],
+  '3-0':['22-kuda-laut-karang',['Kuda Laut Karang','Coral Seahorse']],
+  '3-1':['07-kraken-ungu',['Kraken Ungu','Purple Kraken']],
+  '3-2':['05-roh-berjubah',['Roh Berjubah','Hooded Spirit']],
+  '4-0':['28-harimau-petir',['Harimau Petir','Thunder Tiger']],
+  '4-1':['26-badak-batu',['Badak Batu','Rock Rhino']],
+  '4-2':['27-banteng-lava',['Banteng Lava','Lava Bull']],
+  '5-0':['21-rubah-ninja',['Rubah Ninja','Ninja Fox']],
+  '5-2':['02-naga-azura',['Naga Azura','Azure Dragon']],
+  '6-2':['15-golem-nebula',['Golem Nebula','Nebula Golem']],
+  '7-1':['23-kobra-pasir',['Kobra Pasir','Sand Cobra']],
+  '7-2':['16-harimau-suria',['Harimau Suria','Sun Tiger']],
+  '8-2':['11-phoenix-kosmik',['Phoenix Kosmik','Cosmic Phoenix']],
+  '9-2':['12-naga-samudera-bintang',['Naga Samudera Bintang','Star Sea Dragon']],
+  '10-0':['10-goblin-alkimia',['Goblin Alkimia','Alchemy Goblin']],
+  '10-2':['18-badak-planet',['Badak Planet','Planet Rhino']],
+  '11-2':['17-kobra-galaksi',['Kobra Galaksi','Galaxy Cobra']],
+  '12-1':['13-golem-magma-diraja',['Golem Magma Diraja','Royal Magma Golem']],
+  '12-2':['14-hidra-kosmik',['Hidra Kosmik','Cosmic Hydra']],
+  '13-1':['19-naga-konstelasi',['Naga Konstelasi','Constellation Dragon']],
+  '13-2':['20-singa-gerhana',['Singa Gerhana','Eclipse Lion']]};
+const PREMIUM_DIR='/app/wira-matematik/assets/raksasa/';
+const _origNames={};
+function applyPremiumNames(){for(const k in PREMIUM_MON){const nm=PREMIUM_MON[k][1],[l,b]=k.split('-').map(Number),m=LANDS[l]&&LANDS[l].mons[b];if(!nm||!m)continue;if(!_origNames[k])_origNames[k]=m[0];m[0]=full?nm:_origNames[k]}}
+let _pmN=0;
+function premiumSVG(file,boss){const d=(_pmN++%7)*.35;return `<svg class="pm" viewBox="0 -14 120 134"><image class="pmi" style="animation-delay:-${d}s" href="${PREMIUM_DIR}${file}.webp" x="0" y="-8" width="120" height="120" preserveAspectRatio="xMidYMid meet"/>${boss?crown(60,-10):''}</svg>`}
+const monArt=(l,b)=>{const m=LANDS[l].mons[b],pm=full&&PREMIUM_MON[l+'-'+b];return pm?premiumSVG(pm[0],b===2):monSVG(m[1],m[2],m[3],b===2)};
 
 /* ---------- Questions ---------- */
 function makeQ(l,b){
@@ -954,7 +993,7 @@ function unlockScreen(){
     let r=checkLicence(inp.value);
     // A parent may paste the whole WhatsApp message: pick out the licence line
     if(!r.ok&&(r.reason==='format'||r.reason==='length')){const m=KJL.extract(inp.value);if(m)r=checkLicence(m)}
-    if(r.ok){licence=r;full=true;try{localStorage.setItem('wm_licence',r.text)}catch(e){}
+    if(r.ok){licence=r;full=true;applyPremiumNames();try{localStorage.setItem('wm_licence',r.text)}catch(e){}
       SFX.win();say(t('saySuccess'),['puji-4']);msg.style.color='var(--leafD)';msg.textContent=t('success');setTimeout(map,1500)}
     else{SFX.wrong();msg.style.color='var(--coralD)';msg.textContent=licMsg(r)}
   };
@@ -983,7 +1022,7 @@ function licenceScreen(){
     if(!armed){armed=true;rm.textContent=t('removeYes');rm.style.background='var(--coral)';rm.style.boxShadow='0 5px 0 var(--coralD)';
       msg.style.color='var(--coralD)';msg.textContent=t('pressAgain');return}
     try{localStorage.removeItem('wm_licence')}catch(e){}
-    licence=null;full=false;home();
+    licence=null;full=false;applyPremiumNames();home();
   };
 }
 
@@ -1143,6 +1182,8 @@ LANDS.push(
   {name:bt('Istana Data','Data Palace'),emo:'📊',topic:bt('Graf, jadual & masalah harian','Charts, tables & real-world problems'),sky:['#d89a65','#ffe9bd'],ground:'#7a678c',deco:['📊','🏆','📜','🌟'],
    mons:[[bt('Hantu Carta','Chart Ghost'),'ghost','#f4dcc8','#a78375'],[bt('Naga Jadual','Table Dragon'),'dragon','#e6bf7b','#a57a43'],[bt('Maharaja Data','Data Emperor'),'dragon','#dbc0fb','#7961c3']]}
 );
+
+applyPremiumNames();
 
 /* Item thresholds are educational rewards, never paid upgrades. */
 const GEAR=[

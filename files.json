@@ -1,5 +1,5 @@
 {
- "version": "abd3c0330d",
+ "version": "7f2426d7c4",
  "core": {
   "files": {
    "/app/": "200e0f0dec53",
@@ -873,6 +873,34 @@
   },
   "wira-matematik": {
    "files": {
+    "/app/wira-matematik/assets/raksasa/01-gergasi-merah.webp": "d53bd4c81934",
+    "/app/wira-matematik/assets/raksasa/02-naga-azura.webp": "dc783ba53800",
+    "/app/wira-matematik/assets/raksasa/03-lendir-hijau.webp": "17cb2d9802ec",
+    "/app/wira-matematik/assets/raksasa/04-golem-rune.webp": "c79cda2267d4",
+    "/app/wira-matematik/assets/raksasa/05-roh-berjubah.webp": "85e8f7ec4fe1",
+    "/app/wira-matematik/assets/raksasa/06-serigala-bayang.webp": "72bbfd7af6c4",
+    "/app/wira-matematik/assets/raksasa/07-kraken-ungu.webp": "9f905a638870",
+    "/app/wira-matematik/assets/raksasa/08-pokok-pemangsa.webp": "5564dd9f68e8",
+    "/app/wira-matematik/assets/raksasa/09-yeti-ais.webp": "9661c258b70d",
+    "/app/wira-matematik/assets/raksasa/10-goblin-alkimia.webp": "cbc299ae8458",
+    "/app/wira-matematik/assets/raksasa/11-phoenix-kosmik.webp": "ca24e17ac0b9",
+    "/app/wira-matematik/assets/raksasa/12-naga-samudera-bintang.webp": "75ee07fa3993",
+    "/app/wira-matematik/assets/raksasa/13-golem-magma-diraja.webp": "c8daeb3d1a33",
+    "/app/wira-matematik/assets/raksasa/14-hidra-kosmik.webp": "37ac793e8994",
+    "/app/wira-matematik/assets/raksasa/15-golem-nebula.webp": "a0a0404a61e2",
+    "/app/wira-matematik/assets/raksasa/16-harimau-suria.webp": "745c2dc547fe",
+    "/app/wira-matematik/assets/raksasa/17-kobra-galaksi.webp": "7be4fece2a1c",
+    "/app/wira-matematik/assets/raksasa/18-badak-planet.webp": "bb3c1ac837f0",
+    "/app/wira-matematik/assets/raksasa/19-naga-konstelasi.webp": "11ed97ca4018",
+    "/app/wira-matematik/assets/raksasa/20-singa-gerhana.webp": "eac3153a4ec3",
+    "/app/wira-matematik/assets/raksasa/21-rubah-ninja.webp": "01a97609d120",
+    "/app/wira-matematik/assets/raksasa/22-kuda-laut-karang.webp": "63fa2517d7c3",
+    "/app/wira-matematik/assets/raksasa/23-kobra-pasir.webp": "a4c0f36fd886",
+    "/app/wira-matematik/assets/raksasa/24-penjaga-cendawan.webp": "b8afa3d55fef",
+    "/app/wira-matematik/assets/raksasa/25-kumbang-kristal.webp": "8afe3f204b87",
+    "/app/wira-matematik/assets/raksasa/26-badak-batu.webp": "838702e6eae7",
+    "/app/wira-matematik/assets/raksasa/27-banteng-lava.webp": "6463ff5ade0e",
+    "/app/wira-matematik/assets/raksasa/28-harimau-petir.webp": "1a3d456931c3",
     "/app/wira-matematik/assets/wira-melayu/kesatria-01.webp": "c29ccff44fb9",
     "/app/wira-matematik/assets/wira-melayu/kesatria-02.webp": "00fe9cab9848",
     "/app/wira-matematik/assets/wira-melayu/kesatria-03.webp": "5ca1c405e754",
@@ -1086,7 +1114,7 @@
     "/app/wira-matematik/css/wm-monitor-r3.css": "14b1a9899df3",
     "/app/wira-matematik/data/bank-1019.js": "8863691e5e9a",
     "/app/wira-matematik/data/wm-monitor-r4-dummy.js": "0aaa8d7e2419",
-    "/app/wira-matematik/": "70bbd5876cec",
+    "/app/wira-matematik/": "48c3f5bf9220",
     "/app/wira-matematik/js/cos-anim-v2.js": "8f62d5f14363",
     "/app/wira-matematik/js/ux-v5.js": "ce8c7674b392",
     "/app/wira-matematik/js/visual-v3.js": "575f4405e5cc",
@@ -1106,7 +1134,7 @@
     "/app/wira-matematik/misi/raksasa.js": "993870fab6a7",
     "/app/wira-matematik/misi/style.css": "e7ff4d3c0179"
    },
-   "bytes": 6131897
+   "bytes": 7881550
   },
   "wonder-island": {
    "files": {
