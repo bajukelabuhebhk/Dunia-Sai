@@ -1,5 +1,5 @@
 {
- "version": "29c822c25e",
+ "version": "3a3541cb82",
  "core": {
   "files": {
    "/app/": "200e0f0dec53",
@@ -39,11 +39,11 @@
  "games": {
   "awanara": {
    "files": {
-    "/app/awanara/": "a27ce33d2fdb",
+    "/app/awanara/": "a621f9fc83ef",
     "/app/awanara/muzik/langit-cloudrest.mp3": "834393102bee",
     "/app/awanara/muzik/nafas-bulan.mp3": "c529766da82f"
    },
-   "bytes": 7548677
+   "bytes": 7589534
   },
   "boss-gerai": {
    "files": {
