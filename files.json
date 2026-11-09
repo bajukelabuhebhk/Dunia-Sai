@@ -1,8 +1,9 @@
 {
- "version": "fc671c4c70",
+ "version": "29c822c25e",
  "core": {
   "files": {
    "/app/": "200e0f0dec53",
+   "/img/awanara.jpg": "2e406ffbba05",
    "/img/boss-gerai.jpg": "5136ff6f0e7c",
    "/img/ember-code.jpg": "a12b51a0b432",
    "/img/hikayat-sungai.jpg": "ba4391a5dd3f",
@@ -25,7 +26,7 @@
    "/shared/icons/maskable-512.png": "78d51897dd77",
    "/shared/js/anak.js": "b26ad114d73c",
    "/shared/js/balik.js": "b25251d8c79c",
-   "/shared/js/config.js": "1fdc7128cef9",
+   "/shared/js/config.js": "96b577ab4079",
    "/shared/js/jejak.js": "993517d588a5",
    "/shared/js/lesen-lib.js": "9f17920f43d7",
    "/shared/js/lesen.js": "d72df6c47647",
@@ -33,9 +34,17 @@
    "/shared/js/maklum-balas.js": "87d261af59ac",
    "/shared/js/ruang-ibubapa.js": "d83a0a76181d"
   },
-  "bytes": 1267457
+  "bytes": 1422595
  },
  "games": {
+  "awanara": {
+   "files": {
+    "/app/awanara/": "a27ce33d2fdb",
+    "/app/awanara/muzik/langit-cloudrest.mp3": "834393102bee",
+    "/app/awanara/muzik/nafas-bulan.mp3": "c529766da82f"
+   },
+   "bytes": 7548677
+  },
   "boss-gerai": {
    "files": {
     "/app/boss-gerai/": "6ae65c34d80e"
