@@ -99,6 +99,13 @@
         desc: 'Ladang fantasi di kampung halaman: bertani, memancing, bela ayam dan tangkap kupu-kupu. Setiap barang yang ditemui tercatat dalam Kamus Kampung, Rumi dan Jawi.',
         free: 'Percuma sepenuhnya',
       },
+      {
+        // Percuma sepenuhnya (9 Nov 2026, Afiq). Lagu Eleven Music hanya dibenarkan kerana game ini percuma.
+        id: 'awanara', name: 'AWANARA — The Living Isle', path: '/app/awanara/', img: '/img/awanara.jpg',
+        subject: 'Santai dan rehat minda', age: 'Semua umur', price: 0, pakej: false,
+        desc: 'Pulau terapung yang tenang di atas lautan awan: berkebun, bancuh teh untuk tetamu Cloudrest, alkimia ikut rentak dan Mod Zen. Tiada timer, tiada tekanan.',
+        free: 'Percuma sepenuhnya',
+      },
     ],
 
     // Signing key number -> Ed25519 public key, the same one inside every game. It can check codes, not make them.
