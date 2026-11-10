@@ -1,5 +1,5 @@
 {
- "version": "8abbf4a399",
+ "version": "fc3d613b58",
  "core": {
   "files": {
    "/app/": "200e0f0dec53",
@@ -506,9 +506,9 @@
   },
   "kenal-jawi": {
    "files": {
-    "/app/kenal-jawi/": "76cc12705d66"
+    "/app/kenal-jawi/": "d89e1a4a0799"
    },
-   "bytes": 3434855
+   "bytes": 3438037
   },
   "lembah-embun": {
    "files": {
