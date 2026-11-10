@@ -134,6 +134,7 @@ button:focus-visible{outline:3px solid var(--card);outline-offset:3px}
 .cv{position:relative;width:100%;max-width:340px;aspect-ratio:1;margin:0 auto;border-radius:22px;background:#fffbef;border:3px dashed var(--ghost);overflow:hidden}
 .cv canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none}
 #hl.blink{animation:hb .8s ease-in-out infinite alternate}
+.cv.win{animation:pop .5s}
 @keyframes hb{from{opacity:.2}to{opacity:1}}
 .meter{width:100%;height:14px;border-radius:99px;background:var(--ghost);overflow:hidden;max-width:340px;margin:10px auto 0}
 .meter i{display:block;height:100%;width:0;background:var(--leaf);transition:width .2s}
@@ -1257,22 +1258,41 @@ async function trace(i){
   document.getElementById('mp').onclick=map;
   document.getElementById('nx').onclick=()=>{if(traced.has(i))step(i,1,trace);else{chime(false);toast('Siapkan huruf ini dulu 🙂');speak(Pc('siapkan-dulu'))}};
   const mask=document.getElementById('mask'),draw=document.getElementById('draw'),hl=document.getElementById('hl'),mt=document.getElementById('mt');
-  const size=mask.getBoundingClientRect().width,dpr=Math.min(window.devicePixelRatio||1,2);
-  [mask,draw,hl].forEach(c=>{c.width=size*dpr;c.height=size*dpr});
-  const mc=mask.getContext('2d'),dc=draw.getContext('2d'),hc=hl.getContext('2d');
-  mc.scale(dpr,dpr);dc.scale(dpr,dpr);hc.scale(dpr,dpr);
+  // Everything is measured in the canvas's own layout pixels (offsetWidth). On tablets the app is zoomed (fit()), and browsers
+  // disagree on whether getBoundingClientRect includes that zoom (Chrome yes, Safari/older Chrome no) - that mismatch put the
+  // red line to the right of the finger. The backing store is sized to the on-screen pixels so lines stay sharp.
+  const size=mask.offsetWidth||mask.getBoundingClientRect().width,vis=Math.max(Z,mask.getBoundingClientRect().width/size||1),dpr=Math.min(3,Math.min(window.devicePixelRatio||1,2)*vis);
+  // raw = every stroke as drawn (for the scribble check); fit = the letter widened a little, the only area where red shows
+  const raw=document.createElement('canvas'),fitC=document.createElement('canvas');
+  [mask,draw,hl,raw,fitC].forEach(c=>{c.width=Math.round(size*dpr);c.height=Math.round(size*dpr)});
+  const mc=mask.getContext('2d'),dc=draw.getContext('2d'),hc=hl.getContext('2d'),rc=raw.getContext('2d'),fc=fitC.getContext('2d');
+  [mc,dc,hc,rc,fc].forEach(c=>c.scale(dpr,dpr));
   // Drawing works at once; the letter is analysed once its font is ready (waits 1.2 s at most), and earlier taps are counted then
   let ready=false,drawing=false,last=null,lastCheck=0,pend=[],start=null,moved=0;
   // Gentle mode: after two clears, or 40 s on one letter, the checks relax so nobody gets stuck
   let clears=0,gentle=false;const t0=Date.now();
-  const pos=e=>{const r=draw.getBoundingClientRect();return[e.clientX-r.left,e.clientY-r.top]};
-  dc.lineCap=dc.lineJoin='round';dc.lineWidth=size*.085;dc.strokeStyle='#ef6f6c';
-  draw.onpointerdown=e=>{if(done)return;e.preventDefault();drawing=true;last=pos(e);start=last;moved=0;try{draw.setPointerCapture(e.pointerId)}catch(_){}dc.beginPath();dc.arc(last[0],last[1],dc.lineWidth/2,0,7);dc.fillStyle='#ef6f6c';dc.fill()};
-  draw.onpointermove=e=>{if(!drawing||done)return;const p=pos(e);dc.beginPath();dc.moveTo(last[0],last[1]);dc.lineTo(p[0],p[1]);dc.stroke();moved+=Math.hypot(p[0]-last[0],p[1]-last[1]);last=p;
+  // Finger -> canvas point. If the rect ignores the app zoom (Safari/older Chrome) it is scaled by Z first; elementFromPoint at
+  // three corners confirms the screen really shows the canvas there (else the plain rect is used), so the line lands under the finger in every browser.
+  let map0=null;
+  const calib=()=>{const r=draw.getBoundingClientRect(),k=r.width/size||1;
+    const hy=[[r.left,r.top,k]];if(Z>1.001&&Math.abs(k-1)<.005)hy.unshift([r.left*Z,r.top*Z,Z]);
+    const on=h=>[[.1,.1],[.9,.9],[.1,.9]].every(([a,b])=>document.elementFromPoint(h[0]+h[2]*size*a,h[1]+h[2]*size*b)===draw);
+    map0=hy.find(on)||hy[0]};
+  const pos=e=>{if(!map0)calib();return[(e.clientX-map0[0])/map0[2],(e.clientY-map0[1])/map0[2]]};
+  [dc,rc].forEach(c=>{c.lineCap=c.lineJoin='round';c.lineWidth=size*.085;c.strokeStyle=c.fillStyle='#ef6f6c'});
+  // Keep the visible red inside the letter shape (+ a little tolerance); only the box around the new piece is re-clipped
+  let clipOn=false;
+  const px=v=>Math.round(Math.max(0,Math.min(size,v))*dpr)/dpr;
+  const clipBox=(a,b)=>{if(!clipOn)return;const w=dc.lineWidth/2+3,x0=px(Math.min(a[0],b[0])-w),y0=px(Math.min(a[1],b[1])-w),x1=px(Math.max(a[0],b[0])+w),y1=px(Math.max(a[1],b[1])+w);
+    if(x1<=x0||y1<=y0)return;dc.save();dc.beginPath();dc.rect(x0,y0,x1-x0,y1-y0);dc.clip();dc.globalCompositeOperation='destination-in';dc.drawImage(fitC,x0*dpr,y0*dpr,(x1-x0)*dpr,(y1-y0)*dpr,x0,y0,x1-x0,y1-y0);dc.restore()};
+  const dot=p=>{for(const c of[dc,rc]){c.beginPath();c.arc(p[0],p[1],c.lineWidth/2,0,7);c.fill()}clipBox(p,p)};
+  const seg=(a,b)=>{for(const c of[dc,rc]){c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.stroke()}clipBox(a,b)};
+  draw.onpointerdown=e=>{if(done)return;e.preventDefault();map0=null;drawing=true;last=pos(e);start=last;moved=0;try{draw.setPointerCapture(e.pointerId)}catch(_){}dot(last)};
+  draw.onpointermove=e=>{if(!drawing||done)return;const p=pos(e);seg(last,p);moved+=Math.hypot(p[0]-last[0],p[1]-last[1]);last=p;
     if(ready){const t=Date.now();if(t-lastCheck>250){lastCheck=t;check()}}};
   // Only a real tap (finger barely moved) can count as touching a dot; colouring strokes never do
   draw.onpointerup=draw.onpointercancel=()=>{if(drawing){drawing=false;if(moved<size*.06){if(ready)markDots(start);else pend.push(start)}if(ready)check(true)}};
-  document.getElementById('clr').onclick=()=>{if(done)return;clears++;dc.clearRect(0,0,size,size);hc.clearRect(0,0,size,size);hl.classList.remove('blink');pend=[];mt.style.width='0';if(ready){taps=[];th.textContent=HINT;lastMsg=''}};
+  document.getElementById('clr').onclick=()=>{if(done)return;clears++;dc.clearRect(0,0,size,size);rc.clearRect(0,0,size,size);hc.clearRect(0,0,size,size);hl.classList.remove('blink');pend=[];mt.style.width='0';if(ready){taps=[];th.textContent=HINT;lastMsg=''}};
   document.getElementById('rp').onclick=()=>speak(Lc(x),Pc(ready&&nd?'sentuh-titik':'warnakan'));
   speak(Lc(x));
   try{await Promise.race([document.fonts.load(`700 ${size*.6}px "Noto Naskh Arabic"`,x.j),new Promise(r=>setTimeout(r,1200))])}catch(e){}
@@ -1280,7 +1300,11 @@ async function trace(i){
   const fs=size*.6;mc.font=`700 ${fs}px "Noto Naskh Arabic","Traditional Arabic",serif`;
   mc.textAlign='center';mc.fillStyle='#e9dfc4';
   const m=mc.measureText(x.j),asc=m.actualBoundingBoxAscent||fs*.5,desc=m.actualBoundingBoxDescent||0;
-  mc.textBaseline='alphabetic';mc.fillText(x.j,size/2,size/2+(asc-desc)/2);
+  mc.textBaseline='alphabetic';const ly=size/2+(asc-desc)/2;mc.fillText(x.j,size/2,ly);
+  // Tolerance area for the visible colour: the letter widened by a few pixels on each side (kids aged 4-6 are not exact)
+  fc.font=mc.font;fc.textAlign='center';fc.textBaseline='alphabetic';fc.fillStyle=fc.strokeStyle='#000';fc.lineJoin='round';fc.lineWidth=size*.05;
+  fc.fillText(x.j,size/2,ly);fc.strokeText(x.j,size/2,ly);
+  clipOn=true;dc.save();dc.globalCompositeOperation='destination-in';dc.drawImage(fitC,0,0,size,size);dc.restore();
   const md=mc.getImageData(0,0,mask.width,mask.height).data,gap=Math.max(1,2*dpr|0);
   // Grid of sample cells over the letter; split into body + dots (connected parts)
   const W=mask.width,gw=Math.ceil(W/gap),gh=Math.ceil(mask.height/gap),cell=new Uint8Array(gw*gh);
@@ -1308,18 +1332,20 @@ async function trace(i){
   // Area near the letter (letter widened by about half a finger line) for the scribble check
   const near=new Uint8Array(gw*gh),rad=Math.ceil(size*.085*dpr*.75/gap);
   for(let k=0;k<cell.length;k++)if(cell[k]){const cx=k%gw,cy=(k/gw)|0;for(let dy=-rad;dy<=rad;dy++)for(let dx=-rad;dx<=rad;dx++){const nx=cx+dx,ny=cy+dy;if(nx>=0&&ny>=0&&nx<gw&&ny<gh)near[ny*gw+nx]=1}}
-  let NEED=nd?.6:.62,ZONE=.3,NEAT=.7;
+  let NEED=nd?.55:.57,ZONE=.25,NEAT=.6;
   const th=document.getElementById('th'),HINT=nd?'Warnakan huruf, kemudian sentuh setiap titik':'Warnakan huruf dengan jari sampai bar penuh';
   let lastMsg='';
   const tell=(text,k)=>{th.textContent=text;if(k&&k!==lastMsg){lastMsg=k;speak(Pc(k))}};
   th.textContent=HINT;const hintScreen=screenId;if(nd)setTimeout(()=>{if(!done&&screenId===hintScreen&&document.body.contains(th))speak(Pc('sentuh-titik'))},900);
   const check=(final)=>{
-    if(!gentle&&(clears>=2||Date.now()-t0>40000)){gentle=true;NEED=nd?.45:.47;ZONE=.18;NEAT=.55}
-    const dd=dc.getImageData(0,0,draw.width,draw.height).data;
+    if(!gentle&&(clears>=2||Date.now()-t0>40000)){gentle=true;NEED=nd?.42:.44;ZONE=.16;NEAT=.45}
+    const dd=dc.getImageData(0,0,draw.width,draw.height).data,rd=rc.getImageData(0,0,raw.width,raw.height).data;
     const inked=k=>{const px=Math.min((k%gw)*gap,W-1),py=Math.min(((k/gw)|0)*gap,mask.height-1);return dd[(py*W+px)*4+3]>0};
     const frac=list=>list.length?list.filter(inked).length/list.length:1;
     const bodyCov=frac(body);
-    let ink=0,stray=0;for(let k=0;k<cell.length;k++)if(inked(k)){ink++;if(!near[k])stray++}
+    // Scribble check uses every stroke, also the parts hidden outside the letter
+    const rawInk=k=>{const px=Math.min((k%gw)*gap,W-1),py=Math.min(((k/gw)|0)*gap,mask.height-1);return rd[(py*W+px)*4+3]>0};
+    let ink=0,stray=0;for(let k=0;k<cell.length;k++)if(rawInk(k)){ink++;if(!near[k])stray++}
     const neat=ink?1-stray/ink:1;
     const zoneCov=zones.map(frac),zonesOk=zoneCov.every(c=>c>=ZONE);
     const zoneP=zones.length?zoneCov.reduce((a,c)=>a+Math.min(c/ZONE,1),0)/zones.length:1;
@@ -1338,7 +1364,9 @@ async function trace(i){
       else if(!dotsOk)tell('Jangan lupa titik! Sentuh setiap titik di tempatnya.','jangan-lupa-titik');
       else th.textContent=HINT;
     }
-    if(!done&&bodyCov>=NEED&&zonesOk&&dotsOk&&neat>=NEAT){th.textContent='Syabas!';hc.clearRect(0,0,size,size);hl.classList.remove('blink');drawing=false;done=true;kjJawab(true,x);addStar();speak(praise(),Lc(x));
+    if(!done&&bodyCov>=NEED&&zonesOk&&dotsOk&&neat>=NEAT){th.textContent='Syabas!';hc.clearRect(0,0,size,size);hl.classList.remove('blink');
+      // Success: the whole letter turns red with a little pop, so the child sees the finished shape
+      dc.save();dc.font=mc.font;dc.textAlign='center';dc.textBaseline='alphabetic';dc.fillStyle='#ef6f6c';dc.fillText(x.j,size/2,ly);dc.restore();draw.parentElement.classList.add('win');drawing=false;done=true;kjJawab(true,x);addStar();speak(praise(),Lc(x));
       draw.parentElement.style.borderColor='var(--leaf)';
       const before=traced.size;traced.add(i);saveTraced();kjBridgeAdvance('surih',traced.size);const after=traced.size;if(after===L.length)kjMarkDone('surih');
       if(before<20&&after>=20)toast('Pelekat istimewa baru! 🌙');
