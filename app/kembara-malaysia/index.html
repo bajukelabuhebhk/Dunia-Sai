@@ -1146,4 +1146,122 @@ var KJL2=(function(){
   if('speechSynthesis' in window){try{speechSynthesis.getVoices();speechSynthesis.addEventListener('voiceschanged',function(){speechSynthesis.getVoices()})}catch(e){}}
 })();
 </script>
+<script>
+/* Dunia Sai: Info Lanjut (Tempat Menarik + Tokoh & Pejuang), teks sahaja, tiada suara. Disemak 10 Nov 2026. */
+(function(){
+  var CAT={p:'⚔️ Pejuang',d:'🕊️ Pemimpin & Diplomasi',b:'🏗️ Pembina Negeri',s:'📜 Tokoh Sejarah'};
+  var INFO={
+    perlis:{places:[['Gua Kelam','Gua batu kapur sepanjang 370 m dengan titian kayu di atas sungai bawah tanah.'],['Wang Kelian Viewpoint','Tempat melihat "lautan awan" pada waktu pagi.'],['Tasik Timah Tasoh','Tasik yang cantik berlatarkan bukit batu kapur.']],
+      heroes:[['Syed Harun Jamalullail','Akhir abad ke-18','b','Penghulu Arau yang pertama. Beliau membuka kawasan Arau.'],['Raja Syed Hussein Jamalullail','1843','d','Raja Perlis yang pertama, ditabalkan pada tahun 1843.']]},
+    kedah:{places:[['Langkawi Sky Bridge','Jambatan gantung melengkung di puncak Gunung Mat Cincang.'],['Masjid Zahir','Masjid indah di Alor Setar, dibina pada 1912 dengan 5 kubah hitam.'],['Lembah Bujang','Tapak tamadun purba lebih 1,000 tahun dengan tinggalan candi.']],
+      heroes:[['Sultan Ahmad Tajuddin Halim Shah II','1821 – 1842','d','Sultan Kedah yang terpaksa berundur apabila Siam menyerang Kedah pada 1821. Baginda terus berusaha dan kembali memerintah Kedah pada 1842.'],['Tunku Kudin (Syed Zainal Abidin)','1831','p','Pahlawan Kedah yang merampas semula Kota Kuala Kedah daripada Siam pada 1831. Beliau gugur apabila Siam menyerang balas.'],['Wan Muhammad Saman','1870-an – 1890-an','b','Menteri Kedah yang memajukan pertanian. Terusan Wan Mat Saman membawa air ke sawah padi.']]},
+    pulau_pinang:{places:[['George Town','Tapak Warisan Dunia UNESCO yang terkenal dengan mural seni jalanan.'],['Bukit Bendera','Naik kereta api funikular ke puncak bukit yang sejuk.'],['Escape Theme Park','Ada gelongsor air terpanjang di dunia (1,111 m), rekod Guinness.']],
+      heroes:[['Sultan Abdullah Mukarram Shah (Kedah)','1786 – 1791','p','Pulau Pinang dahulu milik Kedah. Sultan Kedah ini menuntut janji British selepas Francis Light menduduki pulau itu pada 1786, dan cuba mendapatkannya semula pada 1791.'],['Sheikh Omar Basheer','1867','d','Tokoh agama yang membantu mendamaikan masyarakat selepas rusuhan besar di Pulau Pinang pada 1867.']]},
+    perak:{places:[['Royal Belum','Hutan hujan purba, rumah burung enggang dan bunga Rafflesia.'],['Menara Condong Teluk Intan','Menara condong yang dibina pada 1885 sebagai tangki air.'],['Pulau Pangkor','Pulau dengan pantai tenang dan Kota Belanda.']],
+      heroes:[['Dato\' Maharaja Lela','1875 – 1877','p','Pembesar Perak yang menentang Residen British, J.W.W. Birch. Birch terbunuh di Pasir Salak pada 2 November 1875, lalu tercetus Perang Perak.'],['Dato\' Sagor (Ngah Kamdin)','1875 – 1877','p','Rakan seperjuangan Dato\' Maharaja Lela dalam menentang campur tangan British di Perak.'],['Sultan Abdullah & Ngah Ibrahim','1874 – 1877','d','Selepas Perang Perak, British membuang negeri Sultan Abdullah dan Menteri Ngah Ibrahim ke Pulau Seychelles di Lautan Hindi.']]},
+    selangor:{places:[['Batu Caves','Gua batu kapur dengan 272 anak tangga berwarna-warni.'],['Sky Mirror','Beting pasir di laut Kuala Selangor yang memantulkan langit seperti cermin.'],['Kelip-kelip Kampung Kuantan','Ribuan kelip-kelip bercahaya di pokok berembang tepi sungai.']],
+      heroes:[['Raja Mahadi','Sekitar 1866 – 1873','s','Tokoh utama Perang Klang, iaitu perang saudara antara pembesar Selangor untuk menguasai Klang dan hasil bijih timah. Kota Raja Mahadi di Klang masih boleh dilawati.'],['Syed Mashor','Sekitar 1867 – 1873','s','Panglima yang dikaitkan dengan Perang Klang. Makamnya di Kerling diwartakan sebagai tapak warisan.']]},
+    negeri_sembilan:{places:[['Istana Seri Menanti','Istana kayu 4 tingkat yang dibina tanpa menggunakan paku.'],['Pantai Teluk Kemang','Pantai popular di Port Dickson untuk bermandi-manda.'],['Gunung Datuk','Bukit batu granit dengan pemandangan 360 darjah.']],
+      heroes:[['Yamtuan Antah','1875 – 1876','p','Yamtuan Besar Seri Menanti. Baginda memimpin pertempuran di Paroi dan Bukit Putus apabila British campur tangan dalam pertikaian di Sungai Ujong.']]},
+    melaka:{places:[['A Famosa','Pintu kubu Portugis dari abad ke-16.'],['Stadthuys','Bangunan merah Belanda yang dibina sekitar tahun 1650.'],['Masjid Selat Melaka','Masjid yang kelihatan "terapung" di tepi laut.']],
+      heroes:[['Tun Perak','1456 – 1498','p','Bendahara Melaka yang bijak. Beliau membantu mempertahankan Melaka daripada serangan Siam dan berkhidmat kepada beberapa orang sultan.'],['Sultan Mahmud Shah','1511 – 1528','p','Selepas Portugis menawan Melaka pada 1511, baginda berundur dan terus berusaha merampas semula Melaka. Baginda mangkat di Kampar pada 1528.'],['Dol Said','1831 – 1832','p','Penghulu Naning yang enggan membayar cukai kepada British. Tentera British kalah dalam Perang Naning 1831, tetapi menawan Naning pada 1832.']]},
+    johor:{places:[['Tanjung Piai','Hujung paling selatan tanah besar benua Asia.'],['Taman Negara Endau-Rompin','Hutan hujan dengan air terjun bertingkat-tingkat.'],['Masjid Sultan Abu Bakar','Masjid putih bersejarah di atas bukit di Johor Bahru.']],
+      heroes:[['Sultan Abu Bakar','1862 – 1895','d','Bapa Johor Moden. Baginda memajukan Johor melalui diplomasi dan memperkenalkan Undang-Undang Tubuh Kerajaan Johor pada 1895.'],['Dato\' Onn Jaafar','1946','d','Memimpin orang Melayu menentang Malayan Union. Kongres Melayu diadakan di Kuala Lumpur pada Mac 1946, dan UMNO ditubuhkan di Johor Bahru pada 11 Mei 1946.'],['Dato\' Bentara Luar (Mohd Salleh bin Perang)','Abad ke-19','b','Juru ukur Johor yang membantu membuka dan mentadbir bandar baharu, termasuk Batu Pahat.']]},
+    pahang:{places:[['Taman Negara','Hutan hujan berusia kira-kira 130 juta tahun dengan titian kanopi.'],['Cameron Highlands','Ladang teh hijau dan hutan berlumut yang sejuk.'],['Pulau Tioman','Pulau dengan air laut jernih dan batu karang yang cantik.']],
+      heroes:[['Dato\' Bahaman','1891 – 1895','p','Orang Kaya Semantan yang membantah British mengambil kuasa dan hak memungut hasil. Beliau memulakan Kebangkitan Pahang pada 1891.'],['Tok Gajah (Imam Rasu)','1891 – 1895','p','Pembesar Pahang yang berjuang bersama Dato\' Bahaman dan anaknya, Mat Kilau.'],['Mat Kilau (Mohamad Kilau bin Imam Rasu)','1891 – 1895','p','Pahlawan muda Pahang. Ramai menyangka beliau sudah meninggal dunia, tetapi beliau muncul semula pada Disember 1969 dan identitinya disahkan.']]},
+    terengganu:{places:[['Masjid Kristal','Masjid moden diperbuat daripada keluli, kaca dan kristal.'],['Tasik Kenyir','Tasik buatan terbesar di Asia Tenggara dengan kira-kira 340 pulau.'],['Pulau Redang & Perhentian','Pulau berair biru jernih dan tempat pemuliharaan penyu.']],
+      heroes:[['Haji Abdul Rahman Limbong','1922 – 1928','p','Ulama yang membela petani apabila peraturan tanah baharu menyusahkan mereka. Beliau dibuang negeri ke Mekah.'],['Tok Ku Paloh','Akhir abad ke-19','d','Ulama besar Terengganu yang melindungi pejuang Pahang ketika mereka berundur ke Terengganu.'],['Mat Zin bin Mat Min','1928','p','Antara pemimpin petani yang berarak ke Padang Kacong di Hulu Terengganu pada 1928 untuk membantah undang-undang tanah.']]},
+    kelantan:{places:[['Pasar Siti Khadijah','Pasar meriah dengan ramai peniaga wanita dan kubah kaca.'],['Kampung Kraftangan','Tempat belajar tentang songket, wau bulan dan batik.'],['Masjid Beijing, Rantau Panjang','Masjid dengan bumbung hijau seperti pagoda.']],
+      heroes:[['Tok Janggut (Haji Mat Hassan bin Munas)','1915','p','Pejuang Pasir Puteh yang menentang cukai baharu yang membebankan rakyat. Beliau gugur dalam pertempuran pada Mei 1915.'],['Engku Besar Jeram & Penghulu Adam','1915','p','Pemimpin tempatan yang bangkit bersama Tok Janggut di Pasir Puteh.']]},
+    sabah:{places:[['Gunung Kinabalu','Gunung tertinggi di Malaysia, kira-kira 4,095 m.'],['Sungai Kinabatangan','Rumah orang utan, monyet belanda dan gajah pygmy.'],['Pulau Sipadan','Antara tempat menyelam paling terkenal di dunia.']],
+      heroes:[['Mat Salleh','1894 – 1900','p','Pemimpin yang menentang Syarikat Borneo Utara British. Beliau menyerang penempatan syarikat di Pulau Gaya pada 1897 dan gugur di Tambunan pada 1900.'],['Mat Sator','1900','p','Pembantu utama Mat Salleh yang meneruskan perjuangan selepas Mat Salleh gugur.'],['Antanom','1915','p','Pahlawan Murut yang memimpin Kebangkitan Rundum menentang cukai kepala dan peraturan yang menyusahkan penduduk.'],['Albert Kwok','1943','p','Pemimpin Gerila Kinabalu yang menyatukan pelbagai kaum untuk melawan tentera Jepun pada Oktober 1943.']]},
+    sarawak:{places:[['Taman Negara Gunung Mulu','Tapak Warisan Dunia UNESCO dengan gua-gua gergasi.'],['Taman Negara Bako','Taman negara tertua di Sarawak, rumah monyet belanda.'],['Kampung Budaya Sarawak','Lihat rumah tradisi 7 kaum utama Sarawak.']],
+      heroes:[['Rentap','1853 – 1861','p','Pahlawan Iban yang menentang pemerintahan Brooke. Kubunya di Bukit Sadok terkenal dengan semangat "Agi Idup, Agi Ngelaban" (selagi hidup, selagi melawan).'],['Sharif Masahor & Datu Patinggi Abdul Gapur','Sekitar 1859','p','Pembesar Sarawak yang menentang peluasan kuasa Brooke di kawasan Sungai Rajang.'],['Rosli Dhoby & Rukun 13','1946 – 1950','p','Pemuda Sarawak yang menentang penyerahan Sarawak kepada British pada 1946. Rosli Dhoby dan tiga rakannya dihukum mati pada 1950.']]},
+    wp_kl:{places:[['Menara Berkembar PETRONAS','Menara berkembar tertinggi di dunia, 452 m.'],['Merdeka 118','Bangunan kedua tertinggi di dunia, 678.9 m.'],['Taman Botani Perdana','Taman hijau yang luas di tengah bandar raya.']],heroes:[]},
+    wp_putrajaya:{places:[['Masjid Putra','Masjid berkubah merah jambu yang dibina daripada batu granit.'],['Jambatan Seri Wawasan','Jambatan moden yang berbentuk seperti kapal layar.'],['Wetland Putrajaya','Tanah lembap buatan manusia, rumah pelbagai burung air.']],heroes:[]},
+    wp_labuan:{places:[['The Chimney','Cerobong batu bata kira-kira 32 m dari zaman lombong arang batu.'],['Peace Park, Layang-Layangan','Taman damai di tapak tentera Jepun menyerah kalah pada 1945.'],['Pantai Layang-Layangan','Pantai untuk melihat matahari terbenam.']],heroes:[]}
+  };
+  var QUIZ={
+    perlis:['Gua Kelam di Perlis terkenal dengan apa?',['Titian kayu di atas sungai bawah tanah','Menara condong','Masjid kristal']],
+    kedah:['Masjid Zahir di Alor Setar mempunyai berapa kubah hitam?',['5','3','9']],
+    pulau_pinang:['Siapakah yang cuba mendapatkan semula Pulau Pinang pada 1791?',['Sultan Abdullah Mukarram Shah (Kedah)','Sultan Abu Bakar (Johor)','Rentap (Sarawak)']],
+    perak:['Di manakah Residen J.W.W. Birch terbunuh pada 1875?',['Pasir Salak','Pasir Puteh','Bukit Sadok']],
+    selangor:['Perang Klang ialah perang jenis apa?',['Perang saudara antara pembesar','Perang menentang Jepun','Perang menentang Portugis']],
+    negeri_sembilan:['Istana Seri Menanti terkenal kerana dibina tanpa…',['Paku','Kayu','Tingkap']],
+    melaka:['Pada tahun berapakah Portugis menawan Melaka?',['1511','1824','1957']],
+    johor:['Tanjung Piai ialah hujung paling selatan tanah besar benua…',['Asia','Afrika','Eropah']],
+    pahang:['Pada tahun berapakah Mat Kilau muncul semula?',['1969','1915','1946']],
+    terengganu:['Tasik Kenyir ialah tasik buatan terbesar di…',['Asia Tenggara','Eropah','Afrika']],
+    kelantan:['Tok Janggut bangkit di Pasir Puteh pada tahun?',['1915','1511','1875']],
+    sabah:['Berapakah ketinggian Gunung Kinabalu?',['Kira-kira 4,095 m','Kira-kira 1,200 m','Kira-kira 8,848 m']],
+    sarawak:['Semangat "Agi Idup, Agi Ngelaban" dikaitkan dengan siapa?',['Rentap','Mat Salleh','Dol Said']],
+    wp_kl:['Berapakah ketinggian Menara Berkembar PETRONAS?',['452 m','100 m','828 m']],
+    wp_putrajaya:['Apakah warna kubah Masjid Putra?',['Merah jambu','Hitam','Biru']],
+    wp_labuan:['Peace Park di Labuan ialah tapak tentera negara mana menyerah kalah pada 1945?',['Jepun','Portugis','Belanda']]
+  };
+  window.KM_INFO=INFO;
+
+  var css=document.createElement('style');
+  css.textContent='.kminfo{margin:0 0 15px;border:2px solid #ffd27a;border-radius:14px;background:#fffdf6;overflow:hidden}'+
+    '.kminfo>summary{cursor:pointer;list-style:none;padding:12px 15px;font-weight:1000;color:#7a3e00;background:#fff1cf}.kminfo>summary::-webkit-details-marker{display:none}.kminfo>summary:after{content:" ▾";float:right}.kminfo[open]>summary:after{content:" ▴"}'+
+    '.kmtabs{display:flex;gap:8px;padding:11px 13px 0;flex-wrap:wrap}.kmtabs button{flex:1 1 140px;border:0;border-radius:12px;padding:10px 12px;font-weight:950;background:#eef6fb;color:#185179;box-shadow:0 3px 0 #c7e2f1}.kmtabs button.on{background:#ffb93f;color:#552b04;box-shadow:0 3px 0 #c2700b}'+
+    '.kmpane{padding:11px 13px 14px}.kmitem{background:#fff;border:1px solid #f0e2c4;border-radius:12px;padding:10px 12px;margin-top:9px;font-size:14px;line-height:1.55}.kmitem b{display:block;font-size:15px;color:#3a2200}.kmmeta{display:inline-block;font-size:12px;font-weight:900;color:#185179;background:#eaf5fc;border-radius:999px;padding:2px 9px;margin:4px 6px 4px 0}.kmnote{font-size:12px;color:#6b6b6b;margin-top:10px}'+
+    '.kmbook{margin-top:14px}.kmbook h3{margin:0 0 6px}.kmchips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}.kmchips button{border:0;border-radius:999px;padding:9px 14px;font-weight:950;background:#fff1cf;color:#7a3e00;box-shadow:0 3px 0 #e8b85c}';
+  document.head.appendChild(css);
+
+  function e(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+  function infoHTML(id){
+    var d=INFO[id];if(!d)return '';
+    var pl=d.places.map(function(p){return '<div class="kmitem"><b>📍 '+e(p[0])+'</b>'+e(p[1])+'</div>'}).join('');
+    var hasH=d.heroes&&d.heroes.length;
+    var he=hasH?d.heroes.map(function(h){return '<div class="kmitem"><b>'+e(h[0])+'</b><span class="kmmeta">🗓️ '+e(h[1])+'</span><span class="kmmeta">'+e(CAT[h[2]])+'</span><br>'+e(h[3])+'</div>'}).join(''):'';
+    return '<div class="kmtabs">'+
+      '<button type="button" class="on" onclick="kmInfoTab(this,0)">📍 Tempat Menarik</button>'+
+      (hasH?'<button type="button" onclick="kmInfoTab(this,1)">🏅 Tokoh &amp; Pejuang</button>':'')+
+      '</div><div class="kmpane">'+pl+'</div>'+(hasH?'<div class="kmpane" hidden>'+he+'<div class="kmnote">Fakta disemak berdasarkan rujukan Arkib Negara, muzium dan kerajaan negeri.</div></div>':'');
+  }
+  window.kmInfoTab=function(btn,i){var box=btn.closest('.kminfo,.kminfo-modal');if(!box)return;box.querySelectorAll('.kmtabs button').forEach(function(b,j){b.classList.toggle('on',j===i)});box.querySelectorAll('.kmpane').forEach(function(p,j){p.hidden=j!==i})};
+
+  // 1) Destination card: collapsible box under the state facts
+  var flag0=window.showFlagStage;
+  window.showFlagStage=function(st){
+    var r=flag0.apply(this,arguments);
+    try{if(st&&INFO[st.id]){var tip=document.querySelector('#modalBody .tipbox');if(tip){var d=document.createElement('details');d.className='kminfo';d.innerHTML='<summary>📖 Info Lanjut: Tempat Menarik'+(INFO[st.id].heroes.length?' &amp; Tokoh':'')+'</summary>'+infoHTML(st.id);tip.insertAdjacentElement('afterend',d)}}}catch(err){}
+    return r;
+  };
+
+  // 2) Passport: reopen the info for states that already have a stamp
+  window.kmOpenInfo=function(id){
+    var st=STATES_DATA.find(function(s){return s.id===id});if(!st||!INFO[id])return;
+    openModal('📖 Info Lanjut: '+st.name,'<div class="kminfo-modal">'+infoHTML(id)+'</div><div class="buttons" style="justify-content:center;margin-top:12px"><button class="pill secondary" onclick="closeModal()">Tutup</button></div>');
+  };
+  var pass0=window.renderPassport;
+  window.renderPassport=function(){
+    var r=pass0.apply(this,arguments);
+    try{var grid=document.getElementById('passportGrid');if(grid){var box=document.getElementById('kmBook');if(!box){box=document.createElement('div');box.id='kmBook';box.className='kmbook';grid.insertAdjacentElement('afterend',box)}
+      var got=STATES_DATA.filter(function(s){return P.stamps[s.id]&&INFO[s.id]});
+      box.innerHTML='<h3>📖 Buku Info Negeri</h3>'+(got.length?'<p class="hint">Baca semula tempat menarik dan tokoh bagi negeri yang sudah dicop.</p><div class="kmchips">'+got.map(function(s){return '<button type="button" onclick="kmOpenInfo(\''+s.id+'\')">'+e(s.name)+'</button>'}).join('')+'</div>':'<p class="hint">Dapatkan cop pasport untuk membuka info negeri di sini.</p>');
+    }}catch(err){}
+    return r;
+  };
+  try{renderPassport()}catch(err){}
+
+  // 3) Kuiz Kilat: mix in 3 new questions from the info (text only)
+  var quick0=window.startQuickQuiz;
+  window.startQuickQuiz=function(){
+    var r=quick0.apply(this,arguments);
+    try{if(Q&&Q.kind==='quick'){var extra=shuffle(Object.keys(QUIZ)).slice(0,3).map(function(id){var q=QUIZ[id];return {q:q[0],opts:q[1].map(function(t,i){return {text:t,good:i===0}}),fact:'Jawapan: '+q[1][0]}});
+      var keep=Q.qs.slice(0,Math.max(0,Q.qs.length-3));Q.qs=shuffle(keep.concat(extra));Q.idx=0;renderChallenge()}}catch(err){}
+    return r;
+  };
+
+  // 4) No voice for the new info: the speaker button stays quiet on this panel
+  var speak1=window.speakCurrent;
+  window.speakCurrent=function(){
+    var m=document.getElementById('modal'),t=(document.getElementById('modalTitle')||{}).textContent||'';
+    if(m&&m.classList.contains('open')&&t.indexOf('📖')===0){toast('📖 Info ini untuk dibaca. Bacaan suara akan datang.');return}
+    return speak1.apply(this,arguments);
+  };
+})();
+</script>
 </body></html>
