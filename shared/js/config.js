@@ -79,6 +79,15 @@
         lic: { store: 'ember_code_lesen', pk2: 9 },
       },
       {
+        // Game kedua dalam keluarga Ember Code (12 Nov 2026). Lesen PK2 nombor 9 yang sama dengan Ember Code:
+        // sesiapa yang ada Ember Code (atau Pakej STEM / Semua 10 Game) terus dapat game ini. `sekali` = tiada harga berasingan.
+        id: 'ember-mantera', name: 'Ember Code · Mantera Menara', path: '/app/ember-mantera/', img: '/img/ember-mantera.jpg',
+        subject: 'Koding', age: '7 hingga 12 tahun', price: 9.9, pakej: true, sekali: 'ember-code',
+        desc: 'Tower defence 15 peta: susun kad mantera JIKA, ULANG dan SASAR supaya menara berfikir sendiri, kemudian lihat kodnya dalam Python.',
+        free: 'Bab 1 (peta 1 hingga 3)',
+        lic: { store: 'ember_mantera_lesen', pk2: 9 },
+      },
+      {
         id: 'nakhoda-jawi', name: 'Nakhoda Jawi', path: '/app/nakhoda-jawi/', img: '/img/nakhoda-jawi.jpg',
         subject: 'Jawi lanjutan', age: '7 hingga 12 tahun', price: 14.9, pakej: true,
         desc: 'Belayar 18 pulau: 14 kaedah ejaan Jawi, 3 Mini Boss dan Pulau Lanun, dengan suara nakhoda BM dan kapal sendiri.',
