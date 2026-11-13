@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Pekan Bukit Besi · Hikayat Sungai Ilmu</title>
+<link rel="stylesheet" href="enjin/enjin.css">
+<style>
+/* Mini game: Litar Lampu Pekan */
+.sw-lever { display: block; width: 44px; height: 6px; margin: 6px auto 2px; border-radius: 3px; background: #4a5560; transform-origin: 4px 50%; transform: rotate(-38deg); transition: transform .25s; }
+.circuit-switch.on .sw-lever { transform: rotate(0deg); background: #2a7a3d; }
+.circuit-switch small { display: block; font: 900 .62rem var(--body); color: #3c6b62; }
+.circuit-gap { cursor: pointer; font-size: 1.5rem; }
+.circuit-gap.full { border-style: solid; border-color: #6fbf73; background: #e2f9d9; }
+.circuit-gap small { display: block; font-size: .62rem; }
+.circuit-wire.live { background: #ffd34d; box-shadow: 0 0 8px #ffe680; }
+/* Mini game: Kren Magnet */
+.kren-board { position: relative; height: 230px; overflow: hidden; background: linear-gradient(#cdeffa 0 70%, #c9b28a 70%); }
+.kren-arm { position: absolute; left: 0; right: 0; top: 10px; height: 10px; background: repeating-linear-gradient(90deg, #f2b43c 0 14px, #2a2a2a 14px 28px); border: 2px solid #2a2a2a; }
+.kren-mag { position: absolute; left: 50%; top: 20px; width: 54px; margin-left: -27px; transition: transform .7s cubic-bezier(.5,0,.3,1); }
+.kren-rope { width: 3px; height: 34px; margin: 0 auto; background: #333; }
+.magbar { display: flex; flex-direction: column; border: 3px solid #1a1a1a; border-radius: 10px; overflow: hidden; box-shadow: 0 3px 0 rgba(0,0,0,.25); }
+.magbar i { display: grid; place-items: center; height: 30px; font: 400 1.15rem var(--display); color: #fff; font-style: normal; }
+.magbar i.U { background: #e5484d; } .magbar i.S { background: #2a7fd6; }
+.kren-blok { position: absolute; left: 50%; bottom: 22px; width: 64px; margin-left: -32px; transition: transform .6s cubic-bezier(.3,1.4,.5,1); text-align: center; }
+.kren-blok .lbl { display: block; font: 900 .66rem var(--body); color: #4a3a22; margin-top: 4px; }
+.kren-board.turun .kren-mag { transform: translateY(70px); }
+.kren-board.tarik .kren-blok { transform: translateY(-6px); }
+.kren-board.tolak .kren-blok { transform: translateX(150px) rotate(18deg); }
+.kren-board.angkat .kren-mag { transform: translateY(0); }
+.kren-board.angkat .kren-blok { transform: translateY(-76px); transition: transform .7s cubic-bezier(.5,0,.3,1); }
+@media (prefers-reduced-motion: reduce) { .kren-mag, .kren-blok, .sw-lever { transition: none; } }
+</style>
+<link rel="manifest" href="/manifest.json"><script src="/shared/js/balik.js" defer></script>
+</head>
+<body>
+<script src="enjin/lesen.js"></script>
+<script src="enjin/enjin.js"></script>
+<script>
+/* Bandar 2: Pekan Bukit Besi (tema Magnet dan Elektrik).
+   Pekan gelap kerana Sang Kumbang Besi curi wayar dan paku tiang lampu, dan Mutiara Sungai kedua.
+   Misi: baiki 3 tiang lampu (mini game Litar Lampu), bantu Pak Ali dengan Kren Magnet (mini game kutub magnet),
+   angkat batu besi di pintu lombong, kalahkan Sang Kumbang Besi. */
+(() => {
+  const { L, S, esc, tx } = HS;
+  const f = HS.f;
+  const ms = () => HS.lang() === 'ms';
+  const W = 38, H = 28;
+  function peta() {
+    const m = Array.from({ length: H }, () => Array(W).fill('.'));
+    const rect = (x0, y0, x1, y1, c) => { for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) if (m[y] && x >= 0 && x < W) m[y][x] = c; };
+    const set = (x, y, c) => { if (m[y] && x >= 0 && x < W) m[y][x] = c; };
+    for (let y = 6; y < H; y++) for (let x = 0; x < W; x++) if ((x * 37 + y * 53) % 17 === 0) m[y][x] = ',';
+    rect(1, 1, 36, 5, 'R');
+    rect(15, 1, 23, 3, 'c'); rect(19, 4, 19, 5, 'c');                 // lombong
+    rect(1, 14, 12, 14, '='); rect(26, 14, 36, 14, '='); rect(19, 6, 19, 10, '=');
+    rect(13, 11, 25, 17, 'a');                                         // dataran pekan
+    rect(33, 6, 34, 26, '~'); rect(33, 14, 34, 14, 'b');               // anak sungai dan jambatan
+    for (const [x, y] of [[3, 9], [7, 9], [3, 18], [7, 18], [27, 9], [30, 9], [27, 18], [30, 18]]) rect(x, y, x + 1, y + 1, 'H');
+    rect(14, 20, 17, 21, 'W'); rect(18, 18, 18, 22, '=');              // bengkel Pak Ali
+    for (const [x, y] of [[5, 6], [9, 7], [13, 7], [24, 7], [29, 6], [31, 7]]) set(x, y, 'k');
+    for (const [x, y] of [[2, 7], [11, 6], [26, 6], [36, 8], [3, 24], [8, 25], [12, 23], [24, 24], [28, 25], [30, 23], [22, 26], [36, 20]]) set(x, y, 'T');
+    rect(2, 21, 9, 21, 'F'); rect(26, 21, 31, 21, 'F');
+    for (let x = 0; x < W; x++) { m[0][x] = 'T'; m[H - 1][x] = 'T'; }
+    for (let y = 0; y < H; y++) { m[y][0] = 'T'; m[y][W - 1] = 'T'; }
+    return m.map(r => r.join(''));
+  }
+  const LAMPU = [[13, 10], [25, 10], [21, 18]];
+  const lampuOk = () => [1, 2, 3].filter(n => f('lampu' + n)).length;
+  const gelap = (x, y) => y <= 5 && x >= 14 && x <= 24;
+
+  function lukisLampu(n) {
+    return (c, X, Y, time, { shadow }) => {
+      const lit = f('lampu' + n);
+      shadow(X, Y + 6, 4, 1.6);
+      c.fillStyle = '#1d2430'; c.fillRect(X - 2, Y - 19, 4, 26); c.fillStyle = '#4b5a6e'; c.fillRect(X - 1, Y - 19, 1.5, 26);
+      c.fillStyle = '#1d2430'; c.fillRect(X - 6, Y - 25, 12, 7); c.fillRect(X - 3, Y - 27, 6, 2);
+      c.fillStyle = lit ? '#ffe680' : '#7a8290'; c.fillRect(X - 5, Y - 24, 10, 4);
+      if (lit) { c.fillStyle = 'rgba(255,230,128,.25)'; c.beginPath(); c.arc(X, Y - 22, 10, 0, 7); c.fill(); }
+      else if (Math.sin(time / 70 + n) > .9) { c.fillStyle = '#9fe8ff'; c.fillRect(X + 4, Y - 20, 2, 1); c.fillRect(X + 5, Y - 21, 1, 3); }
+      if (!lit) { c.fillStyle = '#1d2430'; c.fillRect(X + 2, Y - 14, 6, 1.5); c.fillStyle = '#c47a2c'; c.fillRect(X + 7, Y - 14.5, 2, 2.5); }
+    };
+  }
+  function lukisBatu(c, X, Y, time, { shadow }) {
+    shadow(X, Y + 7, 10, 3);
+    c.fillStyle = '#20242c'; c.beginPath(); c.moveTo(X - 10, Y + 7); c.lineTo(X - 9, Y - 6); c.lineTo(X - 2, Y - 11); c.lineTo(X + 8, Y - 8); c.lineTo(X + 11, Y + 7); c.closePath(); c.fill();
+    c.fillStyle = '#5b6474'; c.beginPath(); c.moveTo(X - 8.5, Y + 6); c.lineTo(X - 7.5, Y - 5); c.lineTo(X - 2, Y - 9.5); c.lineTo(X + 7, Y - 7); c.lineTo(X + 9.5, Y + 6); c.closePath(); c.fill();
+    c.fillStyle = '#8f9bb0'; c.fillRect(X - 4, Y - 5, 3, 2); c.fillRect(X + 3, Y - 2, 2, 2); c.fillRect(X - 1, Y + 2, 2, 1);
+    if (Math.sin(time / 500) > .8) { c.fillStyle = '#fff'; c.fillRect(X - 4, Y - 5, 1, 1); }
+  }
+
+  // ---------- Mini game 1: Litar Lampu Pekan ----------
+  const B = (em, ms_, en, k, why) => ({ em, ms: ms_, en, k, why });
+  const LITAR = [
+    { gaps: 1, suis: false, bahan: [B('🔩', 'Paku besi', 'Iron nail', true), B('🪵', 'Kayu', 'Wood', false, L('Kayu ialah penebat. Arus elektrik tidak boleh mengalir melaluinya.', 'Wood is an insulator. Electric current cannot flow through it.')), B('🧽', 'Getah pemadam', 'Rubber eraser', false, L('Getah ialah penebat. Ia tidak mengalirkan elektrik.', 'Rubber is an insulator. It does not conduct electricity.')), B('🧻', 'Kertas', 'Paper', false, L('Kertas ialah penebat. Mentol tidak akan menyala.', 'Paper is an insulator. The bulb will not light.'))] },
+    { gaps: 1, suis: true, bahan: [B('🧶', 'Benang', 'Yarn', false, L('Benang ialah penebat. Ia tidak mengalirkan elektrik.', 'Yarn is an insulator. It does not conduct electricity.')), B('📎', 'Klip kertas', 'Paper clip', true), B('🎈', 'Belon', 'Balloon', false, L('Belon diperbuat daripada getah, iaitu penebat.', 'A balloon is made of rubber, an insulator.')), B('🥢', 'Penyepit kayu', 'Wooden chopsticks', false, L('Kayu ialah penebat elektrik.', 'Wood is an electrical insulator.'))] },
+    { gaps: 2, suis: true, bahan: [B('🖍️', 'Krayon', 'Crayon', false, L('Krayon diperbuat daripada lilin, iaitu penebat.', 'Crayons are made of wax, an insulator.')), B('🥄', 'Sudu keluli', 'Steel spoon', true), B('🍃', 'Daun kering', 'Dry leaf', false, L('Daun kering tidak mengalirkan elektrik.', 'A dry leaf does not conduct electricity.')), B('🗝️', 'Kunci logam', 'Metal key', true), B('🧴', 'Botol plastik', 'Plastic bottle', false, L('Plastik ialah penebat. Sebab itu wayar dibalut plastik.', 'Plastic is an insulator. That is why wires are wrapped in plastic.'))] },
+  ];
+  function miniLitar(n) {
+    const R = LITAR[n - 1];
+    return HS.mini({
+      tajuk: L('Litar Lampu Pekan', 'Town Lamp Circuit'), sub: L(`Tiang lampu ${n} daripada 3`, `Lamp post ${n} of 3`),
+      bina: (el, done, count) => {
+        const fill = Array(R.gaps).fill(null); let closed = !R.suis, finished = false;
+        count(ms() ? `💡 ${lampuOk()}/3` : `💡 ${lampuOk()}/3`);
+        const draw = (msg, kind) => {
+          const lit = fill.every(Boolean) && closed;
+          const wire = `<span class="circuit-wire${lit ? ' live' : ''}"></span>`;
+          el.innerHTML = `<p class="mg-q">${esc(ms() ? `Pilih bahan yang mengalirkan elektrik untuk mengisi ${R.gaps === 2 ? 'dua ruang kosong' : 'ruang kosong'}${R.suis ? ', kemudian tutup suis' : ''}.` : `Pick materials that conduct electricity to fill the ${R.gaps === 2 ? 'two gaps' : 'gap'}${R.suis ? ', then close the switch' : ''}.`)}</p>
+            <div class="circuit-board${lit ? ' solved' : ''}"><div class="circuit-track">
+              <span class="circuit-node">🔋</span>${wire}
+              ${fill.map((b, i) => `<span class="circuit-gap${b ? ' full' : ''}">${b ? b.em : '❔'}<small>${esc(b ? (ms() ? b.ms : b.en) : (ms() ? 'kosong' : 'gap'))}</small></span>${wire}`).join('')}
+              ${R.suis ? `<button class="circuit-switch${closed ? ' on' : ''}" id="sw" type="button"><span class="sw-lever"></span><small>${esc(closed ? (ms() ? 'Suis tutup' : 'Switch closed') : (ms() ? 'Suis buka' : 'Switch open'))}</small></button>${wire}` : ''}
+              <span class="circuit-node bulb${lit ? ' lit' : ''}">💡</span></div>
+              <div class="circuit-status">${esc(lit ? (ms() ? 'Litar lengkap! Mentol menyala.' : 'Complete circuit! The bulb lights up.') : (ms() ? 'Litar belum lengkap.' : 'The circuit is not complete yet.'))}</div></div>
+            <div class="mg-row">${R.bahan.map((b, i) => `<button class="mg-pick${fill.includes(b) ? ' ok' : ''}" type="button" data-b="${i}" ${fill.includes(b) || lit ? 'disabled' : ''}><span class="em">${b.em}</span>${esc(ms() ? b.ms : b.en)}</button>`).join('')}</div>
+            <div class="mini-feedback ${kind || ''}">${esc(msg || (ms() ? 'Ketik satu bahan.' : 'Tap a material.'))}</div>
+            <div class="arcade-next">${lit ? `<button class="btn" id="mgDone" type="button" data-adv>${esc(ms() ? 'Nyalakan lampu ▶' : 'Light the lamp ▶')}</button>` : ''}</div>`;
+          el.querySelectorAll('[data-b]').forEach(btn => btn.onclick = () => {
+            const b = R.bahan[+btn.dataset.b];
+            if (!b.k) { HS.SFX.bad(); btn.classList.add('miss'); return draw((ms() ? `${b.ms}: ` : `${b.en}: `) + tx(b.why), 'bad'); }
+            const k = fill.indexOf(null); if (k < 0) return; fill[k] = b; HS.SFX.zap();
+            draw(ms() ? `Betul! ${b.ms} ialah logam, jadi ia konduktor.` : `Right! ${b.en} is metal, so it is a conductor.`, 'good');
+            check();
+          });
+          const sw = el.querySelector('#sw'); if (sw) sw.onclick = () => { closed = !closed; HS.SFX.clunk(); draw(closed ? (ms() ? 'Suis ditutup. Litar bersambung di suis.' : 'Switch closed. The circuit joins at the switch.') : (ms() ? 'Suis dibuka. Litar terputus.' : 'Switch open. The circuit is broken.'), closed ? 'good' : ''); check(); };
+          const d = el.querySelector('#mgDone'); if (d) { d.onclick = () => done(true); d.focus(); }
+        };
+        const check = () => { if (!finished && fill.every(Boolean) && closed) { finished = true; HS.SFX.win(); draw(ms() ? 'Litar lengkap! Arus mengalir dari bateri, melalui logam, ke mentol.' : 'Complete! Current flows from the battery, through the metal, to the bulb.', 'good'); } };
+        draw();
+      },
+    });
+  }
+
+  // ---------- Mini game 2: Kren Magnet ----------
+  const KREN = [
+    { goal: 'tarik', bawah: 'S', blok: 'S' },
+    { goal: 'tarik', bawah: 'U', blok: 'U' },
+    { goal: 'tolak', bawah: 'S', blok: 'U' },
+  ];
+  const PILIH = [B('🔩', 'Paku besi', 'Iron nail', true), B('🥤', 'Tin minuman aluminium', 'Aluminium drink can', false, L('Aluminium ialah logam, tetapi magnet tidak menariknya.', 'Aluminium is a metal, but magnets do not pull it.')), B('📎', 'Klip kertas', 'Paper clip', true), B('🪵', 'Kayu', 'Wood', false, L('Kayu tidak ditarik oleh magnet.', 'Magnets do not pull wood.')), B('🥫', 'Tin makanan keluli', 'Steel food tin', true), B('🧴', 'Botol plastik', 'Plastic bottle', false, L('Plastik tidak ditarik oleh magnet.', 'Magnets do not pull plastic.'))];
+  function miniKren() {
+    return HS.mini({
+      tajuk: L('Kren Magnet Pak Ali', 'Uncle Ali\'s Magnet Crane'), sub: L('Kutub sama menolak, kutub berlainan menarik.', 'Like poles push, unlike poles pull.'),
+      bina: (el, done, count) => {
+        let r = 0;
+        const P_ = p => ms() ? p : (p === 'U' ? 'N' : 'S');
+        const other = p => p === 'U' ? 'S' : 'U';
+        const round = () => {
+          count(`${Math.min(r + 1, 4)}/4`);
+          if (r >= KREN.length) return pilih();
+          const K = KREN[r]; let bawah = K.bawah, busy = false;
+          const draw = (msg, kind) => {
+            el.innerHTML = `<p class="mg-q">${esc(K.goal === 'tarik'
+                ? (ms() ? 'Kren perlu MENARIK batu besi bermagnet ini. Pusing magnet kren jika perlu, kemudian turunkan.' : 'The crane must PULL this magnetic iron rock. Flip the crane magnet if needed, then lower it.')
+                : (ms() ? 'Batu ini menghalang jalan. Kren perlu MENOLAK batu itu ke tepi. Pusing magnet kren jika perlu, kemudian turunkan.' : 'This rock is in the way. The crane must PUSH it aside. Flip the crane magnet if needed, then lower it.'))}</p>
+              <div class="mg-board kren-board" id="kb"><div class="kren-arm"></div>
+                <div class="kren-mag"><div class="kren-rope"></div><div class="magbar"><i class="${other(bawah)}">${P_(other(bawah))}</i><i class="${bawah}">${P_(bawah)}</i></div></div>
+                <div class="kren-blok"><div class="magbar"><i class="${K.blok}">${P_(K.blok)}</i><i class="${other(K.blok)}">${P_(other(K.blok))}</i></div><span class="lbl">🪨 ${esc(ms() ? 'batu besi' : 'iron rock')}</span></div></div>
+              <div class="mg-row"><button class="btn secondary" id="flip" type="button">🔄 ${esc(ms() ? 'Pusing magnet' : 'Flip magnet')}</button><button class="btn" id="drop" type="button" data-adv>⬇️ ${esc(ms() ? 'Turunkan' : 'Lower')}</button></div>
+              <div class="mini-feedback ${kind || ''}">${esc(msg || (ms() ? `Kutub bawah magnet kren: ${P_(bawah)}. Kutub atas batu: ${P_(K.blok)}.` : `Crane magnet bottom pole: ${P_(bawah)}. Rock top pole: ${P_(K.blok)}.`))}</div>`;
+            el.querySelector('#flip').onclick = () => { if (busy) return; bawah = other(bawah); HS.SFX.clunk(); draw(); };
+            el.querySelector('#drop').onclick = async () => {
+              if (busy) return; busy = true;
+              const kb = el.querySelector('#kb'), same = bawah === K.blok, ok = (K.goal === 'tarik') !== same;
+              kb.classList.add('turun'); await HS.wait(650);
+              kb.classList.add(same ? 'tolak' : 'tarik'); HS.SFX[same ? 'bad' : 'zap'](); await HS.wait(600);
+              if (ok && !same) { kb.classList.add('angkat'); await HS.wait(600); }
+              if (ok) {
+                HS.SFX.good(); HS.gainXP(5);
+                el.querySelector('.mini-feedback').className = 'mini-feedback good';
+                el.querySelector('.mini-feedback').textContent = same ? (ms() ? `Kutub sama (${P_(bawah)} dan ${P_(K.blok)}) menolak. Batu tertolak ke tepi!` : `Like poles (${P_(bawah)} and ${P_(K.blok)}) push. The rock slides away!`) : (ms() ? `Kutub berlainan (${P_(bawah)} dan ${P_(K.blok)}) menarik. Batu terangkat!` : `Unlike poles (${P_(bawah)} and ${P_(K.blok)}) pull. The rock is lifted!`);
+                el.querySelector('.mg-row').innerHTML = `<button class="btn" id="nx" type="button" data-adv>${esc(ms() ? 'Seterusnya ▶' : 'Next ▶')}</button>`;
+                el.querySelector('#nx').onclick = () => { r++; round(); }; el.querySelector('#nx').focus();
+              } else {
+                await HS.wait(300); busy = false;
+                draw(same ? (ms() ? `Aduh, kutub sama (${P_(bawah)} dan ${P_(K.blok)}) MENOLAK. Batu tergelincir. Cuba pusing magnet kren.` : `Oops, like poles (${P_(bawah)} and ${P_(K.blok)}) PUSH. The rock slid away. Try flipping the magnet.`)
+                          : (ms() ? `Aduh, kutub berlainan (${P_(bawah)} dan ${P_(K.blok)}) MENARIK. Batu melekat pada kren! Kita perlu menolak.` : `Oops, unlike poles (${P_(bawah)} and ${P_(K.blok)}) PULL. The rock stuck to the crane! We need to push.`), 'bad');
+              }
+            };
+          };
+          draw();
+        };
+        const pilih = () => {
+          const got = new Set();
+          const draw = (msg, kind) => {
+            const all = got.size === 3;
+            el.innerHTML = `<p class="mg-q">${esc(ms() ? 'Kren mengangkat sampah di bengkel. Ketik SEMUA benda yang ditarik oleh magnet.' : 'The crane clears the workshop. Tap ALL the things a magnet pulls.')}</p>
+              <div class="mg-board${all ? ' solved' : ''}"><div class="mg-row">${PILIH.map((b, i) => `<button class="mg-pick${got.has(i) ? ' ok' : ''}" type="button" data-b="${i}" ${got.has(i) || all ? 'disabled' : ''}><span class="em">${b.em}</span>${esc(ms() ? b.ms : b.en)}</button>`).join('')}</div>
+              <div class="circuit-status">🧲 ${got.size}/3</div></div>
+              <div class="mini-feedback ${kind || ''}">${esc(msg || (ms() ? 'Magnet menarik besi dan keluli.' : 'Magnets pull iron and steel.'))}</div>
+              <div class="arcade-next">${all ? `<button class="btn" id="mgDone" type="button" data-adv>${esc(ms() ? 'Kren sedia! ▶' : 'Crane ready! ▶')}</button>` : ''}</div>`;
+            el.querySelectorAll('[data-b]').forEach(btn => btn.onclick = () => {
+              const i = +btn.dataset.b, b = PILIH[i];
+              if (!b.k) { HS.SFX.bad(); return draw((ms() ? `${b.ms}: ` : `${b.en}: `) + tx(b.why), 'bad'); }
+              got.add(i); HS.SFX.zap();
+              if (got.size === 3) { HS.SFX.win(); draw(ms() ? 'Hebat! Besi dan keluli ditarik magnet. Aluminium, kayu dan plastik tidak.' : 'Great! Iron and steel are pulled. Aluminium, wood and plastic are not.', 'good'); }
+              else draw(ms() ? `Betul! ${b.ms} ada besi atau keluli.` : `Right! ${b.en} has iron or steel.`, 'good');
+            });
+            const d = el.querySelector('#mgDone'); if (d) { d.onclick = () => done(true); d.focus(); }
+          };
+          draw();
+        };
+        round();
+      },
+    });
+  }
+
+  HS.mula({
+    id: 'bandar-2', ikon: '🧲', nama: L('Pekan Bukit Besi', 'Iron Hill Town'), jenis: L('BANDAR 2', 'TOWN 2'),
+    sub: L('Pekan pelombong di kaki bukit. Tema: magnet dan elektrik.', 'A mining town at the foot of the hill. Theme: magnets and electricity.'),
+    warna: { grass: ['#86c46a', '#7dbb60', '#74b257'], blade: '#4f8f3f', rock: '#5d6270', ore: '#9fb3d1', roofs: ['#3f6f9a', '#8a4530', '#5b7a8c', '#7a5a9a', '#9a6a2a'], wall: '#d9b98a' },
+    peta,
+    perlu: () => !!HS.fOf('laluan-1', 'siap'),
+    perluInfo: { tajuk: L('Lalui Laluan Kompas dahulu', 'Cross the Compass Trail first'), teks: L('Kalahkan Si Kabus Kelabu di Laluan Kompas untuk sampai ke pekan ini.', 'Beat the Grey Mist on the Compass Trail to reach this town.'), butang: L('🧭 Ke Laluan Kompas', '🧭 To the Compass Trail'), ke: 'laluan-1.html' },
+    spawn: { mula: [2, 14], 'laluan-1': [2, 14], hadap: 1 },
+    muzikDi: (x, y) => gelap(x, y) ? 'cave' : 'town',
+    gelap,
+    malam: () => !f('terang'),
+    cahaya: () => LAMPU.filter((_, i) => f('lampu' + (i + 1))).map(([x, y]) => [x * 16 + 8, y * 16 - 14, 58]),
+    petiPool: 'magnet',
+    watak: {
+      nurul: { face: '🧕', name: L('Kak Nurul, juruelektrik', 'Nurul the electrician') },
+      ali: { face: '👨‍🔧', name: L('Pak Ali, tukang kren', 'Uncle Ali, crane mechanic') },
+      atuk: { face: '👴', name: L('Atuk Kassim', 'Grandpa Kassim') },
+      aiman: { face: '🧒', name: L('Aiman', 'Aiman') },
+      kumbang: { face: '<span style="filter:drop-shadow(0 0 6px #9fb3d1)">🪲</span>', name: L('Sang Kumbang Besi', 'Iron Beetle') },
+    },
+    ents: [
+      { id: 'kancil', kind: 'npc', img: 'kancil', h: 30, em: '🦌', x: 3, y: 13 },
+      { id: 'nurul', kind: 'npc', em: '🧕', x: 14, y: 12, seru: () => !f('nurul') || (lampuOk() === 3 && !f('terangCakap')) },
+      { id: 'ali', kind: 'npc', em: '👨‍🔧', x: 17, y: 22, seru: () => f('terang') && !f('kren') },
+      { id: 'atuk', kind: 'npc', em: '👴', x: 23, y: 12 },
+      { id: 'aiman', kind: 'npc', em: '🧒', x: 6, y: 16 },
+      { id: 'lampu1', kind: 'lampu', aksi: () => f('lampu1') ? L('💡 Lihat lampu', '💡 Look at the lamp') : L('💡 Baiki lampu', '💡 Fix the lamp'), x: LAMPU[0][0], y: LAMPU[0][1], tinggi: 16, lukis: lukisLampu(1) },
+      { id: 'lampu2', kind: 'lampu', aksi: () => f('lampu2') ? L('💡 Lihat lampu', '💡 Look at the lamp') : L('💡 Baiki lampu', '💡 Fix the lamp'), x: LAMPU[1][0], y: LAMPU[1][1], tinggi: 16, lukis: lukisLampu(2) },
+      { id: 'lampu3', kind: 'lampu', aksi: () => f('lampu3') ? L('💡 Lihat lampu', '💡 Look at the lamp') : L('💡 Baiki lampu', '💡 Fix the lamp'), x: LAMPU[2][0], y: LAMPU[2][1], tinggi: 16, lukis: lukisLampu(3) },
+      { id: 'batu', kind: 'block', x: 19, y: 5, lukis: lukisBatu },
+      { id: 'kumbang', kind: 'foe', em: '🪲', size: 24, x: 19, y: 2 },
+      { id: 'sg-pekan', kind: 'sign', x: 11, y: 13, teks: [S('sign', 'Selamat datang ke Pekan Bukit Besi. Lombong di utara, bengkel Pak Ali di selatan dataran.', 'Welcome to Iron Hill Town. The mine is north, Uncle Ali\'s workshop is south of the square.')] },
+      { id: 'sg-bengkel', kind: 'sign', x: 15, y: 22, huruf: '🔧', warna: '#4a5560', teks: [S('sign', 'Bengkel Pak Ali: kren magnet, baiki basikal, tampal tayar.', 'Uncle Ali\'s Workshop: magnet crane, bike repairs, tyre patching.')] },
+      { id: 'sg-lombong', kind: 'sign', x: 20, y: 6, warna: '#5b6474', teks: [S('sign', 'Lombong Bukit Besi. Awas: gelap di dalam!', 'Iron Hill Mine. Careful: it is dark inside!')] },
+      { id: 'c1', kind: 'chest', em: '🎁', x: 2, y: 26, pool: 'elektrik' },
+      { id: 'c2', kind: 'chest', em: '🎁', x: 36, y: 26, pool: 'magnet' },
+      { id: 'c3', kind: 'chest', em: '🎁', x: 16, y: 1, pool: 'magnet' },
+      { id: 'ke-laluan1', kind: 'exit', x: 1, y: 14, arah: [-1, 0], ke: 'laluan-1.html', nama: L('Laluan Kompas', 'Compass Trail') },
+      { id: 'ke-laluan2', kind: 'exit', x: 36, y: 14, arah: [1, 0], ke: 'peta-wilayah.html', nama: L('Gua Batu Tolak', 'Boulder Cave'), tutup: () => true,
+        tutupTeks: () => [S('kancil', HS.ada('kumbang') ? 'Jalan ke timur menuju Gua Batu Tolak. Tapi kita mesti dapatkan Mutiara Sungai di lombong dahulu!' : 'Gua Batu Tolak di timur sedang dibina. Ia akan dibuka dalam kemas kini seterusnya!', HS.ada('kumbang') ? 'The east road leads to Boulder Cave. But first we must get the River Pearl from the mine!' : 'Boulder Cave in the east is still being built. It opens in the next update!')] },
+    ],
+    misi: () => {
+      const n = !f('nurul') ? 0 : lampuOk() < 3 ? 1 : !f('kren') ? 2 : HS.ada('batu') ? 3 : HS.ada('kumbang') ? 4 : 5;
+      const teks = [
+        L('Cari Kak Nurul di dataran pekan', 'Find Nurul in the town square'),
+        L(`Baiki tiang lampu pekan 💡 ${lampuOk()}/3`, `Fix the town lamp posts 💡 ${lampuOk()}/3`),
+        L('Jumpa Pak Ali di bengkel, selatan dataran', 'Meet Uncle Ali at the workshop, south of the square'),
+        L('Angkat batu besi di pintu lombong utara', 'Lift the iron rock at the north mine door'),
+        L('Masuk lombong dan kalahkan Sang Kumbang Besi', 'Enter the mine and defeat the Iron Beetle'),
+        L('💎 Mutiara Sungai kedua diperoleh! Laluan seterusnya akan datang.', '💎 Second River Pearl found! The next route is coming soon.'),
+      ][n];
+      return { n, jumlah: 5, teks };
+    },
+    masuk: async () => {
+      if (!f('intro')) {
+        await HS.dialog([
+          S('kancil', 'Inilah Pekan Bukit Besi! Eh... kenapa gelap sangat? Semua lampu pekan padam.', 'This is Iron Hill Town! Huh... why is it so dark? All the town lamps are out.'),
+          S('kancil', 'Orang kata Sang Kumbang Besi mencuri Mutiara Sungai kedua, dan menyedut semua besi di sini.', 'People say the Iron Beetle stole the second River Pearl and sucked up all the iron here.'),
+          S('kancil', 'Jom cari Kak Nurul, juruelektrik pekan. Dia di dataran.', 'Let\'s find Nurul, the town electrician. She is in the square.'),
+        ]);
+        f('intro', true);
+      }
+    },
+    bual: async e => {
+      const id = e.id;
+      if (id === 'kancil') {
+        await HS.dialog([!f('nurul') ? S('kancil', 'Kak Nurul ada di dataran pekan, sebelah kiri.', 'Nurul is in the town square, on the left.')
+          : lampuOk() < 3 ? S('kancil', 'Litar mesti lengkap: bateri, wayar, mentol, tanpa ruang kosong!', 'A circuit must be complete: battery, wire, bulb, no gaps!')
+          : HS.ada('kumbang') ? S('kancil', 'Kutub sama menolak, kutub berlainan menarik. Ingat itu di bengkel Pak Ali!', 'Like poles push, unlike poles pull. Remember that at Uncle Ali\'s workshop!')
+          : S('kancil', 'Dua Mutiara Sungai! Laluan ke Gua Batu Tolak akan dibuka tidak lama lagi.', 'Two River Pearls! The road to Boulder Cave opens soon.')]);
+        return;
+      }
+      if (id === 'nurul') {
+        if (!f('nurul')) {
+          await HS.dialog([
+            S('nurul', 'Assalamualaikum, adik! Syukur ada orang datang membantu.', 'Peace be upon you! I am so glad someone came to help.'),
+            S('nurul', 'Sang Kumbang Besi tarik paku dan wayar dari tiang lampu. Sekarang litarnya tak lengkap.', 'The Iron Beetle pulled nails and wires out of the lamp posts. Now the circuits are broken.'),
+            S('nurul', 'Tolong akak baiki 3 tiang lampu 💡. Guna bahan yang mengalirkan elektrik, iaitu konduktor.', 'Please help me fix 3 lamp posts 💡. Use materials that let electricity flow: conductors.'),
+          ]);
+          f('nurul', true); HS.gainXP(10);
+        } else if (lampuOk() < 3) await HS.dialog([S('nurul', `Sudah ${lampuOk()} lampu menyala. Logam ialah konduktor, kayu dan plastik ialah penebat.`, `${lampuOk()} lamps are on. Metals are conductors, wood and plastic are insulators.`)]);
+        else if (!f('terangCakap')) {
+          await HS.dialog([
+            S('nurul', 'Pekan kita terang semula! Terima kasih, adik.', 'Our town is bright again! Thank you.'),
+            S('nurul', 'Sang Kumbang Besi bersembunyi dalam lombong utara. Tapi pintunya ditutup batu besi yang sangat besar.', 'The Iron Beetle hides in the north mine. But its door is blocked by a huge iron rock.'),
+            S('nurul', 'Jumpa Pak Ali di bengkel, selatan dataran. Dia ada kren magnet!', 'See Uncle Ali at the workshop, south of the square. He has a magnet crane!'),
+          ]);
+          f('terangCakap', true);
+        } else await HS.dialog([S('nurul', 'Hati-hati di lombong, adik. Akak doakan!', 'Be careful in the mine!')]);
+        return;
+      }
+      if (e.kind === 'lampu') {
+        const n = +id.slice(-1);
+        if (!f('nurul')) { await HS.dialog([S('narr', 'Tiang lampu ini padam. Wayarnya tercabut.', 'This lamp post is dark. Its wire has been pulled out.')]); return; }
+        if (f('lampu' + n)) { await HS.dialog([S('narr', 'Lampu ini sudah menyala terang. 💡', 'This lamp is shining bright. 💡')]); return; }
+        const ok = await miniLitar(n);
+        if (ok) {
+          f('lampu' + n, true); HS.SFX.win(); HS.gainXP(15); HS.bintang(2);
+          HS.percik(e.x * 16 + 8, e.y * 16 - 14, '#ffe680', 22);
+          HS.toast(ms() ? `💡 Lampu menyala! (${lampuOk()}/3)` : `💡 Lamp on! (${lampuOk()}/3)`);
+          if (lampuOk() === 3) { f('terang', true); await HS.wait(700); HS.goyang(300); HS.toast(ms() ? '🌟 Pekan terang semula!' : '🌟 The town is bright again!'); await HS.wait(400); await HS.bualTerus(HS.ent('nurul')); }
+        }
+        return;
+      }
+      if (id === 'ali') {
+        if (!f('terang')) { await HS.dialog([S('ali', 'Bengkel pak cik gelap gelita. Baiki lampu pekan dulu, nanti pak cik tolong.', 'My workshop is pitch dark. Fix the town lamps first, then I will help.')]); return; }
+        if (!f('kren')) {
+          await HS.dialog([
+            S('ali', 'Batu besi di pintu lombong? Kren magnet pak cik boleh angkat!', 'An iron rock at the mine door? My magnet crane can lift it!'),
+            S('ali', 'Tapi pak cik perlukan pembantu yang faham kutub magnet. Adik boleh cuba?', 'But I need a helper who understands magnet poles. Can you try?'),
+          ]);
+          const ok = await miniKren();
+          if (!ok) { await HS.dialog([S('ali', 'Tak apa, cuba lagi bila sedia.', 'No worries, try again when you are ready.')]); return; }
+          f('kren', true); HS.gainXP(25); HS.bintang(3);
+          await HS.dialog([S('ali', 'Hebat! Kren dah sedia. Mari ke pintu lombong di utara!', 'Brilliant! The crane is ready. Let\'s go to the mine door up north!')]);
+        } else await HS.dialog([S('ali', 'Kutub berlainan menarik, kutub sama menolak. Itu rahsia kren pak cik!', 'Unlike poles pull, like poles push. That is my crane\'s secret!')]);
+        return;
+      }
+      if (id === 'batu') {
+        if (!f('kren')) { await HS.dialog([S('narr', 'Batu besi yang sangat besar menutup pintu lombong. Terlalu berat untuk ditolak.', 'A huge iron rock blocks the mine door. It is far too heavy to push.')]); return; }
+        await HS.dialog([S('ali', 'Turunkan magnet... kutub berlainan... ANGKAT!', 'Lower the magnet... unlike poles... LIFT!')]);
+        HS.SFX.zap(); HS.goyang(500); HS.percik(19 * 16 + 8, 5 * 16, '#9fb3d1', 30); HS.SFX.clunk();
+        HS.buang('batu'); HS.gainXP(15);
+        await HS.dialog([S('narr', 'Kren magnet Pak Ali menarik batu besi itu ke atas. Pintu lombong terbuka!', 'Uncle Ali\'s magnet crane pulls the iron rock up. The mine door is open!')]);
+        return;
+      }
+      if (id === 'kumbang') {
+        await HS.dialog([
+          S('kumbang', 'Krrr! Siapa berani masuk lombong aku? Semua besi di sini milik aku dan Raja Kemarau!', 'Krrr! Who dares enter my mine? All the iron here belongs to me and the Drought King!'),
+          S('adik', 'Kami datang ambil semula Mutiara Sungai!', 'We have come to take back the River Pearl!'),
+        ]);
+        await HS.battle('kumbang');
+        await HS.dialog([
+          S('kumbang', 'Aduh... magnet aku dah lemah...', 'Ouch... my magnet is weak...'),
+          S('narr', 'Sang Kumbang Besi menjatuhkan Mutiara Sungai kedua. Ia bersinar biru seperti air sungai. 💎', 'The Iron Beetle drops the second River Pearl. It shines blue like river water. 💎'),
+          S('kancil', 'Dua mutiara! Raja Kemarau pasti marah. Jalan seterusnya ke Gua Batu Tolak di timur.', 'Two pearls! The Drought King will be angry. Next stop: Boulder Cave in the east.'),
+        ]);
+        HS.buang('kumbang'); HS.beriMutiara(2); f('siap', true); HS.SFX.win(); HS.toast(ms() ? '💎 Mutiara Sungai 2/6!' : '💎 River Pearl 2/6!');
+        return;
+      }
+      if (id === 'atuk') {
+        await HS.dialog(HS.ada('kumbang')
+          ? [S('atuk', 'Atuk dulu pelombong. Magnet menarik besi dan keluli. Aluminium dan tembaga pun logam, tapi magnet tidak menariknya!', 'I was a miner. Magnets pull iron and steel. Aluminium and copper are metals too, but magnets do not pull them!')]
+          : [S('atuk', 'Lombong kita selamat semula. Terima kasih, cucu!', 'Our mine is safe again. Thank you, dear!')]);
+        return;
+      }
+      if (id === 'aiman') {
+        await HS.dialog(f('terang') ? [S('aiman', 'Yeay, terang! Jangan sentuh suis dengan tangan basah tau. Air boleh mengalirkan elektrik!', 'Yay, it is bright! Never touch a switch with wet hands. Water can carry electricity!')]
+          : [S('aiman', 'Gelapnya... Aiman takut. Tolong nyalakan lampu pekan!', 'It is so dark... I am scared. Please turn the town lamps back on!')]);
+        return;
+      }
+      return false;
+    },
+    soalan: (() => {
+      const magnet = [
+        { q: L('Dua kutub Utara magnet didekatkan. Apa berlaku?', 'Two North poles are brought close. What happens?'), o: [['↔️', 'Menolak', 'They push apart'], ['🤝', 'Menarik', 'They pull together'], ['😐', 'Tiada apa-apa', 'Nothing']], a: 0, keep: true, why: L('Kutub sama menolak antara satu sama lain.', 'Like poles push each other away.') },
+        { q: L('Kutub Utara dan kutub Selatan didekatkan. Apa berlaku?', 'A North pole and a South pole are brought close. What happens?'), o: [['🤝', 'Menarik', 'They pull together'], ['↔️', 'Menolak', 'They push apart'], ['😐', 'Tiada apa-apa', 'Nothing']], a: 0, keep: true, why: L('Kutub berlainan menarik antara satu sama lain.', 'Unlike poles pull each other.') },
+        { q: L('Benda manakah TIDAK ditarik oleh magnet?', 'Which one is NOT pulled by a magnet?'), o: [['🥄', 'Sudu plastik', 'Plastic spoon'], ['📎', 'Klip kertas', 'Paper clip'], ['🔩', 'Paku besi', 'Iron nail'], ['🧷', 'Pin keluli', 'Steel pin']], a: 0, why: L('Plastik tidak ditarik oleh magnet. Besi dan keluli ditarik.', 'Plastic is not pulled by magnets. Iron and steel are.') },
+        { q: L('Adakah magnet menarik tin minuman aluminium?', 'Does a magnet pull an aluminium drink can?'), o: [['❌', 'Tidak', 'No'], ['✅', 'Ya', 'Yes']], a: 0, keep: true, why: L('Aluminium ialah logam, tetapi magnet tidak menariknya.', 'Aluminium is a metal, but magnets do not pull it.') },
+        { q: L('Bahagian magnet yang paling kuat tarikannya ialah...', 'The strongest part of a magnet is...'), o: [['🧲', 'Kedua-dua hujung (kutub)', 'Both ends (the poles)'], ['⏺️', 'Bahagian tengah', 'The middle']], a: 0, keep: true, why: L('Daya magnet paling kuat di kutub, iaitu di hujung magnet.', 'Magnetic force is strongest at the poles, at the ends.') },
+        { q: L('Di manakah kita guna magnet di rumah?', 'Where do we use magnets at home?'), o: [['🧊', 'Pintu peti sejuk', 'Fridge door'], ['✏️', 'Pensel kayu', 'Wooden pencil'], ['🛏️', 'Bantal', 'Pillow'], ['🥛', 'Cawan kaca', 'Glass cup']], a: 0, why: L('Pintu peti sejuk ada jalur magnet supaya ia tertutup rapat.', 'Fridge doors have a magnetic strip so they shut tight.') },
+      ];
+      const elektrik = [
+        { q: L('Bahan manakah konduktor elektrik?', 'Which material is an electrical conductor?'), o: [['🔩', 'Paku besi', 'Iron nail'], ['🧽', 'Getah pemadam', 'Rubber eraser'], ['🪵', 'Kayu', 'Wood'], ['🧻', 'Kertas', 'Paper']], a: 0, why: L('Logam seperti besi membenarkan arus elektrik mengalir.', 'Metals like iron let electric current flow.') },
+        { q: L('Mentol TIDAK menyala apabila suis...', 'The bulb does NOT light when the switch is...'), o: [['🔓', 'Dibuka', 'Open'], ['🔒', 'Ditutup', 'Closed']], a: 0, keep: true, why: L('Suis yang dibuka memutuskan litar, jadi arus tidak mengalir.', 'An open switch breaks the circuit, so no current flows.') },
+        { q: L('Apakah sumber tenaga dalam litar ringkas?', 'What is the energy source in a simple circuit?'), o: [['🔋', 'Bateri', 'Battery'], ['💡', 'Mentol', 'Bulb'], ['➰', 'Wayar', 'Wire'], ['🔘', 'Suis', 'Switch']], a: 0, why: L('Bateri membekalkan tenaga elektrik kepada litar.', 'The battery gives electrical energy to the circuit.') },
+        { q: L('Bahan manakah penebat elektrik?', 'Which material is an electrical insulator?'), o: [['🧤', 'Getah', 'Rubber'], ['🔩', 'Besi', 'Iron'], ['🥄', 'Sudu keluli', 'Steel spoon'], ['📎', 'Klip logam', 'Metal clip']], a: 0, why: L('Getah tidak mengalirkan elektrik. Ia penebat.', 'Rubber does not carry electricity. It is an insulator.') },
+        { q: L('Mengapa wayar elektrik dibalut plastik?', 'Why are electric wires wrapped in plastic?'), o: [['⚠️', 'Supaya selamat disentuh', 'So they are safe to touch'], ['🎨', 'Supaya cantik', 'To look nice'], ['🪶', 'Supaya ringan', 'To be light']], a: 0, why: L('Plastik ialah penebat. Ia melindungi kita daripada kejutan elektrik.', 'Plastic is an insulator. It protects us from electric shocks.') },
+        { q: L('Mengapa kita tidak boleh sentuh suis dengan tangan basah?', 'Why must we not touch a switch with wet hands?'), o: [['💧', 'Air boleh mengalirkan elektrik', 'Water can carry electricity'], ['🧼', 'Suis jadi kotor', 'The switch gets dirty'], ['🥶', 'Tangan jadi sejuk', 'Hands get cold']], a: 0, why: L('Air yang biasa kita guna boleh mengalirkan elektrik. Ia berbahaya!', 'Everyday water can carry electricity. It is dangerous!') },
+      ];
+      const keras = [
+        { q: L('Paku besi digosok dengan magnet berkali-kali, sehala. Paku itu akan...', 'An iron nail is stroked with a magnet many times, one way. The nail will...'), o: [['🧲', 'Menjadi magnet sementara', 'Become a temporary magnet'], ['🧴', 'Menjadi plastik', 'Turn into plastic'], ['🌡️', 'Menjadi sangat panas', 'Get very hot']], a: 0, why: L('Menggosok paku besi dengan magnet boleh menjadikannya magnet buat sementara.', 'Stroking an iron nail with a magnet can make it a magnet for a while.') },
+        { q: L('Kompas diletakkan dekat magnet besar. Jarum kompas akan...', 'A compass is put near a big magnet. The needle will...'), o: [['🔄', 'Bergerak ke arah magnet', 'Turn toward the magnet'], ['⏸️', 'Tidak bergerak langsung', 'Not move at all']], a: 0, keep: true, why: L('Jarum kompas ialah magnet, jadi ia ditarik oleh magnet lain yang dekat.', 'The needle is a magnet, so a nearby magnet pulls it.') },
+        { q: L('Bahan manakah boleh melengkapkan litar?', 'Which one can complete a circuit?'), o: [['🗝️', 'Kunci logam', 'Metal key'], ['📏', 'Pembaris plastik', 'Plastic ruler'], ['🧣', 'Kain', 'Cloth'], ['🪵', 'Ranting kayu', 'Wooden twig']], a: 0, why: L('Logam ialah konduktor, jadi kunci logam melengkapkan litar.', 'Metal is a conductor, so a metal key completes the circuit.') },
+        { q: L('Kutub Selatan magnet A MENOLAK magnet B. Kutub B yang didekatkan ialah...', 'The South pole of magnet A PUSHES magnet B. The pole of B nearby is...'), o: [['🔵', 'Selatan', 'South'], ['🔴', 'Utara', 'North']], a: 0, keep: true, why: L('Kutub sama menolak. Selatan menolak Selatan.', 'Like poles push. South pushes South.') },
+      ];
+      return { magnet, elektrik, keras, bos: [...magnet, ...elektrik] };
+    })(),
+    musuh: {
+      kumbang: { hp: 8, rage: 4, pool: 'bos', ragePool: 'keras', time: 18000, rageTime: 15000, proj: '⚡', atk: '🔩', xp: 50, bintang: 8,
+        rageMs: 'Kumbang Besi mengamuk!', rageEn: 'The Iron Beetle is enraged!', pt: '#9aa3b2', pb: '#3e4450', mote: 'rgba(160,220,255,.8)',
+        bg: 'radial-gradient(ellipse at 50% 30%, #4a5468 0, transparent 60%), linear-gradient(#2c3240 0%, #475063 44%, #5a6070 44.5%, #343843 100%)',
+        hills: 'radial-gradient(ellipse 12% 80% at 10% 100%, #262b36 98%, transparent 100%), radial-gradient(ellipse 10% 100% at 35% 100%, #303644 98%, transparent 100%), radial-gradient(ellipse 14% 70% at 70% 100%, #2a2f3b 98%, transparent 100%)',
+        ejek: [L('Krrr! Besi aku kuat!', 'Krrr! My iron is strong!'), L('Raja Kemarau akan menang!', 'The Drought King will win!'), L('Rasakan magnet aku!', 'Feel my magnet!')] },
+    },
+  });
+})();
+</script>
+</body>
+</html>
