@@ -1,5 +1,5 @@
 {
- "version": "fc3d613b58",
+ "version": "15dad16f4c",
  "core": {
   "files": {
    "/app/": "200e0f0dec53",
@@ -210,9 +210,15 @@
     "/app/hikayat-sungai/audio/hs-97.mp3": "2a60ccfe4331",
     "/app/hikayat-sungai/audio/hs-98.mp3": "fe9ed2e138ae",
     "/app/hikayat-sungai/audio/hs-99.mp3": "685316cf7628",
-    "/app/hikayat-sungai/": "2225aa116512",
+    "/app/hikayat-sungai/bandar-2": "5c0aebc52ffd",
+    "/app/hikayat-sungai/enjin/enjin.css": "90dcfd2315cf",
+    "/app/hikayat-sungai/enjin/enjin.js": "5dfaef179f16",
+    "/app/hikayat-sungai/enjin/lesen.js": "f0a49e5c05d9",
+    "/app/hikayat-sungai/": "98801ff62d58",
+    "/app/hikayat-sungai/laluan-1": "b55d26f8684a",
     "/app/hikayat-sungai/peta/peta-kering.webp": "634371b6646f",
     "/app/hikayat-sungai/peta/peta-penuh.webp": "e62f4c78c6df",
+    "/app/hikayat-sungai/peta-wilayah": "651f7214f449",
     "/app/hikayat-sungai/watak/adik-l.webp": "7f312600af8d",
     "/app/hikayat-sungai/watak/adik-p.webp": "676a598ada5b",
     "/app/hikayat-sungai/watak/buaya.webp": "e537750104ca",
@@ -221,7 +227,7 @@
     "/app/hikayat-sungai/watak/lintah.webp": "475c2150aad8",
     "/app/hikayat-sungai/watak/timah.webp": "2216b3ab92c7"
    },
-   "bytes": 7691927
+   "bytes": 7992039
   },
   "kembara-malaysia": {
    "files": {
