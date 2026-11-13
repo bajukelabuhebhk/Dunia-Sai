@@ -1,5 +1,5 @@
 {
- "version": "fc3d613b58",
+ "version": "88972a8c1f",
  "core": {
   "files": {
    "/app/": "200e0f0dec53",
@@ -47,9 +47,9 @@
   },
   "boss-gerai": {
    "files": {
-    "/app/boss-gerai/": "6ae65c34d80e"
+    "/app/boss-gerai/": "0b971ee2c483"
    },
-   "bytes": 1172270
+   "bytes": 1172269
   },
   "ember-code": {
    "files": {
