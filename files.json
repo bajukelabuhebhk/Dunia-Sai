@@ -1,5 +1,5 @@
 {
- "version": "d35df0c1fa",
+ "version": "ac085f8aee",
  "core": {
   "files": {
    "/app/": "ea9a45dd73a4",
@@ -60,9 +60,9 @@
   },
   "ember-mantera": {
    "files": {
-    "/app/ember-mantera/": "29cc6644eb48"
+    "/app/ember-mantera/": "c02d209ab027"
    },
-   "bytes": 648439
+   "bytes": 1003004
   },
   "hikayat-sungai": {
    "files": {
