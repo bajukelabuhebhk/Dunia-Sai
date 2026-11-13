@@ -8,7 +8,7 @@
  *
  * VERSION is set by `node tools/kemas-kini.mjs`; do not edit it by hand.
  */
-const VERSION = '835972c9bc';
+const VERSION = 'bb61f32496';
 const CORE = `ds-core-${VERSION}`;
 const GAMES = 'ds-games';
 const LIST = '/files.json';
