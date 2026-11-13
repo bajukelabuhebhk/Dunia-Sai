@@ -1128,7 +1128,16 @@ var EM_IMG={"meriam1-k": "data:image/webp;base64,UklGRsICAABXRUJQVlA4WAoAAAAQAAA
   #ds-komen{top:106px!important;transform:none!important}
   #side .slot{display:none}
   #side{gap:5px}.tb,.tb.it{width:42px!important;height:42px!important}.tb.q{height:42px!important}
- }`;document.head.appendChild(css);
+  html,body{height:100%;overflow:hidden}
+  #app{height:var(--emvh,100dvh)!important}
+  #mid{justify-content:center}
+  #stage{flex:none}
+  #mid>footer{order:3;border-top:0;padding:6px 10px 8px;flex-wrap:wrap;justify-content:center}
+  #mid>footer #go{font-size:18px;padding:12px 22px}
+ }
+ #quiz .md{position:relative}
+ #qX{position:absolute;top:8px;right:8px;width:36px;height:36px;border-radius:10px;background:#1e1126;color:#fff;border:2px solid var(--line);font-size:18px;font-weight:900;padding:0;line-height:1;z-index:2}
+ #qTopic{margin-right:42px}`;document.head.appendChild(css);
  const wrap=document.getElementById('wrap'),cv=document.getElementById('cv');
  const Z={z:1,vx:0,vy:0,min:1,max:3,ar:H/W,def:1};
  // vw/vh = kawasan peta yang kelihatan (unit peta). ar = tinggi/lebar kotak kanvas.
@@ -1142,9 +1151,15 @@ var EM_IMG={"meriam1-k": "data:image/webp;base64,UklGRsICAABXRUJQVlA4WAoAAAAQAAA
  // telefon tegak: kotak kanvas lebih tinggi daripada peta (hingga 1.6x), peta dizum untuk penuhi tinggi, seret untuk lihat tepi
  const portrait=()=>matchMedia('(orientation:portrait) and (max-width:820px)').matches;
  const ofit=fit;
- window.fit=fit=function(){if(!portrait()){ofit();Z.ar=H/W;Z.def=1;clamp();return}const m=document.getElementById('stage'),aw=m.clientWidth-8,ah=m.clientHeight-8,cw=Math.floor(aw),ch=Math.floor(Math.min(ah,aw*H/W*1.6));
+ const app=document.getElementById('app'),mid=document.getElementById('mid'),foot=document.querySelector('#app>footer,#mid>footer'),side=document.getElementById('side');
+ // tinggi skrin sebenar (pelayar dalam aplikasi kadang-kadang salah kira 100vh/dvh)
+ function setVh(){const h=(window.visualViewport&&visualViewport.height)||innerHeight;document.documentElement.style.setProperty('--emvh',Math.round(h)+'px')}
+ // tegak: footer (Akan datang + MULA GELOMBANG) terus di bawah peta & bar alatan, supaya sentiasa kelihatan
+ function placeFooter(){if(!foot)return;if(portrait()){if(foot.parentNode!==mid)mid.appendChild(foot)}else if(foot.parentNode!==app)app.appendChild(foot)}
+ window.fit=fit=function(){setVh();placeFooter();const m=document.getElementById('stage');if(!portrait()){m.style.height='';ofit();Z.ar=H/W;Z.def=1;clamp();return}
+  const aw=mid.clientWidth-8,ah=mid.clientHeight-side.offsetHeight-(foot?foot.offsetHeight:0)-16,cw=Math.floor(aw),ch=Math.floor(Math.min(ah,aw*H/W*1.6));
   cv.style.width=cw+'px';cv.style.height=ch+'px';const dpr=Math.min(2,window.devicePixelRatio||1);cv.width=Math.round(cw*dpr);cv.height=Math.round(ch*dpr);
-  Z.ar=ch/cw;Z.def=Math.min(Z.max,Math.max(1,(W*Z.ar)/H));clamp()};
+  m.style.height=(ch+8)+'px';Z.ar=ch/cw;Z.def=Math.min(Z.max,Math.max(1,(W*Z.ar)/H));clamp()};
  // butang
  const bar=document.createElement('div');bar.id='zoomBar';bar.innerHTML='<button id="zIn" title="Zum masuk">＋</button><button id="zOut" title="Zum keluar">−</button><button id="zFit" title="Lihat seluruh peta">⤢</button>';wrap.appendChild(bar);
  function zb(){const o=document.getElementById('zOut');if(o){o.disabled=Z.z<=1.01;o.style.opacity=Z.z<=1.01?.4:1}}
@@ -1172,7 +1187,11 @@ var EM_IMG={"meriam1-k": "data:image/webp;base64,UklGRsICAABXRUJQVlA4WAoAAAAQAAA
  cv.addEventListener('wheel',e=>{e.preventDefault();const m=uv(e);zoomAt(e.deltaY<0?1.15:1/1.15,m.u,m.v)},{passive:false});
  // peta baharu = lihat seluruh peta
  if(typeof startMap==='function'){const os=startMap;window.startMap=startMap=function(){const r=os.apply(this,arguments);Z.z=Z.def;Z.vx=(W-vw())/2;Z.vy=(H-vh())/2;clamp();return r}}
- addEventListener('resize',()=>{try{fit()}catch(_){}});setTimeout(()=>{try{fit();if(G){Z.z=Z.def;Z.vx=(W-vw())/2;Z.vy=(H-vh())/2;clamp()}}catch(_){}},0);addEventListener('orientationchange',()=>setTimeout(()=>{try{fit()}catch(_){}},300));
+ addEventListener('resize',()=>{try{fit()}catch(_){}});if(window.visualViewport)visualViewport.addEventListener('resize',()=>{try{fit()}catch(_){}});
+ // kuiz Bip: butang ✕ untuk tutup tanpa menjawab (peluang kuiz tidak hilang)
+ const qmd=document.querySelector('#quiz .md');if(qmd&&!document.getElementById('qX')){const x=document.createElement('button');x.id='qX';x.title='Tutup';x.textContent='✕';qmd.prepend(x);
+  x.addEventListener('click',e=>{e.stopPropagation();hide('quiz');try{updSide()}catch(_){}});
+  const qo=document.getElementById('qOpts');new MutationObserver(()=>{const answered=!!qo.querySelector('.qa:disabled');x.style.display=answered?'none':''}).observe(qo,{subtree:true,attributes:true,childList:true})}setTimeout(()=>{try{fit();if(G){Z.z=Z.def;Z.vx=(W-vw())/2;Z.vy=(H-vh())/2;clamp()}}catch(_){}},0);addEventListener('orientationchange',()=>setTimeout(()=>{try{fit()}catch(_){}},300));
 })();
 </script>
 </body>
