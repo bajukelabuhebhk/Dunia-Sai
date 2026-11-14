@@ -67,7 +67,7 @@
       {
         id: 'boss-gerai', name: 'Boss Gerai', path: '/app/boss-gerai/', img: '/img/boss-gerai.jpg',
         subject: 'Duit dan niaga', age: '6 hingga 12 tahun', price: 9.9, pakej: true,
-        desc: 'Buka gerai pasar malam: ambil pesanan 3 bahasa, masak, kira baki duit dan urus stok.',
+        desc: 'Buka gerai di 10 pasar Malaysia: gabung bahan, masak 60 menu di dapur dan kira baki duit pembeli.',
         free: '3 lokasi Kuala Lumpur',
         lic: { store: 'boss_gerai_lesen', pk2: 8 },
       },
