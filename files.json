@@ -1,10 +1,10 @@
 {
- "version": "ad1867bd85",
+ "version": "2fd78af53e",
  "core": {
   "files": {
    "/app/": "ea9a45dd73a4",
    "/img/awanara.jpg": "2e406ffbba05",
-   "/img/boss-gerai.jpg": "5136ff6f0e7c",
+   "/img/boss-gerai.jpg": "39fc8ecf1403",
    "/img/ember-code.jpg": "a12b51a0b432",
    "/img/ember-mantera.jpg": "74b8f203f5be",
    "/img/hikayat-sungai.jpg": "ba4391a5dd3f",
@@ -27,7 +27,7 @@
    "/shared/icons/maskable-512.png": "78d51897dd77",
    "/shared/js/anak.js": "b26ad114d73c",
    "/shared/js/balik.js": "b25251d8c79c",
-   "/shared/js/config.js": "5bde5691e255",
+   "/shared/js/config.js": "a569ecd85d87",
    "/shared/js/jejak.js": "993517d588a5",
    "/shared/js/lesen-lib.js": "9f17920f43d7",
    "/shared/js/lesen.js": "d72df6c47647",
@@ -35,7 +35,7 @@
    "/shared/js/maklum-balas.js": "87d261af59ac",
    "/shared/js/ruang-ibubapa.js": "d83a0a76181d"
   },
-  "bytes": 1505866
+  "bytes": 1542765
  },
  "games": {
   "awanara": {
@@ -48,9 +48,9 @@
   },
   "boss-gerai": {
    "files": {
-    "/app/boss-gerai/": "6ae65c34d80e"
+    "/app/boss-gerai/": "fab61295b1b4"
    },
-   "bytes": 1172270
+   "bytes": 3638087
   },
   "ember-code": {
    "files": {
