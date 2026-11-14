@@ -167,7 +167,7 @@
         <p>${esc(g.desc)}</p>
         <span style="font-size:.85rem;color:var(--muted)">${esc(g.subject)} · ${esc(g.age)}</span>
         <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:6px">
-          <span class="harga">${g.price ? `Versi penuh ${DS.rm(g.price)}` : 'Percuma sepenuhnya'}</span>
+          <span class="harga">${g.sekali ? `Satu lesen dengan ${esc((DS.game(g.sekali) || {}).name || '')}` : g.price ? `Versi penuh ${DS.rm(g.price)}` : 'Percuma sepenuhnya'}</span>
           ${g.price ? '<span class="lencana">Dalam Pakej</span>' : ''}
         </div>
       </div>
