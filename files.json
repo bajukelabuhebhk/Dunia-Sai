@@ -1,5 +1,5 @@
 {
- "version": "26b4253895",
+ "version": "e04dba4296",
  "core": {
   "files": {
    "/app/": "ea9a45dd73a4",
@@ -15,8 +15,9 @@
    "/img/robot-rumble.jpg": "4edd8272150f",
    "/img/wira-matematik.jpg": "b49e57729261",
    "/img/wonder-island.jpg": "1ae683e5f7e8",
-   "/": "4959d64c107f",
+   "/": "8188b6be81e7",
    "/manifest.json": "9a5f33949e56",
+   "/polisi/": "83435fe7370f",
    "/promo/template": "77349aa14694",
    "/shared/css/dunia.css": "7af9451f39ae",
    "/shared/icons/apple-touch-icon.png": "01fbaa6baf79",
@@ -34,7 +35,7 @@
    "/shared/js/maklum-balas.js": "87d261af59ac",
    "/shared/js/ruang-ibubapa.js": "d83a0a76181d"
   },
-  "bytes": 1487191
+  "bytes": 1510914
  },
  "games": {
   "awanara": {
