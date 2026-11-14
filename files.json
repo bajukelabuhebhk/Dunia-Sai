@@ -1,5 +1,5 @@
 {
- "version": "0c3bc2379d",
+ "version": "b7a7b23c71",
  "core": {
   "files": {
    "/app/": "200e0f0dec53",
@@ -15,7 +15,7 @@
    "/img/robot-rumble.jpg": "4edd8272150f",
    "/img/wira-matematik.jpg": "b49e57729261",
    "/img/wonder-island.jpg": "1ae683e5f7e8",
-   "/": "aeed74eab151",
+   "/": "a966737f519f",
    "/manifest.json": "9a5f33949e56",
    "/polisi/": "83435fe7370f",
    "/promo/template": "77349aa14694",
@@ -35,7 +35,7 @@
    "/shared/js/maklum-balas.js": "87d261af59ac",
    "/shared/js/ruang-ibubapa.js": "d83a0a76181d"
   },
-  "bytes": 1480159
+  "bytes": 1483217
  },
  "games": {
   "awanara": {
