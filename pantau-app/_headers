@@ -1,0 +1,14 @@
+# Pantau app (projek Cloudflare Pages pantau-dunia-sai, build output directory: pantau-app)
+# Owner only: not for search engines, never served stale, may only load files from itself and dunia-sai.pages.dev
+
+/*
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-cache
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: no-referrer
+  Permissions-Policy: camera=(), geolocation=(), microphone=()
+  X-Frame-Options: DENY
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://dunia-sai.pages.dev; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://dunia-sai.pages.dev; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'
+
+/icons/*
+  Cache-Control: public, max-age=2592000
