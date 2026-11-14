@@ -1,11 +1,11 @@
 {
- "version": "b7a7b23c71",
+ "version": "e04dba4296",
  "core": {
   "files": {
-   "/app/": "200e0f0dec53",
+   "/app/": "ea9a45dd73a4",
    "/img/awanara.jpg": "2e406ffbba05",
    "/img/boss-gerai.jpg": "39fc8ecf1403",
-   "/img/ember-code.jpg": "a12b51a0b432",
+   "/img/ember-code.jpg": "e3a6a1ea7053",
    "/img/hikayat-sungai.jpg": "ba4391a5dd3f",
    "/img/kembara-malaysia.jpg": "0943df0e480c",
    "/img/kenal-abc.jpg": "117435109d86",
@@ -15,7 +15,7 @@
    "/img/robot-rumble.jpg": "4edd8272150f",
    "/img/wira-matematik.jpg": "b49e57729261",
    "/img/wonder-island.jpg": "1ae683e5f7e8",
-   "/": "a966737f519f",
+   "/": "8188b6be81e7",
    "/manifest.json": "9a5f33949e56",
    "/polisi/": "83435fe7370f",
    "/promo/template": "77349aa14694",
@@ -27,7 +27,7 @@
    "/shared/icons/maskable-512.png": "78d51897dd77",
    "/shared/js/anak.js": "b26ad114d73c",
    "/shared/js/balik.js": "b25251d8c79c",
-   "/shared/js/config.js": "7a6b0d9e9d5d",
+   "/shared/js/config.js": "c26677cd533c",
    "/shared/js/jejak.js": "993517d588a5",
    "/shared/js/lesen-lib.js": "9f17920f43d7",
    "/shared/js/lesen.js": "d72df6c47647",
@@ -35,7 +35,7 @@
    "/shared/js/maklum-balas.js": "87d261af59ac",
    "/shared/js/ruang-ibubapa.js": "d83a0a76181d"
   },
-  "bytes": 1483217
+  "bytes": 1510914
  },
  "games": {
   "awanara": {
@@ -54,9 +54,9 @@
   },
   "ember-code": {
    "files": {
-    "/app/ember-code/": "6cc55fa70af6"
+    "/app/ember-code/": "eea0dcdac629"
    },
-   "bytes": 5226304
+   "bytes": 1961224
   },
   "hikayat-sungai": {
    "files": {

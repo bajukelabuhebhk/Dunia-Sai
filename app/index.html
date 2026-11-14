@@ -270,7 +270,7 @@
   $('pakejNota').textContent = P.note;
   $('pakejWa').href = DS.waLink(`Assalamualaikum, saya nak beli ${P.name} Dunia Sai (${DS.rm(P.price)}).`);
   $('harga').innerHTML = DS.PAKEJ_TEMA.map((Q) => `<li><span>${esc(Q.name)}<br><small style="color:var(--muted)">${DS.pakejGames(Q).map((g) => esc(g.name)).join(', ')}</small></span><b>${DS.rm(Q.price)}</b></li>`).join('') +
-    DS.GAMES.filter((g) => g.price > 0).map((g) => `<li><span>${esc(g.name)}</span><b>${DS.rm(g.price)}</b></li>`).join('');
+    DS.GAMES.filter((g) => g.price > 0 && !g.sekali).map((g) => `<li><span>${esc(g.name)}</span><b>${DS.rm(g.price)}</b></li>`).join('');
   $('waNo').textContent = DS.whatsappText;
 
   /* ---------- Offline ---------- */
