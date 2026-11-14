@@ -74,7 +74,7 @@
       {
         id: 'ember-code', name: 'Ember Code', path: '/app/ember-code/', img: '/img/ember-code.jpg',
         subject: 'Koding', age: '7 hingga 12 tahun', price: 9.9, pakej: true,
-        desc: 'Tower defence 15 peta: susun kad mantera JIKA, ULANG dan SASAR supaya menara berfikir sendiri, kemudian lihat kodnya dalam Python.',
+        desc: 'Tower defence sambil belajar kod: susun arahan JIKA, ULANG dan SASAR supaya menara berfikir sendiri, kemudian lihat kodnya dalam Python. 15 peta.',
         free: 'Bab 1 (peta 1 hingga 3)',
         lic: { store: 'ember_code_lesen', pk2: 9 },
       },

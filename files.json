@@ -1,11 +1,11 @@
 {
- "version": "24f8bda3c7",
+ "version": "26b4253895",
  "core": {
   "files": {
    "/app/": "ea9a45dd73a4",
    "/img/awanara.jpg": "2e406ffbba05",
    "/img/boss-gerai.jpg": "39fc8ecf1403",
-   "/img/ember-code.jpg": "b8df1e7f83fc",
+   "/img/ember-code.jpg": "e3a6a1ea7053",
    "/img/hikayat-sungai.jpg": "ba4391a5dd3f",
    "/img/kembara-malaysia.jpg": "0943df0e480c",
    "/img/kenal-abc.jpg": "117435109d86",
@@ -26,7 +26,7 @@
    "/shared/icons/maskable-512.png": "78d51897dd77",
    "/shared/js/anak.js": "b26ad114d73c",
    "/shared/js/balik.js": "b25251d8c79c",
-   "/shared/js/config.js": "699105b9c29c",
+   "/shared/js/config.js": "c26677cd533c",
    "/shared/js/jejak.js": "993517d588a5",
    "/shared/js/lesen-lib.js": "9f17920f43d7",
    "/shared/js/lesen.js": "d72df6c47647",
@@ -34,7 +34,7 @@
    "/shared/js/maklum-balas.js": "87d261af59ac",
    "/shared/js/ruang-ibubapa.js": "d83a0a76181d"
   },
-  "bytes": 1487339
+  "bytes": 1487191
  },
  "games": {
   "awanara": {
@@ -53,9 +53,9 @@
   },
   "ember-code": {
    "files": {
-    "/app/ember-code/": "8c1ec944d8cc"
+    "/app/ember-code/": "eea0dcdac629"
    },
-   "bytes": 1961321
+   "bytes": 1961224
   },
   "hikayat-sungai": {
    "files": {
