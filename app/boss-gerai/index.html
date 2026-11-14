@@ -646,7 +646,9 @@ const LEVELS=[null,
   {name:'Festival Boss Gerai',menu:['nasiGorengSp','rotiJohn','satayCampur','jusMangga','aisKacang','apamBalik'],cust:8,max:3}
 ];
 const NLV=LEVELS.length-1;
-const COLS=7,ROWS=8;
+/* saiz papan ikut pasar: pasar awal kurang bahan, jadi petak lebih sedikit & lebih besar */
+const PAPAN=[[5,6],[5,6],[6,6],[6,7],[6,7],[6,7],[7,7],[7,8],[7,8],[7,8]];
+let COLS=7,ROWS=8;
 
 /* =================== KEADAAN =================== */
 let S=null; // keadaan level
@@ -679,7 +681,15 @@ function syncGens(){
   const all=new Set(act);S.queue.forEach(c=>gensFor(remainingNeed(c)).forEach(g=>all.add(g)));
   S.cells.forEach((c,i)=>{if(c&&c.k==='gen'&&!all.has(c.g))S.cells[i]=null;});
   const have=new Set(S.cells.filter(c=>c&&c.k==='gen').map(c=>c.g));
-  [...act,...all].forEach(g=>{if(have.has(g))return;const e=genSlot();if(e>=0){S.cells[e]={k:'gen',g};have.add(g);}});
+  [...act,...all].forEach(g=>{if(have.has(g))return;let e=genSlot();
+    if(e<0&&act.has(g))e=spareCell();
+    if(e>=0){S.cells[e]={k:'gen',g};have.add(g);}});
+}
+/* papan penuh: cari bahan yang tiada pembeli perlukan (untuk beri ruang kepada bakul) */
+function spareCell(){
+  const bases=new Set();S.queue.forEach(c=>remainingNeed(c).forEach(id=>bases.add(INFO[id].base)));
+  for(let i=S.cells.length-1;i>=0;i--){const c=S.cells[i];if(c&&c.k==='it'&&!bases.has(INFO[c.id].base))return i;}
+  return -1;
 }
 function boardUnits(base){let u=0;S.cells.forEach(c=>{if(c&&c.k==='it'&&INFO[c.id].base===base)u+=1<<INFO[c.id].lvl;});return u;}
 function pickGive(g){
@@ -696,6 +706,7 @@ function setLatar(lv){const g=document.querySelector('#s-pasar .gerai');if(g)g.s
 function startLevel(lv){
   setLatar(lv);
   const L=LEVELS[lv];
+  [COLS,ROWS]=PAPAN[lv-1]||[7,8];$('board').style.gridTemplateColumns='repeat('+COLS+',1fr)';
   S={lv,served:0,total:L.cust,cash:0,stars:[],queue:[],used:new Set(),cells:new Array(COLS*ROWS).fill(null)};
   for(let i=0;i<Math.min(3,L.cust);i++)S.queue.push(newCustomer(lv));
   S.made=S.queue.length;
@@ -843,7 +854,7 @@ function showHint(){
     ghost&&ghost.remove();ghost=null;s.el.classList.remove('dragfrom');
     if(e.type!=='pointerup'){renderBoard();return;}
     const el=document.elementFromPoint(e.clientX,e.clientY);
-    if(el&&el.closest('#tong')){S.cells[s.i]=null;sfx('tap');toast('Dibuang 🗑️');renderBoard();return;}
+    if(el&&el.closest('#tong')){S.cells[s.i]=null;sfx('tap');toast('Dibuang 🗑️');syncGens();renderBoard();return;}
     if(el&&el.closest('.cust.active')){if(!deliver(s.i,s.el)){toast('Pembeli ini tak perlukan '+NAME[S.cells[s.i].id],'bad');sfx('bad');renderBoard();}return;}
     const ce=el&&el.closest('#board .cell');
     if(!ce){renderBoard();return;}
@@ -1247,7 +1258,7 @@ setVh();
 window.__bg2={get S(){return S},renderPasar,aud:{unlockAudio,sizzle,pourSound,CLIP,clipLoops,get amb(){return !!ambClip}},
   useful:(id,rem)=>{let x=id;while(x){if(rem.includes(x))return true;x=INFO[x].next;}return false;},
   usefulAny:id=>S.queue.some(c=>{let x=id;const r=remainingNeed(c);while(x){if(r.includes(x))return true;x=INFO[x].next;}return false;}),
-  genOf:rem=>GEN_OF[INFO[rem[0]].base],DISH,LEVELS,STN,syncGens,pendingAt,startLevel,dapur,K,deliver,tryMerge,tapGen,startDapur,startKaunter,remainingNeed,COLS};
+  genOf:rem=>GEN_OF[INFO[rem[0]].base],DISH,LEVELS,STN,syncGens,pendingAt,startLevel,dapur,K,deliver,tryMerge,tapGen,startDapur,startKaunter,remainingNeed,get COLS(){return COLS},get ROWS(){return ROWS}};
 })();
 </script>
 </body>
