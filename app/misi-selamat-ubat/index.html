@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>Misi Selamat Ubat: Dwi-Peranan</title>
+<!-- Dunia Sai: Ruang Ibu Bapa -->
+<script src="/shared/js/ruang-ibubapa.js"></script>
+<style>
+  html,body{margin:0;padding:0;width:100vw;height:100vh;height:100dvh;overflow:hidden;background:#FFE9B8;
+    touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;
+    font-family:"Trebuchet MS","Segoe UI",Verdana,sans-serif}
+  canvas{display:block;width:100vw;height:100vh;height:100dvh;touch-action:none}
+  #putar{display:none;position:fixed;inset:0;background:#FFF3D6;color:#3E2723;z-index:5;
+    align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:24px;font-weight:bold;font-size:22px}
+  #putar span{font-size:64px;display:block;margin-bottom:12px}
+  @media (orientation:portrait) and (max-width:820px){#putar{display:flex}}
+</style>
+<!-- dunia-sai --><link rel="manifest" href="/manifest.json"><script src="/shared/js/balik.js" defer></script></head>
+<body>
+<canvas id="kanvas" aria-label="Permainan Misi Selamat Ubat: Dwi-Peranan"></canvas>
+<div id="putar"><span>&#8635;</span>Sila pusingkan peranti anda ke mod landskap untuk bermain.</div>
+<script>
+'use strict';
+/* =====================================================================
+   MISI SELAMAT UBAT: DWI-PERANAN
+   Permainan pendidikan satu fail. Bahagian kod:
+   1. Asas & utiliti   2. Simpanan   3. Bunyi   4. Data (tahap, kad, kedai)
+   5. Lukisan watak & ubat   6. Enjin tahap   7. Mod A (Rumah)
+   8. Mod B (Farmasi)   9. Skrin menu   10. Input & gelung utama
+   ===================================================================== */
+
+/* ---------- 1. ASAS & UTILITI ---------- */
+const W = 1280, H = 720, OUT = '#3E2723';
+const FON = '"Trebuchet MS","Segoe UI",Verdana,sans-serif';
+const cv = document.getElementById('kanvas'), ctx = cv.getContext('2d');
+let skala = 1, ox = 0, oy = 0, dpr = 1, masa = 0;
+const ptr = { x: W / 2, y: H / 2, turun: false };
+let zonKlik = [];
+const HALANG = { x: 0, y: 0, w: W, h: H, fn() {} };
+
+if (!CanvasRenderingContext2D.prototype.roundRect) {
+  CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
+    r = Math.min(Array.isArray(r) ? r[0] : r || 0, w / 2, h / 2);
+    this.moveTo(x + r, y); this.arcTo(x + w, y, x + w, y + h, r); this.arcTo(x + w, y + h, x, y + h, r);
+    this.arcTo(x, y + h, x, y, r); this.arcTo(x, y, x + w, y, r); this.closePath();
+  };
+}
+function ubahSaiz() {
+  dpr = Math.min(window.devicePixelRatio || 1, 2);
+  cv.width = Math.round(innerWidth * dpr); cv.height = Math.round(innerHeight * dpr);
+  skala = Math.min(cv.width / W, cv.height / H);
+  ox = (cv.width - W * skala) / 2; oy = (cv.height - H * skala) / 2;
+}
+const rnd = n => Math.floor(Math.random() * n);
+const pilihRawak = a => a[rnd(a.length)];
+const kocok = a => { for (let i = a.length - 1; i > 0; i--) { const j = rnd(i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const dalam = (x, y, r) => x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h;
+const had = (v, a, b) => Math.max(a, Math.min(b, v));
+const pad2 = n => String(n).padStart(2, '0');
+
+function box(x, y, w, h, r, isi, garis = OUT, lw = 3) {
+  ctx.beginPath(); ctx.roundRect(x, y, w, h, r);
+  if (isi) { ctx.fillStyle = isi; ctx.fill(); }
+  if (garis) { ctx.lineWidth = lw; ctx.strokeStyle = garis; ctx.stroke(); }
+}
+function circ(x, y, r, isi, garis = OUT, lw = 3) {
+  ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
+  if (isi) { ctx.fillStyle = isi; ctx.fill(); }
+  if (garis) { ctx.lineWidth = lw; ctx.strokeStyle = garis; ctx.stroke(); }
+}
+function garis(x1, y1, x2, y2, warna = OUT, lw = 3) {
+  ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.strokeStyle = warna; ctx.lineWidth = lw; ctx.lineCap = 'round'; ctx.stroke();
+}
+function txt(s, x, y, sz = 20, warna = OUT, al = 'center', tebal = true, maks) {
+  ctx.font = (tebal ? 'bold ' : '') + sz + 'px ' + FON; ctx.fillStyle = warna; ctx.textAlign = al; ctx.textBaseline = 'middle';
+  if (maks) ctx.fillText(s, x, y, maks); else ctx.fillText(s, x, y);
+}
+function balut(s, x, y, maks, sz, warna = OUT, al = 'center', tebal = false) {
+  ctx.font = (tebal ? 'bold ' : '') + sz + 'px ' + FON;
+  const kata = String(s).split(' '), lh = sz * 1.32; let baris = '', n = 0;
+  for (const k of kata) {
+    const uji = baris ? baris + ' ' + k : k;
+    if (ctx.measureText(uji).width > maks && baris) { txt(baris, x, y + n * lh, sz, warna, al, tebal); n++; baris = k; }
+    else baris = uji;
+  }
+  if (baris) { txt(baris, x, y + n * lh, sz, warna, al, tebal); n++; }
+  return n * lh;
+}
+function bintang(x, y, r, isi = '#FFC107', garisW = OUT) {
+  ctx.beginPath();
+  for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? r * 0.46 : r; ctx.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr); }
+  ctx.closePath(); ctx.fillStyle = isi; ctx.fill();
+  if (garisW) { ctx.lineWidth = Math.max(1.5, r * 0.12); ctx.strokeStyle = garisW; ctx.lineJoin = 'round'; ctx.stroke(); }
+}
+function syilingIkon(x, y, r) { circ(x, y, r, '#FFCA28', OUT, 2.5); circ(x, y, r * 0.62, '#FFE082', '#F9A825', 2); txt('C', x, y + 1, r * 0.9, '#E65100'); }
+function mangga(x, y, s = 1) {
+  ctx.beginPath(); ctx.arc(x, y - 8 * s, 8 * s, Math.PI, 0); ctx.lineWidth = 4 * s; ctx.strokeStyle = OUT; ctx.stroke();
+  box(x - 12 * s, y - 8 * s, 24 * s, 20 * s, 4 * s, '#FFCA28', OUT, 2.5);
+  circ(x, y + 1 * s, 2.6 * s, OUT, null);
+}
+function palang(x, y, r, warna = '#2E7D32') { box(x - r * 0.33, y - r, r * 0.66, r * 2, r * 0.15, warna, null); box(x - r, y - r * 0.33, r * 2, r * 0.66, r * 0.15, warna, null); }
+function butang(x, y, w, h, label, fn, o = {}) {
+  const r = o.r == null ? 16 : o.r;
+  box(x, y + 5, w, h, r, 'rgba(62,39,35,.28)', null);
+  box(x, y, w, h, r, o.mati ? '#CFCFCF' : (o.warna || '#FFB300'));
+  if (label) txt(label, x + w / 2, y + h / 2 + 1, o.sz || 22, o.mati ? '#8D8D8D' : (o.teks || OUT), 'center', true, w - 14);
+  zonKlik.push({ x, y, w, h, fn: o.mati ? () => {} : fn });
+}
+
+/* ---------- 2. SIMPANAN (localStorage) ---------- */
+const KUNCI = 'misiSelamatUbat_v1';
+function simpananAsal() { return { prog: { A: {}, B: {} }, akhir: 0, syiling: 0, naik: {}, kad: [], rekod: { A: 0, B: 0 }, beg: 0, senyap: false }; }
+let simpan = simpananAsal();
+try {
+  const s = JSON.parse(localStorage.getItem(KUNCI) || 'null');
+  if (s && typeof s === 'object') { simpan = Object.assign(simpananAsal(), s); simpan.prog = Object.assign({ A: {}, B: {} }, s.prog); simpan.rekod = Object.assign({ A: 0, B: 0 }, s.rekod); }
+} catch (e) { /* storan tidak tersedia – main tanpa simpanan */ }
+function tulis() { try { localStorage.setItem(KUNCI, JSON.stringify(simpan)); } catch (e) {} }
+function jumlahBintang() {
+  let n = simpan.akhir || 0;
+  for (const m of ['A', 'B']) for (const k in simpan.prog[m]) n += simpan.prog[m][k];
+  return n;
+}
+
+/* ---------- 3. BUNYI (Web Audio API) ---------- */
+const Bunyi = {
+  ak: null,
+  mula() {
+    if (!this.ak) { try { this.ak = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { this.ak = null; } }
+    if (this.ak && this.ak.state === 'suspended') this.ak.resume();
+  },
+  nada(f, d = 0.12, jenis = 'sine', v = 0.15, lewat = 0, f2) {
+    if (simpan.senyap || !this.ak) return;
+    const t = this.ak.currentTime + lewat, o = this.ak.createOscillator(), g = this.ak.createGain();
+    o.type = jenis; o.frequency.setValueAtTime(f, t);
+    if (f2) o.frequency.exponentialRampToValueAtTime(f2, t + d);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(v, t + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+    o.connect(g); g.connect(this.ak.destination); o.start(t); o.stop(t + d + 0.03);
+  },
+  klik() { this.nada(540, 0.06, 'triangle', 0.12); this.nada(270, 0.08, 'square', 0.035, 0.02); },
+  imbas() { this.nada(900, 0.4, 'sawtooth', 0.04, 0, 1900); this.nada(1760, 0.09, 'sine', 0.1, 0.42); },
+  penggera() { for (let i = 0; i < 3; i++) { this.nada(880, 0.12, 'sine', 0.1, i * 0.3); this.nada(1108, 0.12, 'sine', 0.1, i * 0.3 + 0.14); } },
+  kombo(n) { const f = [523, 587, 659, 784, 880, 988, 1047][Math.min(Math.max(n, 1), 7) - 1]; this.nada(f, 0.12, 'sine', 0.14); this.nada(f * 1.5, 0.22, 'sine', 0.09, 0.08); },
+  salah() { this.nada(230, 0.28, 'triangle', 0.14, 0, 150); },
+  amaran() { this.nada(440, 0.18, 'sine', 0.09); this.nada(370, 0.26, 'sine', 0.09, 0.2); },
+  menang() { [523, 659, 784, 1047].forEach((f, i) => this.nada(f, 0.24, 'triangle', 0.13, i * 0.13)); },
+  kalah() { [392, 330, 262].forEach((f, i) => this.nada(f, 0.3, 'sine', 0.11, i * 0.2)); },
+  gosok() { this.nada(170 + Math.random() * 90, 0.05, 'sawtooth', 0.018); }
+};
+
+/* ---------- 4. DATA ---------- */
+const THN = new Date().getFullYear(), BLN = new Date().getMonth() + 1;
+const SEMUA_A = ['pil', 'tahan', 'krim', 'insulin', 'sirapAB'];
+const SEMUA_B = ['ok', 'merah', 'luput', 'rosak', 'tiada', 'kimia'];
+const NAMA_BAB = ['Asas Pengasingan', 'Teliti & Tepat', 'Suhu & Kecemasan', 'Cabaran Bersepadu'];
+
+const UBAT_A = {
+  insulin: { nama: 'Pen Insulin', bentuk: 'pen', label: 'putih', zon: 'sejuk', ok: 'Tepat! Insulin belum dibuka disimpan pada 2°C–8°C' },
+  sirapAB: { nama: 'Sirap Antibiotik', bentuk: 'sirap', warna: '#F8BBD0', label: 'putih', zon: 'sejuk', ok: 'Tepat! Sirap antibiotik ini perlu disejukkan. Ikut arahan label' },
+  pil: { nama: 'Pil Demam', bentuk: 'botol', label: 'putih', zon: 'peti', ok: 'Tepat! Pil demam selamat di peti berkunci' },
+  tahan: { nama: 'Ubat Tahan Sakit', bentuk: 'kotak', label: 'putih', zon: 'peti', ok: 'Tepat! Ubat disimpan tinggi, jauh daripada kanak-kanak' },
+  krim: { nama: 'Ubat Sapu', bentuk: 'tiub', label: 'merah', zon: 'peti', ok: 'Tepat! Ubat sapu juga disimpan di peti berkunci' },
+  luput: { nama: 'Ubat Luput', bentuk: 'strip', label: 'putih', zon: 'beg', capLuput: true, ok: 'Bagus! Ubat luput dipulangkan ke farmasi' }
+};
+
+const LEVELS = [
+  { id: '1-1', bab: 1, nama: 'Langkah Pertama',
+    A: { n: 6, pool: ['pil', 'tahan', 'krim'], masa: 80, pandu: 'Ketik ubat, kemudian ketik tempat simpan yang betul',
+      tip: ['Susun ubat dari klinik ke dalam Peti Ubat Berkunci.', 'Jangan letak ubat di meja rendah atau dekat dapur panas.'] },
+    B: { pesakit: 2, per: 2, jenis: ['ok', 'merah'], sabar: 75, pandu: 'Ketik ubat untuk imbas, kemudian ketik bekas yang betul',
+      tip: ['Label Putih = ubat makan/minum → Kotak Hijau.', 'Label Merah = kegunaan luar sahaja → Kotak Biru.'] } },
+  { id: '1-2', bab: 1, nama: 'Kenali Label',
+    A: { n: 7, pool: ['pil', 'krim', 'insulin', 'sirapAB'], masa: 80,
+      tip: ['Pen insulin dan sirap antibiotik berlabel "simpan sejuk" disimpan di RAK peti sejuk.', 'Bukan di pintu peti sejuk dan bukan di bahagian beku.'] },
+    B: { pesakit: 3, per: 2, jenis: ['ok', 'merah', 'luput'], sabar: 70,
+      tip: ['Bandingkan tarikh luput dengan tarikh hari ini.', 'Ubat luput mesti masuk Tong Pelupusan Ubat.'] } },
+  { id: '1-3', bab: 1, nama: 'Asing & Pulang',
+    A: { n: 8, pool: ['pil', 'tahan', 'krim', 'insulin', 'sirapAB', 'luput'], masa: 85, beg: true,
+      tip: ['Ubat luput dikumpul dalam Beg Pemulangan Ubat.', 'Beg ini akan dihantar ke kaunter farmasi (bonus Mod Farmasi).'] },
+    B: { pesakit: 3, per: 3, jenis: ['ok', 'merah', 'luput', 'kimia'], sabar: 70,
+      tip: ['Ada pesakit tersalah bawa peluntur atau pencuci!', 'Bahan kimia bukan ubat → kotak Bukan Ubat.'] } },
+  { id: '2-1', bab: 2, nama: 'Mata Teliti',
+    A: { n: 8, pool: SEMUA_A, masa: 85, adik: 20,
+      tip: ['Awas! Setiap 20 saat ada ubat tertinggal di meja rendah.', 'Ketik ubat itu dan simpan segera sebelum Adik mencapainya.'] },
+    B: { pesakit: 3, per: 3, jenis: ['ok', 'merah', 'luput', 'tiada'], habuk: 0.6, sabar: 75,
+      tip: ['Label berhabuk? Gosok (leret) botol sehingga bersih.', 'Botol tanpa label WAJIB ke Tong Pelupusan Ubat.'] } },
+  { id: '2-2', bab: 2, nama: 'Ikut Jadual',
+    A: { n: 8, pool: [...SEMUA_A, 'luput'], masa: 90, adik: 20, dos: 2, beg: true,
+      tip: ['Apabila penggera berbunyi, baca label ubat dengan teliti.', 'Pilih pesakit, alat sukatan dan masa makan yang betul.', 'Di rumah sebenar, kanak-kanak beri ubat hanya bersama orang dewasa.'] },
+    B: { pesakit: 4, per: 2, jenis: ['ok', 'merah', 'luput', 'rosak', 'tiada'], habuk: 0.5, sabar: 70,
+      tip: ['Periksa rupa ubat: pil bertompok atau cecair berkeladak = rosak.', 'Ubat rosak ke Tong Pelupusan Ubat.'] } },
+  { id: '2-3', bab: 2, nama: 'Sukatan Tepat',
+    A: { n: 9, pool: [...SEMUA_A, 'luput'], masa: 95, adik: 20, dos: 2, dosTepat: true, beg: true,
+      tip: ['Sukat dos tepat dengan picagari atau sudu sukatan ubat.', 'Sudu makan dapur TIDAK tepat untuk menyukat ubat.'] },
+    B: { pesakit: 5, per: 2, jenis: ['ok', 'merah', 'luput', 'rosak', 'tiada'], habuk: 0.5, serentak: 3, sabar: 60,
+      tip: ['Waktu puncak! Tiga pesakit beratur serentak.', 'Ketik pesakit untuk memilih siapa dilayan dahulu.'] } },
+  { id: '3-1', bab: 3, nama: 'Jaga Suhu',
+    A: { n: 8, pool: SEMUA_A, masa: 95, gelap: 1,
+      tip: ['Jika elektrik terputus, suhu peti sejuk akan naik.', 'Pindahkan insulin dan sirap ke Beg Penyejuk sebelum melebihi 8°C.'] },
+    B: { pesakit: 3, per: 3, jenis: ['ok', 'merah', 'luput', 'rosak', 'kimia'], malap: true, sabar: 70,
+      tip: ['Lampu kaunter malap. Guna lampu meja pemeriksaan.', 'Imbas setiap ubat dengan teliti.'] } },
+  { id: '3-2', bab: 3, nama: 'Lampu Malap',
+    A: { n: 9, pool: [...SEMUA_A, 'luput'], masa: 105, gelap: 1, malap: true, dos: 1, dosTepat: true, adik: 20, beg: true,
+      tip: ['Rumah menjadi gelap ketika elektrik terputus.', 'Cahaya mengikut jari anda. Selamatkan ubat sejuk dahulu!'] },
+    B: { pesakit: 4, per: 2, jenis: SEMUA_B, habuk: 0.5, malap: true, serentak: 3, sabar: 62,
+      tip: ['Malap, berhabuk dan sibuk!', 'Gosok, imbas, kemudian asingkan.'] } },
+  { id: '3-3', bab: 3, nama: 'Ribut Petir',
+    A: { n: 10, pool: [...SEMUA_A, 'luput'], masa: 115, gelap: 2, malap: true, dos: 1, dosTepat: true, adik: 20, beg: true,
+      tip: ['Elektrik terputus dua kali!', 'Ingat: insulin jangan terdedah kepada suhu panas.'] },
+    B: { pesakit: 5, per: 2, jenis: SEMUA_B, habuk: 0.5, malap: true, serentak: 3, sabar: 58,
+      tip: ['Ribut di luar, ramai pesakit berteduh di klinik.', 'Kekal tenang dan teliti.'] } },
+  { id: '4-1', bab: 4, nama: 'Hari Sibuk',
+    A: { n: 10, pool: [...SEMUA_A, 'luput'], masa: 115, gelap: 1, malap: true, dos: 2, dosTepat: true, adik: 18, beg: true,
+      tip: ['Semua cabaran muncul bersama.', 'Susun, sukat, dan jaga suhu dengan tenang.'] },
+    B: { pesakit: 5, per: 3, jenis: SEMUA_B, habuk: 0.45, serentak: 3, sabar: 58,
+      tip: ['Gelombang pesakit bertali arus.', 'Layan pesakit yang paling kurang sabar dahulu.'] } },
+  { id: '4-2', bab: 4, nama: 'Gelombang Pesakit',
+    A: { n: 11, pool: [...SEMUA_A, 'luput'], masa: 120, gelap: 2, malap: true, dos: 2, dosTepat: true, adik: 16, beg: true,
+      tip: ['Adik semakin lincah!', 'Jangan biar ubat lama di meja rendah.'] },
+    B: { pesakit: 6, per: 3, jenis: SEMUA_B, habuk: 0.5, malap: true, serentak: 3, sabar: 55,
+      tip: ['Lebih ramai, lebih pantas.', 'Ingat tiga petunjuk: label, tarikh luput, rupa ubat.'] } },
+  { id: '4-3', bab: 4, nama: 'Sifar Kesilapan (Bos)',
+    A: { n: 12, pool: [...SEMUA_A, 'luput'], masa: 130, gelap: 2, malap: true, dos: 2, dosTepat: true, adik: 15, beg: true, sifar: true,
+      tip: ['SYARAT: Sifar Kesilapan Bahaya.', 'Adik tidak boleh mencapai ubat walau sekali!'] },
+    B: { pesakit: 7, per: 3, jenis: SEMUA_B, habuk: 0.5, malap: true, serentak: 3, sabar: 52, sifar: true,
+      tip: ['SYARAT: Sifar Kesilapan Toksik.', 'Jangan sekali-kali luluskan ubat tidak selamat ke Kotak Hijau!'] } }
+];
+const AKHIR = {
+  nama: 'Misi Kecemasan Banjir',
+  tip: ['Fasa 1 (Rumah): selamatkan ubat ketika banjir dan elektrik terputus.', 'Fasa 2 (Farmasi): saring kotak pertolongan cemas. Sifar Kesilapan Toksik!'],
+  A: { n: 8, pool: [...SEMUA_A, 'luput'], masa: 110, gelap: 2, malap: true, dos: 1, dosTepat: true, adik: 18, beg: true },
+  B: { pesakit: 6, per: 3, jenis: SEMUA_B, habuk: 0.4, serentak: 3, sabar: 50, sifar: true, kit: true }
+};
+const TANPA_HAD = {
+  A: { n: 0, pool: [...SEMUA_A, 'luput'], adik: 22, dosTepat: true, beg: true, malap: true },
+  B: { pesakit: 0, per: 2, jenis: SEMUA_B, habuk: 0.35, serentak: 3, sabar: 55 }
+};
+
+const KAD = [
+  { tajuk: 'Simpan Tinggi & Berkunci', warna: '#66BB6A', ubat: { bentuk: 'botol', label: 'putih' },
+    isi: ['Simpan semua ubat di tempat tinggi dan berkunci.', 'Jauhkan daripada capaian dan pandangan kanak-kanak.', 'Ubat bukan gula-gula. Jangan ambil ubat tanpa orang dewasa.'] },
+  { tajuk: 'Label Putih & Label Merah', warna: '#EF5350', ubat: { bentuk: 'tiub', label: 'merah' },
+    isi: ['Label PUTIH: ubat untuk dimakan atau diminum.', 'Label MERAH: untuk kegunaan luar sahaja, seperti sapu dan titis.', 'Ubat berlabel merah tidak boleh dimakan.'] },
+  { tajuk: 'Pulangkan Ubat Lama', warna: '#9CCC65', ubat: { bentuk: 'strip', label: 'putih', capLuput: true },
+    isi: ['Ubat luput atau tidak digunakan lagi? Pulangkan ke kaunter farmasi.', 'Jangan buang ke dalam singki, tandas atau tong sampah biasa.', 'Farmasi akan melupuskannya dengan selamat.'] },
+  { tajuk: 'Periksa Tarikh Luput', warna: '#FFA726', besar: 'LUPUT?',
+    isi: ['Periksa tarikh luput sebelum mengambil ubat.', 'Ubat luput mungkin tidak berkesan atau memudaratkan.', 'Botol tanpa label tidak boleh digunakan.'] },
+  { tajuk: '5B Penggunaan Ubat', warna: '#42A5F5', besar: '5B',
+    isi: ['Betul Pesakit  •  Betul Ubat  •  Betul Dos', 'Betul Cara Pemberian  •  Betul Masa', 'Baca label setiap kali sebelum mengambil ubat.'] },
+  { tajuk: 'Sukat Dengan Tepat', warna: '#26C6DA', alat: 0,
+    isi: ['Guna picagari penyukat atau sudu sukatan ubat.', 'Sudu makan dapur tidak tepat dan boleh menyebabkan terlebih atau terkurang dos.', 'Minta alat sukatan di kaunter farmasi.'] },
+  { tajuk: 'Cara Simpan Insulin', warna: '#5C6BC0', ubat: { bentuk: 'pen', label: 'putih' },
+    isi: ['Insulin belum dibuka disimpan pada suhu 2°C–8°C.', 'Letak di rak tengah peti sejuk, bukan di pintu.', 'Jangan simpan di bahagian beku. Insulin beku tidak boleh digunakan.'] },
+  { tajuk: 'Sirap Antibiotik Bancuh', warna: '#EC407A', ubat: { bentuk: 'sirap', label: 'putih', warna: '#F8BBD0' },
+    isi: ['Kebanyakan sirap antibiotik yang telah dibancuh disimpan di dalam peti sejuk, tetapi ada yang mesti disimpan pada suhu bilik. Ikut arahan label.', 'Goncang botol sebelum guna dan habiskan mengikut arahan.', 'Buang baki selepas tempoh yang tertulis pada label.'] },
+  { tajuk: 'Elektrik Terputus?', warna: '#29B6F6', besar: '2–8°C',
+    isi: ['Kurangkan membuka pintu peti sejuk.', 'Pindahkan insulin ke beg penyejuk berisi pek ais.', 'Jangan biar ubat menyentuh ais secara terus.'] },
+  { tajuk: 'Tanda Ubat Rosak', warna: '#8D6E63', ubat: { bentuk: 'botol', label: 'putih', rosak: true },
+    isi: ['Pil berubah warna, bertompok, lembap atau melekat.', 'Cecair berkeladak, berubah warna atau berbau.', 'Jangan guna. Pulangkan ke farmasi.'] },
+  { tajuk: 'Bahan Kimia Bukan Ubat', warna: '#AB47BC', ubat: { bentuk: 'kimia', label: 'kimia', nama: 'PELUNTUR', warna: '#4FC3F7' },
+    isi: ['Simpan peluntur, pencuci dan racun berasingan daripada ubat.', 'Jangan pindahkan bahan kimia ke dalam botol minuman.', 'Kekalkan dalam bekas asal yang berlabel.'] },
+  { tajuk: 'Sebelum atau Selepas Makan?', warna: '#FF7043', besar: 'BILA?',
+    isi: ['Sebelum makan: ambil ubat ketika perut kosong, sebelum menjamah makanan.', 'Selepas makan: ambil ubat sejurus selepas makan.', 'Ikut arahan pada label ubat anda.'] },
+  { tajuk: 'Nombor Kecemasan', warna: '#E53935', besar: '999',
+    isi: ['Tertelan ubat atau bahan kimia? Hubungi 999 dengan segera.', 'Bawa bekas ubat atau bahan itu ke hospital.', 'Jangan paksa mangsa muntah.'] },
+  { tajuk: 'Pusat Panggilan Farmasi Kebangsaan', warna: '#00897B', besar: '1800-88-6722',
+    isi: ['Ada soalan tentang ubat anda?', 'Hubungi talian bebas tol 1800-88-6722 pada hari bekerja.', 'Pegawai farmasi sedia membantu. Kenali Ubat Anda!'] }
+];
+
+const NAIK = [
+  { id: 'pillbox', mod: 'A', nama: 'Kotak Ubat Mingguan', desc: 'Masa jadual makan ubat menjadi lebih panjang.', harga: 60 },
+  { id: 'kunci', mod: 'A', nama: 'Kunci Magnetik Pintar', desc: 'Adik kecil bergerak lebih perlahan ke meja rendah.', harga: 80 },
+  { id: 'termo', mod: 'A', nama: 'Termometer Digital Peti Sejuk', desc: 'Papar suhu tepat dan suhu naik lebih perlahan.', harga: 100 },
+  { id: 'pengimbas', mod: 'B', nama: 'Pengimbas Tarikh Luput Automatik', desc: 'Imbas sendiri dan tandakan ubat yang sudah luput.', harga: 100 },
+  { id: 'kanta', mod: 'B', nama: 'Kanta Pembesar HD', desc: 'Menonjolkan pil berubah warna dan cecair berkeladak.', harga: 80 },
+  { id: 'ekspres', mod: 'B', nama: 'Kaunter Ekspres Warga Emas', desc: 'Pesakit lebih sabar menunggu, terutama warga emas.', harga: 60 }
+];
+
+const WATAK = {
+  farmasi: { kulit: '#F2C29B', rambut: 'tudung', warnaR: '#26A69A', baju: '#80CBC4', bawah: '#455A64', kot: true },
+  ibu: { kulit: '#EBB98E', rambut: 'tudung', warnaR: '#F06292', baju: '#F8BBD0', bawah: '#7E57C2' },
+  bapa: { nama: 'Ayah', kulit: '#D9A273', rambut: 'pendek', warnaR: '#3E2723', baju: '#4FC3F7', bawah: '#546E7A', kolar: true },
+  datuk: { nama: 'Datuk', kulit: '#F7D7B5', rambut: 'pendek', warnaR: '#CFD8DC', baju: '#FFFFFF', bawah: '#9E9E9E', kolar: true, cermin: true, emas: true },
+  makcik: { nama: 'Mak Cik', kulit: '#A9714B', rambut: 'tudung', warnaR: '#8E24AA', baju: '#CE93D8', bawah: '#BA68C8', selendang: '#F3E5F5' },
+  remaja: { nama: 'Kakak', kulit: '#EBB98E', rambut: 'tudung', warnaR: '#FFD54F', baju: '#43A047', bawah: '#37474F', jaket: true },
+  borneo: { nama: 'Pak Cik', kulit: '#D9A273', rambut: 'pendek', warnaR: '#3E2723', baju: '#8D3B2B', bawah: '#4E342E', corak: true },
+  adik: { kulit: '#EBB98E', rambut: 'budak', warnaR: '#3E2723', baju: '#FF8A65', bawah: '#42A5F5' }
+};
+const PESAKIT = ['datuk', 'makcik', 'remaja', 'borneo'];
+const KELUARGA = ['datuk', 'remaja', 'bapa'];
+
+/* ---------- 5. LUKISAN WATAK & UBAT ---------- */
+function orang(x, y, s, p, o = {}) {
+  const bob = Math.sin(masa * 2.2 + x * 0.05) * 1.5;
+  ctx.save(); ctx.translate(x, y); ctx.scale(s, s); ctx.lineJoin = 'round';
+  box(-24, -76, 48, 72, 8, p.bawah);
+  box(-30, -12, 27, 13, 6, '#4E342E'); box(3, -12, 27, 13, 6, '#4E342E');
+  ctx.translate(0, bob);
+  const lengan = p.kot ? '#FFFFFF' : p.baju;
+  box(-47, -134, 18, 62, 9, lengan); box(29, -134, 18, 62, 9, lengan);
+  if (p.jaket) { box(-47, -120, 18, 8, 0, '#FFFFFF', null); box(29, -120, 18, 8, 0, '#FFFFFF', null); }
+  circ(-38, -70, 8, p.kulit); circ(38, -70, 8, p.kulit);
+  if (o.beg) { box(26, -66, 30, 34, 5, '#FFFFFF', OUT, 2.5); palang(41, -49, 8); }
+  box(-34, -142, 68, 88, 20, p.baju);
+  if (p.jaket) { garis(0, -138, 0, -58, '#FFFFFF', 3); box(-34, -70, 68, 10, 0, '#2E7D32', null); }
+  if (p.corak) {
+    box(-34, -112, 68, 22, 0, '#F5E1B8', OUT, 2);
+    ctx.fillStyle = '#3E2723';
+    for (let i = -3; i <= 3; i++) { ctx.beginPath(); ctx.moveTo(i * 10, -110); ctx.lineTo(i * 10 + 5, -101); ctx.lineTo(i * 10, -92); ctx.lineTo(i * 10 - 5, -101); ctx.closePath(); ctx.fill(); }
+    ctx.fillStyle = '#C62828'; for (let i = -3; i <= 3; i++) { ctx.beginPath(); ctx.arc(i * 10, -101, 1.8, 0, 7); ctx.fill(); }
+  }
+  if (p.selendang) {
+    ctx.beginPath(); ctx.moveTo(-34, -136); ctx.lineTo(-16, -142); ctx.lineTo(34, -78); ctx.lineTo(34, -58); ctx.lineTo(18, -58); ctx.closePath();
+    ctx.fillStyle = p.selendang; ctx.fill(); ctx.lineWidth = 2.5; ctx.strokeStyle = OUT; ctx.stroke();
+  }
+  if (p.kot) {
+    box(-37, -142, 30, 104, 12, '#FFFFFF'); box(7, -142, 30, 104, 12, '#FFFFFF');
+    box(13, -118, 17, 11, 2, '#29B6F6', OUT, 1.5); garis(16, -112, 27, -112, '#FFFFFF', 1.5);
+    box(-30, -84, 18, 20, 3, '#F5F5F5', OUT, 1.5); circ(-21, -88, 6, '#B3E5FC', OUT, 2); garis(-17, -83, -13, -76, OUT, 2.5);
+  }
+  if (p.kolar) {
+    ctx.fillStyle = p.baju === '#FFFFFF' ? '#ECEFF1' : '#FFFFFF'; ctx.strokeStyle = OUT; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(-14, -142); ctx.lineTo(0, -128); ctx.lineTo(-2, -142); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(14, -142); ctx.lineTo(0, -128); ctx.lineTo(2, -142); ctx.closePath(); ctx.fill(); ctx.stroke();
+  }
+  box(-8, -152, 16, 14, 4, p.kulit);
+  let ky = -170;
+  if (p.rambut === 'tudung') {
+    box(-36, -164, 72, 46, 20, p.warnaR); circ(0, -172, 36, p.warnaR); circ(0, -168, 25, p.kulit, OUT, 2.5); ky = -168;
+  } else {
+    if (p.rambut === 'sanggul') circ(0, -207, 13, p.warnaR);
+    circ(0, ky, 30, p.kulit);
+    ctx.beginPath(); ctx.arc(0, ky - 4, 31, Math.PI * 1.02, Math.PI * 1.98); ctx.quadraticCurveTo(0, ky - 16, -30, ky - 5); ctx.closePath();
+    ctx.fillStyle = p.warnaR; ctx.fill(); ctx.lineWidth = 2.5; ctx.strokeStyle = OUT; ctx.stroke();
+    if (p.rambut === 'budak') { ctx.beginPath(); ctx.moveTo(-4, ky - 33); ctx.quadraticCurveTo(4, ky - 50, 12, ky - 36); ctx.lineWidth = 4; ctx.stroke(); }
+  }
+  circ(-10, ky - 1, 3.3, OUT, null); circ(10, ky - 1, 3.3, OUT, null);
+  ctx.fillStyle = 'rgba(255,110,110,.35)'; ctx.beginPath(); ctx.arc(-17, ky + 8, 5, 0, 7); ctx.arc(17, ky + 8, 5, 0, 7); ctx.fill();
+  ctx.beginPath(); ctx.lineWidth = 2.6; ctx.strokeStyle = OUT; ctx.lineCap = 'round';
+  if (o.sedih) ctx.arc(0, ky + 18, 8, Math.PI * 1.2, Math.PI * 1.8); else ctx.arc(0, ky + 4, 9, Math.PI * 0.15, Math.PI * 0.85);
+  ctx.stroke();
+  if (p.cermin) { circ(-10, ky - 1, 8.5, 'rgba(255,255,255,.35)', OUT, 2); circ(10, ky - 1, 8.5, 'rgba(255,255,255,.35)', OUT, 2); garis(-2, ky - 1, 2, ky - 1, OUT, 2); }
+  ctx.restore();
+}
+
+function lukisUbat(o, x, y, s, sq = 0) {
+  ctx.save(); ctx.translate(x, y);
+  const k = sq > 0 ? Math.sin(sq / 0.35 * Math.PI) * 0.24 : 0;
+  ctx.scale(s * (1 + k), s * (1 - k)); ctx.lineJoin = 'round';
+  const merah = o.label === 'merah', L = merah ? '#E53935' : '#FFFFFF', LT = merah ? '#FFFFFF' : OUT;
+  const label = (lx, ly, lw, lh) => {
+    if (o.label === 'tiada' || o.label === 'kimia') return;
+    box(lx, ly, lw, lh, 2, L, OUT, 1.5);
+    if (s >= 1.5 && o.nama) {
+      txt(o.nama, lx + lw / 2, ly + lh * 0.2, 5.4, LT, 'center', true, lw - 3);
+      txt(merah ? 'KEGUNAAN LUAR SAHAJA' : 'UBAT MAKAN/MINUM', lx + lw / 2, ly + lh * 0.48, 3.9, LT, 'center', true, lw - 3);
+      txt('LUPUT ' + o.tarikh, lx + lw / 2, ly + lh * 0.78, 5, LT, 'center', true, lw - 3);
+    } else if (!merah) { garis(lx + 6, ly + lh * 0.35, lx + lw - 6, ly + lh * 0.35, '#B0BEC5', 2); garis(lx + 6, ly + lh * 0.65, lx + lw - 12, ly + lh * 0.65, '#B0BEC5', 2); }
+  };
+  const pil = (px, py, r) => {
+    circ(px, py, r, o.rosak ? '#A1887F' : '#FFFDE7', OUT, 1.2);
+    if (o.rosak) { circ(px - r * 0.3, py - r * 0.2, r * 0.3, '#33691E', null); circ(px + r * 0.35, py + r * 0.3, r * 0.22, '#4E342E', null); }
+  };
+  switch (o.bentuk) {
+    case 'botol':
+      box(-22, -24, 44, 62, 8, 'rgba(255,183,77,.9)'); box(-18, -40, 36, 18, 5, '#FFFFFF');
+      pil(-12, -12, 5); pil(0, -14, 5); pil(12, -12, 5); pil(-6, -6, 5); pil(7, -6, 5);
+      if (o.label === 'tiada') { pil(-12, 6, 5); pil(1, 9, 5); pil(12, 5, 5); pil(-5, 20, 5); pil(8, 22, 5); }
+      label(-22, 0, 44, 32); break;
+    case 'sirap':
+      box(-9, -42, 18, 16, 3, '#FFFFFF'); box(-22, -28, 44, 66, 10, o.warna || '#F8BBD0');
+      if (o.rosak) { box(-20, 25, 40, 11, [0, 0, 8, 8], '#5D4037', null); circ(-10, -19, 2.2, '#5D4037', null); circ(6, -21, 1.8, '#5D4037', null); circ(13, -16, 1.5, '#5D4037', null); circ(-2, -17, 1.4, '#5D4037', null); }
+      label(-22, -12, 44, 34); break;
+    case 'tiub':
+      ctx.beginPath(); ctx.moveTo(-23, -38); ctx.lineTo(23, -38); ctx.lineTo(15, 26); ctx.lineTo(-15, 26); ctx.closePath();
+      ctx.fillStyle = '#FFF3E0'; ctx.fill(); ctx.lineWidth = 3; ctx.strokeStyle = OUT; ctx.stroke();
+      box(-25, -42, 50, 8, 3, '#B0BEC5'); box(-9, 26, 18, 13, 3, '#FFFFFF');
+      label(-19, -26, 38, 34); break;
+    case 'titis':
+      ctx.beginPath(); ctx.moveTo(-6, -22); ctx.lineTo(0, -42); ctx.lineTo(6, -22); ctx.closePath(); ctx.fillStyle = '#FFFFFF'; ctx.fill(); ctx.lineWidth = 2.5; ctx.strokeStyle = OUT; ctx.stroke();
+      box(-11, -26, 22, 10, 3, '#90CAF9'); box(-20, -16, 40, 54, 10, '#E1F5FE');
+      label(-20, -6, 40, 34); break;
+    case 'pen':
+      box(-10, -42, 20, 84, 9, '#90CAF9'); box(-10, -42, 20, 26, [9, 9, 2, 2], '#1E88E5'); box(-5, -8, 10, 26, 3, '#FFFFFF', OUT, 1.5);
+      box(-4, 42, 8, 7, 2, '#CFD8DC', OUT, 1.5); garis(-2, 0, 2, 0, '#1E88E5', 1.5); garis(-2, 8, 2, 8, '#1E88E5', 1.5);
+      break;
+    case 'kotak':
+      box(-26, -32, 52, 66, 6, '#FFFFFF'); box(-26, -32, 52, 18, [6, 6, 0, 0], '#7E57C2');
+      box(-14, -2, 28, 14, 7, '#FFCDD2', OUT, 1.5); garis(0, -2, 0, 12, OUT, 1.5); garis(-16, 22, 16, 22, '#B0BEC5', 2); break;
+    case 'strip':
+      box(-27, -38, 54, 76, 8, '#CFD8DC');
+      pil(-13, -24, 7); pil(13, -24, 7); pil(-13, -6, 7); pil(13, -6, 7);
+      label(-22, 6, 44, 28); break;
+    case 'kimia':
+      box(-8, -42, 20, 14, 3, '#EF5350'); box(-24, -30, 48, 68, 10, o.warna || '#4FC3F7');
+      ctx.beginPath(); ctx.arc(24, -6, 11, -Math.PI / 2, Math.PI / 2); ctx.lineWidth = 5; ctx.strokeStyle = OUT; ctx.stroke();
+      box(-20, -12, 40, 40, 3, '#FFEB3B', OUT, 1.5);
+      ctx.beginPath(); ctx.moveTo(0, -9); ctx.lineTo(11, 9); ctx.lineTo(-11, 9); ctx.closePath(); ctx.fillStyle = '#FFFFFF'; ctx.fill(); ctx.lineWidth = 1.8; ctx.strokeStyle = '#D32F2F'; ctx.stroke();
+      txt('!', 0, 3, 11, '#D32F2F');
+      if (s >= 1.5) txt(o.nama, 0, 20, 6, OUT, 'center', true, 36);
+      break;
+  }
+  if (o.capLuput) {
+    ctx.save(); ctx.rotate(-0.3); box(-25, -9, 50, 18, 3, 'rgba(255,255,255,.88)', '#D32F2F', 2); txt('LUPUT', 0, 1, 12, '#D32F2F'); ctx.restore();
+  }
+  if (o.habuk > 0) {
+    ctx.globalAlpha = Math.min(1, o.habuk * 1.15);
+    box(-28, -30, 56, 70, 10, '#A1887F', null);
+    ctx.fillStyle = '#8D6E63';
+    for (let i = 0; i < 12; i++) { ctx.beginPath(); ctx.arc(-22 + (i * 37) % 44, -24 + (i * 23) % 58, 2 + (i % 3), 0, 7); ctx.fill(); }
+    ctx.globalAlpha = 1;
+  }
+  ctx.restore();
+}
+function ikonAlat(i, x, y, s = 1) {
+  ctx.save(); ctx.translate(x, y); ctx.scale(s, s);
+  if (i === 0) { // picagari penyukat
+    box(-30, -9, 44, 18, 4, '#E1F5FE', OUT, 2.5); box(-30, -9, 22, 18, [4, 0, 0, 4], '#F48FB1', null);
+    for (let k = 0; k < 5; k++) garis(-24 + k * 8, -9, -24 + k * 8, -3, OUT, 1.5);
+    box(14, -4, 16, 8, 2, '#FFFFFF', OUT, 2); box(30, -11, 5, 22, 2, '#90A4AE', OUT, 2); box(-38, -3, 8, 6, 2, '#FFFFFF', OUT, 2);
+  } else if (i === 1) { // sudu sukatan ubat
+    box(-34, -4, 38, 8, 4, '#B3E5FC', OUT, 2.5);
+    ctx.beginPath(); ctx.arc(16, -4, 16, 0, Math.PI); ctx.closePath(); ctx.fillStyle = '#B3E5FC'; ctx.fill(); ctx.lineWidth = 2.5; ctx.strokeStyle = OUT; ctx.stroke();
+    ctx.beginPath(); ctx.arc(16, -2, 11, 0.1, Math.PI - 0.1); ctx.closePath(); ctx.fillStyle = '#F48FB1'; ctx.fill();
+    txt('5 ml', -15, 0, 7, OUT);
+  } else { // sudu makan dapur
+    box(-34, -3, 40, 6, 3, '#CFD8DC', OUT, 2.5);
+    ctx.beginPath(); ctx.ellipse(18, 0, 17, 11, 0, 0, 7); ctx.fillStyle = '#ECEFF1'; ctx.fill(); ctx.lineWidth = 2.5; ctx.strokeStyle = OUT; ctx.stroke();
+  }
+  ctx.restore();
+}
+
+/* ---------- 6. ENJIN TAHAP ---------- */
+let skrin = 'tajuk', peranan = 'A', modal = null, g = null, hasil = null;
+let zarah = [], apung = [];
+
+function terbuka(i) { return i === 0 || (simpan.prog[peranan][LEVELS[i - 1].id] || 0) > 0; }
+function bosLulus() { return (simpan.prog.A['4-3'] || 0) > 0 || (simpan.prog.B['4-3'] || 0) > 0; }
+
+function teks(s, x, y, warna = '#2E7D32') {
+  for (const a of apung) a.y -= 46;
+  apung.push({ s, x: had(x, 330, W - 330), y: had(y, 110, H - 60), t: 2.6, warna });
+  if (apung.length > 4) apung.shift();
+}
+function letusBintang(x, y, n = 12, warna = '#43A047') {
+  for (let i = 0; i < n; i++) {
+    const a = Math.random() * Math.PI * 2, v = 120 + Math.random() * 220;
+    zarah.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 120, t: 0.9, r: 7 + Math.random() * 7, warna, pusing: Math.random() * 6 });
+  }
+}
+function ganjar(mesej, x, y) {
+  ruangJawab(true, null);
+  g.kombo++; g.komboMaks = Math.max(g.komboMaks, g.kombo); g.betul++;
+  g.skor += 10 + Math.min(g.kombo, 10) * 2;
+  Bunyi.kombo(g.kombo); letusBintang(x, y); teks(mesej, x, y - 50, '#2E7D32');
+}
+function hukum(n, mesej, x, y, toksik) {
+  ruangJawab(false, mesej);
+  g.kombo = 0; g.salah++; g.goncang = 0.3;
+  if (toksik) g.toksik++;
+  if (g.tanpaHad) g.nyawa--; else g.meter = Math.max(0, g.meter - n);
+  Bunyi.salah(); teks(mesej, x, y - 50, '#C62828');
+  if (g.tanpaHad) { if (g.nyawa <= 0) selesai(false, 'Nyawa habis'); }
+  else if (toksik && g.cfg.sifar) selesai(false, g.mod === 'A' ? 'Syarat Sifar Kesilapan Bahaya gagal' : 'Syarat Sifar Kesilapan Toksik gagal');
+  else if (g.meter <= 0) selesai(false, g.mod === 'A' ? 'Meter Keselamatan Keluarga habis' : 'Meter Keselamatan Pesakit habis');
+}
+function mulaTahap(k) {
+  let fasa;
+  if (k === 'E') fasa = [{ mod: peranan, cfg: TANPA_HAD[peranan] }];
+  else if (k === 'F') fasa = [{ mod: 'A', cfg: AKHIR.A }, { mod: 'B', cfg: AKHIR.B }];
+  else fasa = [{ mod: peranan, cfg: LEVELS[k][peranan] }];
+  g = { k, fasa, fi: 0, meter: 100, nyawa: 3, skor: 0, kombo: 0, komboMaks: 0, betul: 0, toksik: 0, salah: 0, begBaru: 0, bonus: 0,
+    tanpaHad: k === 'E', t: 0, laju: 0, goncang: 0, habis: null, sepanduk: 0, sepandukTeks: '' };
+  zarah = []; apung = [];
+  mulaFasa(); skrin = 'main'; modal = null;
+  try { if (window.DSRuang) DSRuang.mula(ruangKunci()); } catch (e) {}
+}
+function mulaFasa() {
+  const f = g.fasa[g.fi]; g.mod = f.mod; g.cfg = f.cfg; g.masa = f.cfg.masa || 0;
+  if (g.fasa.length > 1) { g.sepanduk = 2.6; g.sepandukTeks = g.fi === 0 ? 'Fasa 1: Selamatkan ubat di rumah' : 'Fasa 2: Saringan kecemasan di farmasi'; }
+  if (g.mod === 'A') mulaA(f.cfg); else mulaB(f.cfg);
+}
+function namaTahap() {
+  if (g.k === 'E') return 'Mod Tanpa Had';
+  if (g.k === 'F') return 'Tahap Akhir · ' + AKHIR.nama;
+  return 'Tahap ' + LEVELS[g.k].id + ' · ' + LEVELS[g.k].nama;
+}
+function selesai(menang, sebab) {
+  if (g.habis) return;
+  if (menang && g.fi < g.fasa.length - 1) { g.fi++; Bunyi.menang(); mulaFasa(); return; }
+  g.habis = { menang, sebab, t: 1.3 };
+  if (menang) { Bunyi.menang(); letusBintang(W / 2, H / 2, 40, '#FFC107'); } else Bunyi.kalah();
+}
+function bukaKad(i) { const baru = !simpan.kad.includes(i); if (baru) simpan.kad.push(i); return { i, baru }; }
+function kiraKeputusan() {
+  const r = { menang: g.habis.menang, sebab: g.habis.sebab, bintang: 0, syiling: 0, kad: null, skor: g.skor, k: g.k, tanpaHad: g.tanpaHad };
+  ruangTamat(r.menang || g.tanpaHad, typeof g.k === 'number' ? !(simpan.prog[peranan][LEVELS[g.k].id] > 0) : g.k === 'F' ? !(simpan.akhir > 0) : false);
+  if (g.tanpaHad) {
+    r.rekodBaru = g.skor > (simpan.rekod[peranan] || 0);
+    if (r.rekodBaru) simpan.rekod[peranan] = g.skor;
+    r.rekod = simpan.rekod[peranan]; r.syiling = Math.floor(g.skor / 30); r.kad = bukaKad(13);
+  } else if (r.menang) {
+    r.bintang = g.meter >= 85 ? 3 : g.meter >= 55 ? 2 : 1;
+    r.syiling = 10 + r.bintang * 5 + Math.floor(g.skor / 60) + g.bonus;
+    if (g.k === 'F') { simpan.akhir = Math.max(simpan.akhir || 0, r.bintang); r.kad = bukaKad(12); }
+    else { const id = LEVELS[g.k].id; simpan.prog[peranan][id] = Math.max(simpan.prog[peranan][id] || 0, r.bintang); r.kad = bukaKad(g.k); }
+    simpan.beg += g.begBaru; r.beg = g.begBaru;
+  }
+  simpan.syiling += r.syiling; tulis();
+  hasil = r; skrin = 'keputusan'; modal = null;
+}
+function kemasMain(dt) {
+  if (g.goncang > 0) g.goncang -= dt;
+  if (g.sepanduk > 0) g.sepanduk -= dt;
+  if (g.habis) { g.habis.t -= dt; if (g.habis.t <= 0) kiraKeputusan(); return; }
+  g.t += dt;
+  if (g.tanpaHad && Math.floor(g.t / 30) > g.laju) { g.laju = Math.floor(g.t / 30); teks('Lebih pantas! Gelombang ' + (g.laju + 1), W / 2, 200, '#E65100'); Bunyi.amaran(); }
+  if (g.mod === 'A') kemasA(dt); else kemasB(dt);
+}
+
+/* ---------- 7. MOD A: PENJAGA UBAT RUMAH ---------- */
+const ZON = {
+  beku: { x: 658, y: 138, w: 154, h: 112, nama: 'Bahagian Beku' },
+  pintu: { x: 818, y: 258, w: 74, h: 294, nama: 'Pintu' },
+  sejuk: { x: 658, y: 258, w: 154, h: 294, nama: 'Rak Peti Sejuk' },
+  peti: { x: 370, y: 90, w: 240, h: 170, nama: 'Peti Ubat Berkunci' },
+  beg: { x: 395, y: 300, w: 120, h: 135, nama: 'Beg Pemulangan' },
+  cool: { x: 478, y: 452, w: 136, h: 108, nama: 'Beg Penyejuk' },
+  meja: { x: 50, y: 395, w: 290, h: 100, nama: 'Meja Rendah' },
+  dapur: { x: 910, y: 320, w: 370, h: 125, nama: 'Kaunter Dapur' }
+};
+function buatItemA(j, loc) { return { j, def: UBAT_A[j], loc, x: 640, y: 780, s: 1, sq: 0, dikira: false }; }
+function mulaA(cfg) {
+  const a = g.a = { item: [], pilih: null, seret: null, adik: { x: -90, tunggu: cfg.adik || 0, bil: 0 }, gelap: null, suhu: 4,
+    amaranT: 0, panas: false, dos: null, rehat: 0, acara: [], letak: 0, spawnT: 1, acaraT: 30, acaraSeterus: 'dos' };
+  const sen = []; for (let i = 0; i < cfg.n; i++) sen.push(cfg.pool[i % cfg.pool.length]);
+  kocok(sen).forEach(j => a.item.push(buatItemA(j, 'giliran')));
+  if (cfg.gelap || g.tanpaHad) ['insulin', 'sirapAB'].forEach(j => { const it = buatItemA(j, 'sejuk'); it.dikira = true; it.x = 735; it.y = 320; a.item.push(it); });
+  const ac = []; for (let i = 0; i < (cfg.dos || 0); i++) ac.push('dos'); for (let i = 0; i < (cfg.gelap || 0); i++) ac.push('gelap');
+  kocok(ac); a.acara = ac.map((j, i) => ({ j, pada: Math.max(1, Math.round((i + 1) * cfg.n / (ac.length + 1))) }));
+}
+function mulaGelap() {
+  const a = g.a; a.gelap = { t: 15 }; a.panas = false; Bunyi.amaran();
+  teks('Elektrik terputus! Pindahkan insulin dan sirap ke Beg Penyejuk', W / 2, 220, '#E65100');
+}
+function mulaDos() {
+  const a = g.a, T = 22 * (simpan.naik.pillbox ? 1.7 : 1);
+  a.dos = { siapa: rnd(3), ubat: pilihRawak(['Sirap Demam', 'Sirap Batuk', 'Sirap Antibiotik']), ml: 3 + rnd(6), bila: rnd(2),
+    waktu: pilihRawak(['Pagi', 'Tengah Hari', 'Malam']), p: { siapa: -1, alat: -1, ml: 0, bila: -1 }, t: T, T };
+  a.pilih = null; a.seret = null; Bunyi.penggera();
+}
+function serahDos() {
+  const a = g.a, d = a.dos, p = d.p; let salah = null;
+  if (p.siapa !== d.siapa) salah = 'Semak nama pesakit pada label ubat';
+  else if (p.alat < 0) salah = 'Pilih alat sukatan dahulu';
+  else if (p.alat === 2) salah = 'Sudu dapur tidak tepat! Guna picagari atau sudu sukatan';
+  else if (g.cfg.dosTepat && p.ml !== d.ml) salah = 'Dos mesti tepat ' + d.ml + ' ml seperti pada label';
+  else if (p.bila !== d.bila) salah = 'Baca arahan: ' + (d.bila ? 'selepas' : 'sebelum') + ' makan';
+  if (salah) hukum(8, salah, W / 2, 130);
+  else { a.dos = null; g.skor += 20; ganjar('Tepat! 5B dipatuhi: pesakit, ubat, dos, cara dan masa', W / 2, 330); }
+}
+function sasaranItemA(it) { const z = it.def.zon; return z === 'sejuk' && g.a.gelap ? 'cool' : z; }
+function mesejSalahA(it, z) {
+  if (z === 'dapur') return 'Awas! Haba dan wap dapur merosakkan ubat';
+  if (z === 'beku') return 'Jangan! Ubat rosak jika dibekukan';
+  if (z === 'pintu') return 'Suhu di pintu peti sejuk tidak stabil. Guna rak tengah';
+  if (z === 'beg') return 'Ubat ini masih elok. Beg ini untuk ubat luput sahaja';
+  if (z === 'cool') return 'Beg Penyejuk untuk insulin dan sirap antibiotik sahaja';
+  if (it.def.luput || it.def.capLuput) return 'Ubat luput! Masukkan ke dalam Beg Pemulangan';
+  if (it.def.zon === 'sejuk') return g.a.gelap ? 'Elektrik terputus! Guna Beg Penyejuk' : 'Ubat ini mesti disimpan pada 2°C–8°C di rak peti sejuk';
+  return 'Ubat ini tidak perlu disejukkan. Simpan di Peti Ubat Berkunci';
+}
+function letakA(it, z) {
+  const a = g.a, zr = ZON[z], cx = zr.x + zr.w / 2, cy = zr.y + zr.h / 2;
+  a.pilih = null;
+  if (z === it.loc) return;
+  it.sq = 0.35;
+  if (z === sasaranItemA(it)) {
+    if (z === 'sejuk' || z === 'cool') it.loc = z; else { it.loc = 'selesai'; it.zx = cx; it.zy = cy; }
+    if (!it.dikira) { it.dikira = true; a.letak++; if (it.j === 'luput') g.begBaru++; }
+    ganjar(z === 'cool' ? 'Tepat! Beg Penyejuk mengekalkan suhu ubat' : it.def.ok, cx, cy);
+  } else if (z === 'meja') {
+    it.loc = 'meja'; hukum(8, 'Bahaya! Meja rendah mudah dicapai kanak-kanak', cx, cy);
+  } else hukum(10, mesejSalahA(it, z), cx, cy);
+}
+function zonPadaA(x, y) {
+  const a = g.a;
+  for (const z of ['beku', 'pintu', 'sejuk', 'peti', 'beg', 'cool', 'meja', 'dapur']) {
+    if (z === 'beg' && !g.cfg.beg) continue;
+    if (z === 'cool' && !a.gelap) continue;
+    if (dalam(x, y, ZON[z])) return z;
+  }
+  return null;
+}
+function bolehAmbilA(it) { return it.loc === 'dulang' || it.loc === 'meja' || (it.loc === 'sejuk' && g.a.gelap); }
+function tekanA(x, y) {
+  const a = g.a; if (a.dos || g.habis) return;
+  let kena = null, dMin = 1e9;
+  for (const it of a.item) {
+    if (!bolehAmbilA(it)) continue;
+    const d = Math.hypot(x - it.x, y - it.y);
+    if (d < 34 + 30 * it.s && d < dMin) { dMin = d; kena = it; }
+  }
+  if (kena) { a.pilih = kena; a.seret = { it: kena, x0: x, y0: y, gerak: false }; kena.sq = 0.2; Bunyi.klik(); return; }
+  const z = zonPadaA(x, y);
+  if (z && a.pilih) letakA(a.pilih, z);
+  else if (z && !a.pilih) teks('Ketik ubat dahulu, kemudian ketik tempat simpan', W / 2, 520, '#5D4037');
+}
+function gerakA(x, y) {
+  const s = g.a.seret; if (!s) return;
+  if (!s.gerak && Math.hypot(x - s.x0, y - s.y0) > 16) s.gerak = true;
+}
+function lepasA(x, y) {
+  const a = g.a, s = a.seret; a.seret = null;
+  if (!s || !s.gerak || a.dos || g.habis) return;
+  const z = zonPadaA(x, y);
+  if (z) letakA(s.it, z);
+}
+function kemasA(dt) {
+  const a = g.a, cfg = g.cfg;
+  // Jadual makan ubat (pemasa utama berhenti seketika)
+  if (a.dos) {
+    a.dos.t -= dt;
+    if (a.dos.t <= 0) { a.dos = null; hukum(15, 'Terlepas waktu makan ubat! Ikut jadual setiap hari', W / 2, 300); }
+    return;
+  }
+  // Giliran → dulang
+  let nDulang = a.item.filter(i => i.loc === 'dulang').length;
+  for (const it of a.item) if (it.loc === 'giliran' && nDulang < 6) { it.loc = 'dulang'; it.x = 640; it.y = 790; nDulang++; }
+  if (g.tanpaHad) {
+    a.spawnT -= dt;
+    if (a.spawnT <= 0) {
+      a.spawnT = Math.max(1.7, 5 * Math.pow(0.87, g.laju));
+      if (nDulang >= 6) hukum(0, 'Dulang penuh! Susun ubat lebih pantas', 640, 620);
+      else a.item.push(buatItemA(pilihRawak(cfg.pool), 'dulang'));
+    }
+    a.acaraT -= dt;
+    if (a.acaraT <= 0 && !a.gelap) {
+      a.acaraT = Math.max(22, 38 - g.laju * 2);
+      if (a.acaraSeterus === 'dos') mulaDos(); else mulaGelap();
+      a.acaraSeterus = a.acaraSeterus === 'dos' ? 'gelap' : 'dos';
+      return;
+    }
+  } else {
+    g.masa -= dt;
+    if (g.masa <= 0) { g.masa = 0; selesai(false, 'Masa tamat'); return; }
+    if (a.rehat > 0) a.rehat -= dt;
+    if (!a.gelap && a.rehat <= 0 && a.acara.length && a.letak >= a.acara[0].pada) { const e = a.acara.shift(); if (e.j === 'dos') { mulaDos(); return; } mulaGelap(); }
+  }
+  // Kedudukan item
+  const kira = {};
+  for (const it of a.item) {
+    const i = kira[it.loc] = (kira[it.loc] || 0) + 1, n = i - 1; let tx = it.x, ty = it.y, ts = 1;
+    if (it.loc === 'dulang') { tx = 350 + n * 110; ty = 640; }
+    else if (it.loc === 'meja') { tx = 115 + n * 62; ty = 432; ts = 0.8; }
+    else if (it.loc === 'sejuk') { tx = 697 + (n % 2) * 76; ty = 308 + Math.floor(n / 2) * 85; ts = 0.6; }
+    else if (it.loc === 'cool') { tx = 514 + (n % 4) * 22; ty = 478; ts = 0.5; }
+    else if (it.loc === 'selesai') { tx = it.zx; ty = it.zy; ts = 0.15; }
+    if (a.seret && a.seret.it === it && a.seret.gerak) { tx = ptr.x; ty = ptr.y - 20; ts = 1.1; }
+    const kl = Math.min(1, dt * 14);
+    it.x += (tx - it.x) * kl; it.y += (ty - it.y) * kl; it.s += (ts - it.s) * kl;
+    if (it.sq > 0) it.sq -= dt;
+    if (it.loc === 'selesai' && Math.abs(it.s - 0.15) < 0.05) it.buang = true;
+  }
+  a.item = a.item.filter(i => !i.buang);
+  // Adik kecil
+  const ad = a.adik, mejaItem = a.item.filter(i => i.loc === 'meja');
+  if (cfg.adik) {
+    ad.tunggu -= dt;
+    const baki = a.item.some(i => i.loc === 'dulang' || i.loc === 'giliran');
+    if (ad.tunggu <= 0 && !mejaItem.length && (g.tanpaHad || (ad.bil < 4 && baki))) {
+      ad.tunggu = Math.max(10, cfg.adik - g.laju); ad.bil++;
+      const it = buatItemA('pil', 'meja'); it.x = 195; it.y = 300; a.item.push(it); Bunyi.amaran();
+      teks('Ada ubat tertinggal di meja rendah! Simpan segera', 300, 380, '#E65100');
+    }
+  }
+  if (mejaItem.length) {
+    const tempoh = 6.5 * (simpan.naik.kunci ? 1.7 : 1) * Math.max(0.6, 1 - g.laju * 0.06);
+    ad.x += dt * 150 / tempoh;
+    if (ad.x >= 60) {
+      ad.x = -90; mejaItem[0].loc = 'dulang';
+      hukum(20, 'Bahaya! Adik mencapai ubat di meja rendah', 300, 440, true);
+    }
+  } else if (ad.x > -90) ad.x = Math.max(-90, ad.x - dt * 260);
+  // Bekalan elektrik & suhu
+  if (a.gelap) {
+    a.gelap.t -= dt;
+    a.suhu = Math.min(14, a.suhu + dt * 0.45 * (simpan.naik.termo ? 0.6 : 1));
+    const adaSejuk = a.item.some(i => i.loc === 'sejuk');
+    a.amaranT -= dt;
+    if (a.suhu > 6.5 && adaSejuk && a.amaranT <= 0) { a.amaranT = 1.6; Bunyi.amaran(); }
+    if (a.suhu > 8 && adaSejuk) {
+      if (!a.panas) { a.panas = true; hukum(10, 'Suhu melebihi 8°C! Ubat sejuk boleh rosak', 735, 300); }
+      else if (!g.tanpaHad) { g.meter = Math.max(0, g.meter - dt * 4); if (g.meter <= 0) selesai(false, 'Ubat sejuk rosak kerana suhu panas'); }
+    }
+    if (a.gelap.t <= 0) {
+      a.gelap = null; a.suhu = 4; a.rehat = 5; a.panas = false; a.item.forEach(i => { if (i.loc === 'cool') i.loc = 'sejuk'; }); /* Dunia Sai: peti sejuk pulih, rehat 5 s sebelum acara seterusnya */
+      teks('Elektrik pulih! Ubat dikembalikan ke rak peti sejuk', W / 2, 220, '#1565C0'); Bunyi.kombo(3);
+    }
+  } else a.suhu += (4 - a.suhu) * Math.min(1, dt * 1.2);
+  // Menang?
+  if (!g.tanpaHad && !g.habis && !a.gelap && !a.acara.length && !(a.rehat > 0 && a.acara.length) && !a.item.some(i => ['giliran', 'dulang', 'meja', 'selesai'].includes(i.loc))) selesai(true, '');
+}
+function lukisRumah() {
+  const a = g.a, cfg = g.cfg;
+  let gr = ctx.createLinearGradient(0, 60, 0, 560); gr.addColorStop(0, '#FFF4D6'); gr.addColorStop(1, '#FFE2AE');
+  ctx.fillStyle = gr; ctx.fillRect(0, 0, W, 560);
+  // dinding jubin dapur
+  ctx.fillStyle = '#D9F2EF'; ctx.fillRect(905, 0, 375, 560);
+  ctx.strokeStyle = 'rgba(0,121,107,.18)'; ctx.lineWidth = 2;
+  for (let x = 905; x < W; x += 47) { ctx.beginPath(); ctx.moveTo(x, 60); ctx.lineTo(x, 560); ctx.stroke(); }
+  for (let y = 90; y < 560; y += 47) { ctx.beginPath(); ctx.moveTo(905, y); ctx.lineTo(W, y); ctx.stroke(); }
+  ctx.fillStyle = OUT; ctx.fillRect(901, 60, 5, 500);
+  // lantai
+  ctx.fillStyle = '#D9A066'; ctx.fillRect(0, 560, W, 160); ctx.fillStyle = '#C68B4E'; ctx.fillRect(0, 560, W, 8);
+  garis(0, 560, W, 560, OUT, 3);
+  // tingkap & matahari
+  box(95, 105, 190, 150, 12, '#B3E5FC'); circ(240, 150, 24, '#FFEB3B', '#F9A825', 3);
+  box(120, 205, 70, 22, 11, '#FFFFFF', null); box(165, 190, 60, 22, 11, '#FFFFFF', null);
+  garis(190, 105, 190, 255, OUT, 3); garis(95, 180, 285, 180, OUT, 3);
+  // sofa & permaidani
+  ctx.beginPath(); ctx.ellipse(195, 585, 185, 22, 0, 0, 7); ctx.fillStyle = '#EF9A9A'; ctx.fill(); ctx.lineWidth = 3; ctx.strokeStyle = OUT; ctx.stroke();
+  box(25, 320, 340, 190, 34, '#A5D6A7'); box(45, 345, 145, 100, 22, '#C8E6C9', OUT, 2.5); box(200, 345, 145, 100, 22, '#C8E6C9', OUT, 2.5);
+  // meja rendah
+  box(72, 488, 16, 74, 4, '#8D5524'); box(302, 488, 16, 74, 4, '#8D5524'); box(50, 466, 290, 24, 9, '#B9783C');
+  txt('Meja Rendah', 195, 530, 17, '#BF360C');
+  // peti ubat berkunci
+  box(370, 90, 240, 170, 14, '#FFFFFF'); garis(490, 94, 490, 256, OUT, 3);
+  palang(430, 160, 26); palang(550, 160, 26); mangga(490, 180, 1.2);
+  box(385, 264, 210, 28, 14, '#2E7D32', null); txt('Peti Ubat Berkunci', 490, 279, 17, '#FFFFFF');
+  // beg pemulangan ubat
+  if (cfg.beg) {
+    circ(455, 304, 6, '#8D6E63', OUT, 2.5);
+    ctx.beginPath(); ctx.arc(455, 332, 26, Math.PI, 0); ctx.lineWidth = 5; ctx.strokeStyle = OUT; ctx.stroke();
+    box(400, 330, 110, 100, 16, '#AED581'); palang(455, 366, 15, '#FFFFFF');
+    txt('Beg Pemulangan', 455, 400, 13, OUT); txt('ke Farmasi', 455, 416, 13, OUT);
+  }
+  // peti sejuk 2 pintu
+  box(648, 128, 174, 434, 18, '#ECEFF1');
+  box(658, 138, 154, 112, 10, '#CFD8DC'); box(668, 180, 10, 46, 5, '#90A4AE', OUT, 2);
+  txt('✱', 735, 180, 34, '#4FC3F7'); txt('Bahagian Beku', 735, 222, 15, '#455A64');
+  box(658, 258, 154, 294, 8, a.gelap ? '#B0BEC5' : '#E1F5FE');
+  for (const y of [345, 430, 515]) garis(662, y, 808, y, '#78909C', 4);
+  box(818, 258, 74, 294, 10, '#CFD8DC'); for (const y of [340, 430, 520]) box(824, y, 62, 12, 4, '#ECEFF1', OUT, 2);
+  ctx.save(); ctx.translate(855, 390); ctx.rotate(Math.PI / 2); txt('Pintu', 0, 0, 15, '#546E7A'); ctx.restore();
+  box(676, 536, 118, 22, 11, '#0277BD', null); txt('Rak 2°C–8°C', 735, 547, 14, '#FFFFFF');
+  // termometer
+  const t01 = had((a.suhu - 2) / 10, 0, 1), panas = a.suhu > 8;
+  box(618, 290, 20, 160, 10, '#FFFFFF', OUT, 2.5); box(622, 446 - 150 * t01, 12, 150 * t01 + 0.1, 6, panas ? '#E53935' : a.suhu > 6.5 ? '#FB8C00' : '#29B6F6', null);
+  circ(628, 456, 13, panas ? '#E53935' : '#29B6F6', OUT, 2.5);
+  if (simpan.naik.termo || a.gelap) { box(596, 256, 64, 28, 8, panas ? '#FFCDD2' : '#E1F5FE', OUT, 2); txt(a.suhu.toFixed(1) + '°C', 628, 271, 15, panas ? '#C62828' : '#01579B'); }
+  // dapur
+  box(1010, 190, 240, 60, 10, '#B0BEC5'); box(1060, 60, 140, 134, 0, '#CFD8DC');
+  box(920, 446, 350, 116, 8, '#BCAAA4'); box(940, 466, 140, 80, 6, '#D7CCC8', OUT, 2.5); box(1100, 466, 150, 80, 6, '#D7CCC8', OUT, 2.5);
+  box(910, 428, 370, 22, 6, '#8D6E63');
+  box(1085, 400, 160, 30, 6, '#546E7A');
+  for (const fx of [1125, 1205]) {
+    const fl = 10 + Math.sin(masa * 9 + fx) * 4;
+    ctx.beginPath(); ctx.moveTo(fx - 14, 400); ctx.quadraticCurveTo(fx - 10, 400 - fl * 1.6, fx, 400 - fl * 2.2); ctx.quadraticCurveTo(fx + 10, 400 - fl * 1.6, fx + 14, 400); ctx.closePath();
+    ctx.fillStyle = '#FF7043'; ctx.fill(); ctx.lineWidth = 2; ctx.strokeStyle = OUT; ctx.stroke();
+    circ(fx, 396, 5, '#FFEB3B', null);
+  }
+  box(960, 388, 60, 42, 14, '#FFCC80'); garis(1020, 400, 1036, 392, OUT, 5); box(978, 380, 24, 10, 4, '#8D6E63', OUT, 2);
+  ctx.strokeStyle = 'rgba(120,144,156,.6)'; ctx.lineWidth = 4; ctx.lineCap = 'round';
+  for (let i = 0; i < 3; i++) { const sy = 372 - ((masa * 30 + i * 22) % 66); ctx.beginPath(); ctx.moveTo(1040 + i * 6, sy); ctx.quadraticCurveTo(1048 + i * 6, sy - 10, 1040 + i * 6, sy - 20); ctx.stroke(); }
+  txt('Kaunter Dapur (Panas & Lembap)', 1095, 506, 15, '#BF360C');
+  // beg penyejuk
+  if (a.gelap) {
+    box(486, 482, 120, 78, 12, '#4FC3F7'); box(480, 466, 132, 22, 8, '#0288D1'); box(526, 454, 40, 14, 6, null, OUT, 4);
+    txt('✱', 546, 518, 28, '#FFFFFF'); txt('Beg Penyejuk', 546, 546, 14, '#01579B');
+  }
+  // zon bercahaya apabila ubat dipilih
+  if (a.pilih && !a.dos) {
+    ctx.setLineDash([12, 9]); ctx.lineDashOffset = -masa * 30;
+    for (const z in ZON) {
+      if ((z === 'beg' && !cfg.beg) || (z === 'cool' && !a.gelap)) continue;
+      const r = ZON[z]; box(r.x + 3, r.y + 3, r.w - 6, r.h - 6, 14, 'rgba(255,255,255,.14)', '#FFFFFF', 4);
+    }
+    ctx.setLineDash([]);
+  }
+  // dulang bungkusan klinik
+  box(270, 580, 740, 132, 22, '#FFF8E1'); box(288, 568, 190, 28, 14, '#2E7D32', null); txt('Bungkusan Klinik', 383, 583, 16, '#FFFFFF');
+  const baki = a.item.filter(i => i.loc === 'giliran').length; if (baki) txt('+' + baki + ' lagi', 960, 598, 16, '#6D4C41');
+  // ibu
+  orang(1150, 716, 1.0, WATAK.ibu);
+  // ubat
+  const susun = a.item.filter(i => i.loc !== 'giliran').sort((p, q) => (p === a.pilih) - (q === a.pilih));
+  for (const it of susun) {
+    if (it === a.pilih) { circ(it.x, it.y, 52 * it.s + Math.sin(masa * 8) * 3, 'rgba(255,235,59,.55)', '#F9A825', 3); }
+    lukisUbat(it.def, it.x, it.y, it.s, it.sq);
+    if (it.loc === 'dulang' && !(a.seret && a.seret.it === it && a.seret.gerak)) txt(it.def.nama, it.x, it.y + 55, 13, OUT, 'center', true, 104);
+  }
+  // adik kecil
+  if (a.adik.x > -88) {
+    orang(a.adik.x, 566, 0.62, WATAK.adik);
+    if (a.item.some(i => i.loc === 'meja')) { box(a.adik.x - 16, 418, 32, 32, 16, '#FFEB3B'); txt('!', a.adik.x, 435, 24, '#D32F2F'); }
+  }
+}
+function lukisDos() {
+  const a = g.a, d = a.dos, p = d.p;
+  ctx.fillStyle = 'rgba(62,39,35,.6)'; ctx.fillRect(0, 0, W, H); zonKlik.push(HALANG);
+  const X = 140, Y = 72, PW = 1000, PH = 600; box(X, Y, PW, PH, 28, '#FFF8E1');
+  txt('Penggera ' + d.waktu + '! Masa makan ubat', X + PW / 2, Y + 34, 28);
+  box(X + 40, Y + 60, PW - 80, 14, 7, '#FFE0B2', OUT, 2); box(X + 40, Y + 60, Math.max(8, (PW - 80) * d.t / d.T), 14, 7, d.t < 6 ? '#E53935' : '#FB8C00', null);
+  // label ubat
+  const lx = X + 30, ly = Y + 96; box(lx, ly, 290, 400, 14, '#FFFFFF'); box(lx, ly, 290, 44, [14, 14, 0, 0], '#2E7D32'); txt('LABEL UBAT', lx + 145, ly + 23, 20, '#FFFFFF');
+  const baris = [['Nama', WATAK[KELUARGA[d.siapa]].nama], ['Ubat', d.ubat], ['Dos', d.ml + ' ml'], ['Arahan', d.bila ? 'Selepas makan' : 'Sebelum makan'], ['Waktu', d.waktu]];
+  baris.forEach((b, i) => { txt(b[0] + ':', lx + 16, ly + 72 + i * 40, 16, '#6D4C41', 'left', false); txt(b[1], lx + 92, ly + 72 + i * 40, 19, OUT, 'left'); garis(lx + 14, ly + 91 + i * 40, lx + 276, ly + 91 + i * 40, '#E0E0E0', 1.5); });
+  lukisUbat({ bentuk: 'sirap', label: 'putih', warna: '#FFCC80' }, lx + 145, ly + 330, 1.25);
+  txt('Baca label, kemudian pilih jawapan.', lx + 145, Y + 520, 15, '#6D4C41', 'center', false);
+  // pilihan
+  const rx = X + 350; let y = Y + 96;
+  const pilihBtn = (bx, by, bw, bh, pilih, fn) => { butang(bx, by, bw, bh, '', fn, { warna: pilih ? '#AED581' : '#FFFFFF', r: 14 }); };
+  txt('1. Betul Pesakit', rx, y + 10, 19, '#2E7D32', 'left');
+  KELUARGA.forEach((k, i) => {
+    const bx = rx + i * 205; pilihBtn(bx, y + 26, 190, 104, p.siapa === i, () => { p.siapa = i; });
+    ctx.save(); ctx.beginPath(); ctx.rect(bx + 4, y + 30, 100, 96); ctx.clip(); orang(bx + 54, y + 196, 0.78, WATAK[k]); ctx.restore();
+    txt(WATAK[k].nama, bx + 142, y + 78, 20);
+  });
+  y += 146;
+  txt('2. Betul Alat Sukatan', rx, y + 10, 19, '#2E7D32', 'left');
+  ['Picagari penyukat', 'Sudu sukatan ubat', 'Sudu makan dapur'].forEach((n, i) => {
+    const bx = rx + i * 205; pilihBtn(bx, y + 26, 190, 84, p.alat === i, () => { p.alat = i; });
+    ikonAlat(i, bx + 95, y + 56, 1.1); txt(n, bx + 95, y + 93, 15, OUT, 'center', true, 180);
+  });
+  y += 126;
+  if (g.cfg.dosTepat) {
+    txt('3. Betul Dos', rx, y + 10, 19, '#2E7D32', 'left');
+    butang(rx, y + 28, 64, 56, '−', () => { p.ml = Math.max(0, p.ml - 1); }, { sz: 36, warna: '#FFCC80' });
+    const sx = rx + 84, sw = 360; box(sx, y + 36, sw, 40, 8, '#E1F5FE'); if (p.ml > 0) box(sx, y + 36, sw * p.ml / 10, 40, [8, 0, 0, 8], '#F48FB1', null); box(sx, y + 36, sw, 40, 8, null);
+    for (let i = 1; i < 10; i++) garis(sx + sw * i / 10, y + 36, sx + sw * i / 10, y + (i % 5 ? 48 : 56), OUT, 2);
+    box(sx + sw * p.ml / 10 - 4, y + 30, 8, 52, 3, '#607D8B', OUT, 2);
+    butang(sx + sw + 20, y + 28, 64, 56, '+', () => { p.ml = Math.min(10, p.ml + 1); }, { sz: 36, warna: '#FFCC80' });
+    txt(p.ml + ' ml', sx + sw + 142, y + 56, 26);
+    y += 104;
+  }
+  txt((g.cfg.dosTepat ? '4' : '3') + '. Betul Masa', rx, y + 10, 19, '#2E7D32', 'left');
+  ['Sebelum makan', 'Selepas makan'].forEach((n, i) => { butang(rx + i * 205, y + 26, 190, 56, n, () => { p.bila = i; }, { warna: p.bila === i ? '#AED581' : '#FFFFFF', sz: 19, r: 14 }); });
+  butang(rx + 420, y + 22, 190, 64, 'Beri Ubat', serahDos, { warna: '#66BB6A', sz: 24 });
+}
+
+/* ---------- 8. MOD B: SKUAD KAUNTER FARMASI ---------- */
+const IT = { x: 640, y: 236, s: 2.5 };
+const BEKAS_DEF = {
+  hijau: { warna: '#66BB6A', gelapW: '#2E7D32', n1: 'Kotak Hijau', n2: 'Selamat Dimakan' },
+  biru: { warna: '#42A5F5', gelapW: '#1565C0', n1: 'Kotak Biru', n2: 'Kegunaan Luar' },
+  tong: { warna: '#FFCA28', gelapW: '#E65100', n1: 'Tong Pelupusan', n2: 'Khas Ubat' },
+  pulang: { warna: '#BCAAA4', gelapW: '#5D4037', n1: 'Bukan Ubat', n2: 'Asingkan' }
+};
+const MESEJ_B = {
+  ok: ['Tepat! Label Putih, selamat dimakan', '', 'Ubat ini masih elok. Label Putih → Kotak Hijau'],
+  merah: ['Tepat! Label Merah untuk kegunaan luar', 'Bahaya! Label Merah untuk kegunaan luar sahaja', 'Label Merah masih elok → Kotak Biru'],
+  luput: ['Tepat! Ubat luput dilupuskan dengan selamat', 'Bahaya! Ubat luput tidak boleh dimakan', 'Tarikh luput sudah lepas → Tong Pelupusan'],
+  rosak: ['Tepat! Ubat rosak mesti dilupuskan', 'Bahaya! Ubat rosak tidak selamat dimakan', 'Ubat sudah rosak → Tong Pelupusan'],
+  tiada: ['Tepat! Botol tanpa label wajib dilupuskan', 'Bahaya! Ubat tanpa label tidak boleh digunakan', 'Tiada label → Tong Pelupusan'],
+  kimia: ['Tepat! Bahan kimia bukan ubat', 'Bahaya! Ini bahan kimia, bukan ubat', 'Bahan kimia bukan ubat → kotak Bukan Ubat']
+};
+function janaUbatB(j) {
+  const baik = () => pad2(1 + rnd(12)) + '/' + (THN + 1 + rnd(2)), lama = () => pad2(1 + rnd(12)) + '/' + (THN - 1 - rnd(2));
+  const makan = [['botol', 'PARASETAMOL'], ['sirap', 'SIRAP BATUK', '#FFCC80'], ['strip', 'VITAMIN C'], ['botol', 'PIL ALAHAN'], ['sirap', 'SIRAP DEMAM', '#F8BBD0']];
+  const luar = [['tiub', 'KRIM KULIT'], ['titis', 'TITIS MATA'], ['sirap', 'LOSYEN GATAL', '#FFF9C4'], ['tiub', 'UBAT SAPU']];
+  const o = { jenis: j, habuk: 0, imbas: false, luput: false, rosak: false, tarikh: baik() };
+  let d;
+  if (j === 'ok') { d = pilihRawak(makan); o.label = 'putih'; o.sasaran = 'hijau'; }
+  else if (j === 'merah') { d = pilihRawak(luar); o.label = 'merah'; o.sasaran = 'biru'; }
+  else if (j === 'luput') { const m = Math.random() < 0.6; d = pilihRawak(m ? makan : luar); o.label = m ? 'putih' : 'merah'; o.luput = true; o.tarikh = lama(); o.sasaran = 'tong'; }
+  else if (j === 'rosak') { d = pilihRawak(makan); o.label = 'putih'; o.rosak = true; o.sasaran = 'tong'; }
+  else if (j === 'tiada') { d = ['botol', '']; o.label = 'tiada'; o.tarikh = ''; o.sasaran = 'tong'; }
+  else { d = ['kimia', ...pilihRawak([['PELUNTUR', '#4FC3F7'], ['PENCUCI', '#AED581'], ['RACUN', '#B39DDB']])]; o.label = 'kimia'; o.tarikh = ''; o.sasaran = 'pulang'; }
+  o.bentuk = d[0]; o.nama = d[1]; o.warna = d[2];
+  return o;
+}
+function buatPesakit(cfg) {
+  const kunci = pilihRawak(PESAKIT), sp = WATAK[kunci], n = cfg.per + (Math.random() < 0.3 ? 1 : 0), items = [];
+  for (let i = 0; i < n; i++) {
+    const o = janaUbatB(pilihRawak(cfg.jenis));
+    if (cfg.habuk && o.jenis !== 'kimia' && (o.jenis === 'tiada' || Math.random() < cfg.habuk)) o.habuk = 1;
+    items.push(o);
+  }
+  const sabar = cfg.sabar * (simpan.naik.ekspres ? (sp.emas ? 1.6 : 1.2) : 1) * Math.max(0.6, 1 - g.laju * 0.05);
+  return { sp, items, sabar, sabarMaks: sabar, x: W + 80 };
+}
+function mulaB(cfg) {
+  const b = g.b = { baris: [], menunggu: [], aktif: 0, imbasT: 0, terbang: [], seret: null, spawnT: 0, dilayan: 0, jumlah: cfg.pesakit, bekas: {} };
+  for (let i = 0; i < cfg.pesakit; i++) b.menunggu.push(buatPesakit(cfg));
+  if (!g.tanpaHad && simpan.beg > 0 && b.menunggu.length) {
+    const n = Math.min(3, simpan.beg); simpan.beg -= n; tulis();
+    for (let i = 0; i < n; i++) { const o = janaUbatB('luput'); o.bonus = true; b.menunggu[0].items.unshift(o); }
+    b.adaBonus = true;
+  }
+  const senarai = ['hijau', 'biru', 'tong']; if (cfg.jenis.includes('kimia')) senarai.push('pulang');
+  const bw = 220, sela = senarai.length === 4 ? 40 : 70, mulaX = (W - senarai.length * bw - (senarai.length - 1) * sela) / 2;
+  senarai.forEach((k, i) => { b.bekas[k] = { x: mulaX + i * (bw + sela), y: 528, w: bw, h: 172, lompat: 0 }; });
+}
+function semasaB() { const b = g.b, p = b.baris[b.aktif]; return p && p.tiba ? p.items[0] : null; }
+function mulaImbas() { g.b.imbasT = 0.6; Bunyi.imbas(); }
+function asingB(k) {
+  const b = g.b, it = semasaB(); if (!it || g.habis) return;
+  if (it.habuk > 0) { teks('Label berhabuk! Gosok botol dahulu', IT.x, 160, '#E65100'); return; }
+  if (!it.imbas) { teks('Imbas dahulu! Ketik ubat di meja pemeriksaan', IT.x, 160, '#E65100'); return; }
+  const bk = b.bekas[k], cx = bk.x + bk.w / 2, cy = bk.y + 40, m = MESEJ_B[it.jenis];
+  b.baris[b.aktif].items.shift(); b.imbasT = 0; bk.lompat = 0.35;
+  b.terbang.push({ o: it, x: IT.x, y: IT.y, s: IT.s, tx: cx, ty: cy + 30 });
+  if (k === it.sasaran) { ganjar(m[0], cx, cy); if (it.bonus) { g.bonus += 5; teks('Bonus Beg Pemulangan +5 Syiling Cakna', cx, cy - 100, '#F57F17'); } }
+  else if (k === 'hijau') hukum(25, m[1], cx, cy, true);
+  else hukum(10, m[2], cx, cy);
+}
+function rectItemB() { return { x: IT.x - 80, y: IT.y - 115, w: 160, h: 230 }; }
+function tekanB(x, y) {
+  const b = g.b; if (g.habis) return;
+  for (const k in b.bekas) if (dalam(x, y, b.bekas[k])) { asingB(k); return; }
+  for (let i = 0; i < b.baris.length; i++) {
+    const p = b.baris[i];
+    if (Math.abs(x - p.x) < 56 && y > 150 && y < 380 && i !== b.aktif) { b.aktif = i; b.imbasT = 0; Bunyi.klik(); return; }
+  }
+  const it = semasaB();
+  if (it && dalam(x, y, rectItemB())) {
+    b.seret = { x0: x, y0: y, lx: x, ly: y, gerak: false, gosok: it.habuk > 0 };
+    if (!it.habuk && !it.imbas && b.imbasT <= 0) mulaImbas();
+    else if (it.habuk) teks('Gosok (leret) botol untuk membersihkan habuk', IT.x, 110, '#5D4037');
+  }
+}
+function gerakB(x, y) {
+  const b = g.b, s = b.seret, it = semasaB(); if (!s || !it) return;
+  const d = Math.hypot(x - s.lx, y - s.ly); s.lx = x; s.ly = y;
+  if (s.gosok) {
+    if (it.habuk > 0 && dalam(x, y, rectItemB())) {
+      it.habuk -= d / 650; if (Math.random() < 0.3) Bunyi.gosok();
+      if (it.habuk <= 0.12) { it.habuk = 0; Bunyi.kombo(2); teks(it.label === 'tiada' ? 'Bersih, tetapi botol ini tiada label!' : 'Label sudah bersih! Ketik untuk imbas', IT.x, 110, '#1565C0'); }
+    }
+  } else if (!s.gerak && Math.hypot(x - s.x0, y - s.y0) > 18) s.gerak = true;
+}
+function lepasB(x, y) {
+  const b = g.b, s = b.seret; b.seret = null;
+  if (!s || !s.gerak || s.gosok) return;
+  for (const k in b.bekas) if (dalam(x, y, b.bekas[k])) { asingB(k); return; }
+}
+function kemasB(dt) {
+  const b = g.b, cfg = g.cfg, serentak = cfg.serentak || 1;
+  if (g.tanpaHad) {
+    b.spawnT -= dt;
+    if (b.spawnT <= 0 && b.baris.length + b.menunggu.length < 3) { b.menunggu.push(buatPesakit(cfg)); b.spawnT = Math.max(2.5, 8 * Math.pow(0.85, g.laju)); }
+  }
+  while (b.baris.length < serentak && b.menunggu.length) b.baris.push(b.menunggu.shift());
+  if (b.aktif >= b.baris.length) b.aktif = 0;
+  for (let i = b.baris.length - 1; i >= 0; i--) {
+    const p = b.baris[i], tx = 925 + i * 118;
+    p.x += (tx - p.x) * Math.min(1, dt * 6); p.tiba = Math.abs(p.x - tx) < 8;
+    if (p.tiba) p.sabar -= dt * (i === b.aktif ? 1 : 0.4);
+    if (!p.items.length) {
+      b.baris.splice(i, 1); b.dilayan++; g.skor += 15; teks('Terima kasih, pegawai farmasi!', p.x, 200, '#1565C0');
+      if (b.aktif > i) b.aktif--; else if (b.aktif === i) b.aktif = 0;
+    } else if (p.sabar <= 0) {
+      b.baris.splice(i, 1); b.dilayan++; if (b.aktif > i) b.aktif--; else if (b.aktif === i) b.aktif = 0;
+      b.imbasT = 0; hukum(15, 'Pesakit penat menunggu dan beredar', p.x, 260);
+      if (g.habis) return;
+    }
+  }
+  const it = semasaB();
+  if (it && !it.imbas && !it.habuk && b.imbasT <= 0 && simpan.naik.pengimbas) mulaImbas();
+  if (b.imbasT > 0) { b.imbasT -= dt; if (b.imbasT <= 0 && it) it.imbas = true; }
+  for (const t of b.terbang) { const kl = Math.min(1, dt * 12); t.x += (t.tx - t.x) * kl; t.y += (t.ty - t.y) * kl; t.s += (0.5 - t.s) * kl; if (Math.abs(t.s - 0.5) < 0.06) t.buang = true; }
+  b.terbang = b.terbang.filter(t => !t.buang);
+  for (const k in b.bekas) if (b.bekas[k].lompat > 0) b.bekas[k].lompat -= dt;
+  if (!g.tanpaHad && !g.habis && !b.baris.length && !b.menunggu.length && !b.terbang.length) selesai(true, '');
+}
+function lukisBekas(k, r) {
+  const d = BEKAS_DEF[k], sq = r.lompat > 0 ? Math.sin(r.lompat / 0.35 * Math.PI) * 0.08 : 0;
+  ctx.save(); ctx.translate(r.x + r.w / 2, r.y + r.h); ctx.scale(1 + sq, 1 - sq); ctx.translate(-r.w / 2, -r.h);
+  if (k === 'tong') {
+    box(14, 30, r.w - 28, r.h - 34, 14, d.warna); box(0, 8, r.w, 30, 10, '#FFB300'); box(r.w / 2 - 34, 14, 68, 14, 7, OUT, null);
+    palang(r.w / 2, 82, 17, '#FFFFFF');
+  } else if (k === 'pulang') {
+    box(0, 60, r.w, r.h - 64, 16, d.warna); box(12, 48, r.w - 24, 26, 10, '#D7CCC8');
+    ctx.beginPath(); ctx.moveTo(r.w / 2, 82); ctx.lineTo(r.w / 2 + 20, 114); ctx.lineTo(r.w / 2 - 20, 114); ctx.closePath(); ctx.fillStyle = '#FFEB3B'; ctx.fill(); ctx.lineWidth = 2.5; ctx.strokeStyle = OUT; ctx.stroke(); txt('!', r.w / 2, 103, 20, OUT);
+  } else {
+    box(0, 30, r.w, r.h - 34, 16, d.warna); box(-6, 18, r.w + 12, 28, 10, d.gelapW);
+    if (k === 'hijau') { ctx.beginPath(); ctx.moveTo(r.w / 2 - 20, 84); ctx.lineTo(r.w / 2 - 6, 98); ctx.lineTo(r.w / 2 + 22, 66); ctx.strokeStyle = '#FFFFFF'; ctx.lineWidth = 9; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.stroke(); }
+    else { ctx.beginPath(); ctx.moveTo(r.w / 2, 64); ctx.quadraticCurveTo(r.w / 2 + 20, 90, r.w / 2, 102); ctx.quadraticCurveTo(r.w / 2 - 20, 90, r.w / 2, 64); ctx.fillStyle = '#FFFFFF'; ctx.fill(); }
+  }
+  box(14, r.h - 58, r.w - 28, 48, 10, 'rgba(255,255,255,.92)', OUT, 2);
+  txt(d.n1, r.w / 2, r.h - 44, 17, d.gelapW, 'center', true, r.w - 36); txt(d.n2, r.w / 2, r.h - 24, 15, OUT, 'center', true, r.w - 36);
+  ctx.restore();
+}
+function lukisFarmasi() {
+  const b = g.b, cfg = g.cfg, it = semasaB();
+  let gr = ctx.createLinearGradient(0, 60, 0, 400); gr.addColorStop(0, '#E8F5E9'); gr.addColorStop(1, '#D0EBD3');
+  ctx.fillStyle = gr; ctx.fillRect(0, 0, W, 400);
+  box(40, 72, 380, 44, 14, '#2E7D32'); palang(68, 94, 12, '#FFFFFF'); txt(cfg.kit ? 'PUSAT SARINGAN KECEMASAN' : 'FARMASI KLINIK KESIHATAN', 240, 95, 20, '#FFFFFF', 'center', true, 320);
+  // rak ubat
+  const pal = ['#FFAB91', '#90CAF9', '#FFF59D', '#CE93D8', '#A5D6A7', '#F48FB1'];
+  for (let r = 0; r < 2; r++) {
+    const ry = 206 + r * 96;
+    for (let i = 0; i < 18; i++) { const hh = 44 + (i * 7 + r * 5) % 22, x = 56 + i * 45; box(x, ry - hh, 30, hh, 5, pal[(i + r * 2) % 6], OUT, 2); box(x + 4, ry - hh + 10, 22, 12, 2, '#FFFFFF', null); }
+    box(40, ry, 830, 12, 4, '#C9A26B');
+  }
+  // kalendar
+  box(1125, 76, 130, 96, 10, '#FFFFFF'); box(1125, 76, 130, 30, [10, 10, 0, 0], '#E53935'); txt('HARI INI', 1190, 92, 15, '#FFFFFF'); txt(pad2(BLN) + '/' + THN, 1190, 138, 27, OUT);
+  // pegawai farmasi & pesakit
+  orang(104, 446, 1.2, WATAK.farmasi);
+  for (let i = b.baris.length - 1; i >= 0; i--) {
+    const p = b.baris[i], aktif = i === b.aktif, nis = p.sabar / p.sabarMaks;
+    if (aktif) { ctx.beginPath(); ctx.ellipse(p.x, 270, 58, 120, 0, 0, 7); ctx.fillStyle = 'rgba(255,235,59,.4)'; ctx.fill(); }
+    orang(p.x, 446, 1.05, p.sp, { beg: true, sedih: nis < 0.3 });
+    box(p.x - 46, 186, 92, 16, 8, '#FFFFFF', OUT, 2.5); box(p.x - 43, 189, Math.max(4, 86 * nis), 10, 5, nis > 0.5 ? '#66BB6A' : nis > 0.25 ? '#FFA726' : '#E53935', null);
+    circ(p.x + 44, 166, 14, '#FFFFFF', OUT, 2.5); txt(String(p.items.length), p.x + 44, 167, 15);
+  }
+  if (b.menunggu.length) txt('+' + b.menunggu.length + ' menunggu', 1040, 140, 15, '#5D4037');
+  // kaunter kayu
+  box(-10, 392, 1300, 116, 0, '#E6B877'); box(-10, 376, 1300, 26, 8, '#F4D7A1');
+  ctx.strokeStyle = 'rgba(141,85,36,.3)'; ctx.lineWidth = 3; for (let i = 0; i < 9; i++) { ctx.beginPath(); ctx.moveTo(20 + i * 150, 430 + (i % 3) * 22); ctx.lineTo(120 + i * 150, 430 + (i % 3) * 22); ctx.stroke(); }
+  ctx.fillStyle = '#CFD8DC'; ctx.fillRect(0, 506, W, 214); garis(0, 506, W, 506, OUT, 3);
+  // meja pemeriksaan, lampu & kanta
+  box(440, 338, 400, 46, 12, '#FFF8E1'); txt('Meja Pemeriksaan', 640, 362, 16, '#8D6E63');
+  ctx.beginPath(); ctx.moveTo(500, 150); ctx.lineTo(560, 340); ctx.lineTo(770, 340); ctx.lineTo(540, 132); ctx.closePath(); ctx.fillStyle = 'rgba(255,241,118,.28)'; ctx.fill();
+  box(452, 326, 56, 14, 6, '#546E7A'); garis(480, 326, 468, 190, OUT, 9); garis(480, 326, 468, 190, '#90A4AE', 5); garis(468, 190, 512, 142, OUT, 9); garis(468, 190, 512, 142, '#90A4AE', 5);
+  ctx.save(); ctx.translate(520, 140); ctx.rotate(0.75); box(-26, -14, 52, 30, [14, 14, 4, 4], '#FFB300'); ctx.restore();
+  circ(806, 318, 17, 'rgba(179,229,252,.7)', OUT, 4); garis(818, 330, 834, 346, OUT, 7);
+  // kad maklumat imbasan
+  box(196, 132, 236, 216, 16, '#FFFFFF'); box(196, 132, 236, 36, [16, 16, 0, 0], '#00897B'); txt('Hasil Imbasan', 314, 151, 18, '#FFFFFF');
+  if (!it) txt('Menunggu pesakit...', 314, 245, 16, '#8D6E63', 'center', false);
+  else if (it.habuk > 0) { txt('Label berhabuk!', 314, 225, 18, '#E65100'); balut('Gosok (leret) botol sehingga bersih.', 314, 256, 200, 16, '#5D4037'); }
+  else if (!it.imbas) { txt(b.imbasT > 0 ? 'Mengimbas...' : 'Ketik ubat', 314, 230, 20, '#00695C'); if (b.imbasT <= 0) txt('untuk imbas', 314, 256, 18, '#00695C'); }
+  else {
+    const L = { putih: ['PUTIH', 'ubat makan/minum', OUT], merah: ['MERAH', 'kegunaan luar sahaja', '#C62828'], tiada: ['TIADA LABEL', 'tidak dikenali', '#C62828'], kimia: ['BUKAN UBAT', 'bahan kimia rumah', '#6A1B9A'] }[it.label];
+    txt('Label:', 210, 186, 14, '#6D4C41', 'left', false); txt(L[0], 262, 186, 18, L[2], 'left'); txt(L[1], 210, 208, 15, L[2], 'left', false);
+    garis(208, 224, 420, 224, '#E0E0E0', 2);
+    txt('Tarikh luput:', 210, 242, 14, '#6D4C41', 'left', false); txt(it.tarikh || 'tiada', 314, 242, 19, OUT, 'left');
+    if (it.tarikh) { if (simpan.naik.pengimbas) txt(it.luput ? 'SUDAH LUPUT' : 'Belum luput', 210, 266, 17, it.luput ? '#C62828' : '#2E7D32', 'left'); else txt('Hari ini: ' + pad2(BLN) + '/' + THN, 210, 266, 15, '#5D4037', 'left', false); }
+    garis(208, 284, 420, 284, '#E0E0E0', 2);
+    txt('Keadaan:', 210, 302, 14, '#6D4C41', 'left', false);
+    if (simpan.naik.kanta) txt(it.rosak ? 'ROSAK' : 'Elok', 286, 302, 18, it.rosak ? '#C62828' : '#2E7D32', 'left');
+    else txt('lihat rupa ubat', 286, 302, 15, '#5D4037', 'left', false);
+    if (it.bonus) txt('Beg Pemulangan (bonus)', 314, 330, 14, '#F57F17');
+  }
+  // ubat di meja
+  if (it) {
+    const seret = b.seret && b.seret.gerak && !b.seret.gosok, x = seret ? ptr.x : IT.x, y = seret ? ptr.y : IT.y, s = seret ? 1.6 : IT.s;
+    lukisUbat(it, x, y, s);
+    if (b.imbasT > 0) { const yy = IT.y - 105 + 210 * (1 - b.imbasT / 0.6); box(IT.x - 85, yy - 3, 170, 6, 3, '#00E676', null); ctx.fillStyle = 'rgba(0,230,118,.15)'; ctx.fillRect(IT.x - 85, IT.y - 105, 170, yy - IT.y + 105); }
+    if (it.imbas && it.rosak && simpan.naik.kanta && !seret) { circ(IT.x, it.bentuk === 'sirap' ? IT.y + 74 : IT.y - 28, 42 + Math.sin(masa * 7) * 4, null, '#E53935', 5); }
+    if (it.habuk > 0 && !seret) { const hx = IT.x + Math.sin(masa * 4) * 46; circ(hx, IT.y + 10, 16, 'rgba(255,255,255,.75)', OUT, 2.5); txt('↔', hx, IT.y + 10, 18); }
+  }
+  // bekas pengasingan
+  for (const k in b.bekas) lukisBekas(k, b.bekas[k]);
+  for (const t of b.terbang) lukisUbat(Object.assign({}, t.o, { habuk: 0 }), t.x, t.y, t.s);
+}
+
+/* ---------- HUD, kesan & papan main ---------- */
+function ikonBunyi(x, y) {
+  butang(x, y, 50, 46, '', () => { simpan.senyap = !simpan.senyap; tulis(); Bunyi.klik(); }, { warna: '#FFFFFF', r: 12 });
+  txt('♪', x + 25, y + 24, 28, simpan.senyap ? '#BDBDBD' : '#2E7D32');
+  if (simpan.senyap) garis(x + 10, y + 38, x + 40, y + 8, '#E53935', 4);
+}
+function lukisHUD() {
+  box(-6, -6, W + 12, 68, 0, '#FFF8E1');
+  butang(10, 8, 50, 46, '', () => { modal = { jenis: 'jeda' }; }, { warna: '#FFFFFF', r: 12 });
+  box(26, 20, 6, 22, 2, OUT, null); box(38, 20, 6, 22, 2, OUT, null);
+  txt(namaTahap(), 76, 31, 20, OUT, 'left', true, 330);
+  if (g.tanpaHad) {
+    for (let i = 0; i < 3; i++) txt('♥', 450 + i * 40, 32, 38, i < g.nyawa ? '#E53935' : '#D7CCC8');
+    txt('Rekod: ' + (simpan.rekod[peranan] || 0), 650, 31, 18, '#6D4C41');
+  } else {
+    txt(g.mod === 'A' ? 'Keselamatan Keluarga' : 'Keselamatan Pesakit', 425, 16, 14, '#6D4C41', 'left');
+    box(425, 28, 260, 22, 11, '#FFFFFF', OUT, 2.5);
+    if (g.meter > 0) box(428, 31, Math.max(10, 254 * g.meter / 100), 16, 8, g.meter > 55 ? '#66BB6A' : g.meter > 30 ? '#FFA726' : '#E53935', null);
+    if (g.cfg.sifar) { box(700, 14, 150, 34, 10, '#FFCDD2', '#C62828', 2.5); txt(g.mod === 'A' ? 'Sifar Bahaya' : 'Sifar Toksik', 775, 32, 16, '#C62828'); }
+  }
+  if (g.mod === 'A' && !g.tanpaHad) {
+    const kritikal = g.masa < 15; circ(890, 31, 19, '#FFFFFF', OUT, 2.5); garis(890, 31, 890, 19, OUT, 3); garis(890, 31, 898, 35, OUT, 3);
+    txt(Math.ceil(g.masa) + ' s', 918, 32, 24, kritikal ? '#E53935' : OUT, 'left');
+  } else if (g.mod === 'B' && !g.tanpaHad) txt('Pesakit: ' + g.b.dilayan + '/' + g.b.jumlah, 866, 32, 20, OUT, 'left');
+  txt('Skor ' + g.skor, 1085, 31, 22, OUT, 'center');
+  if (g.kombo > 1) { box(1150, 14, 60, 34, 17, '#FFEB3B', OUT, 2.5); txt('x' + g.kombo, 1180, 32, 19, '#E65100'); }
+  ikonBunyi(W - 60, 8);
+  if (g.cfg.pandu && g.t < 14) { const px = g.mod === 'A' ? 640 : 450, py = g.mod === 'A' ? 66 : 70; box(px, py, 560, 32, 16, 'rgba(255,255,255,.94)', OUT, 2); txt(g.cfg.pandu, px + 280, py + 17, 16, '#5D4037', 'center', true, 540); }
+}
+function lukisMalap(x, y, r0, r1, alfa) {
+  const gr = ctx.createRadialGradient(x, y, r0, x, y, r1);
+  gr.addColorStop(0, 'rgba(20,16,40,0)'); gr.addColorStop(1, 'rgba(20,16,40,' + alfa + ')');
+  ctx.fillStyle = gr; ctx.fillRect(0, 60, W, H - 60);
+}
+function lukisKesan() {
+  for (const z of zarah) { ctx.save(); ctx.globalAlpha = Math.min(1, z.t * 2); ctx.translate(z.x, z.y); ctx.rotate(z.pusing); bintang(0, 0, z.r, z.warna, null); ctx.restore(); }
+  ctx.globalAlpha = 1;
+  for (const a of apung) {
+    ctx.globalAlpha = Math.min(1, a.t * 1.6);
+    ctx.font = 'bold 21px ' + FON; const w = Math.min(640, ctx.measureText(a.s).width + 36);
+    box(a.x - w / 2, a.y - 20, w, 40, 20, '#FFFFFF', a.warna, 3); txt(a.s, a.x, a.y + 1, 21, a.warna, 'center', true, w - 24);
+  }
+  ctx.globalAlpha = 1;
+}
+function lukisMain() {
+  ctx.save();
+  if (g.goncang > 0) ctx.translate((Math.random() - 0.5) * 12, (Math.random() - 0.5) * 8);
+  if (g.mod === 'A') {
+    lukisRumah();
+    if (g.a.gelap) { if (g.cfg.malap) lukisMalap(ptr.x, ptr.y, 130, 420, 0.72); else { ctx.fillStyle = 'rgba(20,16,40,.38)'; ctx.fillRect(0, 60, W, H - 60); } }
+  } else { lukisFarmasi(); if (g.cfg.malap) lukisMalap(IT.x, IT.y, 230, 640, 0.66); }
+  ctx.restore();
+  lukisHUD();
+  if (g.mod === 'A' && g.a.dos) lukisDos();
+  if (g.sepanduk > 0) { ctx.globalAlpha = Math.min(1, g.sepanduk); box(W / 2 - 330, 150, 660, 70, 24, '#1565C0'); txt(g.sepandukTeks, W / 2, 186, 26, '#FFFFFF'); ctx.globalAlpha = 1; }
+  if (g.habis) { ctx.fillStyle = 'rgba(255,248,225,' + (1 - g.habis.t / 1.3) * 0.7 + ')'; ctx.fillRect(0, 0, W, H); txt(g.habis.menang ? 'Syabas!' : g.tanpaHad ? 'Permainan Tamat' : 'Cuba Lagi!', W / 2, H / 2, 64, g.habis.menang ? '#2E7D32' : '#C62828'); }
+}
+
+/* ---------- 9. SKRIN MENU ---------- */
+function latarMenu() {
+  const gr = ctx.createLinearGradient(0, 0, 0, H); gr.addColorStop(0, '#FFF4D6'); gr.addColorStop(1, '#FFD9A0');
+  ctx.fillStyle = gr; ctx.fillRect(0, 0, W, H);
+  ctx.globalAlpha = 0.5;
+  for (let i = 0; i < 9; i++) { const x = (i * 163 + masa * 12) % (W + 120) - 60, y = 90 + (i * 97) % 560; if (i % 2) palang(x, y, 16, '#A5D6A7'); else box(x - 22, y - 10, 44, 20, 10, '#FFCC80', null); }
+  ctx.globalAlpha = 1;
+}
+function kepalaMenu(tajuk, balik) {
+  box(-6, -6, W + 12, 78, 0, '#FFF8E1');
+  butang(14, 12, 150, 48, '◀ Kembali', balik, { warna: '#FFFFFF', sz: 19, r: 14 });
+  txt(tajuk, 185, 37, 26, OUT, 'left', true, 560);
+  bintang(820, 36, 17); txt(String(jumlahBintang()), 846, 38, 22, OUT, 'left'); txt('Bintang Kesihatan', 846, 59, 11, '#6D4C41', 'left', false);
+  syilingIkon(1010, 36, 16); txt(String(simpan.syiling), 1034, 38, 22, OUT, 'left'); txt('Syiling Cakna', 1034, 59, 11, '#6D4C41', 'left', false);
+  ikonBunyi(W - 64, 13);
+}
+function lukisTajuk() {
+  latarMenu();
+  txt('Misi Selamat Ubat', W / 2, 78, 66, '#2E7D32'); txt('DWI-PERANAN', W / 2, 138, 30, '#E65100');
+  txt('Pilih peranan anda', W / 2, 186, 22, '#5D4037', 'center', false);
+  const kad = (x, warna, tajuk, sub, ket, fn, lukis) => {
+    butang(x, 216, 500, 400, '', fn, { warna: '#FFFFFF', r: 30 });
+    box(x + 14, 230, 472, 232, 20, warna, OUT, 2.5);
+    ctx.save(); ctx.beginPath(); ctx.roundRect(x + 14, 230, 472, 232, 20); ctx.clip(); lukis(x); ctx.restore();
+    txt(tajuk, x + 250, 494, 28, OUT); txt(sub, x + 250, 528, 20, '#2E7D32');
+    balut(ket, x + 250, 560, 440, 17, '#5D4037');
+  };
+  kad(110, '#FFE0B2', 'Pesakit & Keluarga', 'Mod A: Penjaga Ubat Rumah', 'Susun ubat dengan selamat dan beri ubat mengikut jadual.',
+    () => { peranan = 'A'; skrin = 'peta'; }, x => {
+      box(x + 300, 250, 130, 100, 10, '#FFFFFF'); palang(x + 365, 300, 22); mangga(x + 365, 336, 0.9);
+      orang(x + 170, 500, 1.25, WATAK.ibu); orang(x + 300, 492, 0.78, WATAK.adik); lukisUbat(UBAT_A.sirapAB, x + 80, 400, 1);
+    });
+  kad(670, '#C8E6C9', 'Pegawai Farmasi', 'Mod B: Skuad Kaunter Farmasi', 'Imbas, periksa dan asingkan ubat pesakit di kaunter.',
+    () => { peranan = 'B'; skrin = 'peta'; }, x => {
+      orang(x + 170, 500, 1.25, WATAK.farmasi); orang(x + 360, 500, 1.0, WATAK.datuk, { beg: true });
+      box(x + 14, 420, 472, 50, 0, '#E6B877'); lukisUbat({ bentuk: 'tiub', label: 'merah' }, x + 270, 384, 0.9);
+    });
+  bintang(70, 650, 17); txt(String(jumlahBintang()), 96, 652, 22, OUT, 'left'); syilingIkon(170, 650, 16); txt(String(simpan.syiling), 194, 652, 22, OUT, 'left');
+  txt('Permainan pendidikan berinspirasikan kempen Kenali Ubat Anda. Tidak bergabung dengan KKM. Bukan pengganti nasihat pegawai farmasi.', W / 2, 698, 15, '#6D4C41', 'center', false, 1220);
+  butang(W - 300, 626, 220, 44, 'Koleksi Kad', () => { skrin = 'kad'; modal = null; }, { warna: '#FFFFFF', sz: 18, r: 14 });
+  if (window.DSRuang) butang(W - 500, 626, 180, 44, 'Ibu Bapa', () => { DSRuang.buka(); }, { warna: '#FFFFFF', sz: 18, r: 14 });
+  ikonBunyi(W - 64, 13);
+}
+function lukisPeta() {
+  latarMenu();
+  kepalaMenu('Peta Bab · ' + (peranan === 'A' ? 'Penjaga Ubat Rumah' : 'Skuad Kaunter Farmasi'), () => { skrin = 'tajuk'; });
+  for (let bb = 0; bb < 4; bb++) {
+    const x = 34 + bb * 306, warna = ['#C8E6C9', '#BBDEFB', '#D1C4E9', '#FFCDD2'][bb];
+    box(x, 92, 294, 388, 22, warna); txt('Bab ' + (bb + 1), x + 147, 118, 24); txt(NAMA_BAB[bb], x + 147, 146, 17, '#5D4037', 'center', false);
+    for (let j = 0; j < 3; j++) {
+      const i = bb * 3 + j, L = LEVELS[i], buka = terbuka(i), bt = simpan.prog[peranan][L.id] || 0, y = 168 + j * 102;
+      butang(x + 16, y, 262, 88, '', () => { modal = { jenis: 'taklimat', k: i }; }, { warna: '#FFFFFF', mati: !buka, r: 18 });
+      circ(x + 56, y + 44, 27, buka ? (bt ? '#66BB6A' : '#FFB300') : '#BDBDBD'); txt(L.id, x + 56, y + 45, 19, '#FFFFFF');
+      txt(L.nama, x + 94, y + 28, 17, buka ? OUT : '#8D8D8D', 'left', true, 176);
+      if (buka) for (let s = 0; s < 3; s++) bintang(x + 108 + s * 32, y + 60, 13, s < bt ? '#FFC107' : '#E0E0E0', s < bt ? OUT : '#BDBDBD');
+      else mangga(x + 112, y + 62, 0.8);
+    }
+  }
+  const lulus = bosLulus();
+  butang(34, 496, 600, 96, '', () => { modal = { jenis: 'taklimat', k: 'F' }; }, { warna: '#FFF59D', mati: !lulus, r: 22 });
+  txt('Tahap Akhir Bersepadu', 60, 528, 24, lulus ? OUT : '#8D8D8D', 'left'); txt(lulus ? AKHIR.nama + ' · Rumah + Farmasi' : 'Luluskan Tahap 4-3 untuk membuka', 60, 562, 17, lulus ? '#5D4037' : '#8D8D8D', 'left', false);
+  if (lulus) for (let s = 0; s < 3; s++) bintang(520 + s * 36, 544, 15, s < (simpan.akhir || 0) ? '#FFC107' : '#E0E0E0'); else mangga(580, 548, 1.1);
+  butang(646, 496, 600, 96, '', () => { modal = { jenis: 'taklimat', k: 'E' }; }, { warna: '#B2EBF2', mati: !lulus, r: 22 });
+  txt('Mod Tanpa Had', 672, 528, 24, lulus ? OUT : '#8D8D8D', 'left'); txt(lulus ? '3 nyawa · Rekod: ' + (simpan.rekod[peranan] || 0) : 'Luluskan Tahap 4-3 untuk membuka', 672, 562, 17, lulus ? '#5D4037' : '#8D8D8D', 'left', false);
+  if (lulus) for (let s = 0; s < 3; s++) txt('♥', 1140 + s * 34, 546, 32, '#E53935'); else mangga(1192, 548, 1.1);
+  butang(34, 612, 600, 82, 'Kedai Peralatan', () => { skrin = 'kedai'; }, { warna: '#FFB74D', sz: 26, r: 22 });
+  butang(646, 612, 600, 82, 'Koleksi Kad Kenali Ubat (' + simpan.kad.length + '/' + KAD.length + ')', () => { skrin = 'kad'; }, { warna: '#81C784', sz: 24, r: 22 });
+  if (peranan === 'B' && simpan.beg > 0) { box(380, 78, 520, 30, 15, '#FFF59D', OUT, 2); txt('Bonus: ' + simpan.beg + ' ubat dalam Beg Pemulangan menunggu di kaunter!', 640, 94, 15, OUT, 'center', true, 500); }
+}
+function lukisTaklimat() {
+  const k = modal.k; ctx.fillStyle = 'rgba(62,39,35,.6)'; ctx.fillRect(0, 0, W, H); zonKlik.push(HALANG);
+  box(290, 130, 700, 460, 30, '#FFF8E1');
+  let tajuk, tip, sifar = false;
+  if (k === 'E') { tajuk = 'Mod Tanpa Had'; tip = ['Bertahan selama mungkin dengan 3 nyawa.', 'Gelombang menjadi lebih pantas setiap 30 saat.', 'Rekod tertinggi: ' + (simpan.rekod[peranan] || 0)]; }
+  else if (k === 'F') { tajuk = 'Tahap Akhir · ' + AKHIR.nama; tip = AKHIR.tip; sifar = true; }
+  else { const L = LEVELS[k]; tajuk = 'Tahap ' + L.id + ' · ' + L.nama; tip = L[peranan].tip; sifar = !!L[peranan].sifar; }
+  txt(tajuk, 640, 180, 32, '#2E7D32', 'center', true, 640);
+  txt(k === 'F' ? 'Dua fasa: Rumah, kemudian Farmasi' : peranan === 'A' ? 'Peranan: Penjaga Ubat Rumah' : 'Peranan: Pegawai Farmasi', 640, 222, 19, '#6D4C41', 'center', false);
+  let y = 276;
+  for (const t of tip) { circ(340, y, 7, '#FFB300', OUT, 2); y += balut(t, 362, y, 580, 21, OUT, 'left') + 16; }
+  if (sifar) { box(400, y, 480, 40, 12, '#FFCDD2', '#C62828', 2.5); txt('Satu kesilapan bahaya = gagal', 640, y + 21, 18, '#C62828'); }
+  butang(330, 500, 280, 66, 'Kembali', () => { modal = null; }, { warna: '#FFFFFF' });
+  butang(670, 500, 280, 66, 'Mula!', () => mulaTahap(k), { warna: '#66BB6A', sz: 28 });
+}
+function lukisKedai() {
+  latarMenu(); kepalaMenu('Kedai Peralatan', () => { skrin = 'peta'; });
+  txt('Untuk Rumah (Mod A)', 46, 106, 20, '#2E7D32', 'left'); txt('Untuk Farmasi (Mod B)', 46, 408, 20, '#2E7D32', 'left');
+  NAIK.forEach((n, i) => {
+    const x = 40 + (i % 3) * 406, y = i < 3 ? 124 : 426, ada = !!simpan.naik[n.id], mampu = simpan.syiling >= n.harga;
+    box(x, y, 388, 264, 22, ada ? '#E8F5E9' : '#FFFFFF');
+    circ(x + 66, y + 68, 44, n.mod === 'A' ? '#FFE0B2' : '#C8E6C9');
+    ctx.save(); ctx.translate(x + 66, y + 68);
+    if (n.id === 'pillbox') { box(-30, -16, 60, 32, 6, '#90CAF9', OUT, 2.5); for (let k = 1; k < 4; k++) garis(-30 + k * 15, -16, -30 + k * 15, 16, OUT, 2); }
+    else if (n.id === 'kunci') mangga(0, 8, 1.6);
+    else if (n.id === 'termo') { box(-7, -30, 14, 44, 7, '#FFFFFF', OUT, 2.5); circ(0, 20, 12, '#29B6F6', OUT, 2.5); box(-3, -6, 6, 22, 3, '#29B6F6', null); }
+    else if (n.id === 'pengimbas') { box(-26, -18, 52, 30, 8, '#546E7A', OUT, 2.5); box(-6, 10, 14, 24, 4, '#546E7A', OUT, 2.5); garis(-18, -4, 18, -4, '#00E676', 4); }
+    else if (n.id === 'kanta') { circ(-5, -5, 20, '#B3E5FC', OUT, 4); garis(10, 10, 26, 26, OUT, 8); }
+    else { box(-30, -4, 60, 26, 5, '#E6B877', OUT, 2.5); box(-24, -26, 48, 20, 5, '#FFFFFF', OUT, 2); txt('EKSPRES', 0, -15, 9, '#C62828'); }
+    ctx.restore();
+    balut(n.nama, x + 124, y + 48, 250, 20, OUT, 'left', true);
+    balut(n.desc, x + 22, y + 142, 344, 17, '#5D4037', 'left');
+    if (ada) { box(x + 94, y + 200, 200, 48, 16, '#66BB6A', OUT, 2.5); txt('Dimiliki', x + 194, y + 225, 22, '#FFFFFF'); }
+    else {
+      butang(x + 74, y + 200, 240, 50, '', () => { if (simpan.syiling >= n.harga) { simpan.syiling -= n.harga; simpan.naik[n.id] = true; tulis(); Bunyi.menang(); letusBintang(x + 194, y + 130, 20, '#FFC107'); } else { Bunyi.salah(); teks('Syiling Cakna belum mencukupi', x + 194, y + 180, '#C62828'); } }, { warna: mampu ? '#FFB300' : '#E0E0E0' });
+      syilingIkon(x + 150, y + 225, 15); txt(n.harga + '  Beli', x + 176, y + 226, 22, mampu ? OUT : '#8D8D8D', 'left');
+    }
+  });
+}
+function lukisKadSatu(i, x, y, w, h, besar) {
+  const K = KAD[i], ada = simpan.kad.includes(i), u = w / 160;
+  box(x, y + 5 * u, w, h, 14 * u, 'rgba(62,39,35,.25)', null);
+  if (!ada) { box(x, y, w, h, 14 * u, '#D7CCC8'); mangga(x + w / 2, y + h / 2 - 6 * u, 1.6 * u); txt('Kad ' + (i + 1), x + w / 2, y + h - 26 * u, 15 * u, '#8D6E63'); return; }
+  box(x, y, w, h, 14 * u, '#FFFFFF'); box(x, y, w, h * (besar ? 0.4 : 0.56), [14 * u, 14 * u, 0, 0], K.warna);
+  const cx = x + w / 2, cy = y + h * (besar ? 0.2 : 0.28);
+  if (K.ubat) lukisUbat(K.ubat, cx, cy, besar ? 2 : 0.95 * u);
+  else if (K.alat != null) ikonAlat(K.alat, cx, cy, besar ? 3 : 1.5 * u);
+  else { const lebar = besar ? w - 80 : w - 16 * u; box(cx - lebar / 2, cy - (besar ? 44 : 24 * u), lebar, besar ? 88 : 48 * u, 14 * u, '#FFFFFF', OUT, 2.5); txt(K.besar, cx, cy + 2, besar ? 58 : 28 * u, K.warna, 'center', true, lebar - 16); }
+  if (!besar) { balut(K.tajuk, cx, y + h * 0.68, w - 14 * u, 14.5 * u, OUT, 'center', true); return; }
+  txt(K.tajuk, cx, y + h * 0.47, 30, OUT, 'center', true, w - 40);
+  let yy = y + h * 0.56;
+  for (const t of K.isi) { circ(x + 44, yy, 6, K.warna, OUT, 2); yy += balut(t, x + 62, yy, w - 110, 20, OUT, 'left') + 12; }
+}
+function lukisKoleksi() {
+  latarMenu(); kepalaMenu('Koleksi Kad Kenali Ubat Anda', () => { skrin = g || hasil ? 'peta' : 'tajuk'; });
+  txt('Tamatkan tahap untuk membuka kad. Ketik kad untuk membaca. (' + simpan.kad.length + '/' + KAD.length + ')', W / 2, 100, 18, '#5D4037', 'center', false);
+  KAD.forEach((K, i) => {
+    const x = 40 + (i % 7) * 173, y = 128 + Math.floor(i / 7) * 290;
+    lukisKadSatu(i, x, y, 160, 262, false);
+    zonKlik.push({ x, y, w: 160, h: 262, fn: () => { if (simpan.kad.includes(i)) modal = { jenis: 'kad', i }; else { Bunyi.salah(); teks('Kad ini masih berkunci', x + 80, y + 120, '#6D4C41'); } } });
+  });
+}
+function lukisKadBesar() {
+  ctx.fillStyle = 'rgba(62,39,35,.7)'; ctx.fillRect(0, 0, W, H); zonKlik.push(HALANG);
+  lukisKadSatu(modal.i, 330, 40, 620, 560, true);
+  butang(500, 624, 280, 64, 'Tutup', () => { modal = null; }, { warna: '#FFB300', sz: 24 });
+}
+function lukisJeda() {
+  ctx.fillStyle = 'rgba(62,39,35,.6)'; ctx.fillRect(0, 0, W, H); zonKlik.push(HALANG);
+  box(410, 170, 460, 380, 30, '#FFF8E1'); txt('Berhenti Seketika', 640, 224, 32);
+  butang(470, 270, 340, 66, 'Sambung', () => { modal = null; }, { warna: '#66BB6A', sz: 26 });
+  butang(470, 356, 340, 66, 'Ulang Tahap', () => mulaTahap(g.k), { warna: '#FFB300', sz: 24 });
+  butang(470, 442, 340, 66, 'Keluar ke Peta', () => { ruangHenti(); skrin = 'peta'; modal = null; }, { warna: '#FFFFFF', sz: 24 });
+}
+function lukisKeputusan() {
+  latarMenu(); const r = hasil;
+  box(140, 60, 1000, 600, 34, '#FFF8E1');
+  const tajuk = r.tanpaHad ? 'Permainan Tamat' : r.menang ? 'Tahap Selesai!' : 'Cuba Lagi!';
+  txt(tajuk, 500, 120, 46, r.menang ? '#2E7D32' : r.tanpaHad ? '#1565C0' : '#C62828');
+  if (r.tanpaHad) {
+    txt('Skor: ' + r.skor, 500, 210, 44); txt('Rekod tertinggi: ' + r.rekod, 500, 268, 24, '#5D4037');
+    if (r.rekodBaru) { box(380, 296, 240, 40, 20, '#FFEB3B', OUT, 2.5); txt('Rekod baharu!', 500, 317, 20, '#E65100'); }
+  } else if (r.menang) {
+    for (let s = 0; s < 3; s++) { const ada = s < r.bintang, sc = ada ? 1 + Math.sin(masa * 4 + s) * 0.05 : 1; bintang(390 + s * 110, 220 - (s === 1 ? 14 : 0), 46 * sc, ada ? '#FFC107' : '#E0E0E0', ada ? OUT : '#BDBDBD'); }
+    txt(['', 'Lulus! Cuba kurangkan kesilapan.', 'Bagus! Hampir sempurna.', 'Cemerlang! Wira Selamat Ubat!'][r.bintang], 500, 306, 22, '#5D4037');
+    if (r.beg) txt(r.beg + ' ubat luput dihantar ke farmasi (bonus Mod Farmasi)', 500, 340, 16, '#33691E', 'center', false);
+  } else { balut(r.sebab || 'Cuba sekali lagi.', 500, 210, 620, 26, '#5D4037', 'center', true); balut('Baca petua tahap dan cuba lagi. Anda pasti boleh!', 500, 290, 620, 20, '#6D4C41'); }
+  syilingIkon(420, 396, 20); txt('+' + r.syiling + ' Syiling Cakna', 452, 398, 26, OUT, 'left');
+  txt('Skor ' + r.skor, 500, 446, 20, '#6D4C41', 'center', false);
+  if (r.kad) {
+    lukisKadSatu(r.kad.i, 860, 130, 220, 360, false);
+    txt(r.kad.baru ? 'Kad baharu dibuka!' : 'Kad Kenali Ubat', 970, 104, 20, r.kad.baru ? '#E65100' : '#5D4037');
+    butang(860, 510, 220, 52, 'Baca Kad', () => { modal = { jenis: 'kad', i: r.kad.i }; }, { warna: '#81C784', sz: 20 });
+  }
+  const adaSeterus = r.menang && typeof r.k === 'number' && r.k < LEVELS.length - 1;
+  butang(180, 580, 280, 64, 'Peta Bab', () => { skrin = 'peta'; }, { warna: '#FFFFFF', sz: 24 });
+  butang(490, 580, 280, 64, r.menang ? 'Main Lagi' : 'Ulang', () => mulaTahap(r.k), { warna: '#FFB300', sz: 24 });
+  if (adaSeterus) butang(800, 580, 300, 64, 'Tahap Seterusnya ▶', () => { modal = { jenis: 'taklimat', k: r.k + 1 }; skrin = 'peta'; }, { warna: '#66BB6A', sz: 23 });
+}
+
+
+/* ---------- Dunia Sai: Ruang Ibu Bapa ---------- */
+function ruangKunci() {
+  if (!g) return '';
+  if (g.k === 'F') return 'F:' + g.mod;
+  if (g.k === 'E') return 'E:' + peranan;
+  return peranan + ':' + LEVELS[g.k].id;
+}
+function ruangJawab(ok, mesej) { try { if (window.DSRuang && g) DSRuang.jawab(ruangKunci(), ok, ok ? null : mesej, { satu: true }); } catch (e) {} }
+function ruangTamat(siap, baru) { try { if (!window.DSRuang) return; if (siap) DSRuang.selesai(ruangKunci(), { baru }); else DSRuang.henti(); } catch (e) {} }
+function ruangHenti() { try { if (window.DSRuang) DSRuang.henti(); } catch (e) {} }
+const RUANG_TIP = 'Tanya anak di mana ubat di rumah disimpan, dan baca label ubat sebenar bersama-sama.';
+try {
+  if (window.DSRuang) DSRuang.pasang({ id: 'misi-selamat-ubat', nama: 'Misi Selamat Ubat', tajuk: 'Anak belajar menyimpan, membaca label dan mengasingkan ubat dengan selamat.',
+    aktiviti: k => {
+      const [a, b] = String(k).split(':'), rumah = a === 'A' || b === 'A';
+      const nama = a === 'F' ? 'Tahap Akhir (' + (b === 'A' ? 'Rumah' : 'Farmasi') + ')' : a === 'E' ? 'Mod Tanpa Had (' + (b === 'A' ? 'Rumah' : 'Farmasi') + ')'
+        : (rumah ? 'Rumah ' : 'Farmasi ') + b + ': ' + ((LEVELS.find(L => L.id === b) || {}).nama || '');
+      return [rumah ? '🏠' : '💊', nama, rumah ? 'rumah' : 'farmasi'];
+    },
+    kemahiran: [
+      { id: 'rumah', icon: '🏠', name: 'Simpan & beri ubat dengan selamat', tip: RUANG_TIP },
+      { id: 'farmasi', icon: '💊', name: 'Baca label, tarikh luput & asingkan ubat', tip: RUANG_TIP }
+    ],
+    kata: { soalan: 'tindakan', betul: 'Tindakan betul', main: 'Tahap dimainkan' },
+    item: { tajuk: '🔍 Kesilapan paling kerap', kosong: 'Belum ada kesilapan.', nota: 'Bincang kesilapan ini dengan anak menggunakan ubat sebenar di rumah.' },
+    tipUmum: RUANG_TIP,
+    kemajuan: () => [[jumlahBintang() + '', 'Bintang Kesihatan'], [simpan.kad.length + '/' + KAD.length, 'Kad Kenali Ubat']],
+    nota: () => 'Satu tindakan = satu ubat disimpan, diasingkan atau diberi.' });
+} catch (e) {}
+
+/* ---------- 10. INPUT & GELUNG UTAMA ---------- */
+function kedudukan(e) { const r = cv.getBoundingClientRect(), kx = cv.width / (r.width || 1), ky = cv.height / (r.height || 1); return { x: ((e.clientX - r.left) * kx - ox) / skala, y: ((e.clientY - r.top) * ky - oy) / skala }; }
+cv.addEventListener('pointerdown', e => {
+  e.preventDefault(); Bunyi.mula();
+  try { cv.setPointerCapture(e.pointerId); } catch (err) {}
+  const p = kedudukan(e); ptr.x = p.x; ptr.y = p.y; ptr.turun = true;
+  for (let i = zonKlik.length - 1; i >= 0; i--) if (dalam(p.x, p.y, zonKlik[i])) { if (zonKlik[i] !== HALANG) Bunyi.klik(); zonKlik[i].fn(); return; }
+  if (skrin === 'main' && !modal && g) { if (g.mod === 'A') tekanA(p.x, p.y); else tekanB(p.x, p.y); }
+});
+cv.addEventListener('pointermove', e => {
+  const p = kedudukan(e); ptr.x = p.x; ptr.y = p.y;
+  if (skrin === 'main' && !modal && g && ptr.turun) { if (g.mod === 'A') gerakA(p.x, p.y); else gerakB(p.x, p.y); }
+});
+function lepas(e) {
+  const p = kedudukan(e); ptr.turun = false;
+  if (skrin === 'main' && g) { if (g.mod === 'A') lepasA(p.x, p.y); else lepasB(p.x, p.y); }
+}
+cv.addEventListener('pointerup', lepas); cv.addEventListener('pointercancel', lepas);
+cv.addEventListener('contextmenu', e => e.preventDefault());
+window.addEventListener('resize', ubahSaiz); window.addEventListener('orientationchange', ubahSaiz);
+document.addEventListener('visibilitychange', () => { if (document.hidden && skrin === 'main' && g && !g.habis && !modal) modal = { jenis: 'jeda' }; });
+
+function kemas(dt) {
+  if (skrin === 'main' && g && !modal) kemasMain(dt);
+  for (const z of zarah) { z.t -= dt; z.x += z.vx * dt; z.y += z.vy * dt; z.vy += 520 * dt; z.pusing += dt * 5; }
+  zarah = zarah.filter(z => z.t > 0);
+  for (const a of apung) { a.t -= dt; a.y -= dt * 14; }
+  apung = apung.filter(a => a.t > 0);
+}
+function lukis() {
+  zonKlik = [];
+  ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.fillStyle = '#FFE9B8'; ctx.fillRect(0, 0, cv.width, cv.height);
+  ctx.setTransform(skala, 0, 0, skala, ox, oy);
+  ctx.save(); ctx.beginPath(); ctx.rect(0, 0, W, H); ctx.clip();
+  if (skrin === 'tajuk') lukisTajuk();
+  else if (skrin === 'peta') lukisPeta();
+  else if (skrin === 'kedai') lukisKedai();
+  else if (skrin === 'kad') lukisKoleksi();
+  else if (skrin === 'main') lukisMain();
+  else if (skrin === 'keputusan') lukisKeputusan();
+  if (modal) { if (modal.jenis === 'taklimat') lukisTaklimat(); else if (modal.jenis === 'kad') lukisKadBesar(); else if (modal.jenis === 'jeda') lukisJeda(); }
+  lukisKesan();
+  ctx.restore();
+}
+let lalu = 0;
+function gelung(t) {
+  const dt = Math.min(0.05, Math.max(0, (t - lalu) / 1000)); lalu = t; masa += dt;
+  kemas(dt); lukis(); requestAnimationFrame(gelung);
+}
+ubahSaiz(); requestAnimationFrame(t => { lalu = t; requestAnimationFrame(gelung); });
+</script>
+</body>
+</html>
