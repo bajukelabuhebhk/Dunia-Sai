@@ -129,6 +129,31 @@ const Bunyi = {
   mula() {
     if (!this.ak) { try { this.ak = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { this.ak = null; } }
     if (this.ak && this.ak.state === 'suspended') this.ak.resume();
+    this.muatBgm();
+  },
+  /* Dunia Sai: BGM CC0 oleh mintodog (OpenGameArt "Cozy Puzzle"), lihat LESEN-MUZIK.md */
+  bgm: { buf: {}, dimuat: false, mahu: '', main: '', src: null, gain: null },
+  muatBgm() {
+    const B = this.bgm; if (B.dimuat || !this.ak) return; B.dimuat = true;
+    B.gain = this.ak.createGain(); B.gain.gain.value = 0; B.gain.connect(this.ak.destination);
+    for (const k of ['menu', 'main']) {
+      fetch('muzik-' + k + '.mp3').then(r => r.arrayBuffer()).then(d => new Promise((ok, no) => this.ak.decodeAudioData(d, ok, no)))
+        .then(b => { B.buf[k] = b; }).catch(() => {});
+    }
+  },
+  kemasBgm(mahu) {
+    const B = this.bgm; if (!this.ak || !B.gain) return;
+    if (simpan.senyap || document.hidden) mahu = '';
+    if (mahu && !B.buf[mahu]) return;
+    if (mahu === B.main) return;
+    const t = this.ak.currentTime, lama = B.src;
+    B.gain.gain.cancelScheduledValues(t); B.gain.gain.setValueAtTime(B.gain.gain.value, t); B.gain.gain.linearRampToValueAtTime(0, t + 0.5);
+    if (lama) { try { lama.stop(t + 0.55); } catch (e) {} }
+    B.src = null; B.main = mahu;
+    if (!mahu) return;
+    const src = this.ak.createBufferSource(); src.buffer = B.buf[mahu]; src.loop = true; src.connect(B.gain); src.start(t + 0.55);
+    B.gain.gain.linearRampToValueAtTime(0, t + 0.55); B.gain.gain.linearRampToValueAtTime(mahu === 'main' ? 0.22 : 0.3, t + 1.6);
+    B.src = src;
   },
   nada(f, d = 0.12, jenis = 'sine', v = 0.15, lewat = 0, f2) {
     if (simpan.senyap || !this.ak) return;
@@ -1145,7 +1170,6 @@ function lukisTajuk() {
   bintang(70, 650, 17); txt(String(jumlahBintang()), 96, 652, 22, OUT, 'left'); syilingIkon(170, 650, 16); txt(String(simpan.syiling), 194, 652, 22, OUT, 'left');
   txt('Permainan pendidikan berinspirasikan kempen Kenali Ubat Anda. Tidak bergabung dengan KKM. Bukan pengganti nasihat pegawai farmasi.', W / 2, 698, 15, '#6D4C41', 'center', false, 1220);
   butang(W - 300, 626, 220, 44, 'Koleksi Kad', () => { skrin = 'kad'; modal = null; }, { warna: '#FFFFFF', sz: 18, r: 14 });
-  if (window.DSRuang) butang(W - 500, 626, 180, 44, 'Ibu Bapa', () => { DSRuang.buka(); }, { warna: '#FFFFFF', sz: 18, r: 14 });
   ikonBunyi(W - 64, 13);
 }
 function lukisPeta() {
@@ -1328,6 +1352,7 @@ window.addEventListener('resize', ubahSaiz); window.addEventListener('orientatio
 document.addEventListener('visibilitychange', () => { if (document.hidden && skrin === 'main' && g && !g.habis && !modal) modal = { jenis: 'jeda' }; });
 
 function kemas(dt) {
+  Bunyi.kemasBgm(skrin === 'main' ? 'main' : 'menu');
   if (skrin === 'main' && g && !modal) kemasMain(dt);
   for (const z of zarah) { z.t -= dt; z.x += z.vx * dt; z.y += z.vy * dt; z.vy += 520 * dt; z.pusing += dt * 5; }
   zarah = zarah.filter(z => z.t > 0);
