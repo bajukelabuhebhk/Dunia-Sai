@@ -106,6 +106,12 @@
         desc: 'Pulau terapung yang tenang di atas lautan awan: berkebun, bancuh teh untuk tetamu Cloudrest, alkimia ikut rentak dan Mod Zen. Tiada timer, tiada tekanan.',
         free: 'Percuma sepenuhnya',
       },
+      {
+        id: 'misi-selamat-ubat', name: 'Misi Selamat Ubat', path: '/app/misi-selamat-ubat/', img: '/img/misi-selamat-ubat.jpg',
+        subject: 'Kesihatan dan keselamatan ubat', age: '9 hingga 12 tahun', price: 0, pakej: false,
+        desc: 'Dua peranan: simpan ubat dengan selamat di rumah, dan jadi pegawai farmasi yang mengimbas label, tarikh luput dan ubat rosak di kaunter.',
+        free: 'Percuma sepenuhnya',
+      },
     ],
 
     // Signing key number -> Ed25519 public key, the same one inside every game. It can check codes, not make them.
