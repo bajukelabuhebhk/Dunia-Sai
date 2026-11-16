@@ -1,5 +1,5 @@
 {
- "version": "3a6b88b2dd",
+ "version": "c1ef673891",
  "core": {
   "files": {
    "/app/": "ea9a45dd73a4",
@@ -525,11 +525,31 @@
   "misi-selamat-ubat": {
    "files": {
     "/app/misi-selamat-ubat/LESEN-MUZIK.md": "5ea294d274b6",
-    "/app/misi-selamat-ubat/": "47179c11d97d",
+    "/app/misi-selamat-ubat/gambar/adik.webp": "598e1e4d89fe",
+    "/app/misi-selamat-ubat/gambar/bag.webp": "f083e297badd",
+    "/app/misi-selamat-ubat/gambar/bapa.webp": "ae0289e8bece",
+    "/app/misi-selamat-ubat/gambar/borneo-p.webp": "52a2d717ddb3",
+    "/app/misi-selamat-ubat/gambar/borneo.webp": "c1e4919df198",
+    "/app/misi-selamat-ubat/gambar/cool.webp": "e48661639bc8",
+    "/app/misi-selamat-ubat/gambar/dapur.webp": "920121343082",
+    "/app/misi-selamat-ubat/gambar/datuk-p.webp": "6dbce8098ed7",
+    "/app/misi-selamat-ubat/gambar/datuk.webp": "5352535664cd",
+    "/app/misi-selamat-ubat/gambar/farmasi.webp": "5f65019c87b5",
+    "/app/misi-selamat-ubat/gambar/hud.webp": "10a520904a8f",
+    "/app/misi-selamat-ubat/gambar/ibu.webp": "b35174411d62",
+    "/app/misi-selamat-ubat/gambar/l-farmasi.webp": "037120da9cc6",
+    "/app/misi-selamat-ubat/gambar/l-rumah.webp": "e23d388fd8c3",
+    "/app/misi-selamat-ubat/gambar/lampu.webp": "a6122e6225c1",
+    "/app/misi-selamat-ubat/gambar/makcik-p.webp": "9fc0fc06c9ad",
+    "/app/misi-selamat-ubat/gambar/makcik.webp": "7a10ff9017f1",
+    "/app/misi-selamat-ubat/gambar/remaja-p.webp": "f8f123a1f116",
+    "/app/misi-selamat-ubat/gambar/remaja.webp": "4f6846b9b0a1",
+    "/app/misi-selamat-ubat/gambar/sofa.webp": "6623c7bb42e9",
+    "/app/misi-selamat-ubat/": "1f0a3e40fcf6",
     "/app/misi-selamat-ubat/muzik-main.mp3": "48a5169b3c15",
     "/app/misi-selamat-ubat/muzik-menu.mp3": "71c8aed2721a"
    },
-   "bytes": 3004385
+   "bytes": 3667436
   },
   "nakhoda-jawi": {
    "files": {

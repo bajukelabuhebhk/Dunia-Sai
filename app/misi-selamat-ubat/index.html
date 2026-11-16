@@ -333,7 +333,20 @@ const PESAKIT = ['datuk', 'makcik', 'remaja', 'borneo'];
 const KELUARGA = ['datuk', 'remaja', 'bapa'];
 
 /* ---------- 5. LUKISAN WATAK & UBAT ---------- */
+// Dunia Sai: gambar HD (Gemini). Jika gagal dimuat, lukisan kod kekal sebagai sandaran.
+const GBR = {};
+['farmasi', 'ibu', 'adik', 'bapa', 'datuk', 'makcik', 'remaja', 'borneo', 'datuk-p', 'makcik-p', 'remaja-p', 'borneo-p',
+  'sofa', 'hud', 'bag', 'dapur', 'cool', 'lampu', 'l-rumah', 'l-farmasi'].forEach(n => {
+  const im = new Image(); im.onload = () => { GBR[n] = im; }; im.src = 'gambar/' + n + '.webp';
+});
+function gbr(n, x, y, w, h) { const im = GBR[n]; if (!im) return false; if (h == null) h = w * im.height / im.width; ctx.drawImage(im, x, y, w, h); return true; }
+const KUNCI_WATAK = new Map(Object.keys(WATAK).map(k => [WATAK[k], k]));
 function orang(x, y, s, p, o = {}) {
+  const kw = KUNCI_WATAK.get(p), im = kw && ((o.sedih && GBR[kw + '-p']) || GBR[kw]);
+  if (im) {
+    const h = 214 * s * (1 + Math.sin(masa * 2.2 + x * 0.05) * 0.008), w = h * im.width / im.height;
+    ctx.drawImage(im, x - w / 2, y - h + 3 * s, w, h); return;
+  }
   const bob = Math.sin(masa * 2.2 + x * 0.05) * 1.5;
   ctx.save(); ctx.translate(x, y); ctx.scale(s, s); ctx.lineJoin = 'round';
   box(-24, -76, 48, 72, 8, p.bawah);
@@ -751,6 +764,7 @@ function kemasA(dt) {
 }
 function lukisRumah() {
   const a = g.a, cfg = g.cfg;
+  if (!gbr('l-rumah', 0, 0, W, H)) {
   let gr = ctx.createLinearGradient(0, 60, 0, 560); gr.addColorStop(0, '#FFF4D6'); gr.addColorStop(1, '#FFE2AE');
   ctx.fillStyle = gr; ctx.fillRect(0, 0, W, 560);
   // dinding jubin dapur
@@ -766,18 +780,23 @@ function lukisRumah() {
   box(95, 105, 190, 150, 12, '#B3E5FC'); circ(240, 150, 24, '#FFEB3B', '#F9A825', 3);
   box(120, 205, 70, 22, 11, '#FFFFFF', null); box(165, 190, 60, 22, 11, '#FFFFFF', null);
   garis(190, 105, 190, 255, OUT, 3); garis(95, 180, 285, 180, OUT, 3);
+  }
   // sofa & permaidani
+  if (gbr('sofa', -8, 318, 390)) txt('Meja Rendah', 195, 548, 17, '#BF360C');
+  else {
   ctx.beginPath(); ctx.ellipse(195, 585, 185, 22, 0, 0, 7); ctx.fillStyle = '#EF9A9A'; ctx.fill(); ctx.lineWidth = 3; ctx.strokeStyle = OUT; ctx.stroke();
   box(25, 320, 340, 190, 34, '#A5D6A7'); box(45, 345, 145, 100, 22, '#C8E6C9', OUT, 2.5); box(200, 345, 145, 100, 22, '#C8E6C9', OUT, 2.5);
   // meja rendah
   box(72, 488, 16, 74, 4, '#8D5524'); box(302, 488, 16, 74, 4, '#8D5524'); box(50, 466, 290, 24, 9, '#B9783C');
   txt('Meja Rendah', 195, 530, 17, '#BF360C');
+  }
   // peti ubat berkunci
   box(370, 90, 240, 170, 14, '#FFFFFF'); garis(490, 94, 490, 256, OUT, 3);
   palang(430, 160, 26); palang(550, 160, 26); mangga(490, 180, 1.2);
   box(385, 264, 210, 28, 14, '#2E7D32', null); txt('Peti Ubat Berkunci', 490, 279, 17, '#FFFFFF');
   // beg pemulangan ubat
-  if (cfg.beg) {
+  if (cfg.beg && gbr('bag', 400, 300, 110)) { box(395, 406, 120, 24, 12, '#FFFFFF', OUT, 2); txt('Beg Pemulangan', 455, 418, 13, '#33691E'); }
+  else if (cfg.beg) {
     circ(455, 304, 6, '#8D6E63', OUT, 2.5);
     ctx.beginPath(); ctx.arc(455, 332, 26, Math.PI, 0); ctx.lineWidth = 5; ctx.strokeStyle = OUT; ctx.stroke();
     box(400, 330, 110, 100, 16, '#AED581'); palang(455, 366, 15, '#FFFFFF');
@@ -798,6 +817,12 @@ function lukisRumah() {
   circ(628, 456, 13, panas ? '#E53935' : '#29B6F6', OUT, 2.5);
   if (simpan.naik.termo || a.gelap) { box(596, 256, 64, 28, 8, panas ? '#FFCDD2' : '#E1F5FE', OUT, 2); txt(a.suhu.toFixed(1) + '°C', 628, 271, 15, panas ? '#C62828' : '#01579B'); }
   // dapur
+  if (GBR.dapur && GBR.hud) {
+    gbr('hud', 995, 70, 240); gbr('dapur', 905, 268, 375);
+    ctx.strokeStyle = 'rgba(120,144,156,.55)'; ctx.lineWidth = 4; ctx.lineCap = 'round';
+    for (let i = 0; i < 3; i++) { const sy = 300 - ((masa * 30 + i * 22) % 66); ctx.beginPath(); ctx.moveTo(1150 + i * 6, sy); ctx.quadraticCurveTo(1158 + i * 6, sy - 10, 1150 + i * 6, sy - 20); ctx.stroke(); }
+    box(965, 492, 260, 26, 13, 'rgba(255,255,255,.85)', null); txt('Kaunter Dapur (Panas & Lembap)', 1095, 506, 15, '#BF360C');
+  } else {
   box(1010, 190, 240, 60, 10, '#B0BEC5'); box(1060, 60, 140, 134, 0, '#CFD8DC');
   box(920, 446, 350, 116, 8, '#BCAAA4'); box(940, 466, 140, 80, 6, '#D7CCC8', OUT, 2.5); box(1100, 466, 150, 80, 6, '#D7CCC8', OUT, 2.5);
   box(910, 428, 370, 22, 6, '#8D6E63');
@@ -812,8 +837,10 @@ function lukisRumah() {
   ctx.strokeStyle = 'rgba(120,144,156,.6)'; ctx.lineWidth = 4; ctx.lineCap = 'round';
   for (let i = 0; i < 3; i++) { const sy = 372 - ((masa * 30 + i * 22) % 66); ctx.beginPath(); ctx.moveTo(1040 + i * 6, sy); ctx.quadraticCurveTo(1048 + i * 6, sy - 10, 1040 + i * 6, sy - 20); ctx.stroke(); }
   txt('Kaunter Dapur (Panas & Lembap)', 1095, 506, 15, '#BF360C');
+  }
   // beg penyejuk
-  if (a.gelap) {
+  if (a.gelap && gbr('cool', 482, 434, 128)) { box(484, 532, 124, 24, 12, '#FFFFFF', OUT, 2); txt('Beg Penyejuk', 546, 544, 14, '#01579B'); }
+  else if (a.gelap) {
     box(486, 482, 120, 78, 12, '#4FC3F7'); box(480, 466, 132, 22, 8, '#0288D1'); box(526, 454, 40, 14, 6, null, OUT, 4);
     txt('✱', 546, 518, 28, '#FFFFFF'); txt('Beg Penyejuk', 546, 546, 14, '#01579B');
   }
@@ -1032,10 +1059,15 @@ function lukisBekas(k, r) {
 }
 function lukisFarmasi() {
   const b = g.b, cfg = g.cfg, it = semasaB();
-  let gr = ctx.createLinearGradient(0, 60, 0, 400); gr.addColorStop(0, '#E8F5E9'); gr.addColorStop(1, '#D0EBD3');
-  ctx.fillStyle = gr; ctx.fillRect(0, 0, W, 400);
+  const latarF = gbr('l-farmasi', 0, 0, W, 506);
+  if (!latarF) { let gr = ctx.createLinearGradient(0, 60, 0, 400); gr.addColorStop(0, '#E8F5E9'); gr.addColorStop(1, '#D0EBD3');
+  ctx.fillStyle = gr; ctx.fillRect(0, 0, W, 400); }
   box(40, 72, 380, 44, 14, '#2E7D32'); palang(68, 94, 12, '#FFFFFF'); txt(cfg.kit ? 'PUSAT SARINGAN KECEMASAN' : 'FARMASI KLINIK KESIHATAN', 240, 95, 20, '#FFFFFF', 'center', true, 320);
   // rak ubat
+  if (latarF) {
+    box(1100, 112, 146, 38, 4, '#E53935', null); txt('HARI INI', 1173, 131, 17, '#FFFFFF');
+    box(1110, 186, 126, 52, 10, '#FFFFFF', OUT, 2.5); txt(pad2(BLN) + '/' + THN, 1173, 213, 27, OUT);
+  } else {
   const pal = ['#FFAB91', '#90CAF9', '#FFF59D', '#CE93D8', '#A5D6A7', '#F48FB1'];
   for (let r = 0; r < 2; r++) {
     const ry = 206 + r * 96;
@@ -1044,6 +1076,7 @@ function lukisFarmasi() {
   }
   // kalendar
   box(1125, 76, 130, 96, 10, '#FFFFFF'); box(1125, 76, 130, 30, [10, 10, 0, 0], '#E53935'); txt('HARI INI', 1190, 92, 15, '#FFFFFF'); txt(pad2(BLN) + '/' + THN, 1190, 138, 27, OUT);
+  }
   // pegawai farmasi & pesakit
   orang(104, 446, 1.2, WATAK.farmasi);
   for (let i = b.baris.length - 1; i >= 0; i--) {
@@ -1053,17 +1086,22 @@ function lukisFarmasi() {
     box(p.x - 46, 186, 92, 16, 8, '#FFFFFF', OUT, 2.5); box(p.x - 43, 189, Math.max(4, 86 * nis), 10, 5, nis > 0.5 ? '#66BB6A' : nis > 0.25 ? '#FFA726' : '#E53935', null);
     circ(p.x + 44, 166, 14, '#FFFFFF', OUT, 2.5); txt(String(p.items.length), p.x + 44, 167, 15);
   }
-  if (b.menunggu.length) txt('+' + b.menunggu.length + ' menunggu', 1040, 140, 15, '#5D4037');
+  if (b.menunggu.length) { if (GBR['l-farmasi']) box(966, 128, 148, 26, 13, 'rgba(255,255,255,.9)', null); txt('+' + b.menunggu.length + ' menunggu', 1040, 140, 15, '#5D4037'); }
   // kaunter kayu
   box(-10, 392, 1300, 116, 0, '#E6B877'); box(-10, 376, 1300, 26, 8, '#F4D7A1');
   ctx.strokeStyle = 'rgba(141,85,36,.3)'; ctx.lineWidth = 3; for (let i = 0; i < 9; i++) { ctx.beginPath(); ctx.moveTo(20 + i * 150, 430 + (i % 3) * 22); ctx.lineTo(120 + i * 150, 430 + (i % 3) * 22); ctx.stroke(); }
   ctx.fillStyle = '#CFD8DC'; ctx.fillRect(0, 506, W, 214); garis(0, 506, W, 506, OUT, 3);
   // meja pemeriksaan, lampu & kanta
   box(440, 338, 400, 46, 12, '#FFF8E1'); txt('Meja Pemeriksaan', 640, 362, 16, '#8D6E63');
+  if (GBR.lampu) {
+    ctx.beginPath(); ctx.moveTo(744, 200); ctx.lineTo(600, 340); ctx.lineTo(752, 340); ctx.lineTo(778, 212); ctx.closePath(); ctx.fillStyle = 'rgba(255,241,118,.28)'; ctx.fill();
+    gbr('lampu', 736, 162, 150);
+  } else {
   ctx.beginPath(); ctx.moveTo(500, 150); ctx.lineTo(560, 340); ctx.lineTo(770, 340); ctx.lineTo(540, 132); ctx.closePath(); ctx.fillStyle = 'rgba(255,241,118,.28)'; ctx.fill();
   box(452, 326, 56, 14, 6, '#546E7A'); garis(480, 326, 468, 190, OUT, 9); garis(480, 326, 468, 190, '#90A4AE', 5); garis(468, 190, 512, 142, OUT, 9); garis(468, 190, 512, 142, '#90A4AE', 5);
   ctx.save(); ctx.translate(520, 140); ctx.rotate(0.75); box(-26, -14, 52, 30, [14, 14, 4, 4], '#FFB300'); ctx.restore();
   circ(806, 318, 17, 'rgba(179,229,252,.7)', OUT, 4); garis(818, 330, 834, 346, OUT, 7);
+  }
   // kad maklumat imbasan
   box(196, 132, 236, 216, 16, '#FFFFFF'); box(196, 132, 236, 36, [16, 16, 0, 0], '#00897B'); txt('Hasil Imbasan', 314, 151, 18, '#FFFFFF');
   if (!it) txt('Menunggu pesakit...', 314, 245, 16, '#8D6E63', 'center', false);
