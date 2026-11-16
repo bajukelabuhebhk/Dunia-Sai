@@ -1,5 +1,5 @@
 {
- "version": "01359708dd",
+ "version": "3a6b88b2dd",
  "core": {
   "files": {
    "/app/": "ea9a45dd73a4",
@@ -14,6 +14,7 @@
    "/img/misi-selamat-ubat.jpg": "62e5cf161571",
    "/img/nakhoda-jawi.jpg": "64953dcc9acf",
    "/img/robot-rumble.jpg": "4edd8272150f",
+   "/img/skuad-penjaga-sungai.jpg": "c1ed7e413de1",
    "/img/wira-matematik.jpg": "b49e57729261",
    "/img/wonder-island.jpg": "1ae683e5f7e8",
    "/": "8188b6be81e7",
@@ -28,7 +29,7 @@
    "/shared/icons/maskable-512.png": "78d51897dd77",
    "/shared/js/anak.js": "b26ad114d73c",
    "/shared/js/balik.js": "b25251d8c79c",
-   "/shared/js/config.js": "1588ccd92697",
+   "/shared/js/config.js": "cea2b65bc8d5",
    "/shared/js/jejak.js": "993517d588a5",
    "/shared/js/lesen-lib.js": "9f17920f43d7",
    "/shared/js/lesen.js": "d72df6c47647",
@@ -36,7 +37,7 @@
    "/shared/js/maklum-balas.js": "87d261af59ac",
    "/shared/js/ruang-ibubapa.js": "d83a0a76181d"
   },
-  "bytes": 1603915
+  "bytes": 1767672
  },
  "games": {
   "awanara": {
@@ -899,6 +900,59 @@
     "/app/robot-rumble/": "fcb9ed2172d6"
    },
    "bytes": 6582895
+  },
+  "skuad-penjaga-sungai": {
+   "files": {
+    "/app/skuad-penjaga-sungai/LESEN-MUZIK.md": "5bb6e9b3b508",
+    "/app/skuad-penjaga-sungai/gambar/l-bakau.webp": "a758a8cf8f3a",
+    "/app/skuad-penjaga-sungai/gambar/l-bandar.webp": "c971322cccb1",
+    "/app/skuad-penjaga-sungai/gambar/l-hulu.webp": "f14fd65e6d3e",
+    "/app/skuad-penjaga-sungai/gambar/l-jeti.webp": "5d5c5336b29b",
+    "/app/skuad-penjaga-sungai/gambar/penapis.webp": "5e524786520b",
+    "/app/skuad-penjaga-sungai/gambar/s-balang.webp": "6d5b611eac43",
+    "/app/skuad-penjaga-sungai/gambar/s-bateri.webp": "a1a1395b7be2",
+    "/app/skuad-penjaga-sungai/gambar/s-bekas.webp": "5f96160c515d",
+    "/app/skuad-penjaga-sungai/gambar/s-botolair.webp": "86e8e6fe66de",
+    "/app/skuad-penjaga-sungai/gambar/s-buku.webp": "fc1c82767d40",
+    "/app/skuad-penjaga-sungai/gambar/s-daun.webp": "d634c0971563",
+    "/app/skuad-penjaga-sungai/gambar/s-kicap.webp": "e29b4c0a17a7",
+    "/app/skuad-penjaga-sungai/gambar/s-kotak.webp": "74d95de8501f",
+    "/app/skuad-penjaga-sungai/gambar/s-mentol.webp": "38c67ad9727c",
+    "/app/skuad-penjaga-sungai/gambar/s-minyak.webp": "2c545c9f21ee",
+    "/app/skuad-penjaga-sungai/gambar/s-minyakhitam.webp": "50f4fd765c5f",
+    "/app/skuad-penjaga-sungai/gambar/s-nasi.webp": "ac0ee4eb2b92",
+    "/app/skuad-penjaga-sungai/gambar/s-pisang.webp": "878bdd7c6aec",
+    "/app/skuad-penjaga-sungai/gambar/s-racun.webp": "0eb5b63da68b",
+    "/app/skuad-penjaga-sungai/gambar/s-ranting.webp": "e1bb61cb407a",
+    "/app/skuad-penjaga-sungai/gambar/s-sampul.webp": "1bd4c2433feb",
+    "/app/skuad-penjaga-sungai/gambar/s-sardin.webp": "f0516a2fcfb0",
+    "/app/skuad-penjaga-sungai/gambar/s-sos.webp": "0a6ec34f1619",
+    "/app/skuad-penjaga-sungai/gambar/s-suratkhabar.webp": "0ff3ebf6eb1a",
+    "/app/skuad-penjaga-sungai/gambar/s-telefon.webp": "097c9057cb93",
+    "/app/skuad-penjaga-sungai/gambar/s-telur.webp": "66ab09ab6c5b",
+    "/app/skuad-penjaga-sungai/gambar/s-tin.webp": "e9247d540ab7",
+    "/app/skuad-penjaga-sungai/gambar/s-tulang.webp": "dfb20ad5a810",
+    "/app/skuad-penjaga-sungai/gambar/syiling.webp": "599b3c54f6c1",
+    "/app/skuad-penjaga-sungai/gambar/t-biru.webp": "b05c4c93f043",
+    "/app/skuad-penjaga-sungai/gambar/t-coklat.webp": "c6cf85c85023",
+    "/app/skuad-penjaga-sungai/gambar/t-hijau.webp": "b8950628788c",
+    "/app/skuad-penjaga-sungai/gambar/t-jingga.webp": "d4c90aecf530",
+    "/app/skuad-penjaga-sungai/gambar/t-merah.webp": "f21a7bb5b824",
+    "/app/skuad-penjaga-sungai/gambar/w-l-lompat.webp": "078310c91755",
+    "/app/skuad-penjaga-sungai/gambar/w-l-sedih.webp": "c350e49a2c1d",
+    "/app/skuad-penjaga-sungai/gambar/w-l-sedih2.webp": "df7b4c569c77",
+    "/app/skuad-penjaga-sungai/gambar/w-l-sorak.webp": "3edab13dff48",
+    "/app/skuad-penjaga-sungai/gambar/w-l-tunjuk.webp": "6b77a8fd9541",
+    "/app/skuad-penjaga-sungai/gambar/w-p-diri.webp": "0fea735e034a",
+    "/app/skuad-penjaga-sungai/gambar/w-p-lambai.webp": "559ab115a51f",
+    "/app/skuad-penjaga-sungai/gambar/w-p-semangat.webp": "68d7e91c67ae",
+    "/app/skuad-penjaga-sungai/gambar/w-p-semangat2.webp": "02950f45d943",
+    "/app/skuad-penjaga-sungai/gambar/w-p-tunjuk.webp": "4d38d964244c",
+    "/app/skuad-penjaga-sungai/": "b1a0cdffb72d",
+    "/app/skuad-penjaga-sungai/muzik-main.mp3": "dedc41c4f803",
+    "/app/skuad-penjaga-sungai/muzik-menu.mp3": "bded3096f3a5"
+   },
+   "bytes": 5190760
   },
   "wira-matematik": {
    "files": {

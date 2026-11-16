@@ -112,6 +112,13 @@
         desc: 'Dua peranan: simpan ubat dengan selamat di rumah, dan jadi pegawai farmasi yang mengimbas label, tarikh luput dan ubat rosak di kaunter.',
         free: 'Percuma sepenuhnya',
       },
+      {
+        // Percuma sepenuhnya (16 Nov 2026, Afiq). BGM CC0 Komiku, lihat app/skuad-penjaga-sungai/LESEN-MUZIK.md
+        id: 'skuad-penjaga-sungai', name: 'Skuad Penjaga Sungai', path: '/app/skuad-penjaga-sungai/', img: '/img/skuad-penjaga-sungai.jpg',
+        subject: 'Kitar semula dan penapisan air', age: '7 hingga 12 tahun', price: 0, pakej: false,
+        desc: 'Asingkan sisa ke tong yang betul sebelum ia jatuh ke sungai, dan cuci penapis air berlapis. 15 peta dari hulu kampung ke hutan bakau.',
+        free: 'Percuma sepenuhnya',
+      },
     ],
 
     // Signing key number -> Ed25519 public key, the same one inside every game. It can check codes, not make them.
