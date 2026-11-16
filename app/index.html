@@ -66,6 +66,10 @@
   .tiada-net.tunjuk { display: block; }
   .topbar { flex-wrap: wrap; } .topbar .btn { white-space: nowrap; }
   @media (max-width: 420px) { #mainTv .tv-penuh { display: none; } #mainTv { padding: 8px 12px; } }
+  .tab { display: flex; gap: 6px; margin: 0 0 16px; padding: 5px; border-radius: 999px; background: #fff; box-shadow: var(--shadow); }
+  .tab button { flex: 1; min-height: 46px; border: 0; border-radius: 999px; background: none; color: var(--ink); font: 800 1rem var(--font); cursor: pointer; }
+  .tab button[aria-selected="true"] { background: var(--hijau); color: #fff; box-shadow: 0 3px 0 var(--hijau-gelap); }
+  [role="tabpanel"][hidden] { display: none !important; }
 </style>
 </head>
 <body>
@@ -79,6 +83,14 @@
   <div class="tiada-net" id="tiadaNet">Tiada internet. Game yang sudah disimpan masih boleh dimainkan.</div>
   <div class="pasang-ios" id="pasangIos">📲 <b>Pasang Dunia Sai di skrin utama:</b> tekan butang <b>Kongsi</b> (petak dengan anak panah ke atas) di Safari, kemudian pilih <b>Add to Home Screen</b>.</div>
 
+  <div class="tab" role="tablist" aria-label="Bahagian">
+    <button type="button" role="tab" id="tabGame" aria-controls="paneGame" aria-selected="true">🎮 Game</button>
+    <button type="button" role="tab" id="tabSkor" aria-controls="paneSkor" aria-selected="false" tabindex="-1">🏆 Papan Skor</button>
+  </div>
+
+  <div id="paneSkor" role="tabpanel" aria-labelledby="tabSkor" hidden></div>
+
+  <div id="paneGame" role="tabpanel" aria-labelledby="tabGame">
   <section class="salam">
     <h1 id="haiTajuk">Jom main dan belajar!</h1>
     <p>Pilih satu game. Setiap game ada bahagian percuma. Versi penuh dibuka dengan kod lesen.</p>
@@ -129,6 +141,7 @@
       <button class="btn garis kecil" id="bukaMaklumBalas">💬 Beri maklum balas</button>
     </div>
   </section>
+  </div>
 </div>
 <footer class="kaki">© SgieldSai · Dunia Sai: Setiap Permainan, Satu Ilmu · <a href="/">Laman utama</a></footer>
 
@@ -139,6 +152,7 @@
 <script src="/shared/js/lesen.js"></script>
 <script src="/shared/js/maklum-balas.js"></script>
 <script src="/shared/js/main-tv.js"></script>
+<script src="/shared/js/papan-skor.js"></script>
 <script>
 (() => {
   const $ = (id) => document.getElementById(id);
@@ -227,6 +241,27 @@
     if (!new URLSearchParams(location.search).get('lesen')) history.replaceState(null, '', location.pathname);
   }
   renderAnak();
+
+  /* ---------- Tabs: Game | Papan Skor (#skor) ---------- */
+  function tab(skor, fokus) {
+    $('paneGame').hidden = skor; $('paneSkor').hidden = !skor;
+    $('tabGame').setAttribute('aria-selected', String(!skor)); $('tabSkor').setAttribute('aria-selected', String(skor));
+    $('tabGame').tabIndex = skor ? -1 : 0; $('tabSkor').tabIndex = skor ? 0 : -1;
+    if (skor) DSSkor.draw(); else renderAnak();
+    if (fokus) $(skor ? 'tabSkor' : 'tabGame').focus();
+  }
+  const keSkor = (skor) => {
+    if (skor !== (location.hash === '#skor')) history.replaceState(null, '', location.pathname + location.search + (skor ? '#skor' : ''));
+    tab(skor); scrollTo(0, 0);
+  };
+  $('tabGame').onclick = () => keSkor(false);
+  $('tabSkor').onclick = () => keSkor(true);
+  document.querySelector('.tab').addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { e.preventDefault(); const s = $('paneSkor').hidden; keSkor(s); $(s ? 'tabSkor' : 'tabGame').focus(); }
+  });
+  addEventListener('hashchange', () => tab(location.hash === '#skor'));
+  DSSkor.pasang($('paneSkor'), { onPilih: renderAnak });
+  tab(location.hash === '#skor');
 
   /* ---------- Licence ---------- */
   const reasons = {
@@ -332,7 +367,7 @@
   addEventListener('online', net); addEventListener('offline', net); net();
 
   // Licences entered inside a game show here when the child comes back
-  addEventListener('pageshow', () => countSaved().then(render));
+  addEventListener('pageshow', () => { countSaved().then(render); if (!$('paneSkor').hidden) DSSkor.draw(); });
 
   render();
   loadList().then(countSaved).then(() => {
