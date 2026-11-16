@@ -15,9 +15,50 @@
   #putar span{font-size:64px;display:block;margin-bottom:12px}
   @media (orientation:portrait) and (max-width:820px){#putar{display:flex}}
 </style>
+<!-- Dunia Sai: Papan Skor untuk pemain yang berkongsi satu peranti (16 Nov 2026), lihat bahagian 11 -->
+<script src="/shared/js/anak.js"></script>
+<style>
+  #skor{display:none;position:fixed;inset:0;z-index:6;font-family:"Trebuchet MS","Segoe UI",Verdana,sans-serif;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-y;
+    background:#FFF3D6;color:#3E2723;user-select:text;-webkit-user-select:text}
+  #skor.buka{display:block}
+  #skor *{box-sizing:border-box}
+  .sk-atas{position:sticky;top:0;z-index:1;display:flex;align-items:center;gap:10px;padding:8px max(12px,env(safe-area-inset-right)) 8px max(12px,env(safe-area-inset-left));background:#FFF8E1;border-bottom:3px solid #3E2723}
+  .sk-atas h1{flex:1;margin:0;font-size:22px;color:#2E7D32}
+  .sk-btn{min-height:44px;padding:8px 16px;border:3px solid #3E2723;border-radius:14px;background:#fff;color:#3E2723;font-weight:bold;font-size:17px;font-family:inherit;cursor:pointer}
+  .sk-btn.utama{background:#FFB300}
+  .sk-isi{max-width:900px;margin:0 auto;padding:12px max(12px,env(safe-area-inset-right)) 40px max(12px,env(safe-area-inset-left));display:grid;gap:12px;grid-template-columns:minmax(0,1fr)}
+  .sk-kotak{background:#fff;border:3px solid #3E2723;border-radius:20px;padding:12px 14px;min-width:0}
+  .sk-kotak h2{margin:0 0 6px;font-size:19px}
+  .sk-kecil{margin:0;color:#6D4C41;font-size:14px}
+  .sk-baris{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+  .sk-nama{min-height:50px;padding:8px 18px;border:3px solid #3E2723;border-radius:16px;background:#fff;color:#3E2723;font-weight:bold;font-size:18px;font-family:inherit;cursor:pointer}
+  .sk-nama.aktif{background:#66BB6A;color:#fff}
+  .sk-nama.tambah{border-style:dashed;color:#2E7D32;font-size:16px}
+  .sk-masa{min-height:38px;padding:4px 14px;border:2px solid #3E2723;border-radius:999px;background:#fff;font-weight:bold;font-size:15px;font-family:inherit;color:#3E2723;cursor:pointer}
+  .sk-masa.aktif{background:#FFB300}
+  #skor form{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+  #skor form[hidden]{display:none}
+  #skor input{flex:1 1 160px;min-height:46px;padding:8px 12px;border:3px solid #3E2723;border-radius:14px;font-weight:bold;font-size:17px;font-family:inherit;color:#3E2723;touch-action:auto}
+  .sk-kad{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,180px),1fr));gap:10px;margin-top:10px}
+  .sk-p{border:3px solid #E6B877;border-radius:18px;padding:10px;text-align:center;background:#FFFDF6}
+  .sk-p.aktif{border-color:#2E7D32}
+  .sk-p b{display:block;font-size:18px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .sk-p .bt{font-size:30px;font-weight:bold;color:#E65100;line-height:1.2}
+  .sk-p small{display:block;color:#6D4C41;font-size:13px}
+  .sk-skrol{overflow-x:auto;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y;margin-top:10px;border:2px solid #E6B877;border-radius:14px}
+  .sk-jadual{border-collapse:collapse;width:100%;font-size:15px}
+  .sk-jadual th,.sk-jadual td{padding:7px 9px;border-bottom:1px solid #F0DDB8;text-align:center;white-space:nowrap}
+  .sk-jadual thead th{background:#FFE0B2}
+  .sk-jadual tbody th{text-align:left}
+  .sk-jadual td.atas{background:#DCEDC8;font-weight:bold}
+  .sk-jadual td.kosong{color:#BCAAA4}
+  .sk-nota{margin:8px 0 0;padding:8px 12px;border-radius:12px;background:#FFF8E1;font-size:15px}
+  .sk-padam{margin-top:6px;border:0;background:none;color:#C62828;font-weight:bold;font-size:14px;font-family:inherit;text-decoration:underline;cursor:pointer;padding:4px 0}
+</style>
 <!-- dunia-sai --><link rel="manifest" href="/manifest.json"><script src="/shared/js/balik.js" defer></script></head>
 <body>
 <canvas id="kanvas" aria-label="Permainan Misi Selamat Ubat: Dwi-Peranan"></canvas>
+<div id="skor" role="dialog" aria-label="Papan Skor" aria-modal="true"></div>
 <div id="putar"><span>&#8635;</span>Sila pusingkan peranti anda ke mod landskap untuk bermain.</div>
 <script>
 'use strict';
@@ -554,6 +595,7 @@ function kiraKeputusan() {
     simpan.beg += g.begBaru; r.beg = g.begBaru;
   }
   simpan.syiling += r.syiling; tulis();
+  r.pemain = Skor.rekod(r); /* Dunia Sai: Papan Skor */
   hasil = r; skrin = 'keputusan'; modal = null;
 }
 function kemasMain(dt) {
@@ -1173,7 +1215,7 @@ function kepalaMenu(tajuk, balik) {
 function lukisTajuk() {
   latarMenu();
   txt('Misi Selamat Ubat', W / 2, 78, 66, '#2E7D32'); txt('DWI-PERANAN', W / 2, 138, 30, '#E65100');
-  txt('Pilih peranan anda', W / 2, 186, 22, '#5D4037', 'center', false);
+  txt('Pilih peranan anda' + (Skor.pemain() ? '  ·  Pemain: ' + Skor.pemain() : ''), W / 2, 186, 22, '#5D4037', 'center', false, 1100);
   const kad = (x, warna, tajuk, sub, ket, fn, lukis) => {
     butang(x, 216, 500, 400, '', fn, { warna: '#FFFFFF', r: 30 });
     box(x + 14, 230, 472, 232, 20, warna, OUT, 2.5);
@@ -1195,6 +1237,7 @@ function lukisTajuk() {
   txt('Permainan pendidikan berinspirasikan kempen Kenali Ubat Anda. Tidak bergabung dengan KKM. Bukan pengganti nasihat pegawai farmasi.', W / 2, 698, 15, '#6D4C41', 'center', false, 1220);
   butang(W - 300, 626, 220, 44, 'Koleksi Kad', () => { skrin = 'kad'; modal = null; }, { warna: '#FFFFFF', sz: 18, r: 14 });
   butang(W - 500, 626, 180, 44, 'Mod Pameran', () => { modal = { jenis: 'masukPam' }; }, { warna: '#FFFFFF', sz: 18, r: 14 });
+  butang(W - 720, 626, 200, 44, '🏆 Papan Skor', () => Skor.buka(), { warna: '#FFD54F', sz: 18, r: 14 });
   ikonBunyi(W - 64, 13);
 }
 function lukisPeta() {
@@ -1318,6 +1361,7 @@ function lukisKeputusan() {
   } else { balut(r.sebab || 'Cuba sekali lagi.', 500, 210, 620, 26, '#5D4037', 'center', true); balut('Baca petua tahap dan cuba lagi. Anda pasti boleh!', 500, 290, 620, 20, '#6D4C41'); }
   syilingIkon(420, 396, 20); txt('+' + r.syiling + ' Syiling Cakna', 452, 398, 26, OUT, 'left');
   txt('Skor ' + r.skor, 500, 446, 20, '#6D4C41', 'center', false);
+  if (r.pemain) txt('🏆 Direkod untuk ' + r.pemain + ' dalam Papan Skor', 500, 486, 17, '#2E7D32', 'center', false, 640);
   if (r.kad) {
     lukisKadSatu(r.kad.i, 860, 130, 220, 360, false);
     txt(r.kad.baru ? 'Kad baharu dibuka!' : 'Kad Kenali Ubat', 970, 104, 20, r.kad.baru ? '#E65100' : '#5D4037');
@@ -1359,6 +1403,80 @@ try {
     kemajuan: () => [[jumlahBintang() + '', 'Bintang Kesihatan'], [simpan.kad.length + '/' + KAD.length, 'Kad Kenali Ubat']],
     nota: () => 'Satu tindakan = satu ubat disimpan, diasingkan atau diberi.' });
 } catch (e) {}
+
+/* ---------- 11. Dunia Sai: PAPAN SKOR (pemain berkongsi satu peranti) ----------
+   Setiap tahap yang tamat direkod di bawah nama pemain aktif Dunia Sai (ds_anak, dipilih di sini atau di /app/).
+   Disimpan dalam peranti ini sahaja: localStorage misiSelamatUbat_skor_v1 = { v:1, ev:[{ t, a, m, k, menang, bt, skor }] }.
+   Kemajuan game (bab terbuka, syiling, kad) masih dikongsi semua pemain dalam peranti yang sama. */
+const Skor = (() => {
+  const KEY = 'misiSelamatUbat_skor_v1', DAY = 86400000, TANPA = '(tanpa nama)';
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const el = document.getElementById('skor');
+  let julat = 'semua', tambah = false;
+  const baca = () => { try { const d = JSON.parse(localStorage.getItem(KEY) || 'null'); return d && Array.isArray(d.ev) ? d.ev : []; } catch (e) { return []; } };
+  const anak = () => window.DSAnak ? DSAnak.read() : { names: [], active: '' };
+  const pemain = () => anak().active || '';
+  const namaTahap = k => k === 'F' ? 'Tahap Akhir' : k === 'E' ? 'Tanpa Had' : LEVELS[k] ? LEVELS[k].id : String(k);
+  function rekod(r) {
+    const ev = baca(), a = pemain();
+    ev.push({ t: Date.now(), a, m: peranan, k: r.tanpaHad ? 'E' : r.k, menang: !!r.menang, bt: r.bintang || 0, skor: r.skor || 0 });
+    try { localStorage.setItem(KEY, JSON.stringify({ v: 1, ev: ev.slice(-2000) })); } catch (e) {}
+    return a;
+  }
+  function dari() { const d = new Date(); d.setHours(0, 0, 0, 0); return julat === 'hari' ? d.getTime() : julat === 'minggu' ? d.getTime() - 6 * DAY : 0; }
+  // The best name(s) when at least two players scored
+  function juara(m) { const e = Object.entries(m).filter(([, v]) => v > 0); if (e.length < 2) return []; const t = Math.max(...e.map(([, v]) => v)); return e.filter(([, v]) => v === t).map(([k]) => k); }
+  function lukis() {
+    const A = anak(), all = baca(), ev = all.filter(x => x.t >= dari());
+    const nama = A.names.slice(); all.forEach(x => { if (x.a && !nama.includes(x.a)) nama.push(x.a); });
+    const kol = nama.slice(); if (ev.some(x => !x.a)) kol.push(TANPA);
+    const P = {}; kol.forEach(n => P[n] = { best: {}, main: 0, lulus: 0, tanpa: { A: 0, B: 0 } });
+    for (const x of ev) {
+      const p = P[x.a || TANPA]; if (!p) continue; p.main++;
+      if (x.k === 'E') { p.tanpa[x.m] = Math.max(p.tanpa[x.m], x.skor); continue; }
+      if (x.menang) p.lulus++;
+      const id = x.m + ':' + x.k; p.best[id] = Math.max(p.best[id] || 0, x.bt);
+    }
+    const bt = n => Object.values(P[n].best).reduce((a, b) => a + b, 0);
+    const raja = juara(Object.fromEntries(kol.map(n => [n, bt(n)])));
+    const ids = []; for (const m of ['A', 'B']) { LEVELS.forEach((L, i) => { if (kol.some(n => P[n].best[m + ':' + i] !== undefined)) ids.push([m, i]); }); if (kol.some(n => P[n].best[m + ':F'] !== undefined)) ids.push([m, 'F']); }
+    const baris = ids.map(([m, k]) => { const id = m + ':' + k, j = juara(Object.fromEntries(kol.map(n => [n, P[n].best[id] || 0])));
+      return `<tr><th scope="row">${m === 'A' ? '🏠' : '💊'} ${esc(namaTahap(k))}</th>${kol.map(n => { const v = P[n].best[id]; return v === undefined ? '<td class="kosong">–</td>' : `<td class="${j.includes(n) ? 'atas' : ''}">${v ? '⭐'.repeat(v) : 'belum lulus'}</td>`; }).join('')}</tr>`; }).join('');
+    const tanpa = ['A', 'B'].filter(m => kol.some(n => P[n].tanpa[m] > 0)).map(m => { const j = juara(Object.fromEntries(kol.map(n => [n, P[n].tanpa[m]])));
+      return `<tr><th scope="row">${m === 'A' ? '🏠' : '💊'} Tanpa Had (skor)</th>${kol.map(n => P[n].tanpa[m] ? `<td class="${j.includes(n) ? 'atas' : ''}">${j.includes(n) ? '👑 ' : ''}${P[n].tanpa[m]}</td>` : '<td class="kosong">–</td>').join('')}</tr>`; }).join('');
+    const bila = { hari: 'hari ini', minggu: 'dalam 7 hari ini', semua: 'lagi' }[julat];
+    const terkini = ev.slice(-8).reverse().map(x => { const d = new Date(x.t); return `<tr><td>${d.toLocaleDateString('ms-MY', { day: 'numeric', month: 'short' })} ${d.toLocaleTimeString('ms-MY', { hour: '2-digit', minute: '2-digit' })}</td><th scope="row">${esc(x.a || TANPA)}</th><td>${x.m === 'A' ? '🏠' : '💊'} ${esc(namaTahap(x.k))}</td><td>${x.k === 'E' ? 'Skor ' + x.skor : x.menang ? '⭐'.repeat(x.bt) : 'Cuba lagi'}</td></tr>`; }).join('');
+    el.innerHTML = `<div class="sk-atas"><button type="button" class="sk-btn" data-tutup>◀ Kembali</button><h1>🏆 Papan Skor</h1></div><div class="sk-isi">
+      <div class="sk-kotak"><h2>🎮 Giliran siapa sekarang?</h2><p class="sk-kecil">Tekan nama sebelum main. Setiap tahap yang tamat akan direkod untuk nama itu.</p>
+        <div class="sk-baris">${nama.map(n => `<button type="button" class="sk-nama ${n === A.active ? 'aktif' : ''}" data-pilih="${esc(n)}" aria-pressed="${n === A.active}">${n === A.active ? '⭐ ' : ''}${esc(n)}</button>`).join('')}<button type="button" class="sk-nama tambah" data-tambah>＋ Tambah pemain</button></div>
+        <form ${tambah ? '' : 'hidden'}><label for="skBaru" style="position:absolute;left:-9999px">Nama pemain</label><input id="skBaru" maxlength="30" placeholder="Nama pemain" autocomplete="off"><button class="sk-btn utama">Tambah</button></form>
+        ${A.active ? `<p class="sk-nota">Sekarang: <b>${esc(A.active)}</b>. <button type="button" class="sk-btn utama" data-tutup style="margin-left:6px">Jom main ▶</button></p>` : ''}</div>
+      <div class="sk-kotak"><h2>🏆 Skor pemain</h2>
+        <div class="sk-baris" role="group" aria-label="Tempoh">${[['hari', 'Hari ini'], ['minggu', '7 hari'], ['semua', 'Semua']].map(([k, l]) => `<button type="button" class="sk-masa ${julat === k ? 'aktif' : ''}" data-julat="${k}" aria-pressed="${julat === k}">${l}</button>`).join('')}</div>
+        ${ev.length ? `<div class="sk-kad">${kol.map(n => `<div class="sk-p ${n === A.active ? 'aktif' : ''}"><b>${raja.includes(n) ? '👑 ' : ''}${esc(n)}</b><div class="bt">⭐ ${bt(n)}</div><small>bintang terbaik</small><small>✅ ${P[n].lulus} lulus · 🎮 ${P[n].main} main</small></div>`).join('')}</div>
+        ${baris || tanpa ? `<div class="sk-skrol"><table class="sk-jadual"><thead><tr><th scope="col">Tahap</th>${kol.map(n => `<th scope="col">${esc(n)}</th>`).join('')}</tr></thead><tbody>${baris}${tanpa}</tbody></table></div>` : ''}`
+        : `<p class="sk-nota">Belum ada skor ${bila}. Pilih nama di atas, kemudian main mana-mana tahap.</p>`}
+        <p class="sk-kecil" style="margin-top:8px">⭐ = bintang terbaik setiap tahap (🏠 Mod Rumah, 💊 Mod Farmasi). 👑 = paling banyak bintang.</p></div>
+      ${terkini ? `<div class="sk-kotak"><h2>🕘 Main terkini</h2><div class="sk-skrol"><table class="sk-jadual"><tbody>${terkini}</tbody></table></div>
+        <button type="button" class="sk-padam" data-padam>🗑 Padam semua skor</button></div>` : ''}
+      <p class="sk-kecil">🔐 Skor disimpan dalam peranti ini sahaja. Bab yang terbuka, syiling dan kad dikongsi semua pemain dalam peranti ini.</p></div>`;
+  }
+  // The Dunia Sai 🏠 and 💬 side buttons would cover the sheet, so hide them while it is open
+  const sisi = on => ['ds-balik', 'ds-komen'].forEach(id => { const x = document.getElementById(id); if (x) x.style.visibility = on ? '' : 'hidden'; });
+  function buka() { modal = null; tambah = false; lukis(); el.classList.add('buka'); el.scrollTop = 0; sisi(false); ruangHenti(); }
+  function tutup() { el.classList.remove('buka'); sisi(true); }
+  el.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    if ('tutup' in b.dataset) tutup();
+    else if (b.dataset.pilih && window.DSAnak) { DSAnak.choose(b.dataset.pilih); lukis(); }
+    else if ('tambah' in b.dataset) { tambah = true; lukis(); const i = el.querySelector('#skBaru'); if (i) i.focus(); }
+    else if (b.dataset.julat) { julat = b.dataset.julat; lukis(); }
+    else if ('padam' in b.dataset) { if (confirm('Padam semua skor dalam Papan Skor? Bab, syiling dan kad tidak terjejas.')) { try { localStorage.removeItem(KEY); } catch (er) {} lukis(); } }
+  });
+  el.addEventListener('submit', e => { e.preventDefault(); const v = el.querySelector('#skBaru').value; if (v.trim() && window.DSAnak) { DSAnak.add(v); tambah = false; lukis(); } });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && el.classList.contains('buka')) tutup(); });
+  return { rekod, buka, pemain };
+})();
 
 /* ---------- Dunia Sai: skrin Mod Pameran ---------- */
 function lukisPameran() {
