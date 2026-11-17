@@ -1,8 +1,8 @@
 {
- "version": "c1ef673891",
+ "version": "7b3b1750fe",
  "core": {
   "files": {
-   "/app/": "ea9a45dd73a4",
+   "/app/": "21b60487532d",
    "/img/awanara.jpg": "2e406ffbba05",
    "/img/boss-gerai.jpg": "39fc8ecf1403",
    "/img/ember-code.jpg": "e3a6a1ea7053",
@@ -13,11 +13,12 @@
    "/img/lembah-embun.jpg": "73fedf025ae4",
    "/img/misi-selamat-ubat.jpg": "62e5cf161571",
    "/img/nakhoda-jawi.jpg": "64953dcc9acf",
+   "/img/robot-rumble-3d.jpg": "1dbbec178e3a",
    "/img/robot-rumble.jpg": "4edd8272150f",
    "/img/skuad-penjaga-sungai.jpg": "c1ed7e413de1",
    "/img/wira-matematik.jpg": "b49e57729261",
    "/img/wonder-island.jpg": "1ae683e5f7e8",
-   "/": "8188b6be81e7",
+   "/": "90a462e7eacb",
    "/manifest.json": "9a5f33949e56",
    "/polisi/": "83435fe7370f",
    "/promo/template": "77349aa14694",
@@ -29,15 +30,15 @@
    "/shared/icons/maskable-512.png": "78d51897dd77",
    "/shared/js/anak.js": "b26ad114d73c",
    "/shared/js/balik.js": "b25251d8c79c",
-   "/shared/js/config.js": "cea2b65bc8d5",
+   "/shared/js/config.js": "1a1cb41b13b7",
    "/shared/js/jejak.js": "993517d588a5",
-   "/shared/js/lesen-lib.js": "9f17920f43d7",
+   "/shared/js/lesen-lib.js": "440a6afd99bc",
    "/shared/js/lesen.js": "d72df6c47647",
    "/shared/js/main-tv.js": "2375fd8ca23c",
    "/shared/js/maklum-balas.js": "87d261af59ac",
    "/shared/js/ruang-ibubapa.js": "d83a0a76181d"
   },
-  "bytes": 1767672
+  "bytes": 1831428
  },
  "games": {
   "awanara": {
@@ -917,9 +918,15 @@
     "/app/robot-rumble/audio/suara/win_m8.mp3": "5ed77de694ff",
     "/app/robot-rumble/audio/suara/win_m9.mp3": "1bd25403147f",
     "/app/robot-rumble/audio/suara/win_title.mp3": "d6ac57a097bc",
-    "/app/robot-rumble/": "fcb9ed2172d6"
+    "/app/robot-rumble/": "438885dcf605"
    },
-   "bytes": 6582895
+   "bytes": 6604236
+  },
+  "robot-rumble-3d": {
+   "files": {
+    "/app/robot-rumble-3d/": "d96bea9e2125"
+   },
+   "bytes": 972803
   },
   "skuad-penjaga-sungai": {
    "files": {
