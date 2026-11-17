@@ -1,4 +1,5 @@
-// Robot Rumble 3D · Server Bilik Multiplayer (rr-bilik)
+// Robot Rumble 2D + 3D · Server Bilik Multiplayer (rr-bilik)
+// 3D: lumba serentak. 2D: pertandingan rekacipta (bina + kod ikut masa, kemudian lumba akhir).
 // Satu Durable Object setiap bilik (kod 4 huruf). Server hanya kongsi kedudukan robot;
 // fizik dikira di peranti setiap pemain. Tiada chat teks: nama ditapis, reaksi emoji sahaja.
 
@@ -9,6 +10,7 @@ const EMOJI = ['👍', '😄', '😮', '🔥', '🏁', '👋'];
 const MISSION_RE = /^M\d{2}$/;
 const RACE_TIMEOUT_MS = 240000;   // had masa lumba
 const AFTER_FIRST_MS = 45000;     // selepas orang pertama tamat, tunggu lagi 45 s
+const RUN_CODE_RE = /^[0-9A-Za-z_\-]{8,400}$/; // kod larian 2D (encodeRun); disahkan semula oleh setiap peranti
 
 const json = (o, status = 200) => new Response(JSON.stringify(o), {
   status, headers: { 'content-type': 'application/json', 'access-control-allow-origin': '*' }
@@ -69,6 +71,7 @@ export class Bilik {
     this.raceId = 0;
     this.results = [];
     this.lastActive = Date.now();
+    this.jenis = null; // '2d' | '3d', ditetapkan oleh pemain pertama
   }
   async fetch(req) {
     const url = new URL(req.url);
@@ -85,7 +88,7 @@ export class Bilik {
   attach(ws) {
     const used = this.usedColours();
     const p = { id: crypto.randomUUID().slice(0, 8), name: 'Jurutera', col: COLOURS.find(c => !used.has(c)) || COLOURS[0],
-      ready: false, build: {}, joined: false, host: this.players.size === 0, lastEmo: 0, lastPos: 0, done: null };
+      ready: false, build: {}, joined: false, best: null, siap: false, host: this.players.size === 0, lastEmo: 0, lastPos: 0, done: null };
     this.players.set(ws, p);
     ws.addEventListener('message', ev => this.onMsg(ws, ev.data));
     const bye = () => this.leave(ws);
@@ -97,13 +100,14 @@ export class Bilik {
     if (p.host && this.players.size) [...this.players.values()][0].host = true;
     this.broadcast({ t: 'keluar', id: p.id });
     if (this.phase === 'lumba') this.checkEnd();
+    if (this.phase === 'rekacipta') this.checkSiap();
     this.sendRoom();
   }
   send(ws, o) { try { ws.send(JSON.stringify(o)); } catch (e) { } }
   broadcast(o, except) { const s = JSON.stringify(o); for (const ws of this.players.keys()) if (ws !== except) { try { ws.send(s); } catch (e) { } } }
   roomInfo() {
-    return { t: 'bilik', code: this.code, misi: this.mission, fasa: this.phase,
-      pemain: [...this.players.values()].filter(p => p.joined).map(p => ({ id: p.id, nama: p.name, warna: p.col, sedia: p.ready, hos: p.host, binaan: p.build, tamat: p.done })) };
+    return { t: 'bilik', code: this.code, misi: this.mission, fasa: this.phase, jenis: this.jenis || '3d', minit: this.minutes || 5, baki: this.phase === 'rekacipta' ? Math.max(0, this.deadline - Date.now()) : 0,
+      pemain: [...this.players.values()].filter(p => p.joined).map(p => ({ id: p.id, nama: p.name, warna: p.col, sedia: p.ready, hos: p.host, binaan: p.build, tamat: p.done, terbaik: p.best ? p.best.masa : null, siap: p.siap })) };
   }
   sendRoom() { for (const [ws, p] of this.players) this.send(ws, Object.assign(this.roomInfo(), { anda: p.id })); }
   onMsg(ws, data) {
@@ -112,8 +116,25 @@ export class Bilik {
     let m; try { m = JSON.parse(data); } catch (e) { return; }
     this.lastActive = Date.now();
     switch (m.t) {
-      case 'masuk':
+      case 'masuk': {
+        const jenis = m.jenis === '2d' ? '2d' : '3d';
+        const others = [...this.players.values()].filter(q => q.joined && q !== p);
+        if (!others.length) { this.jenis = jenis; this.phase = 'lobi'; this.mission = jenis === '2d' ? 'M01' : 'M26'; }
+        else if (this.jenis !== jenis) { this.send(ws, { t: 'ralat', kod: 'jenis_lain', jenis: this.jenis }); try { ws.close(4001, 'jenis'); } catch (e) { } this.players.delete(ws); return; }
         p.name = cleanName(m.nama); p.build = cleanBuild(m.binaan); p.joined = true; this.sendRoom(); break;
+      }
+      case 'minit':
+        if (p.host && this.phase === 'lobi') { this.minutes = Math.max(2, Math.min(10, m.v | 0)); this.sendRoom(); } break;
+      case 'hantar': {
+        if (this.phase !== 'rekacipta' || m.lumba !== this.raceId || typeof m.kod !== 'string' || !RUN_CODE_RE.test(m.kod)) break;
+        const masa = num(m.masa, 0.01, 999);
+        if (!p.best || masa < p.best.masa) { p.best = { kod: m.kod, masa }; this.broadcast({ t: 'hantar', id: p.id, masa }); this.sendRoom(); }
+        break;
+      }
+      case 'siap':
+        if (this.phase === 'rekacipta') { p.siap = !!m.v; this.sendRoom(); this.checkSiap(); } break;
+      case 'akhir':
+        if (p.host && this.phase === 'rekacipta') this.endContest(); break;
       case 'binaan':
         p.build = cleanBuild(m.binaan); this.sendRoom(); break;
       case 'misi':
@@ -125,6 +146,16 @@ export class Bilik {
         if (!p.host || this.phase === 'lumba') break;
         const list = [...this.players.values()].filter(q => q.joined);
         if (!list.every(q => q.ready || q.host)) { this.send(ws, { t: 'ralat', kod: 'belum_sedia' }); break; }
+        if (this.jenis === '2d') {
+          this.phase = 'rekacipta'; this.raceId++;
+          const ms = (this.minutes || 5) * 60000; this.deadline = Date.now() + ms;
+          for (const q of list) { q.best = null; q.siap = false; q.ready = false; }
+          this.broadcast({ t: 'mula', jenis: '2d', misi: this.mission, lumba: this.raceId, baki: ms });
+          this.sendRoom();
+          const rid = this.raceId;
+          setTimeout(() => { if (this.raceId === rid && this.phase === 'rekacipta') this.endContest(); }, ms + 500);
+          break;
+        }
         this.phase = 'lumba'; this.raceId++; this.results = []; this.firstDone = 0;
         for (const q of list) { q.done = null; q.ready = false; }
         this.raceStart = Date.now();
@@ -159,6 +190,18 @@ export class Bilik {
       }
       case 'ping': this.send(ws, { t: 'pong', c: m.c }); break;
     }
+  }
+  checkSiap() {
+    const list = [...this.players.values()].filter(q => q.joined);
+    if (list.length && list.every(q => q.siap)) this.endContest();
+  }
+  endContest() {
+    const list = [...this.players.values()].filter(q => q.joined);
+    this.phase = 'lobi';
+    this.broadcast({ t: 'akhir', lumba: this.raceId, misi: this.mission,
+      entri: list.map(q => ({ id: q.id, nama: q.name, warna: q.col, kod: q.best ? q.best.kod : null, masa: q.best ? q.best.masa : null })) });
+    for (const q of list) q.siap = false;
+    this.sendRoom();
   }
   checkEnd() {
     const list = [...this.players.values()].filter(q => q.joined);
