@@ -1,0 +1,12 @@
+{
+  // Robot Rumble 3D · server bilik multiplayer (Worker berasingan daripada laman Dunia Sai)
+  "name": "rr-bilik",
+  "main": "src/index.js",
+  "compatibility_date": "2026-10-13",
+  "durable_objects": {
+    "bindings": [{ "name": "BILIK", "class_name": "Bilik" }]
+  },
+  "migrations": [
+    { "tag": "v1", "new_sqlite_classes": ["Bilik"] }
+  ]
+}
