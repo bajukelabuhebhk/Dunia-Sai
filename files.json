@@ -1,5 +1,5 @@
 {
- "version": "7b3b1750fe",
+ "version": "dbd37c23e6",
  "core": {
   "files": {
    "/app/": "21b60487532d",
@@ -18,7 +18,7 @@
    "/img/skuad-penjaga-sungai.jpg": "c1ed7e413de1",
    "/img/wira-matematik.jpg": "b49e57729261",
    "/img/wonder-island.jpg": "1ae683e5f7e8",
-   "/": "90a462e7eacb",
+   "/": "fb39ac8ae5e0",
    "/manifest.json": "9a5f33949e56",
    "/polisi/": "83435fe7370f",
    "/promo/template": "77349aa14694",
@@ -30,7 +30,7 @@
    "/shared/icons/maskable-512.png": "78d51897dd77",
    "/shared/js/anak.js": "b26ad114d73c",
    "/shared/js/balik.js": "b25251d8c79c",
-   "/shared/js/config.js": "1a1cb41b13b7",
+   "/shared/js/config.js": "056d3ca48e25",
    "/shared/js/jejak.js": "993517d588a5",
    "/shared/js/lesen-lib.js": "440a6afd99bc",
    "/shared/js/lesen.js": "d72df6c47647",
