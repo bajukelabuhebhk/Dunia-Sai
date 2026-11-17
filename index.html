@@ -407,8 +407,8 @@
         <span class="meta-game">${esc(g.subject)} · ${esc(g.age)}</span>
         ${g.free && g.price ? `<span class="bahagian-percuma">🎁 Percuma: ${esc(g.free)}</span>` : ''}
         <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:4px">
-          <span class="harga">${g.sekali ? `Satu lesen dengan ${esc((DS.game(g.sekali) || {}).name || '')}` : g.price ? `Versi penuh ${DS.rm(g.price)}` : 'Percuma sepenuhnya'}</span>
-          ${g.price ? '<span class="lencana songket">Dalam pakej</span>' : '<span class="lencana hijau">Percuma</span>'}
+          <span class="harga">${g.hargaLabel ? esc(g.hargaLabel) : g.sekali ? `Satu lesen dengan ${esc((DS.game(g.sekali) || {}).name || '')}` : g.price ? `Versi penuh ${DS.rm(g.price)}` : 'Percuma sepenuhnya'}</span>
+          ${g.gabung ? '<span class="lencana songket">Bersama 2D</span>' : g.price ? '<span class="lencana songket">Dalam pakej</span>' : '<span class="lencana hijau">Percuma</span>'}
         </div>
       </div>
     </a>`;
@@ -448,7 +448,7 @@
       <a class="btn wa" target="_blank" rel="noopener" href="${DS.waLink(`Assalamualaikum, saya nak beli ${Q.name} Dunia Sai (${DS.rm(Q.price)}).`)}">Beli melalui WhatsApp</a>
     </div>`).join('');
 
-  $('harga').innerHTML = DS.GAMES.filter((g) => g.price).map((g) => `<li><span>${esc(g.name)}</span><b>${DS.rm(g.price)}</b></li>`).join('');
+  $('harga').innerHTML = DS.GAMES.filter((g) => g.price).map((g) => g.gabung ? `<li><span>Robot Rumble 2D + 3D<br><small>Pemilik 2D naik taraf ke 3D: RM12.90</small></span><b>${DS.rm(g.price)}</b></li>` : `<li><span>${esc(g.name)}</span><b>${DS.rm(g.price)}</b></li>`).join('');
 
   // Cara beli, WhatsApp, itch
   $('heroWa').href = DS.waLink('Assalamualaikum, saya nak tahu tentang game Dunia Sai.');
