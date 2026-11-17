@@ -3,8 +3,8 @@
 // fizik dikira di peranti setiap pemain. Tiada chat teks: nama ditapis, reaksi emoji sahaja.
 
 const CODE_CHARS = 'BCDFGHJKLMNPQRSTVWXZ'; // tiada vokal: elak perkataan tidak sesuai
-const MAX_PLAYERS = 4;
-const COLOURS = ['#f59e0b', '#38bdf8', '#34d399', '#f472b6'];
+const MAX_PLAYERS = 8;
+const COLOURS = ['#f59e0b', '#38bdf8', '#34d399', '#f472b6', '#a78bfa', '#f87171', '#facc15', '#2dd4bf'];
 const EMOJI = ['👍', '😄', '😮', '🔥', '🏁', '👋'];
 const MISSION_RE = /^M\d{2}$/;
 const RACE_TIMEOUT_MS = 240000;   // had masa lumba
