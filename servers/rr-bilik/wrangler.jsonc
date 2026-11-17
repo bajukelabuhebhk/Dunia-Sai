@@ -3,6 +3,7 @@
   "name": "rr-bilik",
   "main": "src/index.js",
   "workers_dev": true,
+  "preview_urls": false,
   "compatibility_date": "2026-10-13",
   "durable_objects": {
     "bindings": [{ "name": "BILIK", "class_name": "Bilik" }]
