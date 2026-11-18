@@ -447,7 +447,7 @@ const L=[
  {u:"G",n:"ji",w:"Gajah",e:"🐘"},{u:"H",n:"ec",w:"Harimau",e:"🐯"},{u:"I",n:"ai",w:"Ikan",e:"🐟"},
  {u:"J",n:"je",w:"Jam",e:"⏰"},{u:"K",n:"ke",w:"Kucing",e:"🐱"},{u:"L",n:"el",w:"Lembu",e:"🐄"},
  {u:"M",n:"em",w:"Monyet",e:"🐒"},{u:"N",n:"en",w:"Nanas",e:"🍍"},{u:"O",n:"o",w:"Oren",e:"🍊"},
- {u:"P",n:"pi",w:"Pisang",e:"🍌"},{u:"Q",n:"kiu",w:"Quran",e:"📖"},{u:"R",n:"ar",w:"Rumah",e:"🏠"},
+ {u:"P",n:"pi",w:"Pisang",e:"🍌"},{u:"Q",n:"kiu",w:"Qanun",e:"🪕"},{u:"R",n:"ar",w:"Rumah",e:"🏠"},
  {u:"S",n:"es",w:"Sotong",e:"🦑"},{u:"T",n:"ti",w:"Tikus",e:"🐭"},{u:"U",n:"yu",w:"Ular",e:"🐍"},
  {u:"V",n:"vi",w:"Van",e:"🚐"},{u:"W",n:"dablyu",w:"Wau",e:"🪁"},{u:"X",n:"eks",w:"Xilofon",e:XSVG},
  {u:"Y",n:"wai",w:"Yoyo",e:"🪀"},{u:"Z",n:"zed",w:"Zirafah",e:"🦒"}
@@ -460,7 +460,7 @@ const EN=()=>LANG==='en';
 const tx=(ms,en)=>LANG==='en'?en:ms;
 // English example word, picture and letter name (how the phone should say it)
 const L_EN=[["Apple","🍎","ay"],["Ball","⚽","bee"],["Cat","🐱","see"],["Dog","🐶","dee"],["Egg","🥚","ee"],["Fan","🪭","ef"],["Guitar","🎸","jee"],
- ["Hat","🎩","aitch"],["Iguana","🦎","eye"],["Juice","🧃","jay"],["Key","🔑","kay"],["Lion","🦁","el"],["Moon","🌙","em"],["Nose","👃","en"],
+ ["Hat","🎩","aitch"],["Iguana","🦎","eye"],["Juice","🧃","jay"],["Key","🔑","kay"],["Lion","🦁","el"],["Moon","🌙","em"],["Nest","🪺","en"],
  ["Octopus","🐙","oh"],["Penguin","🐧","pee"],["Queen","👑","cue"],["Rabbit","🐰","ar"],["Sun","☀️","ess"],["Tiger","🐯","tee"],["Umbrella","☂️","you"],
  ["Van","🚐","vee"],["Watch","⌚","double you"],["Xylophone",XSVG,"ex"],["Yoyo","🪀","why"],["Zebra","🦓","zed"]];
 /* Gambar foto sebenar (dari Afiq, Gemini) dalam gambar/*.webp. Perkataan tanpa foto kekal emoji. */
@@ -468,7 +468,8 @@ const PIC={ayam:'chicken',bola:'ball',epal:'apple',feri:'ferry',gajah:'elephant'
  lembu:'cow',monyet:'monkey',nanas:'pineapple',oren:'orange',pisang:'banana',rumah:'house',sotong:'squid',tikus:'mouse',ular:'snake',
  van:'van',wau:'wau',xilofon:'xylophone',yoyo:'yoyo',zirafah:'giraffe',itik:'duck',
  apple:'apple',ball:'ball',cat:'cat',dog:'dog',egg:'egg',fan:'fan',guitar:'guitar',hat:'hat',iguana:'iguana',key:'key',tiger:'tiger',
- xylophone:'xylophone',fish:'fish',duck:'duck',hen:'chicken'};
+ xylophone:'xylophone',fish:'fish',duck:'duck',hen:'chicken',
+ cicak:'gecko',daun:'leaf',qanun:'qanun',bulan:'moon',lion:'lion',moon:'moon',nest:'nest'};
 const pic=(w,e)=>{const f=PIC[String(w).toLowerCase()];return f?`<img class="ph" src="gambar/${f}.webp" alt="" draggable="false">`:e};
 L.forEach((x,k)=>{x.wm=x.w;x.em=pic(x.w,x.e);x.nm=x.n;[x.we,x.ee,x.ne]=L_EN[k];x.ee=pic(x.we,x.ee)});
 const VOW=['a','e','i','o','u'];
@@ -551,7 +552,7 @@ const PH_EN={
 };
 const pad=n=>String(n).padStart(2,'0');
 const Lc=x=>EN()?{t:x.ne,l:'en'}:{k:`huruf-${pad(x.i+1)}-${x.l}`,t:x.nm};
-const Wc=x=>EN()?{t:x.we,l:'en'}:{k:`kata-${x.wm.toLowerCase()}`,t:x.wm};
+const Wc=x=>EN()?{t:x.we,l:'en'}:{k:x.wm==='Qanun'?null:`kata-${x.wm.toLowerCase()}`,t:x.wm}; // Qanun belum ada rakaman: suara telefon
 const Ec=w=>w.en?{t:w.w,l:'en'}:{k:`kata-${w.w}`,t:w.w};
 const Sc=s=>({k:`suku-${s}`,t:s});
 const Pc=k=>EN()?{t:PH_EN[k]||PH[k],l:'en'}:k.startsWith('x-')?{t:PH[k]}:{k:'frasa-'+k,t:PH[k]};
