@@ -1,5 +1,5 @@
 {
- "version": "dbd37c23e6",
+ "version": "3c2fe41989",
  "core": {
   "files": {
    "/app/": "21b60487532d",
@@ -16,9 +16,10 @@
    "/img/robot-rumble-3d.jpg": "1dbbec178e3a",
    "/img/robot-rumble.jpg": "4edd8272150f",
    "/img/skuad-penjaga-sungai.jpg": "c1ed7e413de1",
+   "/img/street-venture.jpg": "5136ff6f0e7c",
    "/img/wira-matematik.jpg": "b49e57729261",
    "/img/wonder-island.jpg": "1ae683e5f7e8",
-   "/": "fb39ac8ae5e0",
+   "/": "0adf24f43f5c",
    "/manifest.json": "9a5f33949e56",
    "/polisi/": "83435fe7370f",
    "/promo/template": "77349aa14694",
@@ -30,7 +31,7 @@
    "/shared/icons/maskable-512.png": "78d51897dd77",
    "/shared/js/anak.js": "b26ad114d73c",
    "/shared/js/balik.js": "b25251d8c79c",
-   "/shared/js/config.js": "056d3ca48e25",
+   "/shared/js/config.js": "ddbd572a8601",
    "/shared/js/jejak.js": "993517d588a5",
    "/shared/js/lesen-lib.js": "440a6afd99bc",
    "/shared/js/lesen.js": "d72df6c47647",
@@ -38,7 +39,7 @@
    "/shared/js/maklum-balas.js": "87d261af59ac",
    "/shared/js/ruang-ibubapa.js": "d83a0a76181d"
   },
-  "bytes": 1831428
+  "bytes": 1960427
  },
  "games": {
   "awanara": {
@@ -980,6 +981,12 @@
     "/app/skuad-penjaga-sungai/muzik-menu.mp3": "bded3096f3a5"
    },
    "bytes": 5190760
+  },
+  "street-venture": {
+   "files": {
+    "/app/street-venture/": "9f3144454da0"
+   },
+   "bytes": 751602
   },
   "wira-matematik": {
    "files": {
