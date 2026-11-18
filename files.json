@@ -1,5 +1,5 @@
 {
- "version": "4987e9661a",
+ "version": "e2e41f8f7f",
  "core": {
   "files": {
    "/app/": "21b60487532d",
@@ -524,6 +524,8 @@
     "/app/kenal-abc/gambar/hat.webp": "175fe4a616a1",
     "/app/kenal-abc/gambar/house.webp": "4e59cb916b39",
     "/app/kenal-abc/gambar/iguana.webp": "e5565757b252",
+    "/app/kenal-abc/gambar/jellyfish.webp": "84f2115ce774",
+    "/app/kenal-abc/gambar/jigsaw.webp": "cfa17adf9433",
     "/app/kenal-abc/gambar/kaleidoscope.webp": "16d967c620f5",
     "/app/kenal-abc/gambar/key.webp": "dcdfd8712329",
     "/app/kenal-abc/gambar/leaf.webp": "d7e9a092c27d",
@@ -555,9 +557,9 @@
     "/app/kenal-abc/gambar/yak.webp": "6d05d889b4b8",
     "/app/kenal-abc/gambar/yoyo.webp": "8f479f8e57c9",
     "/app/kenal-abc/gambar/zeppelin.webp": "8de9472f220b",
-    "/app/kenal-abc/": "4c57411b435c"
+    "/app/kenal-abc/": "58e54786a26e"
    },
-   "bytes": 3708860
+   "bytes": 3734333
   },
   "kenal-jawi": {
    "files": {

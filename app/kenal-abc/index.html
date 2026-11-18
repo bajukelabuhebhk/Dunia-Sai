@@ -460,7 +460,7 @@ const EN=()=>LANG==='en';
 const tx=(ms,en)=>LANG==='en'?en:ms;
 // English example word, picture and letter name (how the phone should say it)
 const L_EN=[["Apple","🍎","ay"],["Ball","⚽","bee"],["Cat","🐱","see"],["Dog","🐶","dee"],["Egg","🥚","ee"],["Fan","🪭","ef"],["Guitar","🎸","jee"],
- ["Hat","🎩","aitch"],["Iguana","🦎","eye"],["Juice","🧃","jay"],["Kaleidoscope","🔮","kay"],["Lion","🦁","el"],["Moon","🌙","em"],["Nest","🪺","en"],
+ ["Hat","🎩","aitch"],["Iguana","🦎","eye"],["Jigsaw","🧩","jay"],["Kaleidoscope","🔮","kay"],["Lion","🦁","el"],["Moon","🌙","em"],["Nest","🪺","en"],
  ["Owl","🦉","oh"],["Penguin","🐧","pee"],["Quail","🐦","cue"],["Rainbow","🌈","ar"],["Swordfish","🐟","ess"],["Train","🚂","tee"],["Umbrella","☂️","you"],
  ["Vase","🏺","vee"],["Watermelon","🍉","double you"],["X-ray fish","🐟","ex"],["Yak","🐂","why"],["Zeppelin","🎈","zed"]];
 /* Gambar foto sebenar (dari Afiq, Gemini) dalam gambar/*.webp. Perkataan tanpa foto kekal emoji. */
@@ -471,7 +471,7 @@ const PIC={ayam:'chicken',bola:'ball',epal:'apple',feri:'ferry',gajah:'elephant'
  xylophone:'xylophone',fish:'fish',duck:'duck',hen:'chicken',
  cicak:'gecko',daun:'leaf',qanun:'qanun',bulan:'moon',lion:'lion',moon:'moon',nest:'nest',
  owl:'owl',penguin:'penguin',quail:'quail',rainbow:'rainbow',swordfish:'swordfish',umbrella:'umbrella',train:'train',vase:'vase',
- kaleidoscope:'kaleidoscope',watermelon:'watermelon','x-ray fish':'xrayfish',yak:'yak',zeppelin:'zeppelin'};
+ kaleidoscope:'kaleidoscope',watermelon:'watermelon','x-ray fish':'xrayfish',yak:'yak',zeppelin:'zeppelin',jigsaw:'jigsaw',jellyfish:'jellyfish'};
 const pic=(w,e)=>{const f=PIC[String(w).toLowerCase()];return f?`<img class="ph" src="gambar/${f}.webp" alt="" draggable="false">`:e};
 L.forEach((x,k)=>{x.wm=x.w;x.em=pic(x.w,x.e);x.nm=x.n;[x.we,x.ee,x.ne]=L_EN[k];x.ee=pic(x.we,x.ee)});
 const VOW=['a','e','i','o','u'];
