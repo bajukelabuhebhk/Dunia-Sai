@@ -461,7 +461,7 @@ const tx=(ms,en)=>LANG==='en'?en:ms;
 // English example word, picture and letter name (how the phone should say it)
 const L_EN=[["Apple","🍎","ay"],["Ball","⚽","bee"],["Cat","🐱","see"],["Dog","🐶","dee"],["Egg","🥚","ee"],["Fan","🪭","ef"],["Guitar","🎸","jee"],
  ["Hat","🎩","aitch"],["Iguana","🦎","eye"],["Juice","🧃","jay"],["Key","🔑","kay"],["Lion","🦁","el"],["Moon","🌙","em"],["Nest","🪺","en"],
- ["Octopus","🐙","oh"],["Penguin","🐧","pee"],["Queen","👑","cue"],["Rabbit","🐰","ar"],["Sun","☀️","ess"],["Tiger","🐯","tee"],["Umbrella","☂️","you"],
+ ["Owl","🦉","oh"],["Penguin","🐧","pee"],["Quail","🐦","cue"],["Rainbow","🌈","ar"],["Swordfish","🐟","ess"],["Tiger","🐯","tee"],["Umbrella","☂️","you"],
  ["Van","🚐","vee"],["Watch","⌚","double you"],["Xylophone",XSVG,"ex"],["Yoyo","🪀","why"],["Zebra","🦓","zed"]];
 /* Gambar foto sebenar (dari Afiq, Gemini) dalam gambar/*.webp. Perkataan tanpa foto kekal emoji. */
 const PIC={ayam:'chicken',bola:'ball',epal:'apple',feri:'ferry',gajah:'elephant',harimau:'tiger',ikan:'fish',jam:'clock',kucing:'tabby',
@@ -469,7 +469,8 @@ const PIC={ayam:'chicken',bola:'ball',epal:'apple',feri:'ferry',gajah:'elephant'
  van:'van',wau:'wau',xilofon:'xylophone',yoyo:'yoyo',zirafah:'giraffe',itik:'duck',
  apple:'apple',ball:'ball',cat:'cat',dog:'dog',egg:'egg',fan:'fan',guitar:'guitar',hat:'hat',iguana:'iguana',key:'key',tiger:'tiger',
  xylophone:'xylophone',fish:'fish',duck:'duck',hen:'chicken',
- cicak:'gecko',daun:'leaf',qanun:'qanun',bulan:'moon',lion:'lion',moon:'moon',nest:'nest'};
+ cicak:'gecko',daun:'leaf',qanun:'qanun',bulan:'moon',lion:'lion',moon:'moon',nest:'nest',
+ owl:'owl',penguin:'penguin',quail:'quail',rainbow:'rainbow',swordfish:'swordfish',umbrella:'umbrella',train:'train',vase:'vase'};
 const pic=(w,e)=>{const f=PIC[String(w).toLowerCase()];return f?`<img class="ph" src="gambar/${f}.webp" alt="" draggable="false">`:e};
 L.forEach((x,k)=>{x.wm=x.w;x.em=pic(x.w,x.e);x.nm=x.n;[x.we,x.ee,x.ne]=L_EN[k];x.ee=pic(x.we,x.ee)});
 const VOW=['a','e','i','o','u'];
