@@ -1,5 +1,5 @@
 {
- "version": "dbd37c23e6",
+ "version": "45cb349d19",
  "core": {
   "files": {
    "/app/": "21b60487532d",
@@ -504,9 +504,9 @@
     "/app/kenal-abc/audio/suku-zi.mp3": "2a04ce6009a6",
     "/app/kenal-abc/audio/suku-zo.mp3": "4279ed2cf1cb",
     "/app/kenal-abc/audio/suku-zu.mp3": "10618cf8f7b4",
-    "/app/kenal-abc/": "c12b845075fb"
+    "/app/kenal-abc/": "c4f959eb02fb"
    },
-   "bytes": 3022002
+   "bytes": 3046182
   },
   "kenal-jawi": {
    "files": {
