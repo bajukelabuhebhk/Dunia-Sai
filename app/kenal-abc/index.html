@@ -263,6 +263,9 @@ a.btn{text-decoration:none;display:inline-block}
 /* Surih: picture + word shown after the letter is traced (replaces the hint line, so nothing jumps) */
 .rw{display:flex;align-items:center;justify-content:center;gap:12px;min-height:3.2rem;animation:pop .5s}
 .rw .pic{font-size:2.8rem;line-height:1}
+.ph{width:1.15em;height:1.15em;object-fit:contain;vertical-align:middle;mix-blend-mode:multiply;border-radius:.18em;-webkit-user-drag:none;user-select:none}
+.fish .bd .ph{width:62px;height:62px;border-radius:50%;background:#fff;mix-blend-mode:normal;box-shadow:0 0 0 3px rgba(255,255,255,.6)}
+.big .pic .ph{width:1.5em;height:1.5em}
 .rw .word{font-size:2rem;line-height:1}
 #th{min-height:3.2rem;display:flex;align-items:center;justify-content:center}
 
@@ -456,11 +459,18 @@ let LANG=(()=>{try{return localStorage.getItem('abc_lang')==='en'?'en':'ms'}catc
 const EN=()=>LANG==='en';
 const tx=(ms,en)=>LANG==='en'?en:ms;
 // English example word, picture and letter name (how the phone should say it)
-const L_EN=[["Apple","🍎","ay"],["Ball","⚽","bee"],["Cat","🐱","see"],["Duck","🦆","dee"],["Egg","🥚","ee"],["Fish","🐟","ef"],["Goat","🐐","jee"],
- ["Hat","🎩","aitch"],["Insect","🐞","eye"],["Juice","🧃","jay"],["Kite","🪁","kay"],["Lion","🦁","el"],["Moon","🌙","em"],["Nose","👃","en"],
+const L_EN=[["Apple","🍎","ay"],["Ball","⚽","bee"],["Cat","🐱","see"],["Dog","🐶","dee"],["Egg","🥚","ee"],["Fan","🪭","ef"],["Guitar","🎸","jee"],
+ ["Hat","🎩","aitch"],["Iguana","🦎","eye"],["Juice","🧃","jay"],["Key","🔑","kay"],["Lion","🦁","el"],["Moon","🌙","em"],["Nose","👃","en"],
  ["Octopus","🐙","oh"],["Penguin","🐧","pee"],["Queen","👑","cue"],["Rabbit","🐰","ar"],["Sun","☀️","ess"],["Tiger","🐯","tee"],["Umbrella","☂️","you"],
  ["Van","🚐","vee"],["Watch","⌚","double you"],["Xylophone",XSVG,"ex"],["Yoyo","🪀","why"],["Zebra","🦓","zed"]];
-L.forEach((x,k)=>{x.wm=x.w;x.em=x.e;x.nm=x.n;[x.we,x.ee,x.ne]=L_EN[k]});
+/* Gambar foto sebenar (dari Afiq, Gemini) dalam gambar/*.webp. Perkataan tanpa foto kekal emoji. */
+const PIC={ayam:'chicken',bola:'ball',epal:'apple',feri:'ferry',gajah:'elephant',harimau:'tiger',ikan:'fish',jam:'clock',kucing:'tabby',
+ lembu:'cow',monyet:'monkey',nanas:'pineapple',oren:'orange',pisang:'banana',rumah:'house',sotong:'squid',tikus:'mouse',ular:'snake',
+ van:'van',wau:'wau',xilofon:'xylophone',yoyo:'yoyo',zirafah:'giraffe',itik:'duck',
+ apple:'apple',ball:'ball',cat:'cat',dog:'dog',egg:'egg',fan:'fan',guitar:'guitar',hat:'hat',iguana:'iguana',key:'key',tiger:'tiger',
+ xylophone:'xylophone',fish:'fish',duck:'duck',hen:'chicken'};
+const pic=(w,e)=>{const f=PIC[String(w).toLowerCase()];return f?`<img class="ph" src="gambar/${f}.webp" alt="" draggable="false">`:e};
+L.forEach((x,k)=>{x.wm=x.w;x.em=pic(x.w,x.e);x.nm=x.n;[x.we,x.ee,x.ne]=L_EN[k];x.ee=pic(x.we,x.ee)});
 const VOW=['a','e','i','o','u'];
 const isVowel=x=>VOW.includes(x.l);
 // Consonants used in Suku Kata (Q and X make no simple Malay syllables)
@@ -472,11 +482,11 @@ let WORDS=[
  ["i-tik","🦆"],["jam","⏰"],["ka-ki","🦶"],["ku-da","🐴"],["kek","🎂"],["lo-ri","🚚"],["la-bu","🎃"],
  ["ma-ta","👀"],["na-si","🍚"],["o-ren","🍊"],["pin-tu","🚪"],["ro-ti","🍞"],["su-su","🥛"],["to-pi","🧢"],
  ["u-lar","🐍"],["u-bi","🍠"],["wau","🪁"]
-].map(([s,e])=>({s:s.split('-'),w:s.replace(/-/g,''),e}));
+].map(([s,e])=>({s:s.split('-'),w:s.replace(/-/g,''),e:pic(s.replace(/-/g,''),e)}));
 const WORDS_MS=WORDS;
 // English Eja Kata words (short words, one group each)
 const WORDS_EN=[["ant","🐜"],["bus","🚌"],["bat","🦇"],["bed","🛏️"],["cat","🐱"],["cup","☕"],["duck","🦆"],["egg","🥚"],["fish","🐟"],["frog","🐸"],
- ["hat","🎩"],["hen","🐔"],["log","🪵"],["map","🗺️"],["pin","📌"],["ship","🚢"],["sun","☀️"],["web","🕸️"]].map(([w,e])=>({s:[w],w,e,en:true}));
+ ["hat","🎩"],["hen","🐔"],["log","🪵"],["map","🗺️"],["pin","📌"],["ship","🚢"],["sun","☀️"],["web","🕸️"]].map(([w,e])=>({s:[w],w,e:pic(w,e),en:true}));
 function applyLang(){
   L.forEach(x=>{x.w=EN()?x.we:x.wm;x.e=EN()?x.ee:x.em;x.n=EN()?x.ne:x.nm});
   WORDS=EN()?WORDS_EN:WORDS_MS;
@@ -1164,7 +1174,7 @@ function spell(){
 const KB_EN=[["cat","🐱",["c","a","t"]],["bus","🚌",["b","u","s"]],["hat","🎩",["h","a","t"]],["bed","🛏️",["b","e","d"]],["hen","🐔",["h","e","n"]],
  ["cup","☕",["c","u","p"]],["map","🗺️",["m","a","p"]],["bat","🦇",["b","a","t"]],["log","🪵",["l","o","g"]],["pin","📌",["p","i","n"]],
  ["sun","☀️",["s","u","n"]],["web","🕸️",["w","e","b"]],["fish","🐟",["f","i","sh"]],["ship","🚢",["sh","i","p"]],["frog","🐸",["f","r","o","g"]],["duck","🦆",["d","u","ck"]]]
- .map(([w,e,s])=>({w,e,s,en:true}));
+ .map(([w,e,s])=>({w,e:pic(w,e),s,en:true}));
 // How the phone says each English sound (sounds, not letter names)
 const SND_EN={a:'ah',e:'eh',i:'ih',o:'o',u:'uh',b:'buh',c:'kuh',ck:'kuh',d:'duh',f:'fff',g:'guh',h:'huh',l:'lll',m:'mmm',n:'nnn',p:'puh',r:'rrr',s:'sss',t:'tuh',w:'wuh',sh:'shh'};
 const KBc=(w,x)=>w.en?{t:SND_EN[x]||x,l:'en'}:Sc(x);
