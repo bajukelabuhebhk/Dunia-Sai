@@ -1,5 +1,5 @@
 {
- "version": "b5c69a1b24",
+ "version": "4987e9661a",
  "core": {
   "files": {
    "/app/": "21b60487532d",
@@ -524,6 +524,7 @@
     "/app/kenal-abc/gambar/hat.webp": "175fe4a616a1",
     "/app/kenal-abc/gambar/house.webp": "4e59cb916b39",
     "/app/kenal-abc/gambar/iguana.webp": "e5565757b252",
+    "/app/kenal-abc/gambar/kaleidoscope.webp": "16d967c620f5",
     "/app/kenal-abc/gambar/key.webp": "dcdfd8712329",
     "/app/kenal-abc/gambar/leaf.webp": "d7e9a092c27d",
     "/app/kenal-abc/gambar/lion.webp": "36de65354fc1",
@@ -547,12 +548,16 @@
     "/app/kenal-abc/gambar/umbrella.webp": "f85e0bdde469",
     "/app/kenal-abc/gambar/van.webp": "c9c236fd9eb7",
     "/app/kenal-abc/gambar/vase.webp": "69620c2138b1",
+    "/app/kenal-abc/gambar/watermelon.webp": "b14c671afcc3",
     "/app/kenal-abc/gambar/wau.webp": "eea1d366538b",
+    "/app/kenal-abc/gambar/xrayfish.webp": "6d3d8accbcb0",
     "/app/kenal-abc/gambar/xylophone.webp": "ecb36a22c72a",
+    "/app/kenal-abc/gambar/yak.webp": "6d05d889b4b8",
     "/app/kenal-abc/gambar/yoyo.webp": "8f479f8e57c9",
-    "/app/kenal-abc/": "2d4493fdf72f"
+    "/app/kenal-abc/gambar/zeppelin.webp": "8de9472f220b",
+    "/app/kenal-abc/": "4c57411b435c"
    },
-   "bytes": 3623441
+   "bytes": 3708860
   },
   "kenal-jawi": {
    "files": {
