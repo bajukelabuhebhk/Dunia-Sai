@@ -67,15 +67,25 @@
       {
         id: 'boss-gerai', name: 'Boss Gerai', path: '/app/boss-gerai/', img: '/img/boss-gerai.jpg',
         subject: 'Duit dan niaga', age: '6 hingga 12 tahun', price: 9.9, pakej: true,
-        desc: 'Buka gerai pasar malam: ambil pesanan 3 bahasa, masak, kira baki duit dan urus stok.',
+        desc: 'Buka gerai di 10 pasar Malaysia: gabung bahan, masak 60 menu di dapur dan kira baki duit pembeli.',
+        free: '3 lokasi Kuala Lumpur',
+        lic: { store: 'boss_gerai_lesen', pk2: 8 },
+      },
+      {
+        // 18 Nov 2026 (Afiq): Boss Gerai gaya lama (sebelum gaya Overcooked 14 Nov) kembali sebagai game sendiri.
+        // Tidak dijual asing: lesen Boss Gerai (PK2 game 8) membuka kedua-duanya, jadi tiada nombor PK2 baharu.
+        // Simpanan lama RAJA_GERAI_RG_CC_001_V1 dikekalkan supaya kemajuan pemain lama kembali.
+        id: 'street-venture', name: 'Street Venture', path: '/app/street-venture/', img: '/img/street-venture.jpg',
+        subject: 'Duit dan niaga', age: '6 hingga 12 tahun', price: 9.9, pakej: false, sekali: 'boss-gerai',
+        desc: 'Boss Gerai versi klasik: urus gerai pasar malam di 10 lokasi, ambil pesanan dalam BM, English dan Mandarin, masak, kira baki duit dan urus stok.',
         free: '3 lokasi Kuala Lumpur',
         lic: { store: 'boss_gerai_lesen', pk2: 8 },
       },
       {
         id: 'ember-code', name: 'Ember Code', path: '/app/ember-code/', img: '/img/ember-code.jpg',
-        subject: 'Koding', age: '5 hingga 15 tahun', price: 9.9, pakej: true,
-        desc: 'Tower defence sambil belajar kod: corak, gelung, logik, hingga Python.',
-        free: 'Peta 1 hingga 3',
+        subject: 'Koding', age: '7 hingga 12 tahun', price: 9.9, pakej: true,
+        desc: 'Tower defence sambil belajar kod: susun arahan JIKA, ULANG dan SASAR supaya menara berfikir sendiri, kemudian lihat kodnya dalam Python. 15 peta.',
+        free: 'Bab 1 (peta 1 hingga 3)',
         lic: { store: 'ember_code_lesen', pk2: 9 },
       },
       {
@@ -93,6 +103,16 @@
         lic: { store: 'robot_rumble_lesen', pk2: 11 },
       },
       {
+        // 17 Nov 2026 (Afiq): 3D TIDAK dijual asing. Gabungan 2D + 3D RM19.90 (3D bernilai RM29.90),
+        // pemilik 2D naik taraf RM12.90. Kod gabungan = PK2 game 11 + 12. Pakej STEM/Semua kekal 2D sahaja.
+        id: 'robot-rumble-3d', name: 'Robot Rumble 3D', path: '/app/robot-rumble-3d/', img: '/img/robot-rumble-3d.jpg',
+        subject: 'Robotik dan memandu', age: '8 hingga 14 tahun', price: 19.9, pakej: false, gabung: 'robot-rumble',
+        hargaLabel: '2D + 3D RM19.90 · naik taraf RM12.90',
+        desc: 'Sambungan Robot Rumble: pandu robot sendiri merentas 5 pulau dalam dunia 3D, 18 misi, dan lumba bersama sehingga 8 kawan dalam 👥 Bilik.',
+        free: 'Misi M26 hingga M28',
+        lic: { store: 'robot_rumble_3d_lesen', pk2: 12 },
+      },
+      {
         // Percuma sepenuhnya: tiada `lic`, jadi launcher terus anggap versi penuh dan tidak minta kod
         id: 'lembah-embun', name: 'Lembah Embun', path: '/app/lembah-embun/', img: '/img/lembah-embun.jpg',
         subject: 'Santai dan Jawi', age: 'Semua umur', price: 0, pakej: true,
@@ -106,6 +126,19 @@
         desc: 'Pulau terapung yang tenang di atas lautan awan: berkebun, bancuh teh untuk tetamu Cloudrest, alkimia ikut rentak dan Mod Zen. Tiada timer, tiada tekanan.',
         free: 'Percuma sepenuhnya',
       },
+      {
+        id: 'misi-selamat-ubat', name: 'Misi Selamat Ubat', path: '/app/misi-selamat-ubat/', img: '/img/misi-selamat-ubat.jpg',
+        subject: 'Kesihatan dan keselamatan ubat', age: '9 hingga 12 tahun', price: 0, pakej: false,
+        desc: 'Dua peranan: simpan ubat dengan selamat di rumah, dan jadi pegawai farmasi yang mengimbas label, tarikh luput dan ubat rosak di kaunter.',
+        free: 'Percuma sepenuhnya',
+      },
+      {
+        // Percuma sepenuhnya (16 Nov 2026, Afiq). BGM CC0 Komiku, lihat app/skuad-penjaga-sungai/LESEN-MUZIK.md
+        id: 'skuad-penjaga-sungai', name: 'Skuad Penjaga Sungai', path: '/app/skuad-penjaga-sungai/', img: '/img/skuad-penjaga-sungai.jpg',
+        subject: 'Kitar semula dan penapisan air', age: '7 hingga 12 tahun', price: 0, pakej: false,
+        desc: 'Asingkan sisa ke tong yang betul sebelum ia jatuh ke sungai, dan cuci penapis air berlapis. 15 peta dari hulu kampung ke hutan bakau.',
+        free: 'Percuma sepenuhnya',
+      },
     ],
 
     // Signing key number -> Ed25519 public key, the same one inside every game. It can check codes, not make them.
@@ -115,7 +148,7 @@
     // Penjana lesen (/mnt/project-files/game/penjana-lesen-dunia-sai.html) ada senarai yang sama: ubah kedua-dua tempat.
     // Game percuma (tiada `lic`) tidak masuk mana-mana pakej.
     PAKEJ: {
-      id: 'semua', name: 'Pakej Semua 10 Game', price: 50,
+      id: 'semua', name: 'Pakej Semua 10 Game', price: 60,
       games: ['kenal-jawi', 'kenal-abc', 'wira-matematik', 'hikayat-sungai', 'wonder-island', 'kembara-malaysia', 'boss-gerai', 'ember-code', 'nakhoda-jawi', 'robot-rumble'],
       note: '1 kod lesen buka kesemua 10 game berbayar Dunia Sai. Pembeli Pakej 5 Game sebelum ini dapat naik taraf percuma.',
     },
@@ -137,8 +170,8 @@
       'pakej-5-game': {
         title: 'Pakej Semua 10 Game',
         heading: 'Pakej Semua 10 Game',
-        lead: 'Jawi, ABC, Matematik, Sains, English, Geografi, Duit, Koding dan Robotik dalam satu apps. 10 game, satu kod, RM50 sahaja.',
-        price: 50,
+        lead: 'Jawi, ABC, Matematik, Sains, English, Geografi, Duit, Koding dan Robotik dalam satu apps. 10 game, satu kod, RM60 sahaja.',
+        price: 60,
         games: ['kenal-jawi', 'kenal-abc', 'wira-matematik', 'hikayat-sungai', 'wonder-island', 'kembara-malaysia', 'boss-gerai', 'ember-code', 'nakhoda-jawi', 'robot-rumble'],
         startsAt: '2026-10-26T00:00:00+08:00',
         points: [
@@ -156,7 +189,7 @@
   DS.pakejGames = (P) => (P || DS.PAKEJ).games.map(DS.game).filter(Boolean);
   // Jumlah jika beli game dalam pakej satu-satu
   DS.pakejWorth = (P) => DS.pakejGames(P).reduce((a, g) => a + g.price, 0);
-  // 9.9 -> "RM9.90", 50 -> "RM50"
+  // 9.9 -> "RM9.90", 60 -> "RM60"
   DS.rm = (n) => 'RM' + (Number.isInteger(n) ? String(n) : n.toFixed(2));
 
   global.DS = DS;

@@ -582,6 +582,8 @@ body{height:var(--rr-vh,100dvh)}
     </button>
   </nav>
   <div class="utils">
+    <a class="btn" id="btn-3d" href="/app/robot-rumble-3d/" title="Robot Rumble 3D: pandu robot sendiri" style="text-decoration:none;color:inherit;display:inline-flex;align-items:center;font-weight:900">🚀 3D</a>
+    <button class="btn btn-icon" id="btn-bilik2d" type="button" title="Pertandingan Rekacipta: main bersama kawan" aria-label="Pertandingan Rekacipta" style="font-size:18px">👥</button>
     <button class="btn btn-icon gfx-btn" id="btn-gfx" type="button" aria-label="Compatibility graphics mode" aria-pressed="false" title="Compatibility graphics mode"><span id="gfx-icon" aria-hidden="true">◈</span></button>
     <button class="btn btn-icon" id="btn-sound" type="button" data-i18n-aria="sound_aria" aria-label="Sound" aria-pressed="true">
       <svg class="ico" id="snd-on" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2" aria-hidden="true"><path d="M15.54 8.46a5 5 0 010 7.07m2.83-9.9a9 9 0 010 12.73M5.59 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.59l4.7-4.7c.63-.63 1.71-.19 1.71.7v14c0 .89-1.08 1.34-1.71.71L5.59 15z" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -4750,6 +4752,7 @@ var KJL2=(function(){
     if (race.rival && showGhosts) list.push([race.rival, race.rival.bp, race.rival.stats, 'RX-9', '232,121,249']);
     if (race.pb && showGhosts) list.push([race.pb, race.pb.bp || sim.bp, race.pb.stats || sim.stats, t('ghost_best'), '56,189,248']);
     if (race.challenger) list.push([race.challenger, race.challenger.bp, race.challenger.stats, race.challenger.name, '251,146,60']);
+    if (window.RR2DMP) for (const g of window.RR2DMP.ghosts(missionId)) list.push([g, g.bp, g.stats, g.name, g.rgb]);
     for (const [g, bp, stats, name, col] of list) {
       if (!bp.wheel_rear || !bp.wheel_front) continue;
       const pose = ghostPose(g, bp, stats, tNow);
@@ -5111,6 +5114,7 @@ var KJL2=(function(){
   }
   function challengeOnEnd(r) {
     if (r.success) lastWinRun = { mid: r.missionId, bp: { ...sim.bp }, program: sim.program.map(b => ({ ...b })), t: r.t, stars: race.starsEarned };
+    if (r.success && window.RR2DMP) try { window.RR2DMP.onWin(encodeRun(r.missionId, sim.bp, sim.program, r.t, robotName), r.t); } catch (e) {}
     if (!challenge || challenge.mid !== r.missionId) return;
     challenge.attempts++;
     if (r.success && r.t < challenge.t && !challenge.beaten) {
@@ -6602,7 +6606,262 @@ var KJL2=(function(){
       });
     requestAnimationFrame(t0 => { lastFrame = t0; resizeRig(); requestAnimationFrame(frame); });
   }
+  // RR-MP-2D: API untuk Pertandingan Rekacipta (bilik2d.js)
+  window.RR2D = {
+    mission: () => missionId, count: () => RR.MISSION_IDS.length, missionName, locked: id => needLicence(id), name: () => robotName,
+    setMission: id => { closeModal('modal-missions'); setMission(id, false); },
+    toBuild: () => switchTab('build'), toTest: () => switchTab('test'), decodeRun,
+    loadDesign(bp, prog) { blueprint = { ...RR.DEFAULT_BLUEPRINT, ...RR.sanitizeBlueprint(bp) }; fixTuning(blueprint); program = withIds(prog); refreshBuild(); save(); }
+  };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+})();
+
+</script>
+<script>
+/* Robot Rumble 2D · Pertandingan Rekacipta dalam bilik (RR-MP-2D-001, 17 Nov 2026)
+   2–8 pemain, kod 4 huruf (server rr-bilik yang sama dengan 3D, bilik jenis '2d').
+   Aliran: hos pilih misi + masa → semua bina & kod robot sendiri, setiap ujian yang lulus dihantar automatik
+   (masa terbaik sahaja) → masa tamat / semua tekan Siap → Lumba Akhir: semua robot dilepaskan serentak
+   sebagai bayang di trek yang sama, setiap peranti main semula (replay) setiap reka bentuk untuk sahkan masa.
+   Selamat untuk kanak-kanak: tiada chat teks, nama ditapis, reaksi emoji tetap sahaja.
+   Pertandingan tidak mengubah bintang/kemajuan solo (ujian biasa masih dikira seperti biasa). */
+(function () {
+'use strict';
+var API = window.RR2D; if (!API) return;
+var DEFAULT_SERVER = 'https://rr-bilik.robotrumble.workers.dev';
+var EMOJI = ['👍', '😄', '😮', '🔥', '🏁', '👋'];
+var NAME_KEY = 'rr3d_mp_nama';
+function qs(k) { try { return new URLSearchParams(location.search).get(k); } catch (e) { return null; } }
+function ls(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } }
+var SERVER = (qs('server') || ls('rr3d_mp_server') || DEFAULT_SERVER).replace(/\/$/, '');
+if (qs('server')) ls('rr3d_mp_server', qs('server'));
+function $(id) { return document.getElementById(id); }
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+function cleanName(n) { return String(n || '').replace(/[^\p{L}\p{N} ]/gu, '').replace(/\s+/g, ' ').trim().slice(0, 12); }
+function rgb(hex) { var n = parseInt(String(hex).slice(1), 16); return ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255); }
+function mid(code) { return parseInt(String(code).slice(1), 10) || 1; }
+function mcode(id) { return 'M' + (id < 10 ? '0' : '') + id; }
+function mmss(ms) { var s = Math.max(0, Math.ceil(ms / 1000)); return Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2); }
+
+/* ---------- gaya ---------- */
+var css = document.createElement('style');
+css.textContent = [
+  '#m2Box{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;background:rgba(2,6,23,.78);padding:12px}',
+  '#m2Box[hidden]{display:none}',
+  '#m2Card{width:min(460px,100%);max-height:100%;overflow-y:auto;background:#0f172a;border:1px solid #334155;border-radius:18px;padding:16px;box-shadow:0 20px 50px rgba(0,0,0,.5);color:#e2e8f0;font-family:inherit}',
+  '#m2Card h2{margin:0 0 4px;font-size:20px;color:#fbbf24}',
+  '#m2Card .sub{color:#94a3b8;font-size:12.5px;margin-bottom:12px;line-height:1.45}',
+  '#m2Card label{display:block;font-size:12px;font-weight:800;color:#bae6fd;margin:10px 0 4px}',
+  '#m2Card input,#m2Card select{width:100%;min-height:46px;border-radius:12px;border:1px solid #334155;background:#020617;color:#fff;font:inherit;font-size:16px;padding:0 12px;box-sizing:border-box}',
+  '#m2Code{text-transform:uppercase;letter-spacing:.3em;font-weight:900;text-align:center}',
+  '.m2-row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}.m2-row .btn{flex:1;min-height:48px}',
+  '.m2-kod{font:900 40px ui-monospace,monospace;letter-spacing:.25em;text-align:center;color:#fff;background:#020617;border-radius:14px;padding:8px 0;margin:6px 0}',
+  '.m2-p{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:12px;background:#111c33;margin-top:6px;font-weight:800}',
+  '.m2-p i{width:16px;height:16px;border-radius:50%;flex:none}.m2-p .r{margin-left:auto;font-size:12px;color:#94a3b8;font-family:ui-monospace,monospace}.m2-p .r.ok{color:#34d399}',
+  '.m2-emo{display:flex;gap:6px;justify-content:center;margin-top:12px}.m2-emo button{font-size:22px;width:46px;height:46px;border-radius:12px;background:#1e293b;border:0}',
+  '.m2-err{color:#fda4af;font-size:13px;font-weight:700;margin-top:8px;min-height:1em}',
+  '.m2-rank{display:flex;align-items:center;gap:10px;padding:10px;border-radius:12px;background:#111c33;margin-top:6px;font-weight:800;font-size:15px}',
+  '.m2-rank .m{font-size:24px;width:32px;text-align:center}.m2-rank .t{margin-left:auto;font-family:ui-monospace,monospace}',
+  '#m2Hud{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:70;display:flex;gap:8px;align-items:center;background:rgba(15,23,42,.94);border:2px solid #f59e0b;border-radius:999px;padding:6px 8px 6px 14px;font-weight:900;font-size:14px;color:#fff;box-shadow:0 8px 24px rgba(0,0,0,.4);white-space:nowrap}',
+  '#m2Hud[hidden]{display:none}#m2Hud .tm{font-family:ui-monospace,monospace;font-size:17px;color:#fbbf24}#m2Hud .bt{color:#a7f3d0;font-size:12.5px}',
+  '#m2Hud button{border:0;border-radius:999px;background:#1e293b;color:#fff;font:inherit;font-size:13px;padding:8px 12px;cursor:pointer}',
+  '#m2Float{position:fixed;left:50%;top:18%;transform:translateX(-50%);z-index:90;pointer-events:none;font-size:15px;font-weight:900;text-align:center;color:#fff}',
+  '#m2Float div{background:rgba(15,23,42,.9);border-radius:14px;padding:6px 14px;margin-top:6px;animation:m2Up 2.4s ease-out forwards}#m2Float b{font-size:26px;vertical-align:middle}',
+  '@keyframes m2Up{0%{opacity:0;transform:translateY(10px)}12%{opacity:1;transform:none}80%{opacity:1}100%{opacity:0;transform:translateY(-20px)}}'
+].join('\n');
+document.head.appendChild(css);
+var box = document.createElement('div'); box.id = 'm2Box'; box.hidden = true; box.innerHTML = '<div id="m2Card" role="dialog" aria-modal="true"></div>'; document.body.appendChild(box);
+var hud = document.createElement('div'); hud.id = 'm2Hud'; hud.hidden = true; document.body.appendChild(hud);
+var flo = document.createElement('div'); flo.id = 'm2Float'; document.body.appendChild(flo);
+
+/* ---------- keadaan ---------- */
+var ws = null, room = null, me = null, contest = null, finals = null, ghosts = [], podiumT = 0, tick = 0;
+function card(h) { $('m2Card').innerHTML = h; box.hidden = false; }
+function closeBox() { box.hidden = true; }
+function float(h) { var d = document.createElement('div'); d.innerHTML = h; flo.appendChild(d); setTimeout(function () { d.remove(); }, 2500); }
+function send(o) { if (ws && ws.readyState === 1) ws.send(JSON.stringify(o)); }
+function player(id) { if (!room) return null; for (var i = 0; i < room.pemain.length; i++) if (room.pemain[i].id === id) return room.pemain[i]; return null; }
+function emoRow() { return '<div class="m2-emo">' + EMOJI.map(function (e, i) { return '<button data-e="' + i + '" aria-label="Reaksi ' + e + '">' + e + '</button>'; }).join('') + '</div>'; }
+function wireEmo() { Array.prototype.forEach.call($('m2Card').querySelectorAll('.m2-emo button'), function (b) { b.onclick = function () { send({ t: 'emo', i: +b.dataset.e }); }; }); }
+
+/* Hook yang dipanggil oleh game 2D */
+window.RR2DMP = {
+  ghosts: function (missionId) { return finals && finals.mid === missionId ? ghosts : []; },
+  onWin: function (code, t) {
+    if (!contest || API.mission() !== contest.mid) return;
+    if (contest.best == null || t < contest.best - 1e-6) { contest.best = t; send({ t: 'hantar', lumba: contest.lumba, kod: code, masa: +t.toFixed(2) }); float('<b>📤</b> Masa ' + t.toFixed(2) + ' s dihantar'); }
+    else float('Masa terbaik anda masih ' + contest.best.toFixed(2) + ' s');
+    renderHud();
+  }
+};
+
+/* ---------- skrin: masuk ---------- */
+function showJoin(code, err) {
+  var nm = ls(NAME_KEY) || API.name() || '';
+  card('<h2>👥 Pertandingan Rekacipta</h2><div class="sub">2–8 jurutera, setiap orang guna peranti sendiri. Semua dapat misi dan masa yang sama untuk bina dan kod robot. Bila masa tamat, semua robot dilepaskan serentak di trek yang sama!</div>' +
+    '<label for="m2Name">Nama jurutera</label><input id="m2Name" maxlength="12" autocomplete="off" value="' + esc(cleanName(nm)) + '" placeholder="Contoh: Aisyah">' +
+    '<div class="m2-row"><button class="btn btn-go" id="m2New">➕ Cipta bilik</button></div>' +
+    '<label for="m2Code">Ada kod bilik kawan?</label><input id="m2Code" maxlength="4" autocomplete="off" value="' + esc(code || '') + '" placeholder="ABCD">' +
+    '<div class="m2-row"><button class="btn btn-sky" id="m2Join">🚪 Sertai bilik</button></div>' +
+    '<div class="m2-err" id="m2Err">' + esc(err || '') + '</div>' +
+    '<div class="m2-row"><button class="btn" id="m2Close">Tutup</button></div>');
+  $('m2Close').onclick = closeBox;
+  function nameOk() { var n = cleanName($('m2Name').value); if (!n) { $('m2Err').textContent = 'Tulis nama dahulu (huruf dan nombor sahaja).'; return null; } ls(NAME_KEY, n); return n; }
+  $('m2New').onclick = function () {
+    var n = nameOk(); if (!n) return; $('m2Err').textContent = 'Mencipta bilik…';
+    fetch(SERVER + '/bilik/baru').then(function (r) { return r.json(); }).then(function (j) { if (!j.code) throw 0; connect(j.code, n); })
+      .catch(function () { $('m2Err').textContent = 'Tidak dapat sambung ke server bilik. Semak internet.'; });
+  };
+  $('m2Join').onclick = function () {
+    var n = nameOk(); if (!n) return; var c = String($('m2Code').value || '').toUpperCase().replace(/[^A-Z]/g, '');
+    if (c.length !== 4) { $('m2Err').textContent = 'Kod bilik ada 4 huruf.'; return; }
+    connect(c, n);
+  };
+}
+
+/* ---------- sambungan ---------- */
+function connect(code, name) {
+  if (ws) try { ws.close(); } catch (e) { }
+  var url = SERVER.replace(/^http/, 'ws') + '/bilik/' + code + '/ws', opened = false, why = '';
+  try { ws = new WebSocket(url); } catch (e) { return showJoin(code, 'Tidak dapat sambung.'); }
+  var mine = ws;
+  ws.onopen = function () { opened = true; send({ t: 'masuk', jenis: '2d', nama: name }); };
+  ws.onmessage = function (e) { var m; try { m = JSON.parse(e.data); } catch (x) { return; } if (m.t === 'ralat' && m.kod === 'jenis_lain') why = 'Kod ini untuk bilik lumba 3D. Buka Robot Rumble 3D untuk sertai.'; onMsg(m); };
+  ws.onclose = function () {
+    if (mine !== ws) return; ws = null; room = null; contest = null; hud.hidden = true;
+    showJoin(code, why || (opened ? 'Sambungan bilik terputus.' : 'Bilik penuh atau tidak dapat dibuka.'));
+  };
+}
+function leave() { if (ws) { var w = ws; ws = null; try { w.close(); } catch (e) { } } room = null; contest = null; finals = null; ghosts = []; hud.hidden = true; closeBox(); }
+
+function onMsg(m) {
+  if (m.t === 'bilik') {
+    var first = !room; room = m; me = m.anda;
+    if (contest && m.fasa === 'rekacipta') { contest.end = Date.now() + m.baki; renderHud(); if (!box.hidden && $('m2Live')) showLive(); }
+    else if (!contest && !finals && (first || !box.hidden)) showRoom();
+  }
+  else if (m.t === 'mula' && m.jenis === '2d') startContest(m);
+  else if (m.t === 'hantar') { var p = player(m.id); if (p && m.id !== me) float('<b>📤</b> ' + esc(p.nama) + ': ' + (+m.masa).toFixed(2) + ' s'); }
+  else if (m.t === 'akhir') startFinal(m);
+  else if (m.t === 'emo') { var q = player(m.id); float('<b>' + EMOJI[m.i] + '</b> ' + esc(q ? q.nama : '')); }
+  else if (m.t === 'ralat' && m.kod === 'belum_sedia') float('⏳ Tunggu semua pemain tekan Sedia');
+}
+
+/* ---------- skrin: bilik ---------- */
+function missionOptions(sel) {
+  var h = '';
+  for (var id = 1; id <= API.count(); id++) {
+    var lock = API.locked(id);
+    h += '<option value="' + mcode(id) + '"' + (mcode(id) === sel ? ' selected' : '') + (lock ? ' disabled' : '') + '>M' + id + ' · ' + esc(API.missionName(id)) + (lock ? ' 🔒' : '') + '</option>';
+  }
+  return h;
+}
+function showRoom() {
+  if (!room) return;
+  var mineP = player(me), host = mineP && mineP.hos, all = room.pemain.filter(function (p) { return !p.hos; }).every(function (p) { return p.sedia; });
+  var id = mid(room.misi);
+  var h = '<h2>👥 Bilik Pertandingan</h2><div class="sub">Beri kod ini kepada kawan. Mereka tekan 👥 → Sertai bilik.</div><div class="m2-kod">' + esc(room.code) + '</div>';
+  room.pemain.forEach(function (p) {
+    h += '<div class="m2-p"><i style="background:' + p.warna + '"></i>' + esc(p.nama) + (p.id === me ? ' (anda)' : '') + (p.hos ? ' 👑' : '') +
+      '<span class="r' + (p.sedia || p.hos ? ' ok' : '') + '">' + (p.hos ? 'Hos' : p.sedia ? '✅ Sedia' : '⏳ Belum sedia') + '</span></div>';
+  });
+  if (host) {
+    h += '<label for="m2Mis">Misi pertandingan</label><select id="m2Mis">' + missionOptions(room.misi) + '</select>';
+    h += '<label for="m2Min">Masa bina &amp; kod</label><select id="m2Min">' + [2, 3, 5, 8, 10].map(function (n) { return '<option value="' + n + '"' + (n === room.minit ? ' selected' : '') + '>' + n + ' minit</option>'; }).join('') + '</select>';
+  } else {
+    h += '<label>Misi pertandingan</label><div class="m2-p">M' + id + ' · ' + esc(API.missionName(id)) + (API.locked(id) ? ' 🔒' : '') + '</div>';
+    h += '<label>Masa bina &amp; kod</label><div class="m2-p">' + room.minit + ' minit</div>';
+  }
+  h += '<div class="sub" style="margin-top:8px">Setiap ujian yang lulus dihantar automatik (masa terbaik sahaja). Pertandingan tidak mengubah bintang misi anda.</div>';
+  if (host) h += '<div class="m2-row"><button class="btn btn-go" id="m2Go"' + (all ? '' : ' disabled style="opacity:.5"') + '>▶ Mula pertandingan' + (room.pemain.length < 2 ? ' (seorang)' : '') + '</button></div>';
+  else h += '<div class="m2-row"><button class="btn ' + (mineP && mineP.sedia ? 'btn-amber' : 'btn-go') + '" id="m2Ready">' + (mineP && mineP.sedia ? '✋ Batal sedia' : '✅ Saya sedia') + '</button></div>';
+  h += emoRow() + '<div class="m2-row"><button class="btn" id="m2Hide">⬇ Sembunyi</button><button class="btn" id="m2Leave">🚪 Keluar bilik</button></div>';
+  card(h); wireEmo();
+  if ($('m2Mis')) $('m2Mis').onchange = function () { send({ t: 'misi', misi: this.value }); };
+  if ($('m2Min')) $('m2Min').onchange = function () { send({ t: 'minit', v: +this.value }); };
+  if ($('m2Go')) $('m2Go').onclick = function () { send({ t: 'mula' }); };
+  if ($('m2Ready')) $('m2Ready').onclick = function () { var p = player(me); send({ t: 'sedia', v: !(p && p.sedia) }); };
+  $('m2Leave').onclick = leave; $('m2Hide').onclick = closeBox;
+}
+
+/* ---------- fasa rekacipta ---------- */
+function startContest(m) {
+  finals = null; ghosts = []; clearTimeout(podiumT);
+  var id = mid(m.misi);
+  if (API.locked(id)) { send({ t: 'siap', v: true }); card('<h2>🔒 Misi dikunci</h2><div class="sub">M' + id + ' perlukan versi penuh pada peranti ini. Anda masih boleh menonton lumba akhir nanti.</div><div class="m2-row"><button class="btn" id="m2Ok">OK</button></div>'); $('m2Ok').onclick = closeBox; contest = { mid: id, lumba: m.lumba, end: Date.now() + m.baki, best: null, locked: true }; renderHud(); return; }
+  contest = { mid: id, lumba: m.lumba, end: Date.now() + m.baki, best: null };
+  closeBox(); API.setMission(id); API.toBuild();
+  float('<b>🏁</b> Pertandingan M' + id + ' bermula! ' + Math.round(m.baki / 60000) + ' minit');
+  renderHud();
+}
+function renderHud() {
+  if (!contest) { hud.hidden = true; return; }
+  hud.hidden = false;
+  var mineP = player(me);
+  hud.innerHTML = '<span>⏱ <span class="tm">' + mmss(contest.end - Date.now()) + '</span></span><span class="bt">M' + contest.mid + ' · ' + (contest.best != null ? 'Terbaik ' + contest.best.toFixed(2) + ' s' : 'Belum lulus') + '</span>' +
+    '<button id="m2HudBtn" type="button">📋 Bilik</button>';
+  $('m2HudBtn').onclick = showLive;
+  if (mineP && mineP.siap) hud.querySelector('.bt').textContent += ' · ✅ Siap';
+}
+setInterval(function () { if (contest && !hud.hidden) { var e = hud.querySelector('.tm'); if (e) e.textContent = mmss(contest.end - Date.now()); } }, 500);
+function showLive() {
+  if (!room || !contest) return;
+  var mineP = player(me);
+  var rows = room.pemain.slice().sort(function (a, b) { return (a.terbaik == null) - (b.terbaik == null) || (a.terbaik || 0) - (b.terbaik || 0); });
+  var h = '<h2 id="m2Live">⏱ ' + mmss(contest.end - Date.now()) + ' · M' + contest.mid + '</h2><div class="sub">' + esc(API.missionName(contest.mid)) + '. Bina, kod dan uji di tab UJI. Masa terbaik anda dihantar automatik.</div>';
+  rows.forEach(function (p) {
+    h += '<div class="m2-p"><i style="background:' + p.warna + '"></i>' + esc(p.nama) + (p.id === me ? ' (anda)' : '') + (p.siap ? ' ✅' : '') +
+      '<span class="r' + (p.terbaik != null ? ' ok' : '') + '">' + (p.terbaik != null ? (+p.terbaik).toFixed(2) + ' s' : 'belum lulus') + '</span></div>';
+  });
+  h += emoRow() + '<div class="m2-row"><button class="btn ' + (mineP && mineP.siap ? 'btn-amber' : 'btn-go') + '" id="m2Siap">' + (mineP && mineP.siap ? '✋ Belum siap' : '✅ Saya siap') + '</button></div>';
+  if (mineP && mineP.hos) h += '<div class="m2-row"><button class="btn" id="m2End">⏹ Tamatkan sekarang (hos)</button></div>';
+  h += '<div class="m2-row"><button class="btn" id="m2Back">⬅ Teruskan bina</button><button class="btn" id="m2Leave">🚪 Keluar</button></div>';
+  card(h); wireEmo();
+  $('m2Siap').onclick = function () { var p = player(me); send({ t: 'siap', v: !(p && p.siap) }); };
+  if ($('m2End')) $('m2End').onclick = function () { send({ t: 'akhir' }); };
+  $('m2Back').onclick = closeBox; $('m2Leave').onclick = leave;
+}
+
+/* ---------- lumba akhir ---------- */
+function startFinal(m) {
+  var id = mid(m.misi), ok = [], bad = [];
+  contest = null; hud.hidden = true;
+  m.entri.forEach(function (e) {
+    if (!e.kod) { bad.push({ e: e, why: 'tiada robot lulus' }); return; }
+    var d = API.decodeRun(e.kod);
+    if (!d || d.error || d.mid !== id) { bad.push({ e: e, why: 'tidak sah' }); return; }
+    ok.push({ e: e, d: d });
+  });
+  ok.sort(function (a, b) { return a.d.t - b.d.t; });
+  var mine = null;
+  ghosts = ok.filter(function (r) { if (r.e.id === me) { mine = r; return false; } return true; })
+    .map(function (r) { return { xs: r.d.xs, stride: 1, t: r.d.t, bp: r.d.bp, stats: r.d.stats, name: r.e.nama, rgb: rgb(r.e.warna) }; });
+  finals = { mid: id, ok: ok, bad: bad };
+  if (API.locked(id)) { showPodium(); return; }
+  closeBox();
+  if (mine) API.loadDesign(mine.d.bp, mine.d.program);
+  API.setMission(id); API.toTest();
+  float('<b>🏁</b> Lumba Akhir! ' + ok.length + ' robot di trek');
+  var longest = ok.reduce(function (a, r) { return Math.max(a, r.d.t); }, 0);
+  clearTimeout(podiumT); podiumT = setTimeout(showPodium, (2.6 + Math.min(longest, 60) + 2.5) * 1000);
+}
+function showPodium() {
+  if (!finals) return;
+  var medal = ['🥇', '🥈', '🥉'], h = '<h2>🏆 Keputusan Pertandingan</h2><div class="sub">M' + finals.mid + ' · ' + esc(API.missionName(finals.mid)) + '. Masa disahkan dengan main semula setiap reka bentuk di peranti ini.</div>';
+  finals.ok.forEach(function (r, i) {
+    h += '<div class="m2-rank"><span class="m">' + (medal[i] || (i + 1)) + '</span><i style="width:14px;height:14px;border-radius:50%;background:' + r.e.warna + '"></i>' + esc(r.e.nama) + (r.e.id === me ? ' (anda)' : '') + '<span class="t">' + r.d.t.toFixed(2) + ' s</span></div>';
+  });
+  finals.bad.forEach(function (r) { h += '<div class="m2-rank"><span class="m">💥</span><i style="width:14px;height:14px;border-radius:50%;background:' + r.e.warna + '"></i>' + esc(r.e.nama) + '<span class="t" style="font-size:12px">' + r.why + '</span></div>'; });
+  h += emoRow() + '<div class="m2-row"><button class="btn" id="m2Replay">🔁 Tonton semula</button><button class="btn btn-go" id="m2Again">👥 Kembali ke bilik</button></div>';
+  card(h); wireEmo();
+  $('m2Replay').onclick = function () { closeBox(); API.toTest(); clearTimeout(podiumT); var longest = finals.ok.reduce(function (a, r) { return Math.max(a, r.d.t); }, 0); podiumT = setTimeout(showPodium, (2.6 + Math.min(longest, 60) + 2.5) * 1000); };
+  $('m2Again').onclick = function () { finals = null; ghosts = []; clearTimeout(podiumT); showRoom(); };
+}
+
+/* ---------- butang & pautan ---------- */
+var bb = $('btn-bilik2d');
+if (bb) bb.onclick = function () { if (contest) showLive(); else if (finals) showPodium(); else if (room) showRoom(); else showJoin(); };
+var auto = qs('bilik'); if (auto && /^[A-Za-z]{4}$/.test(auto)) setTimeout(function () { showJoin(auto.toUpperCase()); }, 600);
 })();
 
 </script>
