@@ -139,6 +139,13 @@
         desc: 'Asingkan sisa ke tong yang betul sebelum ia jatuh ke sungai, dan cuci penapis air berlapis. 15 peta dari hulu kampung ke hutan bakau.',
         free: 'Percuma sepenuhnya',
       },
+      {
+        // Percuma sepenuhnya (20 Nov 2026, Afiq): jambatan Kenal Jawi → Nakhoda Jawi. Suara = klip Kenal Jawi.
+        id: 'kembara-jawi-cilik', name: 'Kembara Jawi Cilik', path: '/app/kembara-jawi-cilik/', img: '/img/kembara-jawi-cilik.jpg',
+        subject: 'Jawi: huruf, sambung dan hukum ejaan', age: '4 hingga 12 tahun', price: 0, pakej: false,
+        desc: '5 tahap dari kenal huruf dan surih, suku kata, huruf sombong, hukum ejaan DBP hingga susun ayat. Jambatan dari Kenal Jawi ke Nakhoda Jawi.',
+        free: 'Percuma sepenuhnya',
+      },
     ],
 
     // Signing key number -> Ed25519 public key, the same one inside every game. It can check codes, not make them.
