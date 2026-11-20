@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Laluan Kompas · Hikayat Sungai Ilmu</title>
+<link rel="stylesheet" href="enjin/enjin.css">
+<link rel="manifest" href="/manifest.json"><script src="/shared/js/balik.js" defer></script>
+</head>
+<body>
+<script src="enjin/lesen.js"></script>
+<script src="enjin/enjin.js"></script>
+<script>
+/* Laluan 1: Laluan Kompas (Bandar 1 ke Bandar 2).
+   Puzzle maze dalam kabus. Di setiap simpang, papan tanda beri petunjuk arah (Utara, Timur, Selatan, Barat).
+   Jalan salah ada "kabus berpusing" yang bawa pemain balik ke simpang. Kompas di penjuru peta.
+   Misi sampingan: cari 3 kambing Pak Cik Musa di jalan salah. Si Kabus menjaga jalan keluar. */
+(() => {
+  const { L, S } = HS;
+  const W = 36, H = 24;
+  // simpang (plaza 3x3): pusat, dan ke mana kabus berpusing menghantar pemain
+  const SIMPANG = [[8, 12], [15, 12], [23, 18], [29, 18]];
+  const WARP = { '8,6': 0, '15,5': 1, '19,12': 1, '23,11': 2, '23,22': 2, '34,18': 3, '29,22': 3 };
+  function peta() {
+    const m = Array.from({ length: H }, () => Array(W).fill('r'));
+    const rect = (x0, y0, x1, y1, c) => { for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) if (m[y] && x >= 0 && x < W) m[y][x] = c; };
+    rect(1, 12, 7, 12, '.'); rect(3, 11, 3, 11, '.'); rect(2, 11, 2, 13, '.');      // pintu masuk dari Kampung
+    for (const [cx, cy] of SIMPANG) rect(cx - 1, cy - 1, cx + 1, cy + 1, '.');
+    rect(8, 4, 8, 10, '.'); rect(8, 14, 8, 19, '.'); rect(10, 12, 13, 12, '.');     // simpang 1
+    rect(15, 4, 15, 10, '.'); rect(17, 12, 20, 12, '.'); rect(15, 14, 15, 18, '.'); rect(16, 18, 21, 18, '.');   // simpang 2
+    rect(23, 9, 23, 16, '.'); rect(23, 20, 23, 22, '.'); rect(25, 18, 27, 18, '.');  // simpang 3
+    rect(31, 18, 34, 18, '.'); rect(29, 20, 29, 22, '.'); rect(29, 7, 29, 16, '.'); rect(30, 7, 34, 7, '.'); rect(33, 6, 34, 8, '.');   // simpang 4 dan jalan keluar
+    for (const k in WARP) { const [x, y] = k.split(',').map(Number); m[y][x] = 'w'; }
+    // bunga liar di sepanjang jalan
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (m[y][x] === '.' && ((x * 7 + y * 13) % 11 === 0)) m[y][x] = ',';
+    for (let x = 0; x < W; x++) { m[0][x] = 'T'; m[H - 1][x] = 'T'; }
+    for (let y = 0; y < H; y++) { m[y][0] = 'T'; m[y][W - 1] = 'T'; }
+    return m.map(r => r.join(''));
+  }
+
+  const f = HS.f;
+  const kambing = () => ['k1', 'k2', 'k3'].filter(id => !HS.ada(id)).length;
+  const simpang = () => f('simpang') || 0;
+
+  HS.mula({
+    id: 'laluan-1', ikon: '🧭', nama: L('Laluan Kompas', 'Compass Trail'), jenis: L('LALUAN 1', 'ROUTE 1'),
+    sub: L('Padang kabus di antara Kampung Tepi Sungai dan Pekan Bukit Besi.', 'A foggy meadow between the riverside village and Iron Hill Town.'),
+    muzik: 'fog', daun: false,
+    warna: { grass: ['#8fc77a', '#86bf70', '#7db667'], blade: '#5d9a4e' },
+    peta,
+    perlu: () => !!HS.st().f.buaya,
+    perluInfo: { tajuk: L('Kalahkan Sang Buaya dahulu', 'Beat Sang Buaya first'), teks: L('Laluan ini dibuka selepas empangan Sang Buaya pecah di Kampung Tepi Sungai.', 'This route opens after Sang Buaya\'s dam breaks in the riverside village.'), butang: L('🏠 Ke Kampung', '🏠 To the village'), ke: 'index.html#main' },
+    spawn: { mula: [2, 12], 'bandar-1': [2, 12], 'bandar-2': [33, 7], hadap: 1 },
+    watak: {
+      musa: { face: '👨‍🌾', name: L('Pak Cik Musa', 'Uncle Musa') },
+      kabus: { face: '<span style="filter:drop-shadow(0 0 8px #fff)">☁️</span>', name: L('Si Kabus Kelabu', 'Grey Mist') },
+    },
+    ents: [
+      { id: 'kancil', kind: 'npc', img: 'kancil', h: 30, em: '🦌', x: 3, y: 11, seru: () => !f('kompas') },
+      { id: 'musa', kind: 'npc', em: '👨‍🌾', x: 7, y: 11, seru: () => !f('musa') },
+      { id: 'sg1', kind: 'sign', x: 9, y: 11, huruf: '1', teks: [S('sign', 'Simpang 1: Ke Pekan Bukit Besi, ikut arah TIMUR.', 'Junction 1: To Iron Hill Town, go EAST.')] },
+      { id: 'sg2', kind: 'sign', x: 16, y: 11, huruf: '2', teks: [S('sign', 'Simpang 2: Jalan ke UTARA dan ke TIMUR berpusing dalam kabus. Jangan patah balik ke BARAT. Ikut arah yang tinggal.', 'Junction 2: The NORTH and EAST paths spin in the fog. Do not go back WEST. Take the path that is left.')] },
+      { id: 'sg3', kind: 'sign', x: 24, y: 17, huruf: '3', teks: [S('sign', 'Simpang 3: Ikut arah matahari TERBIT.', 'Junction 3: Follow the direction where the Sun RISES.')] },
+      { id: 'sg4', kind: 'sign', x: 30, y: 17, huruf: '4', teks: [S('sign', 'Simpang 4: Ikut arah jarum kompas menuding.', 'Junction 4: Go the way the compass needle points.')] },
+      { id: 'k1', kind: 'item', em: '🐐', size: 14, x: 15, y: 7 },
+      { id: 'k2', kind: 'item', em: '🐐', size: 14, x: 23, y: 21 },
+      { id: 'k3', kind: 'item', em: '🐐', size: 14, x: 33, y: 18 },
+      { id: 'c1', kind: 'chest', em: '🎁', x: 8, y: 19, pool: 'arah' },
+      { id: 'c2', kind: 'chest', em: '🎁', x: 34, y: 6, pool: 'arah' },
+      { id: 'kabus', kind: 'foe', em: '☁️', size: 24, x: 29, y: 10 },
+      { id: 'ke-kampung', kind: 'exit', x: 1, y: 12, arah: [-1, 0], ke: 'index.html#main', nama: L('Kampung Tepi Sungai', 'Riverside Village') },
+      { id: 'ke-bandar2', kind: 'exit', x: 34, y: 7, arah: [1, 0], ke: 'bandar-2.html', nama: L('Pekan Bukit Besi', 'Iron Hill Town'),
+        tutup: () => HS.ada('kabus'), tutupTeks: [S('kabus', 'Hooo... tiada siapa boleh lalu tanpa melawan aku!', 'Hooo... nobody passes without facing me!')] },
+    ],
+    misi: () => {
+      const n = !f('kompas') ? 0 : simpang() < 4 ? 1 : HS.ada('kabus') ? 2 : 3;
+      const kb = kambing();
+      const teks = [
+        L('Bercakap dengan Sang Kancil', 'Talk to Sang Kancil'),
+        L(`Baca papan tanda dan ikut kompas: Simpang ${Math.min(4, simpang() + 1)}/4 · 🐐 ${kb}/3`, `Read the signs and follow the compass: Junction ${Math.min(4, simpang() + 1)}/4 · 🐐 ${kb}/3`),
+        L(`Kalahkan Si Kabus Kelabu di utara Simpang 4 · 🐐 ${kb}/3`, `Defeat the Grey Mist north of Junction 4 · 🐐 ${kb}/3`),
+        L(`Teruskan ke timur, ke Pekan Bukit Besi ➜ · 🐐 ${kb}/3`, `Head east to Iron Hill Town ➜ · 🐐 ${kb}/3`),
+      ][n];
+      return { n, jumlah: 4, teks };
+    },
+    // kabus: makin luas pandangan selepas dapat tanglung Pak Cik Musa
+    kabus: () => f('tanglung') ? 5 : 3.8,
+    elak: (x, y) => HS.tileAt(x, y) === 'w',
+    langkah: (x, y) => {
+      SIMPANG.forEach(([cx, cy], i) => { if (Math.abs(x - cx) <= 1 && Math.abs(y - cy) <= 1 && simpang() < i + 1) f('simpang', i + 1); });
+      const w = WARP[x + ',' + y];
+      if (w !== undefined) {
+        const [tx, ty] = SIMPANG[w]; HS.SFX.warp(); HS.goyang(300);
+        HS.percik(x * 16 + 8, y * 16 + 8, 'rgba(255,255,255,.9)', 24);
+        setTimeout(() => { HS.lompat(tx, ty); HS.toast(HS.lang() === 'ms' ? `🌀 Kabus berpusing! Kembali ke Simpang ${w + 1}.` : `🌀 The fog spins! Back to Junction ${w + 1}.`); }, 120);
+      }
+    },
+    // kompas di penjuru kiri atas (selepas Sang Kancil beri kompas)
+    lukisSkrin: (c, time, VWp) => {
+      if (!f('kompas')) return;
+      const x = 22, y = 22, r = 17, wob = Math.sin(time / 380) * .08;
+      c.fillStyle = 'rgba(20,40,40,.35)'; c.beginPath(); c.arc(x + 1, y + 2, r + 2, 0, 7); c.fill();
+      c.fillStyle = '#fffdf4'; c.strokeStyle = '#7a4e28'; c.lineWidth = 2.5; c.beginPath(); c.arc(x, y, r, 0, 7); c.fill(); c.stroke();
+      c.fillStyle = '#2a170a'; c.font = 'bold 7px sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle';
+      const ms = HS.lang() === 'ms', U = ms ? ['U', 'T', 'S', 'B'] : ['N', 'E', 'S', 'W'];
+      c.fillStyle = '#c62828'; c.fillText(U[0], x, y - r + 5.5); c.fillStyle = '#2a170a'; c.fillText(U[1], x + r - 5, y); c.fillText(U[2], x, y + r - 5); c.fillText(U[3], x - r + 5, y);
+      c.save(); c.translate(x, y); c.rotate(wob);
+      c.fillStyle = '#e53935'; c.beginPath(); c.moveTo(0, -r + 9); c.lineTo(3, 0); c.lineTo(-3, 0); c.closePath(); c.fill();
+      c.fillStyle = '#90a4ae'; c.beginPath(); c.moveTo(0, r - 9); c.lineTo(3, 0); c.lineTo(-3, 0); c.closePath(); c.fill();
+      c.fillStyle = '#2a170a'; c.beginPath(); c.arc(0, 0, 1.6, 0, 7); c.fill(); c.restore();
+    },
+    masuk: async () => {
+      if (!f('kompas')) await HS.interact(HS.ent('kancil'));
+      else if (!HS.ada('kabus') && !f('sambut')) { f('sambut', true); }
+    },
+    bual: async e => {
+      const ms = HS.lang() === 'ms';
+      if (e.id === 'kancil') {
+        if (!f('kompas')) {
+          await HS.dialog([
+            S('kancil', 'Inilah Laluan Kompas. Kabusnya tebal, mudah sesat di sini!', 'This is the Compass Trail. The fog is thick, it is easy to get lost!'),
+            S('kancil', 'Ambil kompas ini. Jarumnya magnet kecil, ia sentiasa menuding ke UTARA.', 'Take this compass. Its needle is a tiny magnet, it always points NORTH.'),
+            S('kancil', 'Lihat kompas di penjuru peta. Utara di atas, Selatan di bawah, Timur di kanan, Barat di kiri.', 'Look at the compass in the corner. North is up, South is down, East is right, West is left.'),
+            S('kancil', 'Baca papan tanda di setiap simpang. Kalau salah jalan, kabus akan memusingkan kita balik ke simpang!', 'Read the sign at every junction. Take a wrong path and the fog spins us back to the junction!'),
+          ]);
+          f('kompas', true); HS.SFX.pick(); HS.toast(ms ? '🧭 Kompas diterima!' : '🧭 Got the compass!'); HS.gainXP(10);
+        } else await HS.dialog([S('kancil', 'Utara di atas, Timur di kanan. Baca papan tanda, kemudian lihat kompas!', 'North is up, East is right. Read the sign, then check the compass!')]);
+        return;
+      }
+      if (e.id === 'musa') {
+        if (!f('musa')) {
+          await HS.dialog([
+            S('musa', 'Assalamualaikum, adik. Pak cik gembala kambing di padang ini.', 'Peace be upon you. I herd goats on this meadow.'),
+            S('musa', 'Tiga ekor kambing pak cik sesat dalam kabus. Mungkin di hujung jalan yang salah...', 'Three of my goats got lost in the fog. Maybe at the end of the wrong paths...'),
+            S('musa', 'Kalau jumpa, kambing itu akan berlari pulang sendiri. Pak cik akan beri hadiah!', 'If you find them, they will run home by themselves. I will give you a reward!'),
+          ]);
+          f('musa', true);
+        } else if (kambing() < 3) await HS.dialog([S('musa', `Sudah ${kambing()} ekor pulang. Cuba lihat di jalan yang salah, sebelum kabus berpusing.`, `${kambing()} are home. Look along the wrong paths, before the fog spins you.`)]);
+        else await HS.dialog([S('musa', 'Semua kambing pak cik selamat. Terima kasih, adik!', 'All my goats are safe. Thank you!')]);
+        return;
+      }
+      if (e.kind === 'item' && /^k\d/.test(e.id)) {
+        HS.buang(e.id); HS.SFX.pick(); HS.gainXP(5);
+        HS.toast(ms ? `🐐 Mbeee! Kambing berlari pulang (${kambing()}/3)` : `🐐 Maaa! The goat runs home (${kambing()}/3)`);
+        if (kambing() === 3 && !f('tanglung')) {
+          await HS.wait(500);
+          await HS.dialog([
+            S('musa', 'Adik! Ketiga-tiga kambing pak cik dah pulang. Syukur!', 'All three of my goats are home. Thank goodness!'),
+            S('musa', 'Ambil tanglung ini. Cahayanya menembusi kabus, jadi adik boleh nampak lebih jauh.', 'Take this lantern. Its light cuts through the fog, so you can see further.'),
+          ]);
+          f('tanglung', true); HS.bintang(5); HS.toast(ms ? '🏮 Tanglung! Pandangan lebih jauh · +5 ⭐' : '🏮 Lantern! You see further · +5 ⭐');
+        }
+        return;
+      }
+      if (e.id === 'kabus') {
+        await HS.dialog([
+          S('kabus', 'Hooo... aku Si Kabus Kelabu, hamba Raja Kemarau. Kamu sudah jauh tersesat!', 'Hooo... I am the Grey Mist, servant of the Drought King. You are lost!'),
+          S('adik', 'Tidak! Saya ada kompas dan ilmu arah. Ke tepi!', 'No! I have a compass and I know my directions. Step aside!'),
+        ]);
+        await HS.battle('kabus');
+        await HS.dialog([
+          S('kabus', 'Hooo... kabus aku menipis... Raja Kemarau di Puncak Mata Air takkan suka ini...', 'Hooo... my mist fades... the Drought King at the Spring Peak will not like this...'),
+          S('kancil', 'Hebat, adik! Jalan ke timur sudah terbuka. Pekan Bukit Besi di depan!', 'Brilliant! The way east is open. Iron Hill Town is ahead!'),
+        ]);
+        HS.buang('kabus'); f('siap', true);
+        return;
+      }
+      return false;
+    },
+    soalan: {
+      arah: [
+        { q: L('Jarum kompas sentiasa menuding ke arah mana?', 'Which way does a compass needle always point?'), o: [['⬆️', 'Utara', 'North'], ['⬇️', 'Selatan', 'South'], ['➡️', 'Timur', 'East'], ['⬅️', 'Barat', 'West']], a: 0, keep: true, why: L('Jarum kompas ialah magnet kecil. Ia menuding ke arah Utara.', 'A compass needle is a tiny magnet. It points North.') },
+        { q: L('Matahari terbit di sebelah mana?', 'Where does the Sun rise?'), o: [['🌅', 'Timur', 'East'], ['🌇', 'Barat', 'West'], ['⬆️', 'Utara', 'North'], ['⬇️', 'Selatan', 'South']], a: 0, why: L('Setiap pagi matahari terbit di sebelah Timur.', 'Every morning the Sun rises in the East.') },
+        { q: L('Matahari terbenam di sebelah mana?', 'Where does the Sun set?'), o: [['🌇', 'Barat', 'West'], ['🌅', 'Timur', 'East'], ['⬆️', 'Utara', 'North'], ['⬇️', 'Selatan', 'South']], a: 0, why: L('Matahari terbenam di sebelah Barat pada waktu petang.', 'The Sun sets in the West in the evening.') },
+        { q: L('Jarum kompas sebenarnya ialah...', 'A compass needle is really...'), o: [['🧲', 'Magnet kecil', 'A tiny magnet'], ['🪵', 'Kayu nipis', 'Thin wood'], ['🧻', 'Kertas keras', 'Hard paper'], ['🧊', 'Ais', 'Ice']], a: 0, why: L('Jarum kompas ialah magnet. Sebab itu ia boleh menuding ke Utara.', 'The needle is a magnet. That is why it can point North.') },
+        { q: L('Arah yang bertentangan dengan Utara ialah...', 'The opposite of North is...'), o: [['⬇️', 'Selatan', 'South'], ['➡️', 'Timur', 'East'], ['⬅️', 'Barat', 'West']], a: 0, why: L('Utara dan Selatan bertentangan. Timur dan Barat juga bertentangan.', 'North and South are opposites. So are East and West.') },
+        { q: L('Kamu menghadap ke Utara. Timur di sebelah...', 'You face North. East is on your...'), o: [['👉', 'Kanan', 'Right'], ['👈', 'Kiri', 'Left'], ['🔙', 'Belakang', 'Back']], a: 0, why: L('Bila menghadap Utara, Timur di kanan dan Barat di kiri.', 'Facing North, East is on your right and West on your left.') },
+        { q: L('Bahan manakah ditarik oleh magnet?', 'Which one does a magnet pull?'), o: [['🔩', 'Paku besi', 'Iron nail'], ['🪵', 'Kayu', 'Wood'], ['🧴', 'Botol plastik', 'Plastic bottle'], ['🧻', 'Kertas', 'Paper']], a: 0, why: L('Magnet menarik bahan besi seperti paku.', 'Magnets pull iron things like nails.') },
+        { q: L('Dua kutub magnet ialah...', 'The two poles of a magnet are...'), o: [['🧲', 'Utara dan Selatan', 'North and South'], ['↕️', 'Atas dan bawah', 'Top and bottom'], ['↔️', 'Kiri dan kanan', 'Left and right']], a: 0, why: L('Setiap magnet ada kutub Utara (U) dan kutub Selatan (S).', 'Every magnet has a North pole (N) and a South pole (S).') },
+        { q: L('Pada waktu pagi, kamu menghadap matahari. Kamu menghadap ke...', 'In the morning you face the Sun. You are facing...'), o: [['🌅', 'Timur', 'East'], ['🌇', 'Barat', 'West'], ['⬇️', 'Selatan', 'South']], a: 0, why: L('Pagi-pagi matahari di sebelah Timur, tempat ia terbit.', 'In the morning the Sun is in the East, where it rises.') },
+      ],
+    },
+    musuh: {
+      kabus: { hp: 5, pool: 'arah', time: 20000, proj: '🧭', atk: '🌫️', xp: 40, bintang: 5, pt: '#dfe7ea', pb: '#8fa3ab', mote: 'rgba(255,255,255,.9)',
+        bg: 'radial-gradient(ellipse at 50% 20%, #ffffff 0, transparent 55%), linear-gradient(#cfdde2 0%, #e9f0f2 44%, #9cbf8b 44.5%, #6e9a5e 100%)',
+        hills: 'radial-gradient(ellipse 30% 70% at 15% 100%, #b7c9c5 98%, transparent 100%), radial-gradient(ellipse 35% 90% at 60% 100%, #a9bdb8 98%, transparent 100%)',
+        ejek: [L('Hooo... ke mana arah kamu?', 'Hooo... which way now?'), L('Kabus aku tebal!', 'My mist is thick!')] },
+    },
+  });
+})();
+</script>
+</body>
+</html>
