@@ -138,7 +138,7 @@
     // Penjana lesen (/mnt/project-files/game/penjana-lesen-dunia-sai.html) ada senarai yang sama: ubah kedua-dua tempat.
     // Game percuma (tiada `lic`) tidak masuk mana-mana pakej.
     PAKEJ: {
-      id: 'semua', name: 'Pakej Semua 10 Game', price: 60,
+      id: 'semua', name: 'Pakej Semua 10 Game', price: 50,
       games: ['kenal-jawi', 'kenal-abc', 'wira-matematik', 'hikayat-sungai', 'wonder-island', 'kembara-malaysia', 'boss-gerai', 'ember-code', 'nakhoda-jawi', 'robot-rumble'],
       note: '1 kod lesen buka kesemua 10 game berbayar Dunia Sai. Pembeli Pakej 5 Game sebelum ini dapat naik taraf percuma.',
     },
@@ -160,8 +160,8 @@
       'pakej-5-game': {
         title: 'Pakej Semua 10 Game',
         heading: 'Pakej Semua 10 Game',
-        lead: 'Jawi, ABC, Matematik, Sains, English, Geografi, Duit, Koding dan Robotik dalam satu apps. 10 game, satu kod, RM60 sahaja.',
-        price: 60,
+        lead: 'Jawi, ABC, Matematik, Sains, English, Geografi, Duit, Koding dan Robotik dalam satu apps. 10 game, satu kod, RM50 sahaja.',
+        price: 50,
         games: ['kenal-jawi', 'kenal-abc', 'wira-matematik', 'hikayat-sungai', 'wonder-island', 'kembara-malaysia', 'boss-gerai', 'ember-code', 'nakhoda-jawi', 'robot-rumble'],
         startsAt: '2026-10-26T00:00:00+08:00',
         points: [
@@ -179,7 +179,7 @@
   DS.pakejGames = (P) => (P || DS.PAKEJ).games.map(DS.game).filter(Boolean);
   // Jumlah jika beli game dalam pakej satu-satu
   DS.pakejWorth = (P) => DS.pakejGames(P).reduce((a, g) => a + g.price, 0);
-  // 9.9 -> "RM9.90", 60 -> "RM60"
+  // 9.9 -> "RM9.90", 50 -> "RM50"
   DS.rm = (n) => 'RM' + (Number.isInteger(n) ? String(n) : n.toFixed(2));
 
   global.DS = DS;
