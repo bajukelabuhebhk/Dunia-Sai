@@ -276,10 +276,10 @@ button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-vis
 <script>
 /* Robot Rumble 3D · lesen Dunia Sai (17 Nov 2026)
    PK2 game 12. Demo: M26–M28 percuma (3 misi pertama). 3D tidak dijual asing:
-   Robot Rumble 2D + 3D RM19.90, pemilik 2D naik taraf RM12.90. Perlukan /shared/js/config.js + lesen-lib.js. */
+   Robot Rumble 2D + 3D RM19.90 (satu kunci, tiada naik taraf). Perlukan /shared/js/config.js + lesen-lib.js. */
 (function () {
 'use strict';
-var STORE = 'robot_rumble_3d_lesen', GAME = 12;
+var STORE = 'robot_rumble_lesen', GAME = 12; // satu kunci untuk 2D + 3D (24 Nov 2026, Afiq): kongsi simpanan dengan 2D
 var L = window.LIC3 = { FREE: 3, full: false, info: null, GAME: GAME };
 function get() { try { return localStorage.getItem(STORE); } catch (e) { return null; } }
 function set(v) { try { if (v == null) localStorage.removeItem(STORE); else localStorage.setItem(STORE, v); return true; } catch (e) { return false; } }
@@ -296,8 +296,8 @@ if (saved) { var r0 = check(saved); if (r0.ok) { L.full = true; L.info = r0; } }
 L.locked = function (i) { return !L.full && i >= L.FREE; };
 
 var WHY = { format: 'Lesen tidak dikenali. Lesen bermula dengan PK2-.', length: 'Lesen tidak lengkap. Salin semula seluruh lesen.',
-  signature: 'Lesen tidak sah.', blocked: 'Lesen ini telah dibatalkan.', game: 'Lesen ini tidak termasuk Robot Rumble 3D. Pemilik 2D boleh naik taraf RM12.90.',
-  'not-in-bundle': 'Lesen ini tidak termasuk Robot Rumble 3D. Pemilik 2D boleh naik taraf RM12.90.', error: 'Tidak dapat menyemak lesen. Muat semula halaman.' };
+  signature: 'Lesen tidak sah.', blocked: 'Lesen ini telah dibatalkan.', game: 'Lesen ini tidak termasuk Robot Rumble 3D. Dapatkan kod 2D + 3D.',
+  'not-in-bundle': 'Lesen ini tidak termasuk Robot Rumble 3D. Dapatkan kod 2D + 3D.', error: 'Tidak dapat menyemak lesen. Muat semula halaman.' };
 function why(r) { return WHY[r.reason] || (r.reason && /game|bundle|product/.test(r.reason) ? WHY.game : 'Lesen tidak sah atau bukan untuk Robot Rumble 3D.'); }
 function wa(t) { return window.DS ? window.DS.waLink(t) : 'https://wa.me/601137865789?text=' + encodeURIComponent(t); }
 function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
@@ -328,9 +328,9 @@ L.open = function () {
     c.innerHTML = '<h2>🔓 Robot Rumble 3D versi penuh</h2>' +
       '<p>Demo: misi M26 hingga M28 percuma. Versi penuh membuka semua 18 misi, 5 pulau dan semua komponen.</p>' +
       '<p>Robot Rumble 3D dijual <b>bersama</b> Robot Rumble 2D: 2D beri ilmu fizik dan kod, 3D beri pengalaman memandu robot sendiri.</p>' +
-      '<div class="lic-harga"><div>2D + 3D<b>RM19.90</b><s>RM29.90 (3D)</s></div><div>Sudah ada 2D?<b>RM12.90</b>naik taraf</div></div>' +
+      '<div class="lic-harga"><div>2D + 3D<b>RM19.90</b><s>RM29.90 (3D)</s></div></div>' +
       '<div class="lic-row"><a class="lic-wa" target="_blank" rel="noopener" href="' + wa('Assalamualaikum, saya nak beli Robot Rumble 2D + 3D Dunia Sai (RM19.90).') + '">💬 Beli 2D + 3D</a>' +
-      '<a class="lic-wa" target="_blank" rel="noopener" href="' + wa('Assalamualaikum, saya pemilik Robot Rumble 2D dan nak naik taraf ke 3D (RM12.90).') + '">⬆ Naik taraf</a></div>' +
+      '</div>' +
       '<p style="margin-top:14px"><b>Sudah ada lesen?</b> Tampal lesen PK2- (atau seluruh mesej WhatsApp) di bawah.</p>' +
       '<textarea id="licText" placeholder="PK2-…" autocomplete="off" spellcheck="false"></textarea>' +
       '<div id="licMsg"></div><div class="lic-row"><button class="btn btn-go" id="licGo">🔑 Aktifkan</button><button class="btn" id="licClose">Tutup</button></div>';
