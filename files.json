@@ -1,8 +1,8 @@
 {
- "version": "7ffc5d4d4e",
+ "version": "55f9f4fd94",
  "core": {
   "files": {
-   "/app/": "21b60487532d",
+   "/app/": "19f8a4312daa",
    "/img/awanara.jpg": "2e406ffbba05",
    "/img/boss-gerai.jpg": "39fc8ecf1403",
    "/img/ember-code.jpg": "e3a6a1ea7053",
@@ -31,7 +31,7 @@
    "/shared/icons/maskable-512.png": "78d51897dd77",
    "/shared/js/anak.js": "b26ad114d73c",
    "/shared/js/balik.js": "b25251d8c79c",
-   "/shared/js/config.js": "3e63e6ac8838",
+   "/shared/js/config.js": "8cf7607d3288",
    "/shared/js/jejak.js": "993517d588a5",
    "/shared/js/lesen-lib.js": "440a6afd99bc",
    "/shared/js/lesen.js": "d72df6c47647",
@@ -39,7 +39,7 @@
    "/shared/js/maklum-balas.js": "87d261af59ac",
    "/shared/js/ruang-ibubapa.js": "d83a0a76181d"
   },
-  "bytes": 1960427
+  "bytes": 1960330
  },
  "games": {
   "awanara": {

@@ -104,10 +104,10 @@
       },
       {
         // 17 Nov 2026 (Afiq): 3D TIDAK dijual asing. Gabungan 2D + 3D RM19.90 (3D bernilai RM29.90),
-        // pemilik 2D naik taraf RM12.90. Kod gabungan = PK2 game 11 + 12. Pakej STEM/Semua kekal 2D sahaja.
+        // Tiada naik taraf (Afiq, 24 Nov 2026). Kod gabungan = PK2 game 11 + 12. Pakej STEM/Semua kekal 2D sahaja.
         id: 'robot-rumble-3d', name: 'Robot Rumble 3D', path: '/app/robot-rumble-3d/', img: '/img/robot-rumble-3d.jpg',
         subject: 'Robotik dan memandu', age: '8 hingga 14 tahun', price: 19.9, pakej: false, gabung: 'robot-rumble',
-        hargaLabel: '2D + 3D RM19.90 · naik taraf RM12.90',
+        hargaLabel: '2D + 3D RM19.90',
         desc: 'Sambungan Robot Rumble: pandu robot sendiri merentas 5 pulau dalam dunia 3D, 18 misi, dan lumba bersama sehingga 8 kawan dalam 👥 Bilik.',
         free: 'Misi M26 hingga M28',
         lic: { store: 'robot_rumble_3d_lesen', pk2: 12 },
