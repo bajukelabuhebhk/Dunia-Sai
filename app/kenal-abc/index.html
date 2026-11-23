@@ -250,8 +250,62 @@ button:focus-visible{outline:3px solid var(--card);outline-offset:3px}
 a.btn{text-decoration:none;display:inline-block}
 .btn.wa{background:var(--leaf);box-shadow:0 5px 0 var(--leafD);color:var(--ink)}
 .foot{font-size:.85rem;color:var(--muted);text-align:center;margin-top:auto}
+
+/* Dunia Sai: home language switch (BM / EN) */
+.toprow{display:flex;align-items:center;gap:8px;min-height:48px}
+.toprow>div:first-child{flex:1;text-align:left!important;margin:0!important;font-size:1.2rem!important}
+.seg.lang{margin-left:auto}
+.seg.lang button{font:800 1rem var(--display);padding:4px 14px}
+.g9{background:#7dd3c0;box-shadow:0 7px 0 #3f9c8a}
+.g10{background:#c3e88d;box-shadow:0 7px 0 #86b04c}
+.app.wide:not(.ingame) .home{grid-template-columns:repeat(5,1fr)}
+
+/* Surih: picture + word shown after the letter is traced (replaces the hint line, so nothing jumps) */
+.rw{display:flex;align-items:center;justify-content:center;gap:12px;min-height:3.2rem;animation:pop .5s}
+.rw .pic{font-size:2.8rem;line-height:1}
+.ph{width:1.15em;height:1.15em;object-fit:contain;vertical-align:middle;mix-blend-mode:multiply;border-radius:.18em;-webkit-user-drag:none;user-select:none}
+.fish .bd .ph{width:62px;height:62px;border-radius:50%;background:#fff;mix-blend-mode:normal;box-shadow:0 0 0 3px rgba(255,255,255,.6)}
+.big .pic .ph{width:1.5em;height:1.5em}
+.rw .word{font-size:2rem;line-height:1}
+#th{min-height:3.2rem;display:flex;align-items:center;justify-content:center}
+
+/* Kotak Bunyi (Elkonin) */
+.kb{display:flex;justify-content:center;gap:8px}
+.kbx{flex:1 1 0;max-width:86px;aspect-ratio:1;border-radius:16px;border:4px dashed #c9b98d;background:#fffbef;display:flex;align-items:center;justify-content:center;font:700 1.9rem var(--abc);color:var(--ink);cursor:pointer;padding:0;min-width:0}
+.kbx.on{border-style:solid;border-color:var(--mango)}
+.kbx .tok{display:block;width:46%;aspect-ratio:1;border-radius:50%;background:var(--coral);box-shadow:inset -4px -4px 0 rgba(0,0,0,.15);animation:pop .4s}
+.kb.all .kbx{border-color:var(--leaf);animation:pop .5s}
+.kb.all .kbx:nth-child(2){animation-delay:.15s}.kb.all .kbx:nth-child(3){animation-delay:.3s}.kb.all .kbx:nth-child(4){animation-delay:.45s}
+.kbx.rv{border-style:solid;border-color:var(--leaf);background:#fff;animation:pop .4s}
+.kbx .kv{color:#d6336c}.kbx .kc{color:#1c7ed6}
+.kbx.hintb{animation:pulse2 .9s ease-in-out infinite}
+.guli{display:flex;justify-content:center;gap:16px;min-height:72px;align-items:center}
+.guli.gone{visibility:hidden}
+.gu{width:62px;height:62px;border-radius:50%;border:0;background:var(--coral);box-shadow:0 6px 0 var(--coralD),inset -6px -6px 0 rgba(0,0,0,.12);cursor:pointer;padding:0}
+.gu:active{transform:translateY(3px)}
+.gu.used{visibility:hidden}
+
+/* Bina Ayat */
+.ayat{display:flex;gap:6px;justify-content:center;align-items:stretch}
+.car{flex:1 1 0;min-width:0;border-radius:14px;padding:4px 4px 8px;display:flex;flex-direction:column;align-items:center;gap:2px;border:3px dashed;background:#fffbef;cursor:pointer;transition:transform .2s}
+.car small{font:800 .85rem var(--display)}
+.car span{font:700 1.2rem/1.15 var(--abc);color:var(--ink);min-height:2.6em;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;overflow-wrap:anywhere}
+.car span i{font-style:normal;font-size:1.5rem;line-height:1.1}
+.car.fill{border-style:solid;animation:pop .4s}
+.car.say{transform:translateY(-6px) scale(1.06)}
+.car.hintb{animation:pulse2 .9s ease-in-out infinite}
+.car.r0{border-color:var(--orange)}.car.r0 small{color:var(--orangeD)}.car.r0.fill{background:#ffe2c4}
+.car.r1{border-color:var(--leaf)}.car.r1 small{color:var(--leafD)}.car.r1.fill{background:#d4f5e3}
+.car.r2{border-color:var(--sky)}.car.r2 small{color:var(--skyD)}.car.r2.fill{background:#d3f1fa}
+.kad{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.wc{border:0;border-radius:16px;padding:8px 14px;font:700 1.35rem var(--abc);color:var(--ink);cursor:pointer;display:flex;align-items:center;gap:6px;min-height:58px}
+.wc i{font-style:normal;font-size:1.5rem}
+.wc.r0{background:var(--orange);box-shadow:0 5px 0 var(--orangeD)}
+.wc.r1{background:var(--leaf);box-shadow:0 5px 0 var(--leafD)}
+.wc.r2{background:var(--sky);box-shadow:0 5px 0 var(--skyD)}
+.wc.used{visibility:hidden}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-</style><!-- dunia-sai --><link rel="manifest" href="/manifest.json"><script src="/shared/js/balik.js" defer></script></head><body>
+</style><!-- dunia-sai --><link rel="manifest" href="/manifest.json"><script src="/shared/js/balik.js" defer></script><script src="/shared/js/ruang-ibubapa.js"></script></head><body>
 
 <div class="app">
   <header>
@@ -265,7 +319,7 @@ a.btn{text-decoration:none;display:inline-block}
     </div>
   </header>
   <main id="view"></main>
-  <p class="foot">Untuk kanak-kanak 4–6 tahun · 26 huruf Rumi · suku kata · eja kata</p>
+  <p class="foot" id="foot">Untuk kanak-kanak 4–6 tahun · 26 huruf Rumi · suku kata · eja kata · bina ayat</p>
 </div>
 <div class="toast" id="toast" hidden></div>
 
@@ -393,24 +447,57 @@ const L=[
  {u:"G",n:"ji",w:"Gajah",e:"🐘"},{u:"H",n:"ec",w:"Harimau",e:"🐯"},{u:"I",n:"ai",w:"Ikan",e:"🐟"},
  {u:"J",n:"je",w:"Jam",e:"⏰"},{u:"K",n:"ke",w:"Kucing",e:"🐱"},{u:"L",n:"el",w:"Lembu",e:"🐄"},
  {u:"M",n:"em",w:"Monyet",e:"🐒"},{u:"N",n:"en",w:"Nanas",e:"🍍"},{u:"O",n:"o",w:"Oren",e:"🍊"},
- {u:"P",n:"pi",w:"Pisang",e:"🍌"},{u:"Q",n:"kiu",w:"Quran",e:"📖"},{u:"R",n:"ar",w:"Rumah",e:"🏠"},
+ {u:"P",n:"pi",w:"Pisang",e:"🍌"},{u:"Q",n:"kiu",w:"Qanun",e:"🪕"},{u:"R",n:"ar",w:"Rumah",e:"🏠"},
  {u:"S",n:"es",w:"Sotong",e:"🦑"},{u:"T",n:"ti",w:"Tikus",e:"🐭"},{u:"U",n:"yu",w:"Ular",e:"🐍"},
  {u:"V",n:"vi",w:"Van",e:"🚐"},{u:"W",n:"dablyu",w:"Wau",e:"🪁"},{u:"X",n:"eks",w:"Xilofon",e:XSVG},
  {u:"Y",n:"wai",w:"Yoyo",e:"🪀"},{u:"Z",n:"zed",w:"Zirafah",e:"🦒"}
 ];
 L.forEach((x,k)=>{x.i=k;x.l=x.u.toLowerCase()});
+/* Dunia Sai: dwibahasa BM / English dalam satu build (macam Lembah Embun). Pilihan disimpan dalam abc_lang.
+   BM guna rakaman suara sedia ada. English dibaca oleh suara telefon (tiada rakaman baharu). */
+let LANG=(()=>{try{return localStorage.getItem('abc_lang')==='en'?'en':'ms'}catch(e){return 'ms'}})();
+const EN=()=>LANG==='en';
+const tx=(ms,en)=>LANG==='en'?en:ms;
+// English example word, picture and letter name (how the phone should say it)
+const L_EN=[["Apple","🍎","ay"],["Ball","⚽","bee"],["Cat","🐱","see"],["Dog","🐶","dee"],["Egg","🥚","ee"],["Fan","🪭","ef"],["Guitar","🎸","jee"],
+ ["Hat","🎩","aitch"],["Iguana","🦎","eye"],["Jigsaw","🧩","jay"],["Kaleidoscope","🔮","kay"],["Lion","🦁","el"],["Moon","🌙","em"],["Nest","🪺","en"],
+ ["Owl","🦉","oh"],["Penguin","🐧","pee"],["Quail","🐦","cue"],["Rainbow","🌈","ar"],["Swordfish","🐟","ess"],["Train","🚂","tee"],["Umbrella","☂️","you"],
+ ["Vase","🏺","vee"],["Watermelon","🍉","double you"],["X-ray fish","🐟","ex"],["Yak","🐂","why"],["Zeppelin","🎈","zed"]];
+/* Gambar foto sebenar (dari Afiq, Gemini) dalam gambar/*.webp. Perkataan tanpa foto kekal emoji. */
+const PIC={ayam:'chicken',bola:'ball',epal:'apple',feri:'ferry',gajah:'elephant',harimau:'tiger',ikan:'fish',jam:'clock',kucing:'tabby',
+ lembu:'cow',monyet:'monkey',nanas:'pineapple',oren:'orange',pisang:'banana',rumah:'house',sotong:'squid',tikus:'mouse',ular:'snake',
+ van:'van',wau:'wau',xilofon:'xylophone',yoyo:'yoyo',zirafah:'giraffe',itik:'duck',
+ apple:'apple',ball:'ball',cat:'cat',dog:'dog',egg:'egg',fan:'fan',guitar:'guitar',hat:'hat',iguana:'iguana',key:'key',tiger:'tiger',
+ xylophone:'xylophone',fish:'fish',duck:'duck',hen:'chicken',
+ cicak:'gecko',daun:'leaf',qanun:'qanun',bulan:'moon',lion:'lion',moon:'moon',nest:'nest',
+ owl:'owl',penguin:'penguin',quail:'quail',rainbow:'rainbow',swordfish:'swordfish',umbrella:'umbrella',train:'train',vase:'vase',
+ kaleidoscope:'kaleidoscope',watermelon:'watermelon','x-ray fish':'xrayfish',yak:'yak',zeppelin:'zeppelin',jigsaw:'jigsaw',jellyfish:'jellyfish'};
+const pic=(w,e)=>{const f=PIC[String(w).toLowerCase()];return f?`<img class="ph" src="gambar/${f}.webp" alt="" draggable="false">`:e};
+L.forEach((x,k)=>{x.wm=x.w;x.em=pic(x.w,x.e);x.nm=x.n;[x.we,x.ee,x.ne]=L_EN[k];x.ee=pic(x.we,x.ee)});
 const VOW=['a','e','i','o','u'];
 const isVowel=x=>VOW.includes(x.l);
 // Consonants used in Suku Kata (Q and X make no simple Malay syllables)
 const CONS=L.filter(x=>!isVowel(x)&&!'QX'.includes(x.u));
 // Eja Kata words, split into suku kata
-const WORDS=[
+let WORDS=[
  ["a-yam","🐔"],["bo-la","⚽"],["ba-ju","👕"],["bu-ku","📚"],["bas","🚌"],["bu-lan","🌙"],["bu-a-ya","🐊"],
  ["ci-cak","🦎"],["da-un","🍃"],["e-pal","🍎"],["gi-gi","🦷"],["ga-jah","🐘"],["hu-jan","🌧️"],["i-kan","🐟"],
  ["i-tik","🦆"],["jam","⏰"],["ka-ki","🦶"],["ku-da","🐴"],["kek","🎂"],["lo-ri","🚚"],["la-bu","🎃"],
  ["ma-ta","👀"],["na-si","🍚"],["o-ren","🍊"],["pin-tu","🚪"],["ro-ti","🍞"],["su-su","🥛"],["to-pi","🧢"],
  ["u-lar","🐍"],["u-bi","🍠"],["wau","🪁"]
-].map(([s,e])=>({s:s.split('-'),w:s.replace(/-/g,''),e}));
+].map(([s,e])=>({s:s.split('-'),w:s.replace(/-/g,''),e:pic(s.replace(/-/g,''),e)}));
+const WORDS_MS=WORDS;
+// English Eja Kata words (short words, one group each)
+const WORDS_EN=[["ant","🐜"],["bus","🚌"],["bat","🦇"],["bed","🛏️"],["cat","🐱"],["cup","☕"],["duck","🦆"],["egg","🥚"],["fish","🐟"],["frog","🐸"],
+ ["hat","🎩"],["hen","🐔"],["log","🪵"],["map","🗺️"],["pin","📌"],["ship","🚢"],["sun","☀️"],["web","🕸️"]].map(([w,e])=>({s:[w],w,e:pic(w,e),en:true}));
+function applyLang(){
+  L.forEach(x=>{x.w=EN()?x.we:x.wm;x.e=EN()?x.ee:x.em;x.n=EN()?x.ne:x.nm});
+  WORDS=EN()?WORDS_EN:WORDS_MS;
+  document.documentElement.lang=EN()?'en':'ms';
+  const f=document.getElementById('foot');if(f)f.textContent=tx('Untuk kanak-kanak 4–6 tahun · 26 huruf Rumi · suku kata · eja kata · bina ayat','For children aged 4–6 · 26 letters · sound boxes · spelling · sentences');
+}
+function setLang(l){LANG=l==='en'?'en':'ms';try{localStorage.setItem('abc_lang',LANG)}catch(e){}applyLang()}
+applyLang();
 // Real dot count (only lowercase i and j have one)
 const dots=(x,low)=>low&&(x.l==='i'||x.l==='j')?1:0;
 const STICKERS=["🐣","🐢","🦋","🐬","🐞","🦁","🐼","🦄","🚀","🌈","🏆","👑"];
@@ -450,26 +537,40 @@ const PH={
  'warnakan':'Warnakan huruf ini','sentuh-titik':'Warnakan huruf, kemudian sentuh titiknya','ikut-bentuk':'Ikut bentuk huruf ya. Tekan padam dan cuba lagi.',
  'sampai-hujung':'Warnakan sampai ke hujung','jangan-lupa-titik':'Jangan lupa titik!','siapkan-dulu':'Siapkan huruf ini dulu',
  'pelekat-baru':'Pelekat baru!','sepuluh-huruf':'Syabas! Kamu dah kenal sepuluh huruf!','semua-besar':'Tahniah! Kamu sudah kenal semua huruf besar!','semua-kecil':'Tahniah! Kamu sudah kenal semua huruf kecil!',
- 'g-kereta':'Kereta api','g-ikan':'Tangkap ikan','g-surih':'Peta huruf','g-kad':'Kad huruf','g-titik':'Sambung titik','g-pos':'Pos surat','g-suku':'Suku kata','g-eja':'Eja kata','g-pelekat':'Papan pelekat'
+ 'g-kereta':'Kereta api','g-ikan':'Tangkap ikan','g-surih':'Peta huruf','g-kad':'Kad huruf','g-titik':'Sambung titik','g-pos':'Pos surat','g-suku':'Suku kata','g-eja':'Eja kata','g-pelekat':'Papan pelekat',
+ 'x-g-kotak':'Kotak bunyi','x-g-ayat':'Bina ayat','x-kb-tolak':'Sebut perlahan. Tolak satu guli untuk setiap suku kata.','x-kb-mana':'Kotak mana bunyinya',
+ 'x-ay-dengar':'Dengar, kemudian bina ayat ini.','x-ay-r0':'Siapa?','x-ay-r1':'Buat apa?','x-ay-r2':'Apa?'
+};
+const PH_EN={
+ 'syabas':'Well done!','bagus':'Good job!','pandai':'Clever you!','hebat':'Amazing!','cuba-lagi':'Try again',
+ 'hilang':'Which letter is missing?','tangkap':'Catch the fish that starts with','sambung':'Join the dots in A B C order. Start with','cari-seterusnya':'Find the next letter',
+ 'pos':'Post the letter into its capital letter box','huruf-besar':'capital letter','huruf-kecil':'small letter','mana-bunyi':'Which one says','eja':'Spell this word',
+ 'warnakan':'Colour this letter','sentuh-titik':'Colour the letter, then touch its dot','ikut-bentuk':'Follow the shape. Press clear and try again.',
+ 'sampai-hujung':'Colour all the way to the end','jangan-lupa-titik':"Don't forget the dot!",'siapkan-dulu':'Finish this letter first',
+ 'pelekat-baru':'New sticker!','sepuluh-huruf':'Well done! You know ten letters!','semua-besar':'Congratulations! You know all the capital letters!','semua-kecil':'Congratulations! You know all the small letters!',
+ 'g-kereta':'Train','g-ikan':'Go fishing','g-surih':'Letter map','g-kad':'Letter cards','g-titik':'Dot to dot','g-pos':'Post the letters','g-suku':'Malay syllables','g-eja':'Spell words','g-pelekat':'Sticker board',
+ 'x-g-kotak':'Sound boxes','x-g-ayat':'Build a sentence','x-kb-tolak':'Say it slowly. Push one counter for each sound.','x-kb-mana':'Which box says',
+ 'x-ay-dengar':'Listen, then build this sentence.','x-ay-r0':'Who?','x-ay-r1':'Does what?','x-ay-r2':'What?'
 };
 const pad=n=>String(n).padStart(2,'0');
-const Lc=x=>({k:`huruf-${pad(x.i+1)}-${x.l}`,t:x.n});
-const Wc=x=>({k:`kata-${x.w.toLowerCase()}`,t:x.w});
-const Ec=w=>({k:`kata-${w.w}`,t:w.w});
+const Lc=x=>EN()?{t:x.ne,l:'en'}:{k:`huruf-${pad(x.i+1)}-${x.l}`,t:x.nm};
+const Wc=x=>EN()?{t:x.we,l:'en'}:{k:x.wm==='Qanun'?null:`kata-${x.wm.toLowerCase()}`,t:x.wm}; // Qanun belum ada rakaman: suara telefon
+const Ec=w=>w.en?{t:w.w,l:'en'}:{k:`kata-${w.w}`,t:w.w};
 const Sc=s=>({k:`suku-${s}`,t:s});
-const Pc=k=>({k:'frasa-'+k,t:PH[k]});
+const Pc=k=>EN()?{t:PH_EN[k]||PH[k],l:'en'}:k.startsWith('x-')?{t:PH[k]}:{k:'frasa-'+k,t:PH[k]};
 const PRAISE=['syabas','bagus','pandai','hebat'];
 // Every clip the game can play, for making a recording list: run ABC_CLIPS() in the browser console
 window.ABC_CLIPS=()=>{const m=new Map();[...L.map(Lc),...L.map(Wc),...WORDS.map(Ec),...SHAPES.map(Hc),...WORDS.flatMap(w=>w.s.map(Sc)),...CONS.flatMap(c=>VOW.map(v=>Sc(c.l+v))),...Object.keys(PH).map(Pc)].forEach(c=>m.set(c.k,c));return[...m.values()]};
 const missing=new Set();
-const clipSrc=k=>CLIP[k]||(!missing.has(k)&&/^https?:$/.test(location.protocol)?'audio/'+k+'.mp3':null);
-let ttsVoice=null,ttsLang='ms-MY';
-function pickVoice(){try{const vs=speechSynthesis.getVoices();const v=vs.find(v=>/^ms/i.test(v.lang))||vs.find(v=>/^id/i.test(v.lang));if(v){ttsVoice=v;ttsLang=v.lang}}catch(e){}}
+const clipSrc=k=>!k?null:CLIP[k]||(!missing.has(k)&&/^https?:$/.test(location.protocol)?'audio/'+k+'.mp3':null);
+let ttsVoice=null,ttsLang='ms-MY',enVoice=null;
+function pickVoice(){try{const vs=speechSynthesis.getVoices();const v=vs.find(v=>/^ms/i.test(v.lang))||vs.find(v=>/^id/i.test(v.lang));if(v){ttsVoice=v;ttsLang=v.lang}
+  const e=vs.find(v=>/^en[-_](GB|AU|US)/i.test(v.lang))||vs.find(v=>/^en/i.test(v.lang));if(e)enVoice=e}catch(e){}}
 if('speechSynthesis' in window){pickVoice();try{speechSynthesis.onvoiceschanged=pickVoice}catch(e){}}
-function tts(t,id){if(!('speechSynthesis' in window))return voiceEnd(id);try{speechSynthesis.cancel()}catch(e){}
+function tts(t,id,l){if(!('speechSynthesis' in window))return voiceEnd(id);try{speechSynthesis.cancel()}catch(e){}
   busyUntil=Date.now()+900+t.length*80;
   // Some engines (Android, Linux) keep talking if speak() follows cancel() at once, so wait a moment
-  setTimeout(()=>{if(id!==seq)return;try{const u=new SpeechSynthesisUtterance(t);u.lang=ttsLang;if(ttsVoice)u.voice=ttsVoice;u.rate=.85;u.onend=u.onerror=()=>voiceEnd(id);speechSynthesis.speak(u)}catch(e){voiceEnd(id)}},80)}
+  setTimeout(()=>{if(id!==seq)return;try{const u=new SpeechSynthesisUtterance(t),en=l==='en',vv=en?enVoice:ttsVoice;u.lang=en?(enVoice?enVoice.lang:'en-GB'):ttsLang;if(vv)u.voice=vv;u.rate=.85;u.onend=u.onerror=()=>voiceEnd(id);speechSynthesis.speak(u)}catch(e){voiceEnd(id)}},80)}
 // Voice: every speak() gets a new seq; anything from an older seq (a late clip, a delayed TTS, a clip's onended) is dropped
 let curA=null,seq=0,talking=false,busyUntil=0;const fails={};
 const voiceEnd=id=>{if(id===seq){talking=false;busyUntil=0;curA=null}};
@@ -480,12 +581,12 @@ function stopVoice(){seq++;talking=false;busyUntil=0;if(curA){try{curA.onended=n
 function speak(...parts){stopVoice();if(!sound)return;const id=seq;talking=true;busyUntil=Date.now()+15000;
   const rest=i=>parts.slice(i).map(p=>p.t).join('. ');
   (function go(i){if(id!==seq)return;if(i>=parts.length)return voiceEnd(id);const p=parts[i],src=clipSrc(p.k);
-    if(!src){tts(rest(i),id);return}
+    if(!src){tts(rest(i),id,p.l);return}
     const a=new Audio(src);curA=a;
     const fall=bad=>{if(id!==seq)return;try{a.onended=a.onerror=null;a.pause()}catch(e){}curA=null;
       // Only drop a clip for the session after it fails to load twice: one slow or interrupted load should not switch to the robot voice for good
       if(bad&&(fails[p.k]=(fails[p.k]||0)+1)>=2)missing.add(p.k);
-      tts(rest(i),id)};
+      tts(rest(i),id,p.l)};
     a.onended=()=>{if(id!==seq)return;curA=null;go(i+1)};
     a.onerror=()=>fall(true);
     // A clip that starts late (slow load) after the screen moved on is stopped at once
@@ -512,7 +613,7 @@ let toastT;
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,2200)}
 function addStar(){
   stars++;scoreEl.textContent=stars;save('abc_stars',stars);
-  if(stars%PER_STICKER===0 && stars/PER_STICKER<=STICKERS.length){toast(`Pelekat baru! ${STICKERS[stars/PER_STICKER-1]}`)}
+  if(stars%PER_STICKER===0 && stars/PER_STICKER<=STICKERS.length){toast(`${tx('Pelekat baru!','New sticker!')} ${STICKERS[stars/PER_STICKER-1]}`)}
 }
 // Games with timers register a cleanup here; it runs whenever the screen changes
 let cleanup=null;
@@ -537,12 +638,12 @@ function fit(){
 const scaleOf=el=>{const w=el.offsetWidth;return w?el.getBoundingClientRect().width/w:1};
 let fitT;addEventListener('resize',()=>{clearTimeout(fitT);fitT=setTimeout(fit,150)});
 function finish(score,total,again){
-  stopGame();
+  stopGame();try{window.DSRuang&&act&&DSRuang.selesai(act)}catch(e){}
   const s=score>=total*.9?3:score>=total*.6?2:1;
   view.innerHTML=`<div class="prompt done stack" style="align-items:center">
-    <h2>Syabas!</h2><div class="stars">${'⭐'.repeat(s)}${'☆'.repeat(3-s)}</div>
+    <h2>${tx('Syabas!','Well done!')}</h2><div class="stars">${'⭐'.repeat(s)}${'☆'.repeat(3-s)}</div>
     <div class="word">${score} / ${total}</div>
-    <div class="row"><button class="btn" id="again">Main lagi</button><button class="btn" id="hm">🏠 Laman utama</button></div></div>`;
+    <div class="row"><button class="btn" id="again">${tx('Main lagi','Play again')}</button><button class="btn" id="hm">🏠 ${tx('Laman utama','Home')}</button></div></div>`;
   speak(Pc('syabas'));
   document.getElementById('again').onclick=again;document.getElementById('hm').onclick=home;
 }
@@ -551,36 +652,59 @@ const stickersGot=()=>[...STICKERS.slice(0,Math.min(Math.floor(stars/PER_STICKER
 
 /* ---------- HOME ---------- */
 // Dunia Sai: greet the child by the name set in the app
-function abcHai(){let n='';try{n=String(JSON.parse(localStorage.getItem('ds_anak')||'{}').active||'').trim()}catch(e){}if(!n)return '';return `<div style="text-align:center;font-weight:900;font-size:1.35rem;margin:2px 0 6px">👋 Hai ${n.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}! Jom belajar ABC.</div>`}
+function abcHai(){let n='';try{n=String(JSON.parse(localStorage.getItem('ds_anak')||'{}').active||'').trim()}catch(e){}if(!n)return '';return `<div style="text-align:center;font-weight:900;font-size:1.35rem;margin:2px 0 6px">👋 Hai ${n.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}! ${tx('Jom belajar ABC.',"Let's learn ABC.")}</div>`}
+/* Dunia Sai: Ruang Ibu Bapa (/shared/js/ruang-ibubapa.js). Setiap jawapan anak direkod ikut aktiviti dan huruf/perkataan. */
+let act='';
+const rj=(ok,item,opt)=>{try{window.DSRuang&&act&&DSRuang.jawab(act,ok,item,opt)}catch(e){}};
+if(window.DSRuang)DSRuang.pasang({id:'kenal-abc',nama:'Kenal ABC',tajuk:'Anak belajar ABC, kita faham perkembangannya.',
+ aktiviti:{kereta:['🚂','Kereta Api','urutan'],ikan:['🎣','Tangkap Ikan','bunyi'],surih:['✍️','Surih Huruf','tulis'],titik:['⭐','Sambung Titik','urutan'],pos:['📮','Pos Surat','bentuk'],suku:['🧩','Suku Kata','suku'],eja:['🔤','Eja Kata','eja'],kotak:['📦','Kotak Bunyi','suku'],ayat:['🧱','Bina Ayat','ayat']},
+ kemahiran:[
+  {id:'urutan',icon:'🔤',name:'Urutan abjad A hingga Z',tip:'Nyanyi lagu ABC perlahan-lahan sambil tunjuk setiap huruf pada kad atau buku.'},
+  {id:'bunyi',icon:'🔊',name:'Kenal huruf dan perkataan',tip:'Cari benda di rumah yang bermula dengan satu huruf, contohnya B untuk bola dan baju.'},
+  {id:'bentuk',icon:'🔡',name:'Padankan huruf besar dan kecil',tip:'Tulis huruf besar dan huruf kecil pada kertas berasingan, kemudian main padan-padan.'},
+  {id:'tulis',icon:'✍️',name:'Menulis (surih) huruf',tip:'Surih huruf dengan jari di atas pasir, tepung atau tapak tangan anak.'},
+  {id:'suku',icon:'🧩',name:'Bunyi dan suku kata',tip:'Tepuk tangan untuk setiap suku kata: bo-la (2 tepuk), bu-a-ya (3 tepuk).'},
+  {id:'eja',icon:'🔤',name:'Mengeja perkataan',tip:'Eja nama anak dan nama ahli keluarga dengan huruf magnet atau kertas.'},
+  {id:'ayat',icon:'🧱',name:'Membina ayat',tip:'Bila nampak sesuatu, buat ayat pendek bersama: Siapa? Buat apa? Apa? Contoh: Kucing minum susu.'}],
+ kata:{kemahiran:'Kemahiran ABC',baru:'Baharu'},
+ item:{tajuk:'🔤 Huruf dan perkataan yang perlu latihan',kukuh:'⭐ Sudah kukuh',kosong:'Belum ada rekod. Main mana-mana permainan dahulu.'},
+ kemajuan(){return [[traced.U.size+'/26','Huruf besar disurih'],[traced.L.size+'/26','Huruf kecil disurih']]},
+ nota(){return 'Rekod jawapan bermula dari versi ini. Huruf yang sudah disurih sebelum ini tetap dikira.'}});
+
 function home(){
-  setScreen(false);
+  setScreen(false);try{window.DSRuang&&DSRuang.henti()}catch(e){}act='';
   const got=Math.min(Math.floor(stars/PER_STICKER),STICKERS.length);
   const need=got<STICKERS.length?PER_STICKER-(stars%PER_STICKER):0;
   const sp=specialGot();
+  const G=[['go1','g1','🚂',tx('Kereta Api','Train'),'<span class="jl">A B ? D</span>'],
+   ['go2','g2','🎣',tx('Tangkap Ikan','Go Fishing'),`<span class="jl">${EN()?'B → ⚽':'B → ⚽'}</span>`],
+   ['go3','g3','✍️',tx('Surih Huruf','Trace Letters'),`<span class="tp">${traced.U.size+traced.L.size} / ${L.length*2}</span>`],
+   ['go4','g4','📚',tx('Kad Huruf','Letter Cards'),'<span class="jl">A–Z</span>'],
+   ['go5','g5','⭐',tx('Sambung Titik','Dot to Dot'),'<span class="jl">A·B·C</span>'],
+   ['go6','g6','📮',tx('Pos Surat','Post Letters'),'<span class="jl">b → B</span>'],
+   ['go7','g7','🧩',tx('Suku Kata','Syllables (BM)'),'<span class="jl">b + a = ba</span>'],
+   ['go8','g8','🔤',tx('Eja Kata','Spell Words'),`<span class="jl">${tx('bo · la','c a t')}</span>`],
+   ['go10','g9','📦',tx('Kotak Bunyi','Sound Boxes'),'<span class="jl">● ● ●</span>'],
+   ['go11','g10','🧱',tx('Bina Ayat','Sentences'),'<span class="jl">🐱 + 🥛</span>']];
   view.innerHTML=`<div class="stack">
-    ${abcHai()}
-    <div class="home">
-      <button class="game g1" id="go1"><span class="ic">🚂</span>Kereta Api<span class="jl">A B ? D</span></button>
-      <button class="game g2" id="go2"><span class="ic">🎣</span>Tangkap Ikan<span class="jl">B → ⚽</span></button>
-      <button class="game g3" id="go3"><span class="ic">✍️</span>Surih Huruf<span class="tp">${traced.U.size+traced.L.size} / ${L.length*2}</span></button>
-      <button class="game g4" id="go4"><span class="ic">📚</span>Kad Huruf<span class="jl">A–Z</span></button>
-      <button class="game g5" id="go5"><span class="ic">⭐</span>Sambung Titik<span class="jl">A·B·C</span></button>
-      <button class="game g6" id="go6"><span class="ic">📮</span>Pos Surat<span class="jl">b → B</span></button>
-      <button class="game g7" id="go7"><span class="ic">🧩</span>Suku Kata<span class="jl">b + a = ba</span></button>
-      <button class="game g8" id="go8"><span class="ic">🔤</span>Eja Kata<span class="jl">bo · la</span></button>
-    </div>
-    ${full?`<button class="par" id="par">👨‍👩‍👧 Untuk ibu bapa: lesen</button>`:`<button class="demo" id="unl"><span style="font-size:1.6rem">🔒</span><span>Versi percubaan: huruf A hingga Q.<br><b>Buka semua 26 huruf · ${SHOP.price}</b></span></button>`}
-    <section class="stick"><h2>Koleksi pelekat</h2>
+    <div class="toprow">${abcHai()||'<div></div>'}<div class="seg lang" role="group" aria-label="Bahasa / Language"><button data-l="ms" class="${EN()?'':'on'}">BM</button><button data-l="en" class="${EN()?'on':''}">EN</button></div></div>
+    <div class="home">${G.map(g=>`<button class="game ${g[1]}" id="${g[0]}"><span class="ic">${g[2]}</span>${g[3]}${g[4]}</button>`).join('')}</div>
+    ${full?`<button class="par" id="par">👨‍👩‍👧 ${tx('Untuk ibu bapa: lesen','For parents: licence')}</button>`:`<button class="demo" id="unl"><span style="font-size:1.6rem">🔒</span><span>${tx('Versi percubaan: huruf A hingga Q.','Free trial: letters A to Q.')}<br><b>${tx('Buka semua 26 huruf','Unlock all 26 letters')} · ${SHOP.price}</b></span></button>`}
+    <section class="stick"><h2>${tx('Koleksi pelekat','Sticker collection')}</h2>
       <div class="stk">${STICKERS.map((s,i)=>`<span class="${i<got?'':'lk'}">${s}</span>`).join('')}</div>
-      <p>${need?`Kumpul ${need} bintang lagi untuk pelekat baru`:'Semua pelekat sudah dikumpul!'}</p>
-      <h2 style="margin-top:12px">Pelekat istimewa</h2>
+      <p>${need?tx(`Kumpul ${need} bintang lagi untuk pelekat baru`,`Collect ${need} more stars for a new sticker`):tx('Semua pelekat sudah dikumpul!','You have every sticker!')}</p>
+      <h2 style="margin-top:12px">${tx('Pelekat istimewa','Special stickers')}</h2>
       <div class="stk">${SPECIAL.map(([m,n,s])=>`<span class="${sp.includes(s)?'':'lk'}">${s}</span>`).join('')}</div>
-      <p>Siapkan 10 dan 26 huruf besar, dan 26 huruf kecil, dalam Surih Huruf</p>
-      <button class="btn" id="go9">🎨 Papan pelekat</button>
-    </section></div>`;
-  const go=(id,k,fn)=>document.getElementById(id).onclick=()=>{speak(Pc(k));fn()};
-  go('go1','g-kereta',train);go('go2','g-ikan',fishing);go('go3','g-surih',map);go('go4','g-kad',()=>learn());
-  go('go5','g-titik',connect);go('go6','g-pos',postal);go('go7','g-suku',syllable);go('go8','g-eja',spell);go('go9','g-pelekat',board);
+      <p>${tx('Siapkan 10 dan 26 huruf besar, dan 26 huruf kecil, dalam Surih Huruf','Trace 10 and 26 capital letters, and 26 small letters, in Trace Letters')}</p>
+      <button class="btn" id="go9">🎨 ${tx('Papan pelekat','Sticker board')}</button>
+    </section>
+    <button class="par" id="ruangB">📊 ${tx('Ruang Ibu Bapa: lihat kemajuan anak','For parents: see progress (in BM)')}</button></div>`;
+  const go=(id,k,fn,a)=>document.getElementById(id).onclick=()=>{act=a||'';speak(Pc(k));fn()};
+  go('go1','g-kereta',train,'kereta');go('go2','g-ikan',fishing,'ikan');go('go3','g-surih',map,'surih');go('go4','g-kad',()=>learn());
+  go('go5','g-titik',connect,'titik');go('go6','g-pos',postal,'pos');go('go7','g-suku',syllable,'suku');go('go8','g-eja',spell,'eja');go('go9','g-pelekat',board);
+  go('go10','x-g-kotak',soundbox,'kotak');go('go11','x-g-ayat',sentence,'ayat');
+  view.querySelectorAll('.lang button').forEach(b=>b.onclick=()=>{if(b.dataset.l===LANG)return;setLang(b.dataset.l);popSnd();home()});
+  const rb=document.getElementById('ruangB');if(rb)rb.onclick=()=>{if(window.DSRuang)DSRuang.buka(home)};
   const u=document.getElementById('unl');if(u)u.onclick=unlock;
   const pb=document.getElementById('par');if(pb)pb.onclick=()=>gate(licenceScreen);
 }
@@ -601,14 +725,14 @@ function train(){
     const ask=()=>speak(Pc('hilang'));
     view.innerHTML=`<div class="stack">
       <div class="progress"><i style="width:${q/R*100}%"></i></div>
-      <div class="prompt bar"><button class="saybtn" id="rp" aria-label="Dengar lagi">🔊</button><div class="hint">Huruf apa yang hilang?</div></div>
+      <div class="prompt bar"><button class="saybtn" id="rp" aria-label="Dengar lagi">🔊</button><div class="hint">${tx('Huruf apa yang hilang?','Which letter is missing?')}</div></div>
       <div class="rail"><div class="train in" id="tr">${run.map((x,k)=>`<span class="wag${k===gi?' q':''}" data-k="${k}" style="background:${COLS[(k+q)%COLS.length]}">${k===gi?'?':cs(x,low)}</span>`).join('')}<span class="eng" aria-hidden="true">🚂</span></div></div>
       <div class="choices">${opts.map(o=>`<button class="tile" data-i="${o.i}" aria-label="${cs(o,low)}">${cs(o,low)}</button>`).join('')}</div></div>`;
     document.getElementById('rp').onclick=ask;ask();
     view.querySelectorAll('.wag').forEach(w=>w.onclick=()=>{const k=+w.dataset.k;if(k!==gi||locked)speak(Lc(run[k]))});
     view.querySelectorAll('.tile').forEach(b=>b.onclick=()=>{
       if(locked||b.classList.contains('no'))return;
-      if(+b.dataset.i===target.i){locked=true;b.classList.add('ok');chime(true);if(!miss){score++;addStar()}
+      if(+b.dataset.i===target.i){locked=true;b.classList.add('ok');chime(true);rj(true,target.u);if(!miss){score++;addStar()}
         const w=view.querySelector(`.wag[data-k="${gi}"]`);w.classList.remove('q');w.classList.add('fillin');w.textContent=cs(target,low);
         speak(praise(),...run.map(Lc));
         const rail=view.querySelector('.rail'),eng=view.querySelector('.eng');
@@ -616,7 +740,7 @@ function train(){
           const p=document.createElement('span');p.className='smoke';p.textContent='💨';p.style.left=(e.left-r.left)/k+20+'px';p.style.top=(e.top-r.top)/k-20+'px';rail.appendChild(p);
           tone(520,380,.5,'triangle',.12);document.getElementById('tr').classList.add('go')},1500);
         q++;timers.push(quietTimeout(next,2900))}
-      else{miss=true;b.classList.add('no');chime(false);speak(Pc('cuba-lagi'),Pc('hilang'))}
+      else{miss=true;b.classList.add('no');chime(false);rj(false,target.u);speak(Pc('cuba-lagi'),Pc('hilang'))}
     });
   }
   next();
@@ -634,7 +758,7 @@ function fishing(){
   cleanup=()=>{alive=false;cancelAnimationFrame(raf);timers.forEach(clearTimeout)};
   view.innerHTML=`<div class="stack">
     <div class="progress"><i id="pg"></i></div>
-    <div class="prompt bar"><button class="saybtn" id="rp" aria-label="Dengar lagi">🔊</button><div class="hint">Tangkap ikan yang bermula dengan</div><div class="tgt" id="tg"></div></div>
+    <div class="prompt bar"><button class="saybtn" id="rp" aria-label="Dengar lagi">🔊</button><div class="hint">${tx('Tangkap ikan yang bermula dengan','Catch the fish that starts with')}</div><div class="tgt" id="tg"></div></div>
     <div class="sea" id="sea"><span class="rod" aria-hidden="true">🎣</span><span class="weed" style="left:6%">🌿</span><span class="weed" style="left:44%">🪸</span><span class="weed" style="right:6%">🌿</span></div></div>`;
   const sea=document.getElementById('sea'),tg=document.getElementById('tg'),pg=document.getElementById('pg');
   function frame(t){if(!alive)return;const dt=Math.min(.05,(t-(last||t))/1000);last=t;const W=sea.clientWidth;
@@ -655,12 +779,12 @@ function fishing(){
       el.style.transform=`translate(${f.x}px,${f.y}px)`;
       el.onclick=()=>{
         if(locked||f.gone)return;
-        if(x===target){locked=true;f.gone=true;chime(true);popSnd();
+        if(x===target){locked=true;f.gone=true;chime(true);rj(true,target.u);popSnd();
           el.classList.add('hook');el.style.transform=`translate(${f.x}px,${-140}px) rotate(-30deg)`;
           const k=scaleOf(sea);confetti(sea,f.x,f.y+38);
           if(!miss){score++;addStar()}speak(praise(),Lc(target),Wc(target));q++;
           timers.push(quietTimeout(next,1800))}
-        else{miss=true;chime(false);el.classList.remove('wig');void el.offsetWidth;el.classList.add('wig');speak(Wc(x),Pc('cuba-lagi'),Lc(target))}
+        else{miss=true;chime(false);rj(false,target.u);el.classList.remove('wig');void el.offsetWidth;el.classList.add('wig');speak(Wc(x),Pc('cuba-lagi'),Lc(target))}
       };
       sea.appendChild(el);return f});
   }
@@ -693,7 +817,7 @@ function connect(){
     const pts=sh.p.map(p=>p.map(v=>+v.toFixed(1)));
     view.innerHTML=`<div class="stack">
       <div class="progress"><i style="width:${q/R*100}%"></i></div>
-      <div class="prompt bar"><button class="saybtn" id="rp" aria-label="Dengar lagi">🔊</button><div class="hint" id="hn">Sambung titik ikut huruf</div><div class="tgt L" style="font-size:1.6rem">${cs(L[0],low)} → ${cs(L[n-1],low)}</div></div>
+      <div class="prompt bar"><button class="saybtn" id="rp" aria-label="Dengar lagi">🔊</button><div class="hint" id="hn">${tx('Sambung titik ikut huruf','Join the dots in ABC order')}</div><div class="tgt L" style="font-size:1.6rem">${cs(L[0],low)} → ${cs(L[n-1],low)}</div></div>
       <div class="dots" id="dz" style="--s:${n>16?32:n>12?36:42}px">
         <svg viewBox="0 0 100 100" aria-hidden="true"><polygon points="${pts.map(p=>p.join(',')).join(' ')}" fill="${sh.c}"/><polyline id="pl" points=""/></svg>
         ${pts.map((p,k)=>`<button class="dt" data-k="${k}" style="left:${p[0]}%;top:${p[1]}%" aria-label="${cs(L[k],low)}">${cs(L[k],low)}</button>`).join('')}
@@ -709,11 +833,11 @@ function connect(){
         pl.setAttribute('points',drawn.map(p=>p.join(',')).join(' '));
         if(nx<n){popSnd();speak(Lc(L[k]));if(miss>=2)miss=0;return}
         locked=true;drawn.push(pts[0]);pl.setAttribute('points',drawn.map(p=>p.join(',')).join(' '));
-        chime(true);if(!sh.missed){score++;addStar()}
-        hn.textContent=sh.n+'!';
+        chime(true);rj(true);if(!sh.missed){score++;addStar()}
+        hn.textContent=(EN()?sh.en:sh.n)+'!';
         setTimeout(()=>dz.classList.add('fin'),250);
         speak(Lc(L[k]),Hc(sh),praise());q++;t=quietTimeout(next,2400);return}
-      miss++;sh.missed=sh.missed||miss>=3;chime(false);b.classList.remove('no');void b.offsetWidth;b.classList.add('no');
+      miss++;sh.missed=sh.missed||miss>=3;chime(false);rj(false);b.classList.remove('no');void b.offsetWidth;b.classList.add('no');
       if(miss>=2){dz.querySelector(`.dt[data-k="${nx}"]`).classList.add('hintb');speak(Pc('cari-seterusnya'),Lc(L[nx]))}
       else speak(Pc('cuba-lagi'));
     });
@@ -730,9 +854,9 @@ function postal(){
   const later=(f,ms)=>timers.push(setTimeout(f,ms));
   view.innerHTML=`<div class="stack">
     <div class="progress"><i id="pg"></i></div>
-    <div class="prompt bar"><button class="saybtn" id="rp" aria-label="Dengar lagi">🔊</button><div class="hint">Hantar surat ke peti huruf besarnya</div></div>
+    <div class="prompt bar"><button class="saybtn" id="rp" aria-label="Dengar lagi">🔊</button><div class="hint">${tx('Hantar surat ke peti huruf besarnya','Post the letter into its capital letter box')}</div></div>
     <div class="post" id="po"><div class="boxes" id="bx"></div></div>
-    <div class="hint" style="text-align:center;color:var(--muted)">Seret surat ke peti yang betul</div></div>`;
+    <div class="hint" style="text-align:center;color:var(--muted)">${tx('Seret surat ke peti yang betul','Drag the letter to the right box')}</div></div>`;
   const po=document.getElementById('po'),bx=document.getElementById('bx'),pg=document.getElementById('pg');
   function next(){
     if(q>=R)return finish(score,R,postal);
@@ -758,9 +882,9 @@ function postal(){
         const cur=new DOMMatrix(getComputedStyle(env).transform);
         env.classList.remove('back');env.classList.add('in');
         env.style.transform=`translate(${cur.m41+((r.left+r.width/2)-(a.left+a.width/2))/k}px,${cur.m42+((r.top+40*k)-(a.top+a.height/2))/k}px) scale(.3)`;
-        b.classList.add('ok');b.querySelector('.lb').textContent=target.u+target.l;chime(true);
+        b.classList.add('ok');b.querySelector('.lb').textContent=target.u+target.l;chime(true);rj(true,target.u);
         if(!miss){score++;addStar()}speak(praise(),Lc(target));q++;timers.push(quietTimeout(next,1500))}
-      else{miss=true;env.classList.add('back');env.style.transform='';b.classList.remove('nope');void b.offsetWidth;b.classList.add('nope');chime(false);speak(Pc('cuba-lagi'),Pc('pos'),Lc(target))}
+      else{miss=true;env.classList.add('back');env.style.transform='';b.classList.remove('nope');void b.offsetWidth;b.classList.add('nope');chime(false);rj(false,target.u);speak(Pc('cuba-lagi'),Pc('pos'),Lc(target))}
     }
   }
   next();
@@ -775,14 +899,15 @@ async function trace(i){
   const x=L[i],ch=cs(x,low);let done=false;
   view.innerHTML=`<div class="prompt stack" style="gap:8px">
     <button class="saybtn corner" id="rp" aria-label="Dengar lagi">🔊</button>
-    <div class="word"><span class="L">${ch}</span> <span class="hint" style="font-size:1.1rem">${low?'huruf kecil':'huruf besar'}</span></div>
+    <div class="word"><span class="L">${ch}</span> <span class="hint" style="font-size:1.1rem">${low?tx('huruf kecil','small letter'):tx('huruf besar','capital letter')}</span></div>
     <div class="cv"><canvas id="mask"></canvas><canvas id="hl"></canvas><canvas id="draw"></canvas></div>
     <div class="meter"><i id="mt"></i></div>
-    <div class="hint" id="th">Warnakan huruf dengan jari sampai bar penuh</div>
-    <div class="row"><button class="btn" id="pv" aria-label="Sebelum">←</button><button class="btn" id="clr">Padam</button><button class="btn" id="mp" aria-label="Peta huruf">🗺️</button><button class="btn" id="nx" aria-label="Seterusnya">→</button></div></div>`;
+    <div class="hint" id="th">${tx('Warnakan huruf dengan jari sampai bar penuh','Colour the letter with your finger until the bar is full')}</div>
+    <div class="rw" id="rw" hidden><span class="pic">${x.e}</span><span class="word L">${low?`<b>${x.w[0].toLowerCase()}</b>${x.w.slice(1).toLowerCase()}`:wordHTML(x)}</span></div>
+    <div class="row"><button class="btn" id="pv" aria-label="Sebelum">←</button><button class="btn" id="clr">${tx('Padam','Clear')}</button><button class="btn" id="mp" aria-label="Peta huruf">🗺️</button><button class="btn" id="nx" aria-label="Seterusnya">→</button></div></div>`;
   document.getElementById('pv').onclick=()=>{if(i>0)trace(i-1)};
   document.getElementById('mp').onclick=map;
-  document.getElementById('nx').onclick=()=>{if(done0.has(i))step(i,1,trace);else{chime(false);toast('Siapkan huruf ini dulu 🙂');speak(Pc('siapkan-dulu'))}};
+  document.getElementById('nx').onclick=()=>{if(done0.has(i))step(i,1,trace);else{chime(false);toast(tx('Siapkan huruf ini dulu 🙂','Finish this letter first 🙂'));speak(Pc('siapkan-dulu'))}};
   const mask=document.getElementById('mask'),draw=document.getElementById('draw'),hl=document.getElementById('hl'),mt=document.getElementById('mt');
   const size=mask.getBoundingClientRect().width/scaleOf(mask),dpr=Math.min((window.devicePixelRatio||1)*Z,3);
   [mask,draw,hl].forEach(c=>{c.width=size*dpr;c.height=size*dpr});
@@ -838,7 +963,7 @@ async function trace(i){
   const near=new Uint8Array(gw*gh),rad=Math.ceil(size*.085*dpr*.75/gap);
   for(let k=0;k<cell.length;k++)if(cell[k]){const cx=k%gw,cy=(k/gw)|0;for(let dy=-rad;dy<=rad;dy++)for(let dx=-rad;dx<=rad;dx++){const nx=cx+dx,ny=cy+dy;if(nx>=0&&ny>=0&&nx<gw&&ny<gh)near[ny*gw+nx]=1}}
   let NEED=nd?.6:.62,ZONE=.3,NEAT=.7;
-  const th=document.getElementById('th'),HINT=nd?'Warnakan huruf, kemudian sentuh titiknya':'Warnakan huruf dengan jari sampai bar penuh';
+  const th=document.getElementById('th'),HINT=nd?tx('Warnakan huruf, kemudian sentuh titiknya','Colour the letter, then touch its dot'):tx('Warnakan huruf dengan jari sampai bar penuh','Colour the letter with your finger until the bar is full');
   let lastMsg='';
   const tell=(text,k)=>{th.textContent=text;if(k&&k!==lastMsg){lastMsg=k;speak(Pc(k))}};
   th.textContent=HINT;const hintScreen=screenId;if(nd)setTimeout(()=>{if(!done&&screenId===hintScreen&&document.body.contains(th))speak(Pc('sentuh-titik'))},1500);
@@ -862,12 +987,12 @@ async function trace(i){
         hl.classList.add('blink')}}
     const dotsOk=taps.length>=nd;
     if(final&&!done){
-      if(neat<NEAT)tell('Ikut bentuk huruf, jangan conteng. Tekan Padam dan cuba lagi.','ikut-bentuk');
-      else if(!zonesOk||bodyCov<NEED){if(meter>.5)tell('Warnakan seluruh bentuk huruf, sampai ke hujung.','sampai-hujung')}
-      else if(!dotsOk)tell('Jangan lupa titik! Sentuh titik di tempatnya.','jangan-lupa-titik');
+      if(neat<NEAT)tell(tx('Ikut bentuk huruf, jangan conteng. Tekan Padam dan cuba lagi.','Follow the shape, no scribbles. Press Clear and try again.'),'ikut-bentuk');
+      else if(!zonesOk||bodyCov<NEED){if(meter>.5)tell(tx('Warnakan seluruh bentuk huruf, sampai ke hujung.','Colour the whole letter, right to the ends.'),'sampai-hujung')}
+      else if(!dotsOk)tell(tx('Jangan lupa titik! Sentuh titik di tempatnya.',"Don't forget the dot! Touch it in its place."),'jangan-lupa-titik');
       else th.textContent=HINT;
     }
-    if(!done&&bodyCov>=NEED&&zonesOk&&dotsOk&&neat>=NEAT){th.textContent='Syabas!';hc.clearRect(0,0,size,size);hl.classList.remove('blink');drawing=false;done=true;chime(true);addStar();speak(praise(),Lc(x));
+    if(!done&&bodyCov>=NEED&&zonesOk&&dotsOk&&neat>=NEAT){th.hidden=true;document.getElementById('rw').hidden=false;hc.clearRect(0,0,size,size);hl.classList.remove('blink');drawing=false;done=true;chime(true);rj(true,ch,{satu:true});addStar();speak(praise(),Lc(x),Wc(x));
       draw.parentElement.style.borderColor='var(--leaf)';
       const before=done0.size;done0.add(i);saveTraced(m);const after=done0.size;
       quietTimeout(()=>{if(!document.body.contains(draw))return;
@@ -895,7 +1020,7 @@ function map(){
   view.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>{mode=b.dataset.m;save('abc_mode',mode);speak(Pc(mode==='L'?'huruf-kecil':'huruf-besar'));map()});
   view.querySelectorAll('.node').forEach(b=>b.onclick=()=>{
     if(b.classList.contains('pay'))return unlock();
-    if(b.classList.contains('lock')){chime(false);toast('Siapkan huruf sebelumnya dulu 🙂');return}
+    if(b.classList.contains('lock')){chime(false);toast(tx('Siapkan huruf sebelumnya dulu 🙂','Finish the letter before it first 🙂'));return}
     trace(+b.dataset.k)});
   const cur=view.querySelector('.node.now');if(cur&&r>3)cur.scrollIntoView({block:'center'});
 }
@@ -905,11 +1030,11 @@ function celebrate10(){
   setScreen(true);chime(true);speak(Pc('sepuluh-huruf'));
   view.innerHTML=`<div class="prompt stack" style="align-items:center;gap:10px">
     <div class="pic" style="font-size:4rem">🥇</div>
-    <h2 class="cel">Syabas!</h2>
-    <div class="word" style="font-size:1.5rem">Kamu dah kenal 10 huruf!</div>
-    <div class="hint">Pelekat istimewa baru: 🥇</div>
-    <button class="btn" id="go">Teruskan →</button>
-    <button class="btn" id="mp2">🗺️ Peta huruf</button></div>`;
+    <h2 class="cel">${tx('Syabas!','Well done!')}</h2>
+    <div class="word" style="font-size:1.5rem">${tx('Kamu dah kenal 10 huruf!','You know 10 letters!')}</div>
+    <div class="hint">${tx('Pelekat istimewa baru','New special sticker')}: 🥇</div>
+    <button class="btn" id="go">${tx('Teruskan','Keep going')} →</button>
+    <button class="btn" id="mp2">🗺️ ${tx('Peta huruf','Letter map')}</button></div>`;
   document.getElementById('go').onclick=()=>trace(10);
   document.getElementById('mp2').onclick=map;
 }
@@ -919,12 +1044,12 @@ function celebrateFree(){
   const nx=L.slice(FREE,FREE+5),rest=L.length-FREE;
   view.innerHTML=`<div class="prompt stack" style="align-items:center;gap:10px">
     <div class="pic" style="font-size:4rem">🌟</div>
-    <h2 class="cel">Syabas!</h2>
-    <div class="word" style="font-size:1.5rem">Kamu dah kenal ${FREE} huruf!</div>
-    <div class="hint" style="color:var(--ink);font-weight:700">Huruf seterusnya sedang menunggu:</div>
+    <h2 class="cel">${tx('Syabas!','Well done!')}</h2>
+    <div class="word" style="font-size:1.5rem">${tx(`Kamu dah kenal ${FREE} huruf!`,`You know ${FREE} letters!`)}</div>
+    <div class="hint" style="color:var(--ink);font-weight:700">${tx('Huruf seterusnya sedang menunggu:','More letters are waiting:')}</div>
     <div class="peek">${nx.map(x=>`<span>${x.u}</span>`).join('')}<span class="more">+${rest-nx.length}</span></div>
-    <button class="btn wa" id="go">🔓 Buka ${rest} huruf lagi · ${SHOP.price}</button>
-    <button class="btn" id="mp2">🗺️ Peta huruf</button></div>`;
+    <button class="btn wa" id="go">🔓 ${tx(`Buka ${rest} huruf lagi`,`Unlock ${rest} more letters`)} · ${SHOP.price}</button>
+    <button class="btn" id="mp2">🗺️ ${tx('Peta huruf','Letter map')}</button></div>`;
   document.getElementById('go').onclick=unlock;
   document.getElementById('mp2').onclick=map;
 }
@@ -934,18 +1059,18 @@ function certificate(m){
   setScreen(true);chime(true);speak(Pc(m==='L'?'semua-kecil':'semua-besar'));
   let nm=load('abc_name','')||'';
   const esc=s=>String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
-  const d=new Date().toLocaleDateString('ms-MY',{day:'numeric',month:'long',year:'numeric'});
+  const d=new Date().toLocaleDateString(EN()?'en-GB':'ms-MY',{day:'numeric',month:'long',year:'numeric'});
   view.innerHTML=`<div class="cert stack">
     <div class="pic" style="font-size:3.5rem">${m==='L'?'🎓':'🏅'}</div>
-    <div class="ct">Sijil Kenal ABC</div>
+    <div class="ct">${tx('Sijil Kenal ABC','Kenal ABC Certificate')}</div>
     <div class="cj">${m==='L'?'abc … xyz':'ABC … XYZ'}</div>
-    <div class="hint">Dengan ini disahkan bahawa</div>
-    <input class="code nm" id="nm" placeholder="Tulis nama anak" maxlength="30" autocomplete="off" aria-label="Nama anak" value="${esc(nm)}">
-    <div class="hint" style="color:var(--ink);font-size:1.05rem">telah mengenal kesemua ${L.length} ${m==='L'?'huruf kecil':'huruf besar'}</div>
+    <div class="hint">${tx('Dengan ini disahkan bahawa','This is to certify that')}</div>
+    <input class="code nm" id="nm" placeholder="${tx('Tulis nama anak',"Child's name")}" maxlength="30" autocomplete="off" aria-label="Nama anak" value="${esc(nm)}">
+    <div class="hint" style="color:var(--ink);font-size:1.05rem">${tx(`telah mengenal kesemua ${L.length} ${m==='L'?'huruf kecil':'huruf besar'}`,`knows all ${L.length} ${m==='L'?'small':'capital'} letters`)}</div>
     <div class="stars">⭐⭐⭐</div>
     <div class="hint">${d}</div>
-    <div class="hint">Ibu bapa: ambil tangkapan skrin untuk simpan sijil ini</div>
-    <div class="row"><button class="btn" id="mp2">🗺️ Peta</button><button class="btn" id="hm2">🏠</button></div></div>`;
+    <div class="hint">${tx('Ibu bapa: ambil tangkapan skrin untuk simpan sijil ini','Parents: take a screenshot to keep this certificate')}</div>
+    <div class="row"><button class="btn" id="mp2">🗺️ ${tx('Peta','Map')}</button><button class="btn" id="hm2">🏠</button></div></div>`;
   const inp=document.getElementById('nm');inp.oninput=()=>save('abc_name',inp.value);
   document.getElementById('mp2').onclick=map;document.getElementById('hm2').onclick=home;
 }
@@ -957,15 +1082,17 @@ function learn(i){
   if(i!=null){const x=L[i];
     view.innerHTML=`<div class="prompt big stack" style="gap:4px"><button class="saybtn corner" id="rp" aria-label="Dengar lagi">🔊</button>
       <div class="j">${x.u}<small>${x.l}</small></div>
-      <div class="say">sebutan: <b>${x.n}</b></div><div class="pic" style="font-size:3.5rem">${x.e}</div>
-      <div class="word L" style="font-size:1.8rem">${wordHTML(x)}</div>
+      <div class="say">${tx('sebutan','say')}: <b>${x.n}</b></div><div class="pic" style="font-size:4.4rem">${x.e}</div>
+      <div class="word L" style="font-size:2rem">${wordHTML(x)}</div>
       <div class="row" style="margin-top:10px">
-        <button class="btn" id="pv" aria-label="Sebelum">←</button><button class="btn" id="back">Semua</button><button class="btn" id="nx" aria-label="Seterusnya">→</button></div></div>`;
+        <button class="btn" id="pv" aria-label="Sebelum">←</button><button class="btn" id="back">${tx('Semua','All')}</button><button class="btn" id="tr" aria-label="${tx('Surih huruf ini','Trace this letter')}">✍️</button><button class="btn" id="nx" aria-label="Seterusnya">→</button></div></div>`;
     speak(Lc(x),Wc(x));
     view.querySelector('.big .j').onclick=()=>speak(Lc(x));
     view.querySelector('.big .pic').onclick=()=>speak(Wc(x));
     document.getElementById('rp').onclick=()=>speak(Lc(x),Wc(x));
     document.getElementById('back').onclick=()=>learn();
+    // Trace this letter (capital), if the letter map has reached it; otherwise open the map
+    document.getElementById('tr').onclick=()=>{act='surih';mode='U';save('abc_mode',mode);i<=reach('U')?trace(i):map()};
     document.getElementById('pv').onclick=()=>step(i,-1,learn);
     document.getElementById('nx').onclick=()=>step(i,1,learn);
     return;}
@@ -985,17 +1112,17 @@ function syllable(){
     view.innerHTML=`<div class="stack">
       <div class="progress"><i style="width:${q/R*100}%"></i></div>
       <div class="prompt"><button class="saybtn corner" id="rp" aria-label="Dengar lagi">🔊</button>
-        <div class="hint" style="color:var(--ink);font-weight:700;font-size:1.1rem">Dengar dan pilih bunyinya</div>
+        <div class="hint" style="color:var(--ink);font-weight:700;font-size:1.1rem">${tx('Dengar dan pilih bunyinya','Listen and pick the sound (Malay)')}</div>
         <div class="sum"><span class="c" id="cc">${c.l}</span><span class="op">+</span><span class="v" id="vv">?</span><span class="op">=</span><span class="r" id="rr">?</span></div></div>
       <div class="choices">${vs.map(o=>`<button class="tile sy" data-v="${o}" aria-label="${c.l+o}">${c.l+o}</button>`).join('')}</div></div>`;
     document.getElementById('rp').onclick=ask;document.getElementById('cc').onclick=()=>speak(Lc(c));
     ask();
     view.querySelectorAll('.tile').forEach(b=>b.onclick=()=>{
       if(locked)return;
-      if(b.dataset.v===v){locked=true;b.classList.add('ok');chime(true);if(!miss){score++;addStar()}
+      if(b.dataset.v===v){locked=true;b.classList.add('ok');chime(true);rj(true,target);if(!miss){score++;addStar()}
         document.getElementById('vv').textContent=v;document.getElementById('rr').textContent=target;
         speak(praise(),Sc(target));q++;t=quietTimeout(next,1500)}
-      else if(!b.classList.contains('no')){miss=true;b.classList.add('no');chime(false);speak(Sc(c.l+b.dataset.v),Pc('cuba-lagi'),Pc('mana-bunyi'),Sc(target))}
+      else if(!b.classList.contains('no')){miss=true;b.classList.add('no');chime(false);rj(false,target);speak(Sc(c.l+b.dataset.v),Pc('cuba-lagi'),Pc('mana-bunyi'),Sc(target))}
     });
   }
   next();
@@ -1029,15 +1156,135 @@ function spell(){
         view.querySelectorAll('.lt').forEach(e=>e.classList.remove('hintb'));
         pos++;mark();miss=0;
         const g=groups.findIndex(g=>g[g.length-1]===pos-1);
-        if(pos>=letters.length){locked=true;chime(true);if(!wmiss){score++;addStar()}
-          speak(...w.s.map(Sc),Ec(w),praise());q++;t=quietTimeout(next,2000)}
-        else if(g>=0){popSnd();speak(Sc(w.s[g]))}
+        if(pos>=letters.length){locked=true;chime(true);rj(true,w.w);if(!wmiss){score++;addStar()}
+          speak(...(w.en?[]:w.s.map(Sc)),Ec(w),praise());q++;t=quietTimeout(next,2000)}
+        else if(g>=0&&!w.en){popSnd();speak(Sc(w.s[g]))}
         else{popSnd();speak(Lc(x))}
       }else{
-        miss++;wmiss=true;chime(false);b.classList.remove('no');void b.offsetWidth;b.classList.add('no');setTimeout(()=>b.classList.remove('no'),450);
+        miss++;wmiss=true;chime(false);rj(false,w.w);b.classList.remove('no');void b.offsetWidth;b.classList.add('no');setTimeout(()=>b.classList.remove('no'),450);
         speak(Pc('cuba-lagi'));
         if(miss>=2){const h=[...view.querySelectorAll('.lt')].find(e=>!e.classList.contains('used')&&e.dataset.c===letters[pos]);if(h)h.classList.add('hintb')}
       }
+    });
+  }
+  next();
+}
+
+/* ---------- 9. KOTAK BUNYI (Elkonin sound boxes) ----------
+   One box for each sound. Step 1: hear the word and push one counter into a box for each sound (each box says its sound).
+   Step 2: find the box of one sound; then the boxes show how the sounds are written (vowels pink, consonants blue).
+   BM: one box per suku kata (recorded syllables). English: one box per sound (cat = c|a|t, ship = sh|i|p), said by the phone. */
+const KB_EN=[["cat","🐱",["c","a","t"]],["bus","🚌",["b","u","s"]],["hat","🎩",["h","a","t"]],["bed","🛏️",["b","e","d"]],["hen","🐔",["h","e","n"]],
+ ["cup","☕",["c","u","p"]],["map","🗺️",["m","a","p"]],["bat","🦇",["b","a","t"]],["log","🪵",["l","o","g"]],["pin","📌",["p","i","n"]],
+ ["sun","☀️",["s","u","n"]],["web","🕸️",["w","e","b"]],["fish","🐟",["f","i","sh"]],["ship","🚢",["sh","i","p"]],["frog","🐸",["f","r","o","g"]],["duck","🦆",["d","u","ck"]]]
+ .map(([w,e,s])=>({w,e:pic(w,e),s,en:true}));
+// How the phone says each English sound (sounds, not letter names)
+const SND_EN={a:'ah',e:'eh',i:'ih',o:'o',u:'uh',b:'buh',c:'kuh',ck:'kuh',d:'duh',f:'fff',g:'guh',h:'huh',l:'lll',m:'mmm',n:'nnn',p:'puh',r:'rrr',s:'sss',t:'tuh',w:'wuh',sh:'shh'};
+const KBc=(w,x)=>w.en?{t:SND_EN[x]||x,l:'en'}:Sc(x);
+const kbHTML=x=>[...x].map(c=>`<span class="${'aeiou'.includes(c)?'kv':'kc'}">${c}</span>`).join('');
+function soundbox(){
+  setScreen(true);
+  const pool=EN()?(full?KB_EN:KB_EN.slice(0,8)):availWords().filter(w=>w.s.length>=2);
+  const R=Math.min(6,pool.length),order=shuffle(pool).slice(0,R);let q=0,score=0,t=null;
+  cleanup=()=>clearTimeout(t);
+  function next(){
+    if(q>=R)return finish(score,R,soundbox);
+    const w=order[q],n=w.s.length;let filled=0,phase=1,miss=false,tk=-1;
+    view.innerHTML=`<div class="stack">
+      <div class="progress"><i style="width:${q/R*100}%"></i></div>
+      <div class="prompt stack" style="gap:12px"><button class="saybtn corner" id="rp" aria-label="${tx('Dengar lagi','Listen again')}">🔊</button>
+        <div class="pic" id="pc">${w.e}</div>
+        <div class="kb" id="kb">${w.s.map((_,k)=>`<button class="kbx" data-k="${k}" aria-label="${tx('Kotak','Box')} ${k+1}"></button>`).join('')}</div>
+        <div class="hint" id="kh" style="color:var(--ink);font-weight:700">${tx('Tolak satu guli untuk setiap suku kata','Push one counter for each sound')}</div></div>
+      <div class="guli" id="gl">${w.s.map(()=>`<button class="gu" aria-label="${tx('Guli','Counter')}"></button>`).join('')}</div></div>`;
+    const kb=document.getElementById('kb'),gl=document.getElementById('gl'),kh=document.getElementById('kh'),boxes=[...kb.children];
+    const intro=()=>speak(Pc('x-kb-tolak'),Ec(w));
+    const ask=()=>speak(Pc('x-kb-mana'),KBc(w,w.s[tk]));
+    document.getElementById('rp').onclick=()=>phase===2?ask():intro();
+    document.getElementById('pc').onclick=()=>speak(Ec(w));
+    intro();
+    gl.querySelectorAll('.gu').forEach(g=>g.onclick=()=>{
+      if(phase!==1||g.classList.contains('used'))return;
+      const b=boxes[filled];g.classList.add('used');b.innerHTML='<i class="tok"></i>';b.classList.add('on');popSnd();speak(KBc(w,w.s[filled]));filled++;
+      if(filled>=n){phase=0;t=quietTimeout(()=>{kb.classList.add('all');speak(Ec(w));t=quietTimeout(step2,900)},600)}
+    });
+    function reveal(){boxes.forEach((b,k)=>{b.classList.remove('on','hintb');b.classList.add('rv');b.innerHTML=kbHTML(w.s[k])})}
+    function done(){phase=3;reveal();kh.textContent=`${tx('Syabas!','Well done!')} ${w.w}`;chime(true);rj(true,w.w);if(!miss){score++;addStar()}
+      speak(praise(),...w.s.map(x=>KBc(w,x)),Ec(w));q++;t=quietTimeout(next,1800)}
+    function step2(){
+      kb.classList.remove('all');gl.classList.add('gone');
+      // Ask for a sound that appears once in the word (su-su and gi-gi have no single answer: show the spelling and move on)
+      const one=w.s.map((x,k)=>k).filter(k=>w.s.indexOf(w.s[k])===w.s.lastIndexOf(w.s[k]));
+      if(!one.length)return done();
+      tk=pick(one);phase=2;kh.textContent=tx('Kotak mana bunyi ini? Tekan 🔊 untuk dengar lagi.','Which box makes this sound? Press 🔊 to hear it again.');ask();
+    }
+    boxes.forEach((b,k)=>b.onclick=()=>{
+      if(phase===1||phase===3){if(k<filled||phase===3)speak(KBc(w,w.s[k]));return}
+      if(phase!==2)return;
+      if(k===tk)return done();
+      miss=true;rj(false,w.w);chime(false);b.classList.remove('no');void b.offsetWidth;b.classList.add('no');setTimeout(()=>b.classList.remove('no'),450);
+      speak(KBc(w,w.s[k]),Pc('cuba-lagi'),Pc('x-kb-mana'),KBc(w,w.s[tk]));
+      if(miss&&kb.querySelectorAll('.hintb').length===0&&k!==tk){const c=boxes[tk];setTimeout(()=>{if(phase===2)c.classList.add('hintb')},1200)}
+    });
+  }
+  next();
+}
+
+/* ---------- 10. BINA AYAT: build a short sentence from a picture ----------
+   Three cars: Siapa? (orange) + Buat apa? (green) + Apa? (blue). Word cards have the colour of their car.
+   From the third sentence there is one extra card that does not belong: the picture shows which one. */
+const AYAT_MS=[["🐱🥛",[["Kucing","🐱"],["minum"],["susu.","🥛"]]],["👦📚",[["Adik","👦"],["baca"],["buku.","📚"]]],["🧕🍚",[["Ibu","🧕"],["masak"],["nasi.","🍚"]]],
+ ["🐒🍌",[["Monyet","🐒"],["makan"],["pisang.","🍌"]]],["👦⚽",[["Abang","👦"],["tendang"],["bola.","⚽"]]],["👨🚗",[["Ayah","👨"],["pandu"],["kereta.","🚗"]]],
+ ["🧕🌸",[["Kakak","🧕"],["lukis"],["bunga.","🌸"]]],["🐄🌿",[["Lembu","🐄"],["makan"],["rumput.","🌿"]]],["🐔🌽",[["Ayam","🐔"],["makan"],["jagung.","🌽"]]],
+ ["👴🌳",[["Atuk","👴"],["siram"],["pokok.","🌳"]]],["🦆💧",[["Itik","🦆"],["minum"],["air.","💧"]]],["🐰🥕",[["Arnab","🐰"],["makan"],["lobak.","🥕"]]]];
+const AYAT_EN=[["🐱🥛",[["The cat","🐱"],["drinks"],["milk.","🥛"]]],["👦📚",[["The boy","👦"],["reads"],["a book.","📚"]]],["🧕🍚",[["Mum","🧕"],["cooks"],["rice.","🍚"]]],
+ ["🐒🍌",[["The monkey","🐒"],["eats"],["a banana.","🍌"]]],["👦⚽",[["My brother","👦"],["kicks"],["the ball.","⚽"]]],["👨🚗",[["Dad","👨"],["drives"],["a car.","🚗"]]],
+ ["🧕🌸",[["My sister","🧕"],["paints"],["a flower.","🌸"]]],["🐄🌿",[["The cow","🐄"],["eats"],["grass.","🌿"]]],["🐔🌽",[["The hen","🐔"],["eats"],["corn.","🌽"]]],
+ ["👴🌳",[["Grandpa","👴"],["waters"],["the tree.","🌳"]]],["🦆💧",[["The duck","🦆"],["drinks"],["water.","💧"]]],["🐰🥕",[["The rabbit","🐰"],["eats"],["a carrot.","🥕"]]]];
+const ROLE=[['Siapa?','Who?'],['Buat apa?','Does what?'],['Apa?','What?']];
+// Words that already have a recorded clip in audio/ (kata-*.mp3); other words are read by the phone
+const KATA_ADA=new Set('ayam baju bas bintang bola buaya buku bulan cicak daun epal feri gajah gigi harimau hati hujan ikan itik jam kaki kek kucing kuda labu lembu lori mata matahari monyet nanas nasi oren pintu pisang pokok quran roket roti rumah sotong susu tikus topi ubi ular van wau xilofon yoyo zirafah'.split(' '));
+function sentence(){
+  setScreen(true);
+  const all=EN()?AYAT_EN:AYAT_MS,pool=full?all:all.slice(0,5),R=Math.min(5,pool.length),order=shuffle(pool).slice(0,R);let q=0,score=0,t=null,timers=[];
+  cleanup=()=>{clearTimeout(t);timers.forEach(clearTimeout)};
+  const bare=w=>w.replace(/[.!?]$/,'');
+  const say=x=>({t:x,l:EN()?'en':'ms'});
+  const wordC=w=>{const c=bare(w).toLowerCase();return !EN()&&KATA_ADA.has(c)?{k:'kata-'+c,t:c}:say(bare(w))};
+  function next(){
+    if(q>=R)return finish(score,R,sentence);
+    const [scene,parts]=order[q],text=parts.map(p=>p[0]).join(' ');let pos=0,miss=false,locked=false;
+    let cards=parts.map((p,k)=>({w:p[0],e:p[1]||'',r:k,ok:true}));
+    if(q>=2){for(const o of shuffle(all.filter(x=>x!==order[q]))){const r=pick([0,2]),p=o[1][r];
+      if(bare(p[0])!==bare(parts[r][0])&&!scene.includes(p[1])){cards.push({w:p[0],e:p[1]||'',r,ok:false});break}}}
+    cards=shuffle(cards);
+    view.innerHTML=`<div class="stack">
+      <div class="progress"><i style="width:${q/R*100}%"></i></div>
+      <div class="prompt stack" style="gap:10px"><button class="saybtn corner" id="rp" aria-label="${tx('Dengar lagi','Listen again')}">🔊</button>
+        <div class="pic" id="pc" style="font-size:4.2rem">${scene}</div>
+        <div class="ayat" id="ay">${ROLE.map((r,k)=>`<div class="car r${k}" data-k="${k}"><small>${tx(r[0],r[1])}</small><span></span></div>`).join('')}</div>
+        <div class="hint" id="ah">${tx('Tekan kad ikut urutan ayat. Warna kad sama dengan warna gerabak.','Tap the cards in sentence order. Each card matches the colour of its car.')}</div></div>
+      <div class="kad" id="kd">${cards.map((c,i)=>`<button class="wc r${c.r}" data-i="${i}">${c.e?`<i>${c.e}</i>`:''}${c.w}</button>`).join('')}</div></div>`;
+    const ay=document.getElementById('ay'),cars=[...ay.children];
+    const hear=()=>speak(say(text));
+    document.getElementById('rp').onclick=hear;document.getElementById('pc').onclick=hear;
+    speak(Pc('x-ay-dengar'),say(text));
+    cars.forEach((c,k)=>c.onclick=()=>{if(k<pos)speak(wordC(parts[k][0]))});
+    view.querySelectorAll('.wc').forEach(b=>b.onclick=()=>{
+      if(locked||b.classList.contains('used'))return;const c=cards[+b.dataset.i];
+      if(c.ok&&c.r===pos){
+        b.classList.add('used');const car=cars[pos];car.classList.remove('hintb');car.classList.add('fill');
+        car.querySelector('span').innerHTML=(c.e?`<i>${c.e}</i>`:'')+c.w;popSnd();pos++;
+        if(pos<parts.length){speak(wordC(c.w));return}
+        locked=true;document.getElementById('ah').textContent=text;chime(true);rj(true,bare(text));if(!miss){score++;addStar()}
+        // Read the whole sentence; each car lifts in turn
+        speak(say(text),praise());
+        cars.forEach((cr,k)=>{timers.push(setTimeout(()=>{cars.forEach(x=>x.classList.remove('say'));cr.classList.add('say')},250+k*650))});
+        timers.push(setTimeout(()=>cars.forEach(x=>x.classList.remove('say')),250+cars.length*650));
+        q++;t=quietTimeout(next,2600);return}
+      miss=true;rj(false,bare(text));chime(false);b.classList.remove('no');void b.offsetWidth;b.classList.add('no');setTimeout(()=>b.classList.remove('no'),450);
+      cars[pos].classList.add('hintb');
+      speak(Pc('cuba-lagi'),Pc('x-ay-r'+pos));
     });
   }
   next();
@@ -1048,11 +1295,11 @@ function board(){
   setScreen(true);
   const have=stickersGot();let items=load('abc_board',[]);
   view.innerHTML=`<div class="stack">
-    <div class="maphead"><div class="word" style="font-size:1.5rem">Papan Pelekat</div><div class="pill">${have.length} pelekat</div></div>
+    <div class="maphead"><div class="word" style="font-size:1.5rem">${tx('Papan Pelekat','Sticker Board')}</div><div class="pill">${have.length} ${tx('pelekat','stickers')}</div></div>
     <div class="board" id="bd"><div class="bin" id="bin" aria-hidden="true">🗑️</div></div>
     ${have.length?`<div class="tray">${have.map(s=>`<button data-s="${s}" aria-label="Letak pelekat">${s}</button>`).join('')}</div>
-    <div class="hint" style="text-align:center;color:var(--muted)">Tekan pelekat untuk letak. Seret untuk alih. Tekan sekali untuk tukar saiz. Seret ke 🗑️ untuk buang.</div>`
-    :`<div class="prompt"><div class="pic">⭐</div><div class="hint" style="color:var(--ink);font-size:1.1rem">Kumpul ${PER_STICKER} bintang dalam permainan untuk dapat pelekat pertama!</div></div>`}</div>`;
+    <div class="hint" style="text-align:center;color:var(--muted)">${tx('Tekan pelekat untuk letak. Seret untuk alih. Tekan sekali untuk tukar saiz. Seret ke 🗑️ untuk buang.','Tap a sticker to place it. Drag to move. Tap once to resize. Drag to 🗑️ to remove.')}</div>`
+    :`<div class="prompt"><div class="pic">⭐</div><div class="hint" style="color:var(--ink);font-size:1.1rem">${tx(`Kumpul ${PER_STICKER} bintang dalam permainan untuk dapat pelekat pertama!`,`Collect ${PER_STICKER} stars in the games to get your first sticker!`)}</div></div>`}</div>`;
   const bd=document.getElementById('bd'),bin=document.getElementById('bin');
   const persist=()=>save('abc_board',items);
   function draw(){bd.querySelectorAll('.it').forEach(e=>e.remove());
@@ -1069,7 +1316,7 @@ function board(){
       else if(overBin()){items.splice(items.indexOf(it),1);e.remove();chime(false)}
       persist()};
   }
-  view.querySelectorAll('.tray button').forEach(b=>b.onclick=()=>{if(items.length>=40)return toast('Papan sudah penuh 🙂');
+  view.querySelectorAll('.tray button').forEach(b=>b.onclick=()=>{if(items.length>=40)return toast(tx('Papan sudah penuh 🙂','The board is full 🙂'));
     items.push({s:b.dataset.s,x:20+Math.random()*60,y:15+Math.random()*60,z:1});persist();draw();popSnd()});
   draw();
 }
@@ -1079,10 +1326,10 @@ function gate(then){
   setScreen(true);
   view.innerHTML=`<div class="prompt stack" style="gap:12px;align-items:center">
     <div class="pic" style="font-size:3.5rem">👨‍👩‍👧</div>
-    <div class="word" style="font-size:1.6rem">Untuk ibu bapa</div>
-    <div class="hint" style="color:var(--ink);font-size:1.05rem">Tekan dan tahan butang di bawah selama 3 saat.</div>
-    <button class="gate" id="gt"><i id="gf"></i><span>Tahan di sini</span></button>
-    <button class="btn" id="hm">🏠 Kembali</button></div>`;
+    <div class="word" style="font-size:1.6rem">${tx('Untuk ibu bapa','For parents')}</div>
+    <div class="hint" style="color:var(--ink);font-size:1.05rem">${tx('Tekan dan tahan butang di bawah selama 3 saat.','Press and hold the button below for 3 seconds.')}</div>
+    <button class="gate" id="gt"><i id="gf"></i><span>${tx('Tahan di sini','Hold here')}</span></button>
+    <button class="btn" id="hm">🏠 ${tx('Kembali','Back')}</button></div>`;
   const gt=document.getElementById('gt'),gf=document.getElementById('gf');let t0=0,raf=0;
   const stop=()=>{cancelAnimationFrame(raf);t0=0;gf.style.width='0'};
   cleanup=()=>cancelAnimationFrame(raf);

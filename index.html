@@ -448,7 +448,7 @@
       <a class="btn wa" target="_blank" rel="noopener" href="${DS.waLink(`Assalamualaikum, saya nak beli ${Q.name} Dunia Sai (${DS.rm(Q.price)}).`)}">Beli melalui WhatsApp</a>
     </div>`).join('');
 
-  $('harga').innerHTML = DS.GAMES.filter((g) => g.price).map((g) => g.gabung ? `<li><span>Robot Rumble 2D + 3D<br><small>Pemilik 2D naik taraf ke 3D: RM12.90</small></span><b>${DS.rm(g.price)}</b></li>` : `<li><span>${esc(g.name)}</span><b>${DS.rm(g.price)}</b></li>`).join('');
+  $('harga').innerHTML = DS.GAMES.filter((g) => g.price && !g.sekali).map((g) => g.gabung ? `<li><span>Robot Rumble 2D + 3D<br><small>Pemilik 2D naik taraf ke 3D: RM12.90</small></span><b>${DS.rm(g.price)}</b></li>` : `<li><span>${esc(g.name)}</span><b>${DS.rm(g.price)}</b></li>`).join('');
 
   // Cara beli, WhatsApp, itch
   $('heroWa').href = DS.waLink('Assalamualaikum, saya nak tahu tentang game Dunia Sai.');

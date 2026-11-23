@@ -72,6 +72,16 @@
         lic: { store: 'boss_gerai_lesen', pk2: 8 },
       },
       {
+        // 18 Nov 2026 (Afiq): Boss Gerai gaya lama (sebelum gaya Overcooked 14 Nov) kembali sebagai game sendiri.
+        // Tidak dijual asing: lesen Boss Gerai (PK2 game 8) membuka kedua-duanya, jadi tiada nombor PK2 baharu.
+        // Simpanan lama RAJA_GERAI_RG_CC_001_V1 dikekalkan supaya kemajuan pemain lama kembali.
+        id: 'street-venture', name: 'Street Venture', path: '/app/street-venture/', img: '/img/street-venture.jpg',
+        subject: 'Duit dan niaga', age: '6 hingga 12 tahun', price: 9.9, pakej: false, sekali: 'boss-gerai',
+        desc: 'Boss Gerai versi klasik: urus gerai pasar malam di 10 lokasi, ambil pesanan dalam BM, English dan Mandarin, masak, kira baki duit dan urus stok.',
+        free: '3 lokasi Kuala Lumpur',
+        lic: { store: 'boss_gerai_lesen', pk2: 8 },
+      },
+      {
         id: 'ember-code', name: 'Ember Code', path: '/app/ember-code/', img: '/img/ember-code.jpg',
         subject: 'Koding', age: '7 hingga 12 tahun', price: 9.9, pakej: true,
         desc: 'Tower defence sambil belajar kod: susun arahan JIKA, ULANG dan SASAR supaya menara berfikir sendiri, kemudian lihat kodnya dalam Python. 15 peta.',
