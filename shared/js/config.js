@@ -104,13 +104,13 @@
       },
       {
         // 17 Nov 2026 (Afiq): 3D TIDAK dijual asing. Gabungan 2D + 3D RM19.90 (3D bernilai RM29.90),
-        // pemilik 2D naik taraf RM12.90. Kod gabungan = PK2 game 11 + 12. Pakej STEM/Semua kekal 2D sahaja.
+        // Tiada naik taraf (Afiq, 24 Nov 2026). Kod gabungan = PK2 game 11 + 12. Pakej STEM/Semua kekal 2D sahaja.
         id: 'robot-rumble-3d', name: 'Robot Rumble 3D', path: '/app/robot-rumble-3d/', img: '/img/robot-rumble-3d.jpg',
         subject: 'Robotik dan memandu', age: '8 hingga 14 tahun', price: 19.9, pakej: false, gabung: 'robot-rumble',
-        hargaLabel: '2D + 3D RM19.90 · naik taraf RM12.90',
+        hargaLabel: '2D + 3D RM19.90',
         desc: 'Sambungan Robot Rumble: pandu robot sendiri merentas 5 pulau dalam dunia 3D, 18 misi, dan lumba bersama sehingga 8 kawan dalam 👥 Bilik.',
         free: 'Misi M26 hingga M28',
-        lic: { store: 'robot_rumble_3d_lesen', pk2: 12 },
+        lic: { store: 'robot_rumble_lesen', pk2: 12 },
       },
       {
         // Percuma sepenuhnya: tiada `lic`, jadi launcher terus anggap versi penuh dan tidak minta kod
@@ -155,7 +155,7 @@
     // Penjana lesen (/mnt/project-files/game/penjana-lesen-dunia-sai.html) ada senarai yang sama: ubah kedua-dua tempat.
     // Game percuma (tiada `lic`) tidak masuk mana-mana pakej.
     PAKEJ: {
-      id: 'semua', name: 'Pakej Semua 10 Game', price: 60,
+      id: 'semua', name: 'Pakej Semua 10 Game', price: 50,
       games: ['kenal-jawi', 'kenal-abc', 'wira-matematik', 'hikayat-sungai', 'wonder-island', 'kembara-malaysia', 'boss-gerai', 'ember-code', 'nakhoda-jawi', 'robot-rumble'],
       note: '1 kod lesen buka kesemua 10 game berbayar Dunia Sai. Pembeli Pakej 5 Game sebelum ini dapat naik taraf percuma.',
     },
@@ -177,8 +177,8 @@
       'pakej-5-game': {
         title: 'Pakej Semua 10 Game',
         heading: 'Pakej Semua 10 Game',
-        lead: 'Jawi, ABC, Matematik, Sains, English, Geografi, Duit, Koding dan Robotik dalam satu apps. 10 game, satu kod, RM60 sahaja.',
-        price: 60,
+        lead: 'Jawi, ABC, Matematik, Sains, English, Geografi, Duit, Koding dan Robotik dalam satu apps. 10 game, satu kod, RM50 sahaja.',
+        price: 50,
         games: ['kenal-jawi', 'kenal-abc', 'wira-matematik', 'hikayat-sungai', 'wonder-island', 'kembara-malaysia', 'boss-gerai', 'ember-code', 'nakhoda-jawi', 'robot-rumble'],
         startsAt: '2026-10-26T00:00:00+08:00',
         points: [
@@ -196,7 +196,7 @@
   DS.pakejGames = (P) => (P || DS.PAKEJ).games.map(DS.game).filter(Boolean);
   // Jumlah jika beli game dalam pakej satu-satu
   DS.pakejWorth = (P) => DS.pakejGames(P).reduce((a, g) => a + g.price, 0);
-  // 9.9 -> "RM9.90", 60 -> "RM60"
+  // 9.9 -> "RM9.90", 50 -> "RM50"
   DS.rm = (n) => 'RM' + (Number.isInteger(n) ? String(n) : n.toFixed(2));
 
   global.DS = DS;
