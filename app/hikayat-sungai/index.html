@@ -482,6 +482,7 @@ html,body{height:100%}html{overflow:hidden}body{overflow-y:auto;overscroll-behav
     <span class="chip"><span id="lvl"></span><span class="xpbar"><i id="xp"></i></span></span>
     <span class="chip" id="stars"></span>
     <button class="icon-btn arcade-head" id="arcade" type="button" aria-label="Science Arcade">🧪 <span id="arcadeLabel">Makmal Mini</span></button>
+    <button class="icon-btn arcade-head" id="petaBtn" type="button" hidden>🗺️ <span id="petaLabel">Peta Wilayah</span></button>
     <button class="icon-btn" id="wardBtn" type="button">👕 <span id="wardLabel">Almari</span></button>
     <button class="icon-btn demo-chip" id="licBtn" type="button"></button>
     <button class="icon-btn" id="mute" type="button" aria-label="Sound">🔊</button>
@@ -798,6 +799,17 @@ var KJL2=(function(){
     doorLocked: [S('narr', 'Pintu kayu berkunci. Mungkin ada kunci yang tenggelam di kampung?', 'A locked wooden door. Maybe there is a key that sinks somewhere in the village?')],
     doorOpen: [S('narr', 'Kunci dipusing... klik! Pintu terbuka.', 'The key turns... click! The door opens.')],
     rageOn: L('Sang Buaya mengamuk!', 'The Crocodile is enraged!'),
+    // Peta besar (Nov 2026): cerita Raja Kemarau dan jalan ke Laluan Kompas
+    kemarau: [
+      S('narr', 'Di celah lumpur empangan, sesuatu bersinar biru... 💎', 'In the mud of the broken dam, something shines blue... 💎'),
+      S('kancil', 'Mutiara Sungai! Inilah yang membuat sungai kita mengalir.', 'A River Pearl! This is what makes our river flow.'),
+      S('buaya', 'Hmph! Itu cuma satu. Raja Kemarau sudah sorok lima lagi di seluruh lembah!', 'Hmph! That is only one. The Drought King has hidden five more across the valley!'),
+      S('kancil', 'Raja Kemarau? Kalau semua 6 Mutiara Sungai dipulangkan ke Mata Air, Sungai Ilmu akan mengalir penuh semula!', 'The Drought King? If all 6 River Pearls go back to the Spring, the River of Knowledge will flow full again!'),
+      S('kancil', 'Papan tanda 🧭 di hujung barat kampung menuju Laluan Kompas. Jom kita kembara!', 'The 🧭 sign at the west end of the village leads to the Compass Trail. Let\'s go!'),
+    ],
+    exitTutup: [S('narr', 'Papan tanda: "Laluan Kompas ➜ Pekan Bukit Besi". Kabus tebal menutup jalan.', 'Signpost: "Compass Trail ➜ Iron Hill Town". Thick fog covers the road.'),
+      S('kancil', 'Kita selamatkan kampung dahulu. Kalahkan Sang Buaya di empangan!', 'Let\'s save the village first. Beat Sang Buaya at the dam!')],
+    exitBuka: [S('kancil', 'Jom ke Laluan Kompas! Pekan Bukit Besi ada di seberang kabus.', 'To the Compass Trail! Iron Hill Town is beyond the fog.')],
   };
   const TAUNTS = {
     lintah: [L('Slurrp! Soalan seterusnya!', 'Slurrp! Next question!'), L('Kamu takkan lalu!', 'You shall not pass!')],
@@ -940,6 +952,8 @@ var KJL2=(function(){
     { id: 'lab-soil', em: '🪣', x: LAB_POS.soil[0], y: LAB_POS.soil[1], solid: true, kind: 'lab', lab: 'soil' },
     { id: 'lab-light', em: '💎', x: LAB_POS.light[0], y: LAB_POS.light[1], solid: true, kind: 'lab', lab: 'light' },
     { id: 'lab-kanta', em: '🔬', x: LAB_POS.kanta[0], y: LAB_POS.kanta[1], solid: true, kind: 'lab', lab: 'kanta' },
+    // Peta besar: papan tanda ke Laluan Kompas (fail laluan-1.html), dibuka selepas Sang Buaya
+    { id: 'ke-laluan1', em: '🧭', x: 2, y: 9, solid: true, kind: 'exit1' },
   ];
   const ROCKS = ENT.filter(e => e.kind === 'rock');
   const placeRocks = () => ROCKS.forEach((r, i) => { [r.x, r.y] = (st.gone.includes('gate') ? PLATES : ROCK_HOME)[i]; });
@@ -1452,6 +1466,16 @@ var KJL2=(function(){
       if (onPlate(e.x, e.y)) { ctx.fillStyle = `rgba(125,249,255,${.35 + .2 * Math.sin(time / 200)})`; ctx.beginPath(); ctx.arc(X, Y, 9, 0, 7); ctx.fill(); }
       return;
     }
+    if (e.kind === 'exit1') {
+      const open = !!st.f.buaya && full;
+      if (open) { ctx.fillStyle = `rgba(255,214,110,${.3 + .2 * Math.sin(time / 260)})`; ctx.beginPath(); ctx.ellipse(X, Y + 5, 10, 4.5, 0, 0, 7); ctx.fill(); }
+      shadow(X, Y + 6, 5, 1.8);
+      ctx.fillStyle = '#2a170a'; ctx.fillRect(X - 1.5, Y - 3, 3, 10); ctx.fillStyle = '#7a4e28'; ctx.fillRect(X - .8, Y - 3, 1.6, 10);
+      ctx.fillStyle = '#2a170a'; ctx.beginPath(); ctx.moveTo(X + 8, Y - 12); ctx.lineTo(X - 5, Y - 12); ctx.lineTo(X - 10, Y - 7.5); ctx.lineTo(X - 5, Y - 3); ctx.lineTo(X + 8, Y - 3); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = open ? '#ffd76f' : '#d6cfbf'; ctx.beginPath(); ctx.moveTo(X + 7, Y - 11); ctx.lineTo(X - 4.5, Y - 11); ctx.lineTo(X - 8.6, Y - 7.5); ctx.lineTo(X - 4.5, Y - 4); ctx.lineTo(X + 7, Y - 4); ctx.closePath(); ctx.fill();
+      drawSprite('🧭', X + 1.5, Y - 7.5, 7);
+      return;
+    }
     if (e.kind === 'rune') {
       ctx.fillStyle = `rgba(190,140,255,${.25 + .2 * Math.sin(time / 300)})`; ctx.beginPath(); ctx.arc(X, Y, 10, 0, 7); ctx.fill();
       drawSprite('🔮', X, Y - 2 + b, 13); return;
@@ -1513,12 +1537,14 @@ var KJL2=(function(){
     refreshTouchAction();
     $('arcadeLabel').textContent = lang === 'ms' ? 'Makmal Mini' : 'Science Arcade';
     $('wardLabel').textContent = lang === 'ms' ? 'Almari' : 'Wardrobe';
+    $('petaBtn').hidden = !(st.f.buaya && full); $('petaLabel').textContent = lang === 'ms' ? 'Peta Wilayah' : 'Region Map';
     $('licBtn').textContent = full ? lT().licBtn : lT().lockBtn; $('licBtn').classList.toggle('demo-chip', !full);
     const q = t().q, f = st.f;
     const raftN = st.raft.length;
     const line = !f.talked ? q.talk : !f.raft ? q.raft(raftN) : !f.lintah ? q.cross : !f.egg ? q.egg : !f.ketam ? q.ketam : !st.gone.includes('gate') ? q.gate : !f.buaya ? q.buaya : q.done(st.chests.length);
+    const newRoute = f.buaya && full && !(st.dunia && (st.dunia.visited || []).includes('laluan-1'));
     const stageN = !f.talked ? 0 : !f.raft ? 1 : !f.lintah ? 2 : !f.egg ? 3 : !f.ketam ? 4 : !st.gone.includes('gate') ? 5 : !f.buaya ? 6 : 7;
-    $('quest').innerHTML = `<div class="quest-heading"><span>🧭 ${esc(t().quest)} ${Math.min(stageN + 1, 7)}/7</span><span>✨ ${Object.keys(st.arcade || {}).filter(k => st.arcade[k]).length}/7</span></div><div class="quest-text">${esc(line)}</div><div class="quest-progress"><i style="width:${stageN / 7 * 100}%"></i></div>`;
+    $('quest').innerHTML = `<div class="quest-heading"><span>🧭 ${esc(t().quest)} ${Math.min(stageN + 1, 7)}/7</span><span>✨ ${Object.keys(st.arcade || {}).filter(k => st.arcade[k]).length}/7</span></div><div class="quest-text">${esc(newRoute ? (lang === 'ms' ? 'Baharu! Ikut papan tanda 🧭 di hujung barat kampung ke Laluan Kompas' : 'New! Follow the 🧭 sign at the west end of the village to the Compass Trail') : line)}</div><div class="quest-progress"><i style="width:${stageN / 7 * 100}%"></i></div>`;
     if (!full && st.f.lintah) $('quest').querySelector('.quest-text').textContent = lang === 'ms' ? 'Bab 1 selesai! Buka versi penuh untuk meneruskan kisah.' : 'Chapter 1 done! Unlock the full version to continue the story.';
   }
   function gainXP(n) { const b = level(); st.xp += n; save(); hud(); if (level() > b) { toast(t().levelUp(level())); SFX.win(); } }
@@ -1813,6 +1839,7 @@ var KJL2=(function(){
       if (e.id === 'kancil') {
         if (!f.talked) { await dialog(TEXT.intro); f.talked = true; save(); gainXP(10); grant('cap'); }
         else if (!f.raft) await dialog(TEXT.kancilMore(3 - st.raft.length));
+        else if (f.buaya && !f.kemarau) { await dialog(TEXT.kemarau); f.kemarau = true; save(); }
         else await dialog(TEXT.kancilAfter);
       } else if (e.id === 'lintah') {
         await dialog(TEXT.lintahIn); await battle('lintah'); await dialog(TEXT.lintahOut); f.lintah = true; st.gone.push('lintah'); save(); grant('goggles');
@@ -1825,7 +1852,7 @@ var KJL2=(function(){
         else { await dialog(TEXT.ketamIn); await battle('ketam'); await dialog(TEXT.ketamOut); f.ketam = true; st.gone.push('ketam'); save(); grant('helmet'); }
       } else if (e.id === 'buaya') {
         await dialog(TEXT.buayaIn); await battle('buaya'); f.buaya = true; st.gone.push('buaya'); save(); grant('crown'); grant('royal');
-        await dialog(TEXT.buayaOut); ending();
+        await dialog(TEXT.buayaOut); await dialog(TEXT.kemarau); f.kemarau = true; save(); ending();
       } else if (e.kind === 'chest') {
         await dialog(TEXT.chestIn); await chest(e);
       } else if (e.kind === 'gate') {
@@ -1837,6 +1864,9 @@ var KJL2=(function(){
       } else if (e.kind === 'lab') {
         if (arcadeLocked(e.lab)) { setTimeout(() => demoEnd('locked')); return; }
         arcadeOrigin = 'world'; startArcade(e.lab);
+      } else if (e.kind === 'exit1') {
+        if (!f.buaya || !full) await dialog(TEXT.exitTutup);
+        else { if (!f.kemarau) { await dialog(TEXT.kemarau); f.kemarau = true; save(); } await dialog(TEXT.exitBuka); keLaluan1(); }
       } else if (e.kind === 'door') {
         if (!f.key) await dialog(TEXT.doorLocked);
         else { SFX.pick(); st.gone.push('door'); save(); await dialog(TEXT.doorOpen); gainXP(10); }
@@ -1850,9 +1880,18 @@ var KJL2=(function(){
     for (let i = 0; i < 30; i++) particles.push({ x: 31 * TS + 8, y: 4 * TS + 8, vx: (Math.random() - .5) * 3, vy: (Math.random() - .5) * 3, life: 40, c: 'rgba(200,190,170,.9)', r: 2 });
   }
 
+  // Peta besar: pindah ke Laluan Kompas dengan skrin muat ringkas. Simpanan dikongsi (st.dunia).
+  function keLaluan1() {
+    st.dunia = Object.assign(st.dunia || {}, { from: 'bandar-1' }); save();
+    openOv('title-screen', `<div class="hero-content"><div class="art">🧭</div><div class="eyebrow">✦ ${lang === 'ms' ? 'MENUJU KE' : 'HEADING TO'} ✦</div><h1>${lang === 'ms' ? 'Laluan<br><span>Kompas</span>' : 'Compass<br><span>Trail</span>'}</h1></div>`);
+    $('controls').hidden = true; MUSIC.play(null);
+    setTimeout(() => { location.href = 'laluan-1.html'; }, 700);
+  }
   function ending() {
     const o = openOv('title-screen', `<div class="art">${wImg('kancil')}${avImg()}${wImg('timah')}</div><h1>${esc(t().end)}</h1><p>${esc(t().endSub(st.stars, st.chests.length))}</p>
-      <div class="row" style="justify-content:center"><button class="btn" id="ex" type="button" data-adv>${esc(t().explore)}</button><button class="btn ghost" id="ag" type="button">${esc(t().again)}</button></div>`);
+      <div class="row" style="justify-content:center"><button class="btn" id="ex" type="button" data-adv>${esc(t().explore)}</button><button class="btn ghost" id="ag" type="button">${esc(t().again)}</button></div>
+      ${full ? `<div class="row" style="justify-content:center;margin-top:8px"><button class="btn" id="kl1" type="button">🧭 ${lang === 'ms' ? 'Teruskan kembara ke Laluan Kompas' : 'Continue to the Compass Trail'}</button></div>` : ''}`);
+    if ($('kl1')) $('kl1').onclick = keLaluan1;
     $('ex').onclick = closeOv;
     $('ag').onclick = () => { st = fresh(); save(); location.reload(); };
   }
@@ -2510,6 +2549,8 @@ var KJL2=(function(){
   let licence = null, full = false;
   const checkLicence = s => { try { const b=KJL2.find(s);return b?KJL2.verify(b,PRODUCT,PUBLIC_KEYS,BLOCKED,nacl):KJL.verify(s,PRODUCT,PUBLIC_KEYS,BLOCKED,nacl); } catch (e) { return { ok: false, reason: 'error' }; } };
   { let s = null; try { s = localStorage.getItem(LIC_KEY); } catch (e) {} if (s) { const r = checkLicence(s); if (r.ok) { licence = r; full = true; } } }
+  // Peta besar: mod uji Afiq, hanya pada pautan pratonton (*.dunia-sai.pages.dev), tidak pernah di laman live
+  try { if (/\.dunia-sai\.pages\.dev$/.test(location.hostname) && sessionStorage.getItem('hs-uji') === '1') full = true; } catch (e) {}
   const LT = {
     ms: { lockBtn: '🔒 Versi penuh', licBtn: '👨‍👩‍👧 Lesen', demoTag: 'Versi percubaan · Bab 1 percuma',
       demoDoneT: 'Tamat Bab 1! 🎉', demoDone: 'Syabas! Kamu berjaya menyeberang sungai dan menewaskan Lintah Lumpur. Kisah ini bersambung dalam versi penuh.',
@@ -2749,6 +2790,7 @@ var KJL2=(function(){
   }
   function openWardrobe() { if (mode === 'busy' && !arcadeOpen && $('ov').className.indexOf('lic-screen') < 0) return; licBack = null; wardrobe(); }
   $('wardBtn').onclick = openWardrobe;
+  $('petaBtn').onclick = () => { if (mode === 'busy') return; st.dunia = Object.assign(st.dunia || {}, { at: 'bandar-1' }); save(); location.href = 'peta-wilayah.html'; };
   refreshHero();
 
   $('mute').onclick = () => { muted = !muted; if (muted) stopVoice(); MUSIC.setMuted(muted); $('mute').textContent = muted ? '🔇' : '🔊'; };
@@ -2820,7 +2862,15 @@ var KJL2=(function(){
     MUSIC.play(musicBattle ? 'battle' : (mode !== 'title' && !arcadeOpen && inCave(P.x, P.y)) ? 'cave' : 'field');
     MUSIC.setDuck(!!(curV && !curV.paused)); }, 400);
 
-  hud(); title(); requestAnimationFrame(frame);
+  // Peta besar: datang dari Laluan Kompas / Peta Wilayah (index.html#main) terus ke peta, tanpa skrin tajuk
+  if (st.dunia) st.dunia.at = 'bandar-1';
+  if (location.hash === '#main' && st.av) {
+    try { history.replaceState(null, '', location.pathname + location.search); } catch {}
+    if (st.dunia && st.dunia.from === 'laluan-1') { P.x = 3; P.y = 9; P.px = P.x * TS; P.py = P.y * TS; P.face = 1; }
+    if (st.dunia) st.dunia.from = null;
+    save(); hud(); closeOv();
+  } else { hud(); title(); }
+  requestAnimationFrame(frame);
 })();
 </script>
 
