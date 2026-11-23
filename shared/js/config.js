@@ -110,7 +110,7 @@
         hargaLabel: '2D + 3D RM19.90',
         desc: 'Sambungan Robot Rumble: pandu robot sendiri merentas 5 pulau dalam dunia 3D, 18 misi, dan lumba bersama sehingga 8 kawan dalam 👥 Bilik.',
         free: 'Misi M26 hingga M28',
-        lic: { store: 'robot_rumble_3d_lesen', pk2: 12 },
+        lic: { store: 'robot_rumble_lesen', pk2: 12 },
       },
       {
         // Percuma sepenuhnya: tiada `lic`, jadi launcher terus anggap versi penuh dan tidak minta kod

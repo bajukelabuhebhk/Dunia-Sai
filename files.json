@@ -1,5 +1,5 @@
 {
- "version": "55f9f4fd94",
+ "version": "e3cd2309ff",
  "core": {
   "files": {
    "/app/": "19f8a4312daa",
@@ -31,7 +31,7 @@
    "/shared/icons/maskable-512.png": "78d51897dd77",
    "/shared/js/anak.js": "b26ad114d73c",
    "/shared/js/balik.js": "b25251d8c79c",
-   "/shared/js/config.js": "8cf7607d3288",
+   "/shared/js/config.js": "73eb0ab68dd3",
    "/shared/js/jejak.js": "993517d588a5",
    "/shared/js/lesen-lib.js": "440a6afd99bc",
    "/shared/js/lesen.js": "d72df6c47647",
@@ -39,7 +39,7 @@
    "/shared/js/maklum-balas.js": "87d261af59ac",
    "/shared/js/ruang-ibubapa.js": "d83a0a76181d"
   },
-  "bytes": 1960330
+  "bytes": 1960327
  },
  "games": {
   "awanara": {
@@ -978,9 +978,9 @@
   },
   "robot-rumble-3d": {
    "files": {
-    "/app/robot-rumble-3d/": "d96bea9e2125"
+    "/app/robot-rumble-3d/": "12a0ccc68b3a"
    },
-   "bytes": 972803
+   "bytes": 972627
   },
   "skuad-penjaga-sungai": {
    "files": {
